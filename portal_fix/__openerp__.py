@@ -29,6 +29,7 @@ Portal Fix
 Fixes:
 ------
 * When creating portal user from partner, assigne partner company instead of admin company
+We should depreceate this module and fix with a PR to odoo
     """,
     'author':  'ADHOC SA',
     'website': 'www.adhoc.com.ar',
