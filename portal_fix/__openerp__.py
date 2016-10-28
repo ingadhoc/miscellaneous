@@ -20,7 +20,7 @@
 ##############################################################################
 {
     "name": "Portal Fix",
-    'version': '8.0.1.0.0',
+    'version': '9.0.1.0.0',
     'category': 'Portal',
     'sequence': 14,
     'description': """
@@ -45,7 +45,7 @@ We should depreceate this module and fix with a PR to odoo
     ],
     'test': [
     ],
-    'installable': True,
+    'installable': False,
     'auto_install': False,
     'application': True,
 }

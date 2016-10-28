@@ -20,7 +20,7 @@
 ##############################################################################
 {
     'name': 'Mass Mailing Keep Archives',
-    'version': '8.0.0.0.0',
+    'version': '9.0.1.0.0',
     'description': """
 Mass Mailing Keep Archives
 ==========================
@@ -39,6 +39,6 @@ want to keep archives (mails sent) or not.
     'demo': [
         ],
     'test': [],
-    'installable': True,
+    'installable': False,
 }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

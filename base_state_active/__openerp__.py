@@ -20,7 +20,7 @@
 ##############################################################################
 {
     'name': 'Base States Active Field',
-    'version': '8.0.1.0.0',
+    'version': '9.0.1.0.0',
     'category': 'Tools',
     'sequence': 14,
     'summary': '',
@@ -45,7 +45,7 @@ Adds active field for states in order to disable usa states an other states you 
     ],
     'test': [
     ],
-    'installable': True,
+    'installable': False,
     'auto_install': False,
     'application': False,
 }

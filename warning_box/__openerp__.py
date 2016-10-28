@@ -22,7 +22,7 @@
 ##############################################################################
 {
     'name': "Warning box",
-    'version': '8.0.0.1.0',
+    'version': '9.0.1.0.0',
     'category': 'Tools',
     'description': """
         [ENG] Add Warning box.
@@ -36,5 +36,5 @@
         'warning_box.xml',
              ],
     "active": False,
-    "installable": True
+    "installable": False
 }
