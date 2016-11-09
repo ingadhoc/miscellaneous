@@ -24,13 +24,6 @@
     'category': 'Tools',
     'sequence': 14,
     'summary': '',
-    'description': """
-Base States Active Field
-========================
-This module adds a new group "Set default for all users".
-Users of that group can create default values that applies to all users.
-Without this module, only superadmin can do that.
-    """,
     'author': 'ADHOC SA',
     'website': 'www.adhoc.com.ar',
     'license': 'AGPL-3',
@@ -46,7 +39,7 @@ Without this module, only superadmin can do that.
     ],
     'test': [
     ],
-    'installable': False,
+    'installable': True,
     'auto_install': False,
     'application': False,
 }
