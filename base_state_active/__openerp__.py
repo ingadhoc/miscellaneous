@@ -19,17 +19,12 @@
 #
 ##############################################################################
 {
-    'name': 'Base States Active Field',
+    'name': 'Deactivate US States',
     'version': '9.0.1.0.0',
     'category': 'Tools',
     'sequence': 14,
     'summary': '',
-    'description': """
-Base States Active Field
-========================
-Adds active field for states in order to disable usa states an other states you would like to hide
-    """,
-    'author':  'ADHOC SA',
+    'author': 'ADHOC SA',
     'website': 'www.adhoc.com.ar',
     'license': 'AGPL-3',
     'images': [
@@ -45,8 +40,7 @@ Adds active field for states in order to disable usa states an other states you 
     ],
     'test': [
     ],
-    'installable': False,
+    'installable': True,
     'auto_install': False,
     'application': False,
 }
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
