@@ -1,4 +1,12 @@
 id,active
+base.state_au_1,False
+base.state_au_2,False
+base.state_au_3,False
+base.state_au_4,False
+base.state_au_5,False
+base.state_au_6,False
+base.state_au_7,False
+base.state_au_8,False
 base.state_us_1,False
 base.state_us_2,False
 base.state_us_3,False
