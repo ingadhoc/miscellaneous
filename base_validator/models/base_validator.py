@@ -56,7 +56,11 @@ class BaseValidator(models.Model):
         The method raises an openerp.exceptions.ValidationError if the eval of
         python validation code fails
         """
+        # if we call it without any record, we return value
+        if not self:
+            return value
         self.ensure_one()
+        self = self.sudo()
         eval_context = self._validation_eval_context(value)
         msg = None
         try:
