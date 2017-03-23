@@ -1,16 +1,16 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# * base_group_defaults_for_all
+# * mail_archives
 # 
 # Translators:
-# Javier Diez <jd@adhoc.com.ar>, 2016
+# Nicolas Mac Rouillon <nmr@ingadhoc.com>, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 9.0c\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-21 17:53+0000\n"
 "PO-Revision-Date: 2017-03-21 17:53+0000\n"
-"Last-Translator: Javier Diez <jd@adhoc.com.ar>, 2016\n"
+"Last-Translator: Nicolas Mac Rouillon <nmr@ingadhoc.com>, 2017\n"
 "Language-Team: Spanish (https://www.transifex.com/adhoc/teams/46451/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -18,7 +18,17 @@ msgstr ""
 "Language: es\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#. module: base_group_defaults_for_all
-#: model:res.groups,name:base_group_defaults_for_all.group_default_for_all_users
-msgid "Set default for all users"
-msgstr "Establecer por defecto para todos los usuarios"
+#. module: mail_archives
+#. openerp-web
+#: code:addons/mail_archives/static/src/js/archives.js:76
+#: code:addons/mail_archives/static/src/xml/menu.xml:7
+#, python-format
+msgid "Archive"
+msgstr "Archivo"
+
+#. module: mail_archives
+#. openerp-web
+#: code:addons/mail_archives/static/src/xml/menu.xml:15
+#, python-format
+msgid "Archive is empty"
+msgstr "El archivo está vacío"
