@@ -1,0 +1,55 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * base_usability
+# 
+# Translators:
+# emiquinodoz <eq@ingadhoc.com>, 2017
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 9.0c\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-20 14:57+0000\n"
+"PO-Revision-Date: 2017-07-20 14:57+0000\n"
+"Last-Translator: emiquinodoz <eq@ingadhoc.com>, 2017\n"
+"Language-Team: Spanish (https://www.transifex.com/adhoc/teams/46451/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Language: es\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: base_usability
+#: model:ir.ui.view,arch_db:base_usability.view_window_action_form
+msgid "Add in the 'Action' menu"
+msgstr "Añadir en el menú \"Acción\""
+
+#. module: base_usability
+#: code:addons/base_usability/models/ir_actions_act_window.py:49
+#, python-format
+msgid "Deletion of the action record failed."
+msgstr "Se ha producido un error en la eliminación del registro de acciones."
+
+#. module: base_usability
+#: model:ir.ui.view,arch_db:base_usability.view_window_action_form
+msgid "Display an option on related documents to open this action"
+msgstr "Mostrar una opción en documentos relacionados para abrir esta acción"
+
+#. module: base_usability
+#: model:ir.model.fields,field_description:base_usability.field_ir_act_window_ir_values_id
+msgid "Ir Values"
+msgstr ""
+
+#. module: base_usability
+#: model:ir.ui.view,arch_db:base_usability.view_window_action_form
+msgid "Remove from the 'Action' menu"
+msgstr "Eliminar del menú 'Acción'"
+
+#. module: base_usability
+#: model:ir.ui.view,arch_db:base_usability.view_window_action_form
+msgid "Remove the contextual action related this action"
+msgstr "Eliminar la acción contextual relacionada con esta acción"
+
+#. module: base_usability
+#: model:ir.model,name:base_usability.model_ir_actions_act_window
+msgid "ir.actions.act_window"
+msgstr "ir.actions.act_window"
