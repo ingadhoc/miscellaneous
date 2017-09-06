@@ -22,5 +22,5 @@
     "qweb": [
         "static/src/xml/menu.xml",
     ],
-    'installable': False,
+    'installable': True,
 }

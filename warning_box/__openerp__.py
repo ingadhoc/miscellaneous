@@ -36,5 +36,5 @@
     "data": [
         'warning_box.xml',
     ],
-    'installable': False
+    "installable": True
 }

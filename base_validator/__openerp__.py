@@ -20,11 +20,11 @@
 ##############################################################################
 {
     'name': 'Base Validator',
-    'version': '10.0.1.0.0',
+    'version': '9.0.1.0.0',
     'category': 'Tools',
     'sequence': 14,
     'summary': '',
-    'author': 'ADHOC SA,Odoo Community Association (OCA)',
+    'author': 'ADHOC SA',
     'website': 'www.adhoc.com.ar',
     'license': 'AGPL-3',
     'images': [
