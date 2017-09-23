@@ -18,6 +18,8 @@ class BaseValidator(models.Model):
             "valid.\n"
             "#  -  value = 'something': overwrite value"
             " value (for formatting for eg.).\n"
+            "#  -  parts = ['part_one', 'part_two']: parts of the value "
+            "parsed by the validator.\n"
             "# You can use the following:\n"
             "#  - re: regex Python library\n"
             "#  - self: browse_record of the current document type "
@@ -51,10 +53,11 @@ class BaseValidator(models.Model):
                 }
 
     @api.multi
-    def validate_value(self, value, do_not_raise=False):
+    def validate_value(self, value, do_not_raise=False, return_parts=False):
         """Validate the given ID number
         The method raises an openerp.exceptions.ValidationError if the eval of
         python validation code fails
+        If you call with return_parts=True, then we will return the parts list
         """
         # if we call it without any record, we return value
         if not self:
@@ -63,6 +66,12 @@ class BaseValidator(models.Model):
         self = self.sudo()
         eval_context = self._validation_eval_context(value)
         msg = None
+
+        if return_parts:
+            key = 'parts'
+        else:
+            key = 'value'
+
         try:
             safe_eval(self.validation_code,
                       eval_context,
@@ -76,8 +85,8 @@ class BaseValidator(models.Model):
             msg = (_(
                 "'%s' is not a valid value for '%s'.\n%s") % (
                 value, self.name, self.help_message or ''))
-        elif eval_context.get('value', False):
-            value = eval_context.get('value', False)
+        elif eval_context.get(key, False):
+            value = eval_context.get(key, False)
         if msg:
             if do_not_raise:
                 return msg
@@ -85,7 +94,7 @@ class BaseValidator(models.Model):
                 raise ValidationError(msg)
         return value
         # return {
-        #     'value': value, 'message': message, 'failed': failed,
+        #     key: value, 'message': message, 'failed': failed,
 
     @api.depends(
         'validation_code',
