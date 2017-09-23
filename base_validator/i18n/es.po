@@ -3,15 +3,14 @@
 # * base_validator
 # 
 # Translators:
-# Javier Diez <jd@adhoc.com.ar>, 2016
-# Nicolas Mac Rouillon <nmr@ingadhoc.com>, 2017
+# Juan José Scarafía <scarafia.juanjose@gmail.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 9.0c\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-21 17:53+0000\n"
-"PO-Revision-Date: 2017-03-21 17:53+0000\n"
-"Last-Translator: Nicolas Mac Rouillon <nmr@ingadhoc.com>, 2017\n"
+"POT-Creation-Date: 2017-09-23 14:10+0000\n"
+"PO-Revision-Date: 2017-09-23 14:10+0000\n"
+"Last-Translator: Juan José Scarafía <scarafia.juanjose@gmail.com>, 2016\n"
 "Language-Team: Spanish (https://www.transifex.com/adhoc/teams/46451/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -27,22 +26,15 @@ msgid ""
 "# Python code. Use:\n"
 "#  -  failed = True: specify that the value is not valid.\n"
 "#  -  value = 'something': overwrite value value (for formatting for eg.).\n"
+"#  -  parts = ['part_one', 'part_two']: parts of the value parsed by the validator.\n"
 "# You can use the following:\n"
 "#  - re: regex Python library\n"
 "#  - self: browse_record of the current document type browse_record\n"
 "#  - value: string with the value to validate"
 msgstr ""
-"\n"
-"# Código Python. Usar:\n"
-"#  -  fallado = Verdadero: especifica que el valor no es válido.\n"
-"#  -  valor = 'algo': sobreescribe el valor valor (por el formato ej: para f).\n"
-"# Puede usar el siguiente:\n"
-"#  - re: librerías regex de Python\n"
-"#  - self: browse_record del actual tipo de documento browse_record\n"
-"#  - valor: cadena con el valor a validar"
 
 #. module: base_validator
-#: code:addons/base_validator/models/base_validator.py:76
+#: code:addons/base_validator/models/base_validator.py:85
 #, python-format
 msgid ""
 "'%s' is not a valid value for '%s'.\n"
@@ -67,7 +59,7 @@ msgid "Display Name"
 msgstr "Mostrar Nombre"
 
 #. module: base_validator
-#: code:addons/base_validator/models/base_validator.py:72
+#: code:addons/base_validator/models/base_validator.py:81
 #, python-format
 msgid ""
 "Error when evaluating %s. Please check validation code.\n"
