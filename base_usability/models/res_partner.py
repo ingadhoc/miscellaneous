@@ -3,5 +3,10 @@
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
 ##############################################################################
-from . import ir_actions_act_window
-from . import res_partner
+from openerp import models, fields
+
+
+class ResPartner(models.Model):
+    _inherit = 'res.partner'
+
+    active = fields.Boolean(track_visibility='onchange')

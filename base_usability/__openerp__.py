@@ -31,6 +31,8 @@
     ],
     'depends': [
         'base',
+        # depends on mail for tracking on fields
+        'mail',
     ],
     'data': [
         'views/ir_actions_act_window_view.xml',
