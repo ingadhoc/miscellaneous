@@ -8,7 +8,7 @@ Base Usability Improvements
 
 Several Improvements:
 #. Add on action windows method and button to create/delete action option 
-
+#. Add tracking on active field for partners
 
 Installation
 ============
