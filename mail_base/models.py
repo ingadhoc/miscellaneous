@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import api, models
+from odoo import api, models
 
 
 class MailMessage(models.Model):
