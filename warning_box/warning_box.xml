@@ -1,4 +1,4 @@
-<openerp> 
+<odoo> 
 	<data> 
 		<record id="warning_box_form" model="ir.ui.view">
 			 <field name="name">warning_box.form</field> 
@@ -22,5 +22,5 @@
 	        <field name="target">new</field>
 	    </record>
 	</data>
-</openerp>
+</odoo>
 
