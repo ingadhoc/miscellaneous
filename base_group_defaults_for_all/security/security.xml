@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<openerp>
+<odoo>
     <data>
 
     <record model="res.groups" id="group_default_for_all_users">
@@ -19,5 +19,5 @@
      
 
     </data> 
-</openerp>
+</odoo>
 
