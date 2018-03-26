@@ -6,13 +6,15 @@
         <field name="model">ir.actions.act_window</field>
         <field name="inherit_id" ref="base.view_window_action_form"/>
         <field name="arch" type="xml">
+            <field name="name" position="before">
+                <field name="binding_model_id" invisible="1"/>
+            </field>
             <group position="before">
-                <field name="ir_values_id" invisible="1"/>
                 <button name="create_action" string="Add in the 'Action' menu" type="object"
-                    attrs="{'invisible':[('ir_values_id','!=',False), ('src_model','!=',False)]}"
+                    attrs="{'invisible':['|', ('src_model','=', False), ('binding_model_id', '!=', False)]}"
                     help="Display an option on related documents to open this action"/>
                 <button name="unlink_action" string="Remove from the 'Action' menu" type="object"
-                    attrs="{'invisible':[('ir_values_id','=',False)]}"
+                    attrs="{'invisible':[('binding_model_id','=',False)]}"
                     help="Remove the contextual action related this action"/>
             </group>
         </field>
