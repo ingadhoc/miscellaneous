@@ -7,7 +7,7 @@
                 <form string="Validations">
                     <group>
                         <field name="name"/>
-                        <field name='validation_code'/>
+                        <field name='validation_code' widget="ace" options="{'mode': 'python'}"/>
                         <field name='help_message'/>
                         <field name='input_test_string'/>
                         <field name='output_test_string'/>
