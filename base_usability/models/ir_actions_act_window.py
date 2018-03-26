@@ -1,7 +1,7 @@
 from odoo import models, api
 
 
-class IrActionsAct_window(models.Model):
+class IrActionsActWindow(models.Model):
     _inherit = 'ir.actions.act_window'
 
     @api.multi
