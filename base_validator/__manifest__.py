@@ -36,6 +36,7 @@
         'security/ir.model.access.csv',
     ],
     'demo': [
+        'demo/base_validator.xml',
     ],
     'test': [
     ],
