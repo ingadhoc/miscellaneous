@@ -19,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Base Validator',
-    'version': '9.0.1.0.0',
+    'version': '11.0.1.0.0',
     'category': 'Tools',
     'sequence': 14,
     'summary': '',
@@ -36,10 +36,11 @@
         'security/ir.model.access.csv',
     ],
     'demo': [
+        'demo/base_validator.xml',
     ],
     'test': [
     ],
-    'installable': False,
+    'installable': True,
     'auto_install': False,
     'application': False,
 }

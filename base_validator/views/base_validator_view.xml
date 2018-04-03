@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-
         <record id="view_base_validator_form" model="ir.ui.view">
             <field name="name">base.validator.form</field>
             <field name="model">base.validator</field>
@@ -9,7 +7,7 @@
                 <form string="Validations">
                     <group>
                         <field name="name"/>
-                        <field name='validation_code'/>
+                        <field name='validation_code' widget="ace" options="{'mode': 'python'}"/>
                         <field name='help_message'/>
                         <field name='input_test_string'/>
                         <field name='output_test_string'/>
@@ -45,5 +43,4 @@
 
         <menuitem action="action_base_validator" id="menu_base_validator" sequence="20" parent="base.next_id_9"/>
 
-    </data>
 </odoo>
