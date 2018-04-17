@@ -10,15 +10,15 @@
    :target: https://www.gnu.org/licenses/agpl
    :alt: License: AGPL-3
 
-==============
-Base Usability
-==============
+=======
+Base UX
+=======
 
 Several Improvements:
 
 * New button to add/remove a window action as a contextual action in the
   windows source model.
-* If a partner is Active/Archive will be tracked in its message log.
+* If a partner is Actived/Archived will be tracked in its message log.
 
 Installation
 ============
@@ -32,8 +32,6 @@ There is nothing to configure.
 
 Usage
 =====
-
-To use this module, you need to:
 
 .. image:: https://odoo-community.org/website/image/ir.attachment/5784_f2813bd/datas
    :alt: Try me on Runbot

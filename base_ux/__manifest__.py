@@ -18,7 +18,7 @@
 #
 ##############################################################################
 {
-    'name': 'Base Usability Improvements',
+    'name': 'Base UX',
     'version': '11.0.1.0.0',
     'category': 'Base',
     'sequence': 14,
