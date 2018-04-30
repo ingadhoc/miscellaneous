@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="tx_adhoc_url" model="ir.config_parameter">
+        <field name="key">transifex_ux.tx_adhoc_url</field>
+        <field name="value">https://www.transifex.com/adhoc</field>
+    </record>
+
+    <record id="tx_oca_url" model="ir.config_parameter">
+        <field name="key">transifex_ux.tx_oca_url</field>
+        <field name="value">https://www.transifex.com/oca</field>
+    </record>
+
+</odoo>
