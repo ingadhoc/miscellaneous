@@ -1,0 +1,19 @@
+<templates>
+
+    <t t-extend="mail.Chatter.Buttons">
+        <t t-jquery=".o_chatter_button_log_note" t-operation="before">
+            <button type="button" class="btn btn-sm btn-link o_chatter_button_new_internal_message" title="Internal message">
+                Internal message
+            </button>
+        </t>
+    </t>
+
+   <t t-extend="mail.chatter.ChatComposer">
+       <t t-jquery=".o_chatter_composer_info" t-operation="append">
+           <t t-if="widget.options.is_internal">
+               <em class="text-muted">(Internals Only)</em>
+           </t>
+       </t>
+   </t>
+
+</templates>
