@@ -12,6 +12,7 @@
     'data': [
         'views/assets.xml',
         'data/mail_message_subtype_data.xml',
+        'wizards/mail_compose_message_views.xml',
     ],
     'qweb': [
         'static/src/xml/mail_internal.xml',
