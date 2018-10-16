@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+
+    <t t-extend="mail.chat.Sidebar">
+        <t t-jquery="hr" t-operation="before">
+            <div t-attf-class="o_mail_chat_title_main o_mail_chat_title_archive o_mail_chat_channel_item #{(active_channel_id === 'channel_archive') ? 'o_active': ''}"
+                 data-channel-id="channel_archive">
+                <span class="o_channel_name">
+                    <i class="fa fa-archive mr8"/>Archive US</span>
+                <t t-call="mail.chat.SidebarNeedaction"/>
+            </div>
+            <div t-attf-class="o_mail_chat_title_main o_mail_chat_title_all o_mail_chat_channel_item #{(active_channel_id === 'channel_all') ? 'o_active': ''}"
+                 data-channel-id="channel_all">
+                <span class="o_channel_name">
+                    <i class="fa fa-star-o mr8"/>All Messages US</span>
+                <t t-call="mail.chat.SidebarNeedaction"/>
+            </div>
+        </t>
+    </t>
+
+    <t t-extend="mail.client_action_mobile">
+        <t t-jquery=".o_mail_chat_mobile_inbox_buttons" t-operation="append">
+            <button type="button" class="btn btn-default btn-sm visible-xs-inline o_channel_archive_item" title="Archive" data-type="channel_archive">
+                Archive  US
+            </button>
+            <button type="button" class="btn btn-default btn-sm svisible-xs-inline o_channel_all_item" title="All Messages" data-type="channel_all">
+                All messages US
+            </button>
+        </t>
+        <t t-jquery=".o_mail_mobile_tabs" t-operation="append">
+            <div class="o_mail_mobile_tab" data-type="channel_archive">
+                <span class="fa fa-inbox"/>
+                <span class="o_tab_title">Archive US</span>
+            </div>
+            <div class="o_mail_mobile_tab" data-type="channel_all">
+                <span class="fa fa-inbox"/>
+                <span class="o_tab_title">All messages US</span>
+            </div>
+        </t>
+    </t>
+
+</templates>
