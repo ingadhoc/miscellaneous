@@ -19,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Base UX',
-    'version': '11.0.1.0.0',
+    'version': '11.0.1.1.0',
     'category': 'Base',
     'sequence': 14,
     'summary': '',
@@ -33,8 +33,13 @@
         # depends on mail for tracking on fields
         'mail',
     ],
+    'external_dependencies': {
+        'python': ['openupgradelib'],
+    },
     'data': [
+        'data/ir_actions_server_data.xml',
         'views/ir_actions_act_window_view.xml',
+        'wizards/merge_records_view.xml',
     ],
     'demo': [
     ],
