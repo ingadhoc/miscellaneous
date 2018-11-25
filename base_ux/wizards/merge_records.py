@@ -119,3 +119,4 @@ class MergeRecords(models.TransientModel):
             raise UserError(_(
                 "The records were not merge due to the next error: %s" %
                 error))
+        return True
