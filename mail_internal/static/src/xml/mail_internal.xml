@@ -2,7 +2,7 @@
 
     <t t-extend="mail.Chatter.Buttons">
         <t t-jquery=".o_chatter_button_log_note" t-operation="before">
-            <button t-if="log_note_btn" type="button" class="btn btn-sm btn-link o_chatter_button_new_internal_message" title="Internal message">
+            <button t-if="internal_btn" type="button" class="btn btn-sm btn-link o_chatter_button_new_internal_message" title="Internal message">
                 Internal message
             </button>
         </t>

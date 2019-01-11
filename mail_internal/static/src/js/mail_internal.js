@@ -100,12 +100,33 @@ odoo.define('mail_internal.Chatter', function (require) {
     "use strict";
     require('web.dom_ready');
     var Chatter = require('mail.Chatter');
+    var QWeb = core.qweb;
 
     Chatter.include({
+        init: function (parent, record, mailFields, options) {
+            this._super.apply(this, arguments);
+            this._setState(record);
+            if (mailFields.mail_thread) {
+                var nodeOptions = this.record.fieldsInfo.form[mailFields.mail_thread].options;
+                this.hasInternalButton = nodeOptions.display_internal_button;
+            }
+        },
         events: _.extend({}, Chatter.prototype.events, {
             'click .o_chatter_button_new_internal_message': '_onOpenComposerInternalMessage',
         }),
         start: function () {
+            this.$topbar = this.$('.o_chatter_topbar');
+
+            // render and append the buttons
+            this.$topbar.append(QWeb.render('mail.Chatter.Buttons', {
+                internal_btn: this.hasInternalButton,
+            }));
+
+            // start and append the widgets
+            var fieldDefs = _.invoke(this.fields, 'appendTo', $('<div>'));
+            var def = this.dp.add($.when.apply($, fieldDefs));
+            this._render(def).then(this._updateMentionSuggestions.bind(this));
+
             return this._super.apply(this, arguments);
         },
         // handlers
