@@ -39,7 +39,7 @@
     'data': [
         'data/ir_actions_server_data.xml',
         'views/ir_actions_act_window_view.xml',
-        'views/ir_translations_view.xml',
+        'views/ir_translation_view.xml',
         'views/mail_activity_templates.xml',
         'wizards/merge_records_view.xml',
     ],
