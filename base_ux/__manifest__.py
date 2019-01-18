@@ -19,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Base UX',
-    'version': '11.0.1.2.0',
+    'version': '11.0.1.3.0',
     'category': 'Base',
     'sequence': 14,
     'summary': '',
@@ -39,6 +39,7 @@
     'data': [
         'data/ir_actions_server_data.xml',
         'views/ir_actions_act_window_view.xml',
+        'views/ir_translation_view.xml',
         'views/mail_activity_templates.xml',
         'wizards/merge_records_view.xml',
     ],

@@ -20,6 +20,7 @@ Several Improvements:
   windows source model.
 * If a partner is Actived/Archived will be tracked in its message log.
 * When a user marks an activity as done it will be marked done by him instead of mark as done by the activity assigned user
+* Let us to search by exact source the translated terms
 
 Installation
 ============
