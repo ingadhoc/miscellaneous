@@ -17,7 +17,11 @@
 #  - Warning: Warning Exception to use with raise
 # To return an action, assign: action = {...}
 
-wizard = model.with_context(env.context).create({})
+to_merge_model = env.ref('base.model_res_country_state')
+wizard = model.with_context(env.context).create({
+    'attribute_fields': "['code', 'country_id']",
+    'model_id': to_merge_model.id,
+})
 action_values = env.ref('base_ux.merge_records_action').read()[0]
 action_values.update({
     'context': env.context,

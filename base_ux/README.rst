@@ -21,6 +21,7 @@ Several Improvements:
 * If a partner is Actived/Archived will be tracked in its message log.
 * When a user marks an activity as done it will be marked done by him instead of mark as done by the activity assigned user
 * Let us to search by exact source the translated terms
+* New generic wizard that leave us to merge records of any model, By the moment this can be used only via migration script or server action.
 
 Installation
 ============

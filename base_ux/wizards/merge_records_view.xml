@@ -16,13 +16,16 @@
                             You can remove records from this list to avoid merging them.
                         </p>
                         <group col="2">
+                            <field name="model_id"/>
+                            <field name="attribute_fields"/>
                             <field name="line_id" domain="[('id', 'in', line_ids or False)]" options="{'no_create': True}, 'no_create_edit': True"/>
                         </group>
                         <field name="line_ids" nolabel="1" readonly="1">
                             <tree string="Records">
-                                <field name="res_id"/>
+                                <field name="res_name"/>
                                 <field name="xml_id"/>
                                 <field name="attribute_ids" widget="many2many_tags"/>
+                                <field name="res_id"/>
                             </tree>
                         </field>
                     </group>
