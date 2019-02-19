@@ -14,6 +14,27 @@
                <em class="text-muted">(Internals Only)</em>
            </t>
        </t>
+
+        <t t-jquery="textarea" t-operation="attributes">
+            <attribute name="t-att-style">(widget.options.is_internal or widget.options.is_log) and 'background-color: rgb(242, 242, 242);' or ''</attribute>
+        </t>
+
+        <t t-jquery="div.o_composer_container > div" t-operation="attributes">
+            <attribute name="t-att-style">(widget.options.is_internal or widget.options.is_log) and 'background-color: rgb(242, 242, 242);' or ''</attribute>
+        </t>
+
+        <t t-jquery="button.o_composer_button_add_attachment" t-operation="attributes">
+            <attribute name="t-att-style">(widget.options.is_internal or widget.options.is_log) and 'background-color: rgb(242, 242, 242);' or ''</attribute>
+        </t>
+
+        <t t-jquery="button.o_composer_button_full_composer" t-operation="attributes">
+            <attribute name="t-att-style">(widget.options.is_internal or widget.options.is_log) and 'background-color: rgb(242, 242, 242);' or ''</attribute>
+        </t>
+
+        <t t-jquery="button.o_composer_button_emoji" t-operation="attributes">
+            <attribute name="t-att-style">(widget.options.is_internal or widget.options.is_log) and 'background-color: rgb(242, 242, 242);' or ''</attribute>
+        </t>
+
    </t>
 
 </templates>
