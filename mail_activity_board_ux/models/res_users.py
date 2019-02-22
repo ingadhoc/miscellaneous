@@ -60,6 +60,7 @@ class ResUsers(models.Model):
                     'today_count': 0,
                     'overdue_count': 0,
                     'planned_count': 0,
+                    'type': activity['type'],
                 }
             user_activities[activity['type']][
                 '%s_count' % activity['states']] += activity['count']
