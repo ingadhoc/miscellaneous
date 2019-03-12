@@ -173,6 +173,16 @@ class MergeRecords(models.TransientModel):
                 record_ids=to_delete.mapped('res_id'),
                 target_record_id=self.line_id.res_id,
             )
+        except ValueError as error_singleton:
+            if "Expected singleton" in repr(error_singleton):
+                to_delete = self.line_ids - self.line_id
+                for item in to_delete:
+                    openupgrade_merge_records.merge_records(
+                        env=self.env,
+                        model_name=self.model_id.model,
+                        record_ids=[item.res_id],
+                        target_record_id=self.line_id.res_id,
+                    )
         except Exception as error:
             raise UserError(_(
                 "The records were not merge due to the next error: %s" %
