@@ -18,7 +18,7 @@
                           </p>
                         </group>
                         <group>
-                            <field name="model_id"/>
+                            <field name="model_id" required="1"/>
                             <field name="attribute_fields"/>
                             <label for="field_spec"/>
                             <div>
@@ -27,7 +27,7 @@
                                 <i class="fa fa-fw fa-question-circle"/>
                             </a>
                             </div>
-                            <field name="line_id" domain="[('id', 'in', line_ids or False)]" options="{'no_create': True}, 'no_create_edit': True"/>
+                            <field name="line_id" domain="[('id', 'in', line_ids or False)]" options="{'no_create': True}, 'no_create_edit': True" required="1"/>
                         </group>
                         <field name="line_ids" nolabel="1" readonly="1">
                             <tree string="Records">
