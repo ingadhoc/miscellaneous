@@ -93,6 +93,10 @@ class MergeRecords(models.TransientModel):
         help="Attributes to show in the wizard in order to make it easy to"
         " detect duplicated records",
     )
+    field_spec = fields.Char(
+        help="Dictionary {'field_name': 'operation'} that let us to know"
+        " what to do with the field when merging records."
+    )
 
     @api.model
     def default_get(self, fields):
@@ -165,6 +169,12 @@ class MergeRecords(models.TransientModel):
                 "Please select at least two records"
             ))
 
+        field_spec = None
+        if self.field_spec:
+            field_spec = safe_eval(self.field_spec)
+            if not isinstance(field_spec, (dict, )):
+                raise UserError(
+                    _('Not valid Field Spec: Should be a dictionary'))
         try:
             to_delete = self.line_ids - self.line_id
             openupgrade_merge_records.merge_records(
@@ -172,6 +182,7 @@ class MergeRecords(models.TransientModel):
                 model_name=self.model_id.model,
                 record_ids=to_delete.mapped('res_id'),
                 target_record_id=self.line_id.res_id,
+                field_spec=field_spec,
             )
         except ValueError as error_singleton:
             if "Expected singleton" in repr(error_singleton):
@@ -182,6 +193,7 @@ class MergeRecords(models.TransientModel):
                         model_name=self.model_id.model,
                         record_ids=[item.res_id],
                         target_record_id=self.line_id.res_id,
+                        field_spec=field_spec,
                     )
         except Exception as error:
             raise UserError(_(

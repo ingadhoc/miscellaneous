@@ -4,7 +4,6 @@
     <record id="merge_records_server_action" model="ir.actions.server">
         <field name="name">Merge Records</field>
         <field name="model_id" ref="base_ux.model_merge_records"/>
-        <field name="binding_model_id" ref="base.model_res_country_state"/>
         <field name="state">code</field>
         <field name="code">
 # Available variables:
@@ -17,17 +16,9 @@
 #  - Warning: Warning Exception to use with raise
 # To return an action, assign: action = {...}
 
-to_merge_model = env.ref('base.model_res_country_state')
-wizard = model.with_context(env.context).create({
-    'attribute_fields': "['code', 'country_id']",
-    'model_id': to_merge_model.id,
-})
-action_values = env.ref('base_ux.merge_records_action').read()[0]
-action_values.update({
-    'context': env.context,
-    'res_id': wizard.id,
-    })
-action = action_values
+fields_list = []
+action = env['merge.records'].create({'attribute_fields': fields_list}).get_formview_action()
+action.update({'target': 'new'})
 </field>
     </record>
 

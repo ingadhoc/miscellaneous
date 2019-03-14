@@ -23,6 +23,12 @@ Several Improvements:
 * Let us to search by exact source the translated terms
 * New generic wizard that leave us to merge records of any model, By the moment this can be used only via migration script or server action.
 
+    **NOTE:** In order to use it you can go to server actions menu, search by "Merge Records" action and there:
+
+    1. Change the action's model to the model of the records you want to merge.
+    2. Add a contextual action in order to see "Merge Records" in the More menu when reviewing list view.
+    3. You can also specify the field_list you like in order to pre visualizate the values of the records you want to merge in order to select which will be the final record.
+
 Installation
 ============
 

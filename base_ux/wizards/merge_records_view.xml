@@ -8,17 +8,26 @@
             <form string='Merge Records'>
                 <sheet>
                     <separator string="Merge the following records"/>
-                    <group col="1">
-                        <p class="oe_grey">
-                            Selected records will be merged together.
-                            All documents linked to one of these records
-                            will be redirected to the destination record.
-                            You can remove records from this list to avoid merging them.
-                        </p>
-                        <group col="2">
-                            <field name="model_id"/>
+                    <group>
+                        <group colspan="4">
+                          <p class="oe_grey">
+                              Selected records will be merged together.
+                              All documents linked to one of these records
+                              will be redirected to the destination record.
+                              You can remove records from this list to avoid merging them.
+                          </p>
+                        </group>
+                        <group>
+                            <field name="model_id" required="1"/>
                             <field name="attribute_fields"/>
-                            <field name="line_id" domain="[('id', 'in', line_ids or False)]" options="{'no_create': True}, 'no_create_edit': True"/>
+                            <label for="field_spec"/>
+                            <div>
+                            <field name="field_spec" placeholder="{'field_name': 'operation'}" class="oe_inline"/>
+                            <a href="https://github.com/OCA/openupgradelib/blob/fb978d75711a062822b472892de23b33827614ad/openupgradelib/openupgrade_merge_records.py#L243-L278" target="_blank" title="Check all available operations (openupgradelib._adjust_merged_values_orm method)">
+                                <i class="fa fa-fw fa-question-circle"/>
+                            </a>
+                            </div>
+                            <field name="line_id" domain="[('id', 'in', line_ids or False)]" options="{'no_create': True}, 'no_create_edit': True" required="1"/>
                         </group>
                         <field name="line_ids" nolabel="1" readonly="1">
                             <tree string="Records">
