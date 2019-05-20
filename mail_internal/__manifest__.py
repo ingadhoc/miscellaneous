@@ -18,6 +18,6 @@
     'qweb': [
         'static/src/xml/mail_internal.xml',
     ],
-    'installable': False,
+    'installable': True,
     'application': False,
 }
