@@ -9,6 +9,7 @@ import re
 
 class BaseValidator(models.Model):
     _name = "base.validator"
+    _description = "base.validator"
 
     def _default_validation_code(self):
         return _(
