@@ -19,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Base Validator',
-    'version': '11.0.1.0.0',
+    'version': '12.0.1.0.0',
     'category': 'Tools',
     'sequence': 14,
     'summary': '',
@@ -40,7 +40,7 @@
     ],
     'test': [
     ],
-    'installable': False,
+    'installable': True,
     'auto_install': False,
     'application': False,
 }
