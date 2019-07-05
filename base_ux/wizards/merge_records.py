@@ -85,11 +85,10 @@ class MergeRecords(models.TransientModel):
         'ir.model',
         'Model',
         index=True,
-        # required=True,
     )
     attribute_fields = fields.Char(
         'Attributes',
-        readonly=True,  # TODO remove this when fix onchange
+        readonly=True,
         help="Attributes to show in the wizard in order to make it easy to"
         " detect duplicated records",
     )
@@ -117,15 +116,6 @@ class MergeRecords(models.TransientModel):
         res = super(MergeRecords, self).create(values)
         res.line_ids = res.update_merge_lines()
         return res
-
-    # TODO The update_merge_lines is working fine but for some reason this
-    # onchange does not update the line_ids field properly (the attributes are
-    # leave empty). if we use this wizard from interface in the future will be
-    # good to fix this problem
-    # @api.onchange('model_id', 'attribute_fields')
-    # def onchange_merge_lines(self):
-    #     for rec in self:
-    #         rec.line_ids = rec.update_merge_lines()
 
     @api.multi
     def update_merge_lines(self):
