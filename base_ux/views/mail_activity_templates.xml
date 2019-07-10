@@ -1,7 +1,7 @@
 <odoo>
 
     <template id="message_activity_done" inherit_id="mail.message_activity_done">
-        <span t-field="activity.user_id.name" position="attributes">
+        <span t-field="activity.env.user.name" position="attributes">
             <attribute name="t-field">activity.write_uid.name</attribute>
         </span>
     </template>
