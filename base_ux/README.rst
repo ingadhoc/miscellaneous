@@ -15,13 +15,12 @@ Base UX
 =======
 
 Several Improvements:
-
-* New button to add/remove a window action as a contextual action in the
-  windows source model.
-* If a partner is Actived/Archived will be tracked in its message log.
-* When a user marks an activity as done it will be marked done by him instead of mark as done by the activity assigned user
-* Let us to search by exact source the translated terms
-* New generic wizard that leave us to merge records of any model, By the moment this can be used only via migration script or server action.
+    * New button to archive/unarchive a company in company form view.
+    * New button to add/remove a window action as a contextual action in the windows source model.
+    * If a partner is Actived/Archived will be tracked in its message log.
+    * When a user marks an activity as done it will be marked done by him instead of mark as done by the activity assigned user
+    * Let us to search by exact source the translated terms
+    * New generic wizard that leave us to merge records of any model, By the moment this can be used only via migration script or server action.
 
     **NOTE:** In order to use it you can go to server actions menu, search by "Merge Records" action and there:
 
