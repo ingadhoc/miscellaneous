@@ -18,6 +18,7 @@ except (ImportError, IOError) as err:
 class MergeRecordsLineAttribute(models.TransientModel):
 
     _name = 'merge.records.line.attribute'
+    _description = 'merge.records.line.attribute'
 
     name = fields.Char()
     value = fields.Char()
@@ -37,6 +38,7 @@ class MergeRecordsLineAttribute(models.TransientModel):
 class MergeRecordsLine(models.TransientModel):
 
     _name = 'merge.records.line'
+    _description = 'merge.records.line'
     _order = 'xml_id'
 
     wizard_id = fields.Many2one(
@@ -45,7 +47,7 @@ class MergeRecordsLine(models.TransientModel):
     )
     name = fields.Char()
     res_id = fields.Integer(
-        string='ID',
+        string='Res. ID',
         help="ID of the target record in the database",
     )
     res_name = fields.Char(
@@ -68,6 +70,7 @@ class MergeRecordsLine(models.TransientModel):
 class MergeRecords(models.TransientModel):
 
     _name = 'merge.records'
+    _description = 'merge.records'
 
     res_ids = fields.Char(
         string='Records to merge',

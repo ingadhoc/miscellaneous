@@ -20,12 +20,10 @@
                         <group>
                             <field name="model_id" required="1"/>
                             <field name="attribute_fields"/>
-                            <label for="field_spec"/>
+                            <label for="field_spec" name="field_spec"/>
                             <div>
                             <field name="field_spec" placeholder="{'field_name': 'operation'}" class="oe_inline"/>
-                            <a href="https://github.com/OCA/openupgradelib/blob/fb978d75711a062822b472892de23b33827614ad/openupgradelib/openupgrade_merge_records.py#L243-L278" target="_blank" title="Check all available operations (openupgradelib._adjust_merged_values_orm method)">
-                                <i class="fa fa-fw fa-question-circle"/>
-                            </a>
+                            <a href="https://github.com/OCA/openupgradelib/blob/fb978d75711a062822b472892de23b33827614ad/openupgradelib/openupgrade_merge_records.py#L243-L278" target="_blank" title="Check all available operations (openupgradelib._adjust_merged_values_orm method)"><i class="fa fa-fw fa-question-circle"/>Check Available Options</a>
                             </div>
                             <field name="line_id" domain="[('id', 'in', line_ids or False)]" options="{'no_create': True}, 'no_create_edit': True" required="1"/>
                         </group>
