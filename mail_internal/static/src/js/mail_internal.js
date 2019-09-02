@@ -2,10 +2,10 @@ odoo.define('mail_internal.ChatterComposer', function (require) {
     "use strict";
 
     var utils = require('mail.utils');
+    var ChatterComposer = require('mail.composer.Chatter');
 
-    var ChatterComposer = require('mail.ChatterComposer');
     var ChatterComposerInternal = ChatterComposer.include({
-        preprocess_message: function () {
+        _preprocessMessage: function () {
             var self = this;
             var def = $.Deferred();
             this._super().then(function (message) {
@@ -17,18 +17,17 @@ odoo.define('mail_internal.ChatterComposer', function (require) {
                 });
 
                 // Subtype
-                if (self.options.is_log) {
+                if (self.options.isLog) {
                     message.subtype = 'mail.mt_note';
                 }
-                if (self.options.is_internal) {
+                if (self.options.isInternal) {
                     message.subtype = 'mail_internal.mt_internal_message';
                 }
 
                 // Partner_ids
-                if (!self.options.is_log && !self.options.is_internal) {
-
-                    var checked_suggested_partners = self.get_checked_suggested_partners();
-                    self.check_suggested_partners(checked_suggested_partners).done(function (partner_ids) {
+                if (!self.options.isLog && !self.options.isInternal) {
+                    var checkedSuggestedPartners = self._getCheckedSuggestedPartners();
+                    self._checkSuggestedPartners(checkedSuggestedPartners).done(function (partner_ids) {
                         message.partner_ids = (message.partner_ids || []).concat(partner_ids);
                         // update context
                         message.context = _.defaults({}, message.context, {
@@ -44,27 +43,27 @@ odoo.define('mail_internal.ChatterComposer', function (require) {
 
             return def;
         },
-        on_open_full_composer: function () {
-            if (!this.do_check_attachment_upload()) {
+        _onOpenFullComposer: function () {
+            if (!this._doCheckAttachmentUpload()) {
                 return false;
             }
 
             var self = this;
             var recipient_done = $.Deferred();
-            if (this.options.is_log) {
+            if (this.options.isLog) {
                 recipient_done.resolve([]);
             } else {
-                var checked_suggested_partners = this.get_checked_suggested_partners();
-                recipient_done = this.check_suggested_partners(checked_suggested_partners);
+                var checkedSuggestedPartners = this._getCheckedSuggestedPartners();
+                recipient_done = this._checkSuggestedPartners(checkedSuggestedPartners);
             }
             recipient_done.then(function (partner_ids) {
                 var context = {
                     default_parent_id: self.id,
-                    default_body: utils.get_text2html(self.$input.val()),
+                    default_body: utils.getTextToHTML(self.$input.val()),
                     default_attachment_ids: _.pluck(self.get('attachment_ids'), 'id'),
                     default_partner_ids: partner_ids,
-                    default_is_internal: self.options.is_internal,
-                    default_is_log: self.options.is_log,
+                    default_is_internal: self.options.isInternal,
+                    default_is_log: self.options.isLog,
                     mail_post_autofollow: true,
                 };
 
@@ -110,31 +109,28 @@ odoo.define('mail_internal.Chatter', function (require) {
         },
         // handlers
         _onOpenComposerInternalMessage: function () {
-            this._openComposer({
-                is_internal: true,
-                is_log: true,
-            });
+            this._openComposer({ isLog: true, isInternal: true });
         },
         // private
         _closeComposer: function (force) {
             this._super.apply(this, arguments);
-            if (this.composer && (this.composer.is_empty() || force)) {
+            if (this._composer && (this._composer.isEmpty() || force)) {
                 this.$el.removeClass('o_chatter_composer_active');
                 this.$('.o_chatter_button_new_internal_message').removeClass('o_active');
-                this.composer.do_hide();
-                this.composer.clear_composer();
+                this._composer.do_hide();
+                this._composer.clearComposer();
             }
         },
         _openComposer: function (options) {
             var self = this;
             this._super.apply(this, arguments);
-            this.composer.options.is_internal = options && options.is_internal || false;
-            this.composer.insertAfter(this.$('.o_chatter_topbar')).then(function () {
+            this._composer.options.isInternal = options && options.isInternal || false;
+            this._composer.insertAfter(this.$('.o_chatter_topbar')).then(function () {
                 self.$('.o_chatter_button_new_internal_message').removeClass('o_active');
-                self.$('.o_chatter_button_new_internal_message').toggleClass('o_active', self.composer.options.is_internal && self.composer.options.is_log);
+                self.$('.o_chatter_button_new_internal_message').toggleClass('o_active', self._composer.options.isInternal && self._composer.options.isLog);
                 // Show send message when neither log or internal
-                self.$('.o_chatter_button_log_note').toggleClass('o_active', self.composer.options.is_log && !self.composer.options.is_internal);
-                self.$('.o_chatter_button_new_message').toggleClass('o_active', !self.composer.options.is_log && !self.composer.options.is_internal);
+                self.$('.o_chatter_button_log_note').toggleClass('o_active', self._composer.options.isLog && !self._composer.options.isInternal);
+                self.$('.o_chatter_button_new_message').toggleClass('o_active', !self._composer.options.isLog && !self._composer.options.isInternal);
             });
         },
     });
