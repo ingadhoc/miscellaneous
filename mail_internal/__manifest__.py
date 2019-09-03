@@ -1,6 +1,6 @@
 {
     'name': 'Mail Internal',
-    'version': '11.0.1.1.0',
+    'version': '12.0.1.1.0',
     'category': 'Communications',
     'sequence': 2,
     'summary': 'Internal Messaging',
@@ -18,6 +18,6 @@
     'qweb': [
         'static/src/xml/mail_internal.xml',
     ],
-    'installable': False,
+    'installable': True,
     'application': False,
 }

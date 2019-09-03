@@ -17,5 +17,4 @@ class MailComposeMessage(models.TransientModel):
             'subtype_id': internal,
             'is_log': False,
         })
-        return super(MailComposeMessage, self).send_mail(
-            auto_commit=auto_commit)
+        return super().send_mail(auto_commit=auto_commit)
