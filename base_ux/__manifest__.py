@@ -41,6 +41,7 @@
         'views/ir_actions_act_window_view.xml',
         'views/ir_translation_view.xml',
         'views/mail_activity_templates.xml',
+        'views/mail_template_view.xml',
         'views/res_company_view.xml',
         'wizards/merge_records_view.xml',
     ],
