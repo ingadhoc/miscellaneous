@@ -21,8 +21,23 @@
         </field>
     </template>
 
+    <record id="view_mail_template_tree" model="ir.ui.view">
+        <field name="name">view_mail_template_tree</field>
+        <field name="model">mail.template</field>
+        <field name="type">tree</field>
+        <field name="inherit_id" ref="mail.email_template_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree[1]" position="attributes">
+                <attribute name="decoration-muted">not active</attribute>
+            </xpath>
+            <field name="report_name" position="after">
+                <field name="active" widget="boolean_toggle"/>
+            </field>
+        </field>
+    </record>
+
     <record id="mail.action_email_template_tree_all" model="ir.actions.act_window">
-        <field name="context">{'search_default_active': True}</field>
+        <field name="context">{'search_default_active': True, 'active_test': False}</field>
     </record>
 
 </odoo>

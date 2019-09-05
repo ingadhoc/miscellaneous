@@ -9,6 +9,5 @@ class ResCompany(models.Model):
     _inherit = 'res.company'
 
     active = fields.Boolean(
-        track_visibility='onchange',
         default=True,
     )
