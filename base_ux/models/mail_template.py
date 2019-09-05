@@ -9,6 +9,5 @@ class MailTemplate(models.Model):
     _inherit = 'mail.template'
 
     active = fields.Boolean(
-        track_visibility='onchange',
         default=True,
     )
