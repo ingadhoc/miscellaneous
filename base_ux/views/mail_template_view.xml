@@ -31,7 +31,7 @@
                 <attribute name="decoration-muted">not active</attribute>
             </xpath>
             <field name="report_name" position="after">
-                <field name="active" widget="boolean_toggle"/>
+                <field name="active" invisible="1"/>
             </field>
         </field>
     </record>
