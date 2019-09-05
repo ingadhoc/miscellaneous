@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_mail_template_form" model="ir.ui.view">
+        <field name="name">Archive/Unarchive Button - Mail Template Form View</field>
+        <field name="model">mail.template</field>
+        <field name="inherit_id" ref="mail.email_template_form"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                    <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                </button>
+            </div>
+        </field>
+    </record>
+
+    <template id="view_mail_template_search" inherit_id="mail.view_email_template_search">
+        <field name="name" position="after">
+            <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+            <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+        </field>
+    </template>
+
+    <record id="view_mail_template_tree" model="ir.ui.view">
+        <field name="name">view_mail_template_tree</field>
+        <field name="model">mail.template</field>
+        <field name="type">tree</field>
+        <field name="inherit_id" ref="mail.email_template_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree[1]" position="attributes">
+                <attribute name="decoration-muted">not active</attribute>
+            </xpath>
+            <field name="report_name" position="after">
+                <field name="active" invisible="1"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="mail.action_email_template_tree_all" model="ir.actions.act_window">
+        <field name="context">{'search_default_active': True, 'active_test': False}</field>
+    </record>
+
+</odoo>

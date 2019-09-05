@@ -15,6 +15,7 @@ Base UX
 =======
 
 Several Improvements:
+    * New button to archive/unarchive a mail template in mail template form view.
     * New button to archive/unarchive a company in company form view.
     * New button to add/remove a window action as a contextual action in the windows source model.
     * If a partner is Actived/Archived will be tracked in its message log.

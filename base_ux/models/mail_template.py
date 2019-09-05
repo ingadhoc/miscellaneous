@@ -2,8 +2,12 @@
 # For copyright and license notices, see __manifest__.py file in module root
 # directory
 ##############################################################################
-from . import ir_actions_act_window
-from . import res_partner
-from . import res_country_state
-from . import res_company
-from . import mail_template
+from odoo import models, fields
+
+
+class MailTemplate(models.Model):
+    _inherit = 'mail.template'
+
+    active = fields.Boolean(
+        default=True,
+    )
