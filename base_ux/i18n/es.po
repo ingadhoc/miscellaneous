@@ -1,0 +1,334 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * base_ux
+# 
+# Translators:
+# Juan José Scarafía <scarafia.juanjose@gmail.com>, 2019
+# Federico La Torre <3doeste@gmail.com>, 2019
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-12-26 00:35+0000\n"
+"PO-Revision-Date: 2019-07-26 19:24+0000\n"
+"Last-Translator: Federico La Torre <3doeste@gmail.com>, 2019\n"
+"Language-Team: Spanish (https://www.transifex.com/adhoc/teams/46451/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Language: es\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: base_ux
+#: model_terms:ir.ui.view,arch_db:base_ux.merge_records_form
+msgid "<i class=\"fa fa-fw fa-question-circle\"/>Check Available Options"
+msgstr ""
+"<i class=\"fa fa-fw fa-question-circle\"/>Controle las Opciones Diaponibles"
+
+#. module: base_ux
+#: model:ir.model,name:base_ux.model_ir_actions_act_window
+msgid "Action Window"
+msgstr "Ventana de Acción"
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_email_template_preview__active
+#: model:ir.model.fields,field_description:base_ux.field_mail_template__active
+#: model:ir.model.fields,field_description:base_ux.field_res_company__active
+#: model:ir.model.fields,field_description:base_ux.field_res_partner__active
+#: model_terms:ir.ui.view,arch_db:base_ux.view_company_search
+#: model_terms:ir.ui.view,arch_db:base_ux.view_mail_template_search
+msgid "Active"
+msgstr "Activo"
+
+#. module: base_ux
+#: model_terms:ir.ui.view,arch_db:base_ux.view_window_action_form
+msgid "Add in the 'Action' menu"
+msgstr "Añadir en el menú \"Acción\""
+
+#. module: base_ux
+#: model_terms:ir.ui.view,arch_db:base_ux.view_company_search
+#: model_terms:ir.ui.view,arch_db:base_ux.view_mail_template_search
+msgid "Archived"
+msgstr "Archivado"
+
+#. module: base_ux
+#: model_terms:ir.ui.view,arch_db:base_ux.merge_records_form
+msgid ""
+"Are you sure you want to merge this records? This operation can not be "
+"undone"
+msgstr ""
+"¿Estás seguro de que deseas combinar estos registros? Esta operación no se "
+"puede deshacer."
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_merge_records__attribute_fields
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line__attribute_ids
+msgid "Attributes"
+msgstr "Atributos"
+
+#. module: base_ux
+#: model:ir.model.fields,help:base_ux.field_merge_records__attribute_fields
+msgid ""
+"Attributes to show in the wizard in order to make it easy to detect "
+"duplicated records"
+msgstr ""
+"Atributos para mostrar en el asistente de forma de hacer mas fácil detectar "
+"registros duplicados"
+
+#. module: base_ux
+#: model_terms:ir.ui.view,arch_db:base_ux.merge_records_form
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: base_ux
+#: model_terms:ir.ui.view,arch_db:base_ux.merge_records_form
+msgid ""
+"Check all available operations (openupgradelib._adjust_merged_values_orm "
+"method)"
+msgstr ""
+"Controle todas las operaciones disponibles "
+"(openupgradelib._adjust_merged_values_orm method)"
+
+#. module: base_ux
+#: model:ir.model,name:base_ux.model_res_company
+msgid "Companies"
+msgstr "Empresas"
+
+#. module: base_ux
+#: model:ir.model,name:base_ux.model_res_partner
+msgid "Contact"
+msgstr "Contactos"
+
+#. module: base_ux
+#: model:ir.model,name:base_ux.model_res_country_state
+msgid "Country state"
+msgstr "Provincia"
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_merge_records__create_uid
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line__create_uid
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line_attribute__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_merge_records__create_date
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line__create_date
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line_attribute__create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: base_ux
+#: model:ir.model.fields,help:base_ux.field_merge_records__field_spec
+msgid ""
+"Dictionary {'field_name': 'operation'} that let us to know what to do with "
+"the field when merging records."
+msgstr ""
+"Diccionario {'field_name'\\: 'operation'} que nos permite saber que hacer "
+"con el campo cuando se unen registros."
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_merge_records__display_name
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line__display_name
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line_attribute__display_name
+msgid "Display Name"
+msgstr "Mostrar Nombre"
+
+#. module: base_ux
+#: model_terms:ir.ui.view,arch_db:base_ux.view_window_action_form
+msgid "Display an option on related documents to open this action"
+msgstr "Mostrar una opción en documentos relacionados para abrir esta acción"
+
+#. module: base_ux
+#: code:addons/base_ux/wizards/merge_records.py:34
+#, python-format
+msgid "Do not apply"
+msgstr "No aplicar"
+
+#. module: base_ux
+#: model:ir.model,name:base_ux.model_mail_template
+msgid "Email Templates"
+msgstr "Modelos de Email"
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_merge_records__field_spec
+msgid "Field Spec"
+msgstr "Especificaciones de Campo"
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_merge_records__line_id
+msgid "Final Record"
+msgstr "Registro Final"
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_merge_records__id
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line__id
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line_attribute__id
+msgid "ID"
+msgstr "ID"
+
+#. module: base_ux
+#: model:ir.model.fields,help:base_ux.field_merge_records_line__res_id
+msgid "ID of the target record in the database"
+msgstr "ID del registro buscado en la base de datos"
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_merge_records____last_update
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line____last_update
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line_attribute____last_update
+msgid "Last Modified on"
+msgstr "Última modificación el"
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_merge_records__write_uid
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line__write_uid
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line_attribute__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_merge_records__write_date
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line__write_date
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line_attribute__write_date
+msgid "Last Updated on"
+msgstr "Última actualizacón el"
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_merge_records__line_ids
+msgid "Lines"
+msgstr "Líneas"
+
+#. module: base_ux
+#: model:ir.actions.act_window,name:base_ux.merge_records_action
+#: model:ir.actions.server,name:base_ux.merge_records_server_action
+#: model_terms:ir.ui.view,arch_db:base_ux.merge_records_form
+msgid "Merge Records"
+msgstr "Combinar registros"
+
+#. module: base_ux
+#: model_terms:ir.ui.view,arch_db:base_ux.merge_records_form
+msgid "Merge the following records"
+msgstr "Combinar los siguientes registros."
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_merge_records__model_id
+msgid "Model"
+msgstr "Modelo"
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line__model
+msgid "Model Name"
+msgstr ""
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line__name
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line_attribute__name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: base_ux
+#: code:addons/base_ux/wizards/merge_records.py:180
+#, python-format
+msgid "Not valid Field Spec: Should be a dictionary"
+msgstr ""
+
+#. module: base_ux
+#: code:addons/base_ux/wizards/merge_records.py:171
+#, python-format
+msgid "Please select at least two records"
+msgstr "Por favor seleccione al menos dos registros"
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line__res_name
+msgid "Record Name"
+msgstr "Nombre de registro"
+
+#. module: base_ux
+#: model_terms:ir.ui.view,arch_db:base_ux.merge_records_form
+msgid "Records"
+msgstr "Registros"
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_merge_records__res_ids
+msgid "Records to merge"
+msgstr "Registros a unir"
+
+#. module: base_ux
+#: model_terms:ir.ui.view,arch_db:base_ux.view_window_action_form
+msgid "Remove from the 'Action' menu"
+msgstr "Eliminar del menú 'Acción'"
+
+#. module: base_ux
+#: model_terms:ir.ui.view,arch_db:base_ux.view_window_action_form
+msgid "Remove the contextual action related this action"
+msgstr "Eliminar la acción contextual relacionada con esta acción"
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line__res_id
+msgid "Res. ID"
+msgstr ""
+
+#. module: base_ux
+#: model_terms:ir.ui.view,arch_db:base_ux.merge_records_form
+msgid ""
+"Selected records will be merged together.\n"
+"                              All documents linked to one of these records\n"
+"                              will be redirected to the destination record.\n"
+"                              You can remove records from this list to avoid merging them."
+msgstr ""
+"Los registros seleccionados serán unidos juntos.\n"
+"Todos los documentos enlazados a uno de estos registros\n"
+"serán redireccionados al registro de destino.\n"
+"Usted puede eliminar registros de esta lista para evitar unirlos."
+
+#. module: base_ux
+#: model_terms:ir.ui.view,arch_db:base_ux.view_translation_search
+msgid "Source (exact term)"
+msgstr "Fuente (termino exacto)"
+
+#. module: base_ux
+#: code:addons/base_ux/wizards/merge_records.py:202
+#, python-format
+msgid "The records were not merge due to the next error: %s"
+msgstr "Los registros no se fusionaron debido al siguiente error: %s"
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line_attribute__value
+msgid "Value"
+msgstr "Valor"
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line__wizard_id
+msgid "Wizard"
+msgstr "Asistente"
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line_attribute__wizard_line_id
+msgid "Wizard Line"
+msgstr "Línea de Asistente"
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_merge_records_line__xml_id
+msgid "XML ID"
+msgstr "XML ID"
+
+#. module: base_ux
+#: model:ir.model,name:base_ux.model_merge_records
+msgid "merge.records"
+msgstr "merge.records"
+
+#. module: base_ux
+#: model:ir.model,name:base_ux.model_merge_records_line
+msgid "merge.records.line"
+msgstr "merge.records.line"
+
+#. module: base_ux
+#: model:ir.model,name:base_ux.model_merge_records_line_attribute
+msgid "merge.records.line.attribute"
+msgstr "merge.records.line.attribute"
+
+#. module: base_ux
+#: model_terms:ir.ui.view,arch_db:base_ux.merge_records_form
+msgid "{'field_name': 'operation'}"
+msgstr ""
