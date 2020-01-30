@@ -1,6 +1,6 @@
 {
     'name': 'Mail Internal',
-    'version': '12.0.1.1.0',
+    'version': '13.0.1.0.0',
     'category': 'Communications',
     'sequence': 2,
     'summary': 'Internal Messaging',
