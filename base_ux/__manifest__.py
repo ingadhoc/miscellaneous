@@ -19,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Base UX',
-    'version': '12.0.1.1.0',
+    'version': '13.0.1.0.0',
     'category': 'Base',
     'sequence': 14,
     'summary': '',
@@ -30,8 +30,7 @@
     ],
     'depends': [
         'base',
-        # depends on mail for tracking on fields
-        'mail',
+        'mail',  # depends on mail for tracking on fields
     ],
     'external_dependencies': {
         'python': ['openupgradelib'],
@@ -48,7 +47,7 @@
     ],
     'test': [
     ],
-    'installable': False,
+    'installable': True,
     'auto_install': False,
     'application': False,
 }

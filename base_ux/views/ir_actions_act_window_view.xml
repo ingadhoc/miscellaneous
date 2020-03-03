@@ -11,7 +11,7 @@
             </field>
             <group position="before">
                 <button name="create_action" string="Add in the 'Action' menu" type="object"
-                    attrs="{'invisible':['|', ('src_model','=', False), ('binding_model_id', '!=', False)]}"
+                    attrs="{'invisible':['|', ('res_model','=', False), ('binding_model_id', '!=', False)]}"
                     help="Display an option on related documents to open this action"/>
                 <button name="unlink_action" string="Remove from the 'Action' menu" type="object"
                     attrs="{'invisible':[('binding_model_id','=',False)]}"
