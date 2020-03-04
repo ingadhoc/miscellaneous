@@ -6,8 +6,8 @@
         <field name="inherit_id" ref="base.view_translation_search"/>
         <field name="arch" type="xml">
 
-            <field name="source" position="before">
-                <field name="source" filter_domain="[('source', '=like', self)]" string="Source (exact term)"/>
+            <field name="src" position="before">
+                <field name="src" filter_domain="[('src', '=like', self)]" string="Source (exact term)"/>
             </field>
 
         </field>

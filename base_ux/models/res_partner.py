@@ -8,4 +8,4 @@ from odoo import models, fields
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
-    active = fields.Boolean(track_visibility='onchange')
+    active = fields.Boolean(tracking=True)

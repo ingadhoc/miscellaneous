@@ -130,7 +130,6 @@ class MergeRecords(models.TransientModel):
     #     for rec in self:
     #         rec.line_ids = rec.update_merge_lines()
 
-    @api.multi
     def update_merge_lines(self):
         model = self.env[self.model_id.model] if self else self.env[
             self.env.context.get('active_model')]
@@ -161,7 +160,6 @@ class MergeRecords(models.TransientModel):
             })]
         return res
 
-    @api.multi
     def action_merge(self):
         """ Merge records button. Merge the selected records, and redirect to
             the merged record form view.
