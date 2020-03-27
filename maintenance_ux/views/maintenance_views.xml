@@ -1,0 +1,21 @@
+<odoo>
+
+    <record id="maintenance_maintenance_request_view_form_inherit_rating" model="ir.ui.view">
+        <field name="name">maintenance_ux.maintenance_request.view.form.inherit.rating</field>
+        <field name="model">maintenance.request</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_request_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/div[1]" position="before">
+                <div class="oe_button_box" name="button_box">
+                    <button name="%(rating_rating_action_maintenance_request)d" type="action" class="oe_stat_button" icon="fa-smile-o">
+                        <field name="rating_count" string="Rating" widget="statinfo"/>
+                    </button>
+                </div>
+            </xpath>
+            <header position="inside">
+                <button string="Send Rating Request" name="action_send_rating" type="object" class="oe_highlight"/>
+            </header>
+        </field>
+    </record>
+
+</odoo>
