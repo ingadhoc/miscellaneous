@@ -1,4 +1,4 @@
-from odoo import fields, models, api
+from odoo import fields, models
 
 
 class MailComposeMessage(models.TransientModel):
@@ -10,7 +10,6 @@ class MailComposeMessage(models.TransientModel):
         help='Whether the message is only for employees',
     )
 
-    @api.multi
     def send_mail(self, auto_commit=False):
         internal = self.env.ref("mail_internal.mt_internal_message").id
         self.filtered(lambda x: x.is_internal).write({
