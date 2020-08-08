@@ -3,7 +3,6 @@ odoo.define('report_pdf_preview.report', function (require) {
 
     var ActionManager = require('web.ActionManager');
     var core = require('web.core');
-    var crash_manager = require('web.crash_manager');
     var framework = require('web.framework');
 
     var PreviewDialog = require('report_pdf_preview.PreviewDialog');
@@ -26,7 +25,6 @@ odoo.define('report_pdf_preview.report', function (require) {
                     var url = '/report/pdf/' + action.report_name + active_ids_path;
                     var filename = action.report_name;
                     var title = action.display_name;
-                    var def = $.Deferred()
                     var dialog = PreviewDialog.createPreviewDialog(self, url, false, "pdf", title);
                     $.when(dialog, dialog._opened).then(function (dialog) {
                         var a = 1;
