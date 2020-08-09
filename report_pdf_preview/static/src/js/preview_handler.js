@@ -1,5 +1,5 @@
 /**********************************************************************************
-* 
+*
 *    Copyright (C) 2017 MuK IT GmbH
 *
 *    This program is free software: you can redistribute it and/or modify
@@ -48,11 +48,11 @@ var PDFHandler = BaseHandler.extend({
 		return ['application/pdf'].includes(mimetype);
     },
     createHtml: function(url, mimetype, extension, title) {
-    	var result = $.Deferred();	
+    	var result = $.Deferred();
     	var viewerUrlTempalte = _.template('/report_pdf_preview/static/lib/PDFjs/web/viewer.html?file=<%= url %>');
     	result.resolve($(QWeb.render('ViewerJSFrame', {url: viewerUrlTempalte({url})})));
 		return result;
-	},    
+	},
 });
 
 var OpenOfficeHandler = BaseHandler.extend({
@@ -65,7 +65,7 @@ var OpenOfficeHandler = BaseHandler.extend({
 				'application/vnd.oasis.opendocument.spreadsheet'].includes(mimetype);
     },
     createHtml: function(url, mimetype, extension, title) {
-    	var result = $.Deferred();	
+    	var result = $.Deferred();
     	var viewerUrlTempalte = _.template('/report_pdf_preview/static/lib/ViewerJS/index.html#<%= url %>');
 		result.resolve($(QWeb.render('ViewerJSFrame', {url: viewerUrlTempalte({url})})));
 		return result;
