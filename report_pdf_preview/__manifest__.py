@@ -23,22 +23,16 @@
     "depends": [
         "web", "report_aeroo"
         ],
-    "author": "山西清水欧度信息技术有限公司",
+    "author": "山西清水欧度信息技术有限公司, ADHOC SA",
     'website': 'http://www.odooqs.com',
     "category": "web",
-    "description": """
-    """,
     "data": [
         'views/assets.xml',
     ],
-    "init_xml": [],
-    'update_xml': [],
-    'demo_xml': [],
+    'license': 'AGPL-3',
     "qweb": [
         "static/src/xml/*.xml",
     ],
     'images': ['static/description/icon.jpg', 'static/description/main_screenshot.png'],
     'installable': True,
-    'active': False,
-    #    'certificate': '',
 }
