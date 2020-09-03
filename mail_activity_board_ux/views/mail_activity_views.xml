@@ -4,8 +4,7 @@
     <record id="mail_activity_view_form_board" model="ir.ui.view">
         <field name="name">mail.activity.boards.view.form.inherit</field>
         <field name="model">mail.activity</field>
-        <field name="mode">primary</field>
-        <field name="priority">99</field>
+        <field name="mode">extension</field>
         <field name="inherit_id" ref="mail_activity_board.mail_activity_view_form_board"/>
         <field name="arch" type="xml">
             <xpath expr="//form" position="attributes">
@@ -27,14 +26,17 @@
         <field name="priority">99</field>
         <field name="inherit_id" ref="mail_activity_board.mail_activity_view_tree"/>
         <field name="arch" type="xml">
+            <field name="res_name" position="after">
+                <button name="open_origin" type="object" icon="fa-external-link"/>
+            </field>
             <tree>
-                <field name="res_model_id" readonly="1"/>
+                <field name="res_model_id" invisible="1"/>
                 <field name="force_next" invisible="1"/>
                 <button icon="fa-check-circle" attrs="{'invisible': [('force_next', '=', True)]}" string="Mark as Done" name="action_done" type="object" context="{'mail_activity_quick_update': True}"/>
                 <button icon="fa-clock-o" attrs="{'invisible': [('force_next', '=', True)]}" string="Done &amp; Schedule Next" name="action_done_schedule_next" type="object" context="{'mail_activity_quick_update': True}"/>
                 <button icon="fa-clock-o" attrs="{'invisible': [('force_next', '=', False)]}" string="Done &amp; Launch Next" name="action_done_schedule_next" type="object" context="{'mail_activity_quick_update': True}"/>
                 <button icon="fa-trash" string="Discard" special="cancel"/>
-                <button icon="fa-pencil" string="Edit" type="object" name="get_formview_action"/>
+                <button icon="fa-pencil" string="Edit" type="object" name="open_activity_dashboard_form"/>
             </tree>
             <tree position="attributes">
                 <attribute name="editable">bottom</attribute>
@@ -53,7 +55,7 @@
             eval="[(5, 0, 0),
                     (0, 0, {'view_mode': 'kanban', 'view_id': ref('mail_activity_board.mail_activity_view_kanban')}),
                     (0, 0, {'view_mode': 'tree', 'view_id': ref('mail_activity_board_ux.mail_activity_view_tree')}),
-                    (0, 0, {'view_mode': 'form', 'view_id': ref('mail_activity_board_ux.mail_activity_view_form_board')}),
+                    (0, 0, {'view_mode': 'form', 'view_id': ref('mail_activity_board.mail_activity_view_form_board')}),
                     (0, 0, {'view_mode': 'calendar'}),
                     (0, 0, {'view_mode': 'pivot'}),
                     (0, 0, {'view_mode': 'graph'})]"/>
