@@ -1,0 +1,10 @@
+<odoo>
+
+    <record id="rating_rating_action_maintenance_request" model="ir.actions.act_window">
+        <field name="name">Ratings</field>
+        <field name="res_model">rating.rating</field>
+        <field name="view_mode">kanban,pivot,graph</field>
+        <field name="domain">[('res_model', '=', 'maintenance.request'), ('res_id', '=', active_id), ('consumed', '=', True)]</field>
+    </record>
+
+</odoo>
