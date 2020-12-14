@@ -1,0 +1,13 @@
+<odoo>
+
+    <template id="html_container" inherit_id="web.html_container">
+        <t t-call="web.report_layout" position="replace">
+            <t t-foreach="range(ncopies)" t-as="n">
+                <t t-call="web.report_layout">
+                    <t t-raw="0"/>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>
