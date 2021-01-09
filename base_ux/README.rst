@@ -22,6 +22,7 @@ Several Improvements:
     * When a user marks an activity as done it will be marked done by him instead of mark as done by the activity assigned user
     * Let us to search by exact source the translated terms
     * Be able to use re python library and odoo.tools.html2plaintext()function in server actions, ir.cron, base.automation, etc.
+    * Make parent field on res.company invisible as it is useless now
     * New generic wizard that leave us to merge records of any model, By the moment this can be used only via migration script or server action.
 
     **NOTE:** In order to use it you can go to server actions menu, search by "Merge Records" action and there:
