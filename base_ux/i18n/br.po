@@ -3,8 +3,7 @@
 # 	* base_ux
 # 
 # Translators:
-# Juan José Scarafía <scarafia.juanjose@gmail.com>, 2020
-# Juan Carreras <jc@adhoc.com.ar>, 2020
+# Cesar Lucho Tatad <gonefishingcesarlucho@gmail.com>, 2020
 # 
 msgid ""
 msgstr ""
@@ -12,18 +11,18 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-09 20:59+0000\n"
 "PO-Revision-Date: 2020-03-04 01:08+0000\n"
-"Last-Translator: Juan Carreras <jc@adhoc.com.ar>, 2020\n"
-"Language-Team: Spanish (https://www.transifex.com/adhoc/teams/46451/es/)\n"
+"Last-Translator: Cesar Lucho Tatad <gonefishingcesarlucho@gmail.com>, 2020\n"
+"Language-Team: Breton (https://www.transifex.com/adhoc/teams/46451/br/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
-"Language: es\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: br\n"
+"Plural-Forms: nplurals=5; plural=((n%10 == 1) && (n%100 != 11) && (n%100 !=71) && (n%100 !=91) ? 0 :(n%10 == 2) && (n%100 != 12) && (n%100 !=72) && (n%100 !=92) ? 1 :(n%10 ==3 || n%10==4 || n%10==9) && (n%100 < 10 || n% 100 > 19) && (n%100 < 70 || n%100 > 79) && (n%100 < 90 || n%100 > 99) ? 2 :(n != 0 && n % 1000000 == 0) ? 3 : 4);\n"
 
 #. module: base_ux
 #: model:ir.model,name:base_ux.model_ir_actions_act_window
 msgid "Action Window"
-msgstr "Ventana de Acción"
+msgstr "Ffenestr Weithredu"
 
 #. module: base_ux
 #: model:ir.model.fields,field_description:base_ux.field_email_template_preview__active
@@ -33,18 +32,18 @@ msgstr "Ventana de Acción"
 #: model_terms:ir.ui.view,arch_db:base_ux.view_company_search
 #: model_terms:ir.ui.view,arch_db:base_ux.view_mail_template_search
 msgid "Active"
-msgstr "Activo"
+msgstr "gweithredol"
 
 #. module: base_ux
 #: model_terms:ir.ui.view,arch_db:base_ux.view_window_action_form
 msgid "Add in the 'Action' menu"
-msgstr "Añadir en el menú \"Acción\""
+msgstr "Ychwanegwch yn y ddewislen 'Gweithredu'"
 
 #. module: base_ux
 #: model_terms:ir.ui.view,arch_db:base_ux.view_company_search
 #: model_terms:ir.ui.view,arch_db:base_ux.view_mail_template_search
 msgid "Archived"
-msgstr "Archivado"
+msgstr "Archifwyd"
 
 #. module: base_ux
 #: model_terms:ir.ui.view,arch_db:base_ux.merge_records_form
@@ -52,14 +51,14 @@ msgid ""
 "Are you sure you want to merge this records? This operation can not be "
 "undone"
 msgstr ""
-"¿Estás seguro de que deseas combinar estos registros? Esta operación no se "
-"puede deshacer."
+"Ydych chi'n siŵr eich bod chi am uno'r cofnodion hyn? Ni ellir dadwneud y "
+"llawdriniaeth hon"
 
 #. module: base_ux
 #: model:ir.model.fields,field_description:base_ux.field_merge_records__attribute_fields
 #: model:ir.model.fields,field_description:base_ux.field_merge_records_line__attribute_ids
 msgid "Attributes"
-msgstr "Atributos"
+msgstr "Rhinweddau"
 
 #. module: base_ux
 #: model:ir.model.fields,help:base_ux.field_merge_records__attribute_fields
@@ -67,13 +66,13 @@ msgid ""
 "Attributes to show in the wizard in order to make it easy to detect "
 "duplicated records"
 msgstr ""
-"Atributos para mostrar en el asistente de forma de hacer mas fácil detectar "
-"registros duplicados"
+"Rhinweddau i'w dangos yn y dewin er mwyn ei gwneud hi'n hawdd canfod "
+"cofnodion wedi'u dyblygu"
 
 #. module: base_ux
 #: model_terms:ir.ui.view,arch_db:base_ux.merge_records_form
 msgid "Cancel"
-msgstr "Cancelar"
+msgstr "Canslo"
 
 #. module: base_ux
 #: model_terms:ir.ui.view,arch_db:base_ux.merge_records_form
@@ -81,37 +80,37 @@ msgid ""
 "Check all available operations (openupgradelib._adjust_merged_values_orm "
 "method)"
 msgstr ""
-"Controle todas las operaciones disponibles "
-"(openupgradelib._adjust_merged_values_orm method)"
+"Gwiriwch yr holl weithrediadau sydd ar gael (dull "
+"openupgradelib._adjust_merged_values_orm)"
 
 #. module: base_ux
 #: model:ir.model,name:base_ux.model_res_company
 msgid "Companies"
-msgstr "Empresas"
+msgstr "Cwmnïau"
 
 #. module: base_ux
 #: model:ir.model,name:base_ux.model_res_partner
 msgid "Contact"
-msgstr "Contactos"
+msgstr "Cysylltwch"
 
 #. module: base_ux
 #: model:ir.model,name:base_ux.model_res_country_state
 msgid "Country state"
-msgstr "Provincia"
+msgstr "Gwladwriaeth y wlad"
 
 #. module: base_ux
 #: model:ir.model.fields,field_description:base_ux.field_merge_records__create_uid
 #: model:ir.model.fields,field_description:base_ux.field_merge_records_line__create_uid
 #: model:ir.model.fields,field_description:base_ux.field_merge_records_line_attribute__create_uid
 msgid "Created by"
-msgstr "Creado por"
+msgstr "Wedi'i greu gan"
 
 #. module: base_ux
 #: model:ir.model.fields,field_description:base_ux.field_merge_records__create_date
 #: model:ir.model.fields,field_description:base_ux.field_merge_records_line__create_date
 #: model:ir.model.fields,field_description:base_ux.field_merge_records_line_attribute__create_date
 msgid "Created on"
-msgstr "Creado el"
+msgstr "Wedi'i greu ar"
 
 #. module: base_ux
 #: model:ir.model.fields,help:base_ux.field_merge_records__field_spec
@@ -119,41 +118,41 @@ msgid ""
 "Dictionary {'field_name': 'operation'} that let us to know what to do with "
 "the field when merging records."
 msgstr ""
-"Diccionario {'field_name'\\: 'operation'} que nos permite saber que hacer "
-"con el campo cuando se unen registros."
+"Geiriadur {'field_name': 'operation'} sy'n gadael i ni wybod beth i'w wneud "
+"â'r maes wrth uno cofnodion."
 
 #. module: base_ux
 #: model:ir.model.fields,field_description:base_ux.field_merge_records__display_name
 #: model:ir.model.fields,field_description:base_ux.field_merge_records_line__display_name
 #: model:ir.model.fields,field_description:base_ux.field_merge_records_line_attribute__display_name
 msgid "Display Name"
-msgstr "Mostrar Nombre"
+msgstr "Enw Arddangos"
 
 #. module: base_ux
 #: model_terms:ir.ui.view,arch_db:base_ux.view_window_action_form
 msgid "Display an option on related documents to open this action"
-msgstr "Mostrar una opción en documentos relacionados para abrir esta acción"
+msgstr "Arddangos opsiwn ar ddogfennau cysylltiedig i agor y weithred hon"
 
 #. module: base_ux
 #: code:addons/base_ux/wizards/merge_records.py:0
 #, python-format
 msgid "Do not apply"
-msgstr "No aplicar"
+msgstr "Peidiwch â gwneud cais"
 
 #. module: base_ux
 #: model:ir.model,name:base_ux.model_mail_template
 msgid "Email Templates"
-msgstr "Modelos de Email"
+msgstr "Templedi E-bost"
 
 #. module: base_ux
 #: model:ir.model.fields,field_description:base_ux.field_merge_records__field_spec
 msgid "Field Spec"
-msgstr "Especificaciones de Campo"
+msgstr "Manyleb Maes"
 
 #. module: base_ux
 #: model:ir.model.fields,field_description:base_ux.field_merge_records__line_id
 msgid "Final Record"
-msgstr "Registro Final"
+msgstr "Cofnod Terfynol"
 
 #. module: base_ux
 #: model:ir.model.fields,field_description:base_ux.field_merge_records__id
@@ -165,98 +164,98 @@ msgstr "ID"
 #. module: base_ux
 #: model:ir.model.fields,help:base_ux.field_merge_records_line__res_id
 msgid "ID of the target record in the database"
-msgstr "ID del registro buscado en la base de datos"
+msgstr "ID y cofnod targed yn y gronfa ddata"
 
 #. module: base_ux
 #: model:ir.model.fields,field_description:base_ux.field_merge_records____last_update
 #: model:ir.model.fields,field_description:base_ux.field_merge_records_line____last_update
 #: model:ir.model.fields,field_description:base_ux.field_merge_records_line_attribute____last_update
 msgid "Last Modified on"
-msgstr "Última modificación el"
+msgstr "Newidiwyd Diwethaf ar"
 
 #. module: base_ux
 #: model:ir.model.fields,field_description:base_ux.field_merge_records__write_uid
 #: model:ir.model.fields,field_description:base_ux.field_merge_records_line__write_uid
 #: model:ir.model.fields,field_description:base_ux.field_merge_records_line_attribute__write_uid
 msgid "Last Updated by"
-msgstr "Última actualización por"
+msgstr "Wedi'i ddiweddaru ddiwethaf gan"
 
 #. module: base_ux
 #: model:ir.model.fields,field_description:base_ux.field_merge_records__write_date
 #: model:ir.model.fields,field_description:base_ux.field_merge_records_line__write_date
 #: model:ir.model.fields,field_description:base_ux.field_merge_records_line_attribute__write_date
 msgid "Last Updated on"
-msgstr "Última actualizacón el"
+msgstr "Wedi'i Ddiweddaru Ddiwethaf ar"
 
 #. module: base_ux
 #: model:ir.model.fields,field_description:base_ux.field_merge_records__line_ids
 msgid "Lines"
-msgstr "Líneas"
+msgstr "Llinellau"
 
 #. module: base_ux
 #: model:ir.actions.act_window,name:base_ux.merge_records_action
 #: model:ir.actions.server,name:base_ux.merge_records_server_action
 #: model_terms:ir.ui.view,arch_db:base_ux.merge_records_form
 msgid "Merge Records"
-msgstr "Combinar registros"
+msgstr "Uno Cofnodion"
 
 #. module: base_ux
 #: model_terms:ir.ui.view,arch_db:base_ux.merge_records_form
 msgid "Merge the following records"
-msgstr "Combinar los siguientes registros."
+msgstr "Unwch y cofnodion canlynol"
 
 #. module: base_ux
 #: model:ir.model.fields,field_description:base_ux.field_merge_records__model_id
 msgid "Model"
-msgstr "Modelo"
+msgstr "Model"
 
 #. module: base_ux
 #: model:ir.model.fields,field_description:base_ux.field_merge_records_line__model
 msgid "Model Name"
-msgstr "Nombre del Modelo"
+msgstr "Enw'r Model"
 
 #. module: base_ux
 #: model:ir.model.fields,field_description:base_ux.field_merge_records_line__name
 #: model:ir.model.fields,field_description:base_ux.field_merge_records_line_attribute__name
 msgid "Name"
-msgstr "Nombre"
+msgstr "Enw"
 
 #. module: base_ux
 #: code:addons/base_ux/wizards/merge_records.py:0
 #, python-format
 msgid "Not valid Field Spec: Should be a dictionary"
-msgstr "Especificación de campo no válida: debe ser un diccionario"
+msgstr "Ddim yn ddilys Manyleb Maes: Dylai fod yn eiriadur"
 
 #. module: base_ux
 #: code:addons/base_ux/wizards/merge_records.py:0
 #, python-format
 msgid "Please select at least two records"
-msgstr "Por favor seleccione al menos dos registros"
+msgstr "Dewiswch o leiaf ddau gofnod"
 
 #. module: base_ux
 #: model:ir.model.fields,field_description:base_ux.field_merge_records_line__res_name
 msgid "Record Name"
-msgstr "Nombre de registro"
+msgstr "Enw'r Cofnod"
 
 #. module: base_ux
 #: model_terms:ir.ui.view,arch_db:base_ux.merge_records_form
 msgid "Records"
-msgstr "Registros"
+msgstr "Cofnodion"
 
 #. module: base_ux
 #: model:ir.model.fields,field_description:base_ux.field_merge_records__res_ids
 msgid "Records to merge"
-msgstr "Registros a unir"
+msgstr "Cofnodion i uno"
 
 #. module: base_ux
 #: model_terms:ir.ui.view,arch_db:base_ux.view_window_action_form
 msgid "Remove from the 'Action' menu"
-msgstr "Eliminar del menú 'Acción'"
+msgstr "Tynnwch o'r ddewislen 'Gweithredu'"
 
 #. module: base_ux
 #: model_terms:ir.ui.view,arch_db:base_ux.view_window_action_form
 msgid "Remove the contextual action related this action"
-msgstr "Eliminar la acción contextual relacionada con esta acción"
+msgstr "Dileu'r gweithredu cyd-destunol sy'n gysylltiedig â'r weithred hon"
 
 #. module: base_ux
 #: model:ir.model.fields,field_description:base_ux.field_merge_records_line__res_id
@@ -271,56 +270,56 @@ msgid ""
 "                              will be redirected to the destination record.\n"
 "                              You can remove records from this list to avoid merging them."
 msgstr ""
-"Los registros seleccionados serán unidos juntos.\n"
-"Todos los documentos enlazados a uno de estos registros\n"
-"serán redireccionados al registro de destino.\n"
-"Usted puede eliminar registros de esta lista para evitar unirlos."
+"Bydd cofnodion dethol yn cael eu huno gyda'i gilydd. Bydd yr holl ddogfennau"
+" sy'n gysylltiedig ag un o'r cofnodion hyn these yn cael eu hailgyfeirio i'r"
+" cofnod cyrchfan. Gallwch dynnu cofnodion o'r rhestr hon er mwyn osgoi eu "
+"huno."
 
 #. module: base_ux
 #: model:ir.model,name:base_ux.model_ir_actions_server
 msgid "Server Action"
-msgstr "Acción de servidor"
+msgstr "Gweithredu Gweinydd"
 
 #. module: base_ux
 #: model_terms:ir.ui.view,arch_db:base_ux.view_translation_search
 msgid "Source (exact term)"
-msgstr "Fuente (termino exacto)"
+msgstr "Ffynhonnell (union derm)"
 
 #. module: base_ux
 #: code:addons/base_ux/wizards/merge_records.py:0
 #, python-format
 msgid "The records were not merge due to the next error: %s"
-msgstr "Los registros no se fusionaron debido al siguiente error: %s"
+msgstr "Ni chyfunwyd y cofnodion oherwydd y gwall nesaf : %s"
 
 #. module: base_ux
 #: model:ir.model.fields,field_description:base_ux.field_merge_records_line_attribute__value
 msgid "Value"
-msgstr "Valor"
+msgstr "Gwerth"
 
 #. module: base_ux
 #: model:ir.model.fields,field_description:base_ux.field_merge_records_line__wizard_id
 msgid "Wizard"
-msgstr "Asistente"
+msgstr "dewin"
 
 #. module: base_ux
 #: model:ir.model.fields,field_description:base_ux.field_merge_records_line_attribute__wizard_line_id
 msgid "Wizard Line"
-msgstr "Línea de Asistente"
+msgstr "Llinell Dewin"
 
 #. module: base_ux
 #: model:ir.model.fields,field_description:base_ux.field_merge_records_line__xml_id
 msgid "XML ID"
-msgstr "XML ID"
+msgstr "ID XML"
 
 #. module: base_ux
 #: model:ir.model,name:base_ux.model_merge_records
 msgid "merge.records"
-msgstr "merge.records"
+msgstr "uno cofnodion"
 
 #. module: base_ux
 #: model:ir.model,name:base_ux.model_merge_records_line
 msgid "merge.records.line"
-msgstr "merge.records.line"
+msgstr "uno llinellau cofnodion"
 
 #. module: base_ux
 #: model:ir.model,name:base_ux.model_merge_records_line_attribute
@@ -330,4 +329,4 @@ msgstr "merge.records.line.attribute"
 #. module: base_ux
 #: model_terms:ir.ui.view,arch_db:base_ux.merge_records_form
 msgid "{'field_name': 'operation'}"
-msgstr "{'field_name': 'operation'}"
+msgstr "{'Field_name': 'Gweithrediad'}"

@@ -3,8 +3,7 @@
 # 	* mail_internal
 # 
 # Translators:
-# Juan José Scarafía <scarafia.juanjose@gmail.com>, 2020
-# Juan Carreras <jc@adhoc.com.ar>, 2020
+# Cesar Lucho Tatad <gonefishingcesarlucho@gmail.com>, 2020
 # 
 msgid ""
 msgstr ""
@@ -12,13 +11,13 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-09 20:59+0000\n"
 "PO-Revision-Date: 2020-06-02 20:43+0000\n"
-"Last-Translator: Juan Carreras <jc@adhoc.com.ar>, 2020\n"
-"Language-Team: Spanish (https://www.transifex.com/adhoc/teams/46451/es/)\n"
+"Last-Translator: Cesar Lucho Tatad <gonefishingcesarlucho@gmail.com>, 2020\n"
+"Language-Team: Breton (https://www.transifex.com/adhoc/teams/46451/br/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
-"Language: es\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: br\n"
+"Plural-Forms: nplurals=5; plural=((n%10 == 1) && (n%100 != 11) && (n%100 !=71) && (n%100 !=91) ? 0 :(n%10 == 2) && (n%100 != 12) && (n%100 !=72) && (n%100 !=92) ? 1 :(n%10 ==3 || n%10==4 || n%10==9) && (n%100 < 10 || n% 100 > 19) && (n%100 < 70 || n%100 > 79) && (n%100 < 90 || n%100 > 99) ? 2 :(n != 0 && n % 1000000 == 0) ? 3 : 4);\n"
 
 #. module: mail_internal
 #. openerp-web
@@ -32,46 +31,46 @@ msgid ""
 "(widget.options.isInternal or widget.options.isLog) and 'background-color: "
 "rgb(242, 242, 242);' or ''"
 msgstr ""
-"(widget.options.isInternal or widget.options.isLog) and 'background-color: "
-"rgb(242, 242, 242);' or ''"
+"(Widget.opstions.isinternal neu Widget.opoptions.islog) a 'Chefndir-Lliw: "
+"RGB (242, 242, 242);' neu ''"
 
 #. module: mail_internal
 #: model:ir.model,name:mail_internal.model_mail_compose_message
 msgid "Email composition wizard"
-msgstr "Asistente de composición de correo electrónico"
+msgstr "Dewin Cyfansoddiad E-bost"
 
 #. module: mail_internal
 #: model:mail.message.subtype,name:mail_internal.mt_internal_message
 msgid "Internal Message"
-msgstr "Mensaje interno"
+msgstr "Neges fewnol"
 
 #. module: mail_internal
 #. openerp-web
 #: code:addons/mail_internal/static/src/xml/mail_internal.xml:0
 #, python-format
 msgid "Internal Users following this document"
-msgstr "Usuarios Internos siguiendo este documento"
+msgstr "Defnyddwyr Mewnol yn dilyn y ddogfen hon"
 
 #. module: mail_internal
 #. openerp-web
 #: code:addons/mail_internal/static/src/xml/mail_internal.xml:0
 #, python-format
 msgid "Internal message"
-msgstr "Mensaje interno"
+msgstr "Neges fewnol"
 
 #. module: mail_internal
 #: model:ir.model.fields,field_description:mail_internal.field_mail_compose_message__is_internal
 msgid "Send Internal Message"
-msgstr "Enviar mensaje interno"
+msgstr "Anfon Neges Fewnol"
 
 #. module: mail_internal
 #. openerp-web
 #: code:addons/mail_internal/static/src/xml/mail_internal.xml:0
 #, python-format
 msgid "To:"
-msgstr "A\\:"
+msgstr "At:"
 
 #. module: mail_internal
 #: model:ir.model.fields,help:mail_internal.field_mail_compose_message__is_internal
 msgid "Whether the message is only for employees"
-msgstr "Si el mensaje es solo para empleados."
+msgstr "P'un a yw'r neges ar gyfer gweithwyr yn unig"

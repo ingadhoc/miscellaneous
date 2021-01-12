@@ -1,0 +1,116 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* report_pdf_preview
+# 
+# Translators:
+# Irina Fedulova <istartlin@gmail.com>, 2020
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 13.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-01-09 20:59+0000\n"
+"PO-Revision-Date: 2020-08-09 01:04+0000\n"
+"Last-Translator: Irina Fedulova <istartlin@gmail.com>, 2020\n"
+"Language-Team: Russian (https://www.transifex.com/adhoc/teams/46451/ru/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Language: ru\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#. module: report_pdf_preview
+#. openerp-web
+#: code:addons/report_pdf_preview/static/src/xml/preview_dialog.xml:0
+#, python-format
+msgid "&times;"
+msgstr "&раз;"
+
+#. module: report_pdf_preview
+#. openerp-web
+#: code:addons/report_pdf_preview/static/src/xml/preview_dialog.xml:0
+#, python-format
+msgid "Close"
+msgstr "Закрыть"
+
+#. module: report_pdf_preview
+#. openerp-web
+#: code:addons/report_pdf_preview/static/src/xml/preview_content.xml:0
+#, python-format
+msgid "Download"
+msgstr "Загрузить"
+
+#. module: report_pdf_preview
+#. openerp-web
+#: code:addons/report_pdf_preview/static/src/xml/preview_content.xml:0
+#, python-format
+msgid "Extension:"
+msgstr ""
+
+#. module: report_pdf_preview
+#. openerp-web
+#: code:addons/report_pdf_preview/static/src/xml/preview_content.xml:0
+#, python-format
+msgid "Filename:"
+msgstr "Имя файла:"
+
+#. module: report_pdf_preview
+#. openerp-web
+#: code:addons/report_pdf_preview/static/src/xml/preview_content.xml:0
+#, python-format
+msgid "Odoo App Store"
+msgstr "Odoo App Store"
+
+#. module: report_pdf_preview
+#. openerp-web
+#: code:addons/report_pdf_preview/static/src/xml/preview_dialog.xml:0
+#, python-format
+msgid "Ok"
+msgstr "Ок"
+
+#. module: report_pdf_preview
+#. openerp-web
+#: code:addons/report_pdf_preview/static/src/js/preview_dialog.js:0
+#, python-format
+msgid "Preview"
+msgstr "Предпросмотр"
+
+#. module: report_pdf_preview
+#. openerp-web
+#: code:addons/report_pdf_preview/static/src/xml/preview_content.xml:0
+#, python-format
+msgid ""
+"This file type is currently not supported. By installing further extension "
+"via the"
+msgstr ""
+"Этот тип файла пока не поддерживается. Установив следующее расширение через"
+
+#. module: report_pdf_preview
+#. openerp-web
+#: code:addons/report_pdf_preview/static/src/xml/preview_content.xml:0
+#, python-format
+msgid "Type:"
+msgstr "Тип:"
+
+#. module: report_pdf_preview
+#. openerp-web
+#: code:addons/report_pdf_preview/static/src/js/preview_generator.js:0
+#: code:addons/report_pdf_preview/static/src/js/preview_generator.js:0
+#: code:addons/report_pdf_preview/static/src/js/preview_generator.js:0
+#, python-format
+msgid "Unknown"
+msgstr "Неизвестно"
+
+#. module: report_pdf_preview
+#. openerp-web
+#: code:addons/report_pdf_preview/static/src/xml/preview_content.xml:0
+#, python-format
+msgid "Unsupported File Extension"
+msgstr "Неподдерживаемое расширение файла"
+
+#. module: report_pdf_preview
+#. openerp-web
+#: code:addons/report_pdf_preview/static/src/xml/preview_content.xml:0
+#, python-format
+msgid "it is possible to improve the Preview."
+msgstr "возможно улучшить Предпросмотр."
