@@ -1,0 +1,118 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* maintenance_ux
+# 
+# Translators:
+# Ekaterina <nawsikaya@bk.ru>, 2021
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 13.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-01-12 22:27+0000\n"
+"PO-Revision-Date: 2020-11-12 18:18+0000\n"
+"Last-Translator: Ekaterina <nawsikaya@bk.ru>, 2021\n"
+"Language-Team: Russian (https://www.transifex.com/adhoc/teams/46451/ru/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Language: ru\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#. module: maintenance_ux
+#: model:mail.template,subject:maintenance_ux.mail_template_maintenance_request_rating
+msgid "${object.name}: Service Rating Request"
+msgstr ""
+
+#. module: maintenance_ux
+#: model:mail.template,body_html:maintenance_ux.mail_template_maintenance_request_rating
+msgid ""
+"<div style=\"background:#F0F0F0;color:#515166;padding:10px 0px;font-family:Arial,Helvetica,sans-serif;font-size:14px;\">\n"
+"                % set access_token = object.rating_get_access_token()\n"
+"                <table style=\"width:600px;margin:5px auto;\">\n"
+"                    <tbody>\n"
+"                        <tr>\n"
+"                            <td>\n"
+"                                <a href=\"/\"><img src=\"/web/binary/company_logo\" style=\"vertical-align:baseline;max-width:100px;\"/></a>\n"
+"                            </td>\n"
+"                            <td style=\"text-align:right;vertical-align:middle;\">\n"
+"                                Satisfaction Survey\n"
+"                            </td>\n"
+"                        </tr>\n"
+"                    </tbody>\n"
+"                </table>\n"
+"                <table style=\"width:600px;margin:0px auto;background:white;border:1px solid #e1e1e1;\">\n"
+"                    <tbody>\n"
+"                        <tr>\n"
+"                            <td style=\"padding:15px 20px 10px 20px;\">\n"
+"                            <p>Hello,</p>\n"
+"                            <p>Please take a moment to rate our services related to the order \"<strong>${object.name}</strong>\"\n"
+"                            assigned to <strong>${object.rating_get_rated_partner_id().name}</strong>.</p>\n"
+"                            <p>We appreciate your feedback. It helps us to improve continuously.</p>\n"
+"                            </td>\n"
+"                        </tr>\n"
+"                        <tr>\n"
+"                            <td style=\"padding:10px 20px\">\n"
+"                                <table style=\"width:100%;border-top:1px solid #e1e1e1;\">\n"
+"                                    <tr>\n"
+"                                        <td style=\"text-align:center;\">\n"
+"                                            <h2 style=\"font-weight:300;font-size:18px;\">\n"
+"                                            Tell us how you feel about our service:\n"
+"                                            </h2>\n"
+"                                            <div style=\"text-color: #888888\">(click on one of these smileys)</div>\n"
+"                                        </td>\n"
+"                                    </tr>\n"
+"                                    <tr>\n"
+"                                        <td style=\"padding:10px 10px;\">\n"
+"                                            <table style=\"width:100%;text-align:center;\">\n"
+"                                                <tr>\n"
+"                                                    <td>\n"
+"                                                        <a href=\"/rating/${access_token}/10\">\n"
+"                                                        <img alt=\"Satisfied\" src=\"/rating/static/src/img/rating_10.png\" title=\"Satisfied\"/>\n"
+"                                                        </a>\n"
+"                                                    </td>\n"
+"                                                    <td>\n"
+"                                                        <a href=\"/rating/${access_token}/5\">\n"
+"                                                        <img alt=\"Not satisfied\" src=\"/rating/static/src/img/rating_5.png\" title=\"Not satisfied\"/>\n"
+"                                                        </a>\n"
+"                                                    </td>\n"
+"                                                    <td>\n"
+"                                                        <a href=\"/rating/${access_token}/1\">\n"
+"                                                        <img alt=\"Highly Dissatisfied\" src=\"/rating/static/src/img/rating_1.png\" title=\"Highly Dissatisfied\"/>\n"
+"                                                        </a>\n"
+"                                                    </td>\n"
+"                                                </tr>\n"
+"                                            </table>\n"
+"                                        </td>\n"
+"                                    </tr>\n"
+"                                </table>\n"
+"                            </td>\n"
+"                        </tr>\n"
+"                        <tr>\n"
+"                            <td style=\"padding:15px 20px 10px 20px;\">${object.user_id.signature | safe}</td>\n"
+"                        </tr>\n"
+"                    </tbody>\n"
+"                </table>\n"
+"            </div>\n"
+"        "
+msgstr ""
+
+#. module: maintenance_ux
+#: model:ir.model,name:maintenance_ux.model_maintenance_request
+msgid "Maintenance Request"
+msgstr "Maintenance Request"
+
+#. module: maintenance_ux
+#: model_terms:ir.ui.view,arch_db:maintenance_ux.maintenance_maintenance_request_view_form_inherit_rating
+msgid "Rating"
+msgstr "Rating"
+
+#. module: maintenance_ux
+#: model:ir.actions.act_window,name:maintenance_ux.rating_rating_action_maintenance_request
+msgid "Ratings"
+msgstr "Ratings"
+
+#. module: maintenance_ux
+#: model_terms:ir.ui.view,arch_db:maintenance_ux.maintenance_maintenance_request_view_form_inherit_rating
+msgid "Send Rating Request"
+msgstr "Send Rating Request"
