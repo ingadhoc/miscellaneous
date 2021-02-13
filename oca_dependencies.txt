@@ -1,2 +1,0 @@
-social
-ingadhoc-aeroo_reports https://github.com/ingadhoc/aeroo_reports.git
