@@ -16,6 +16,7 @@ Mail Internal
 
 This module add a Internal Message link in the chatter section that we let us
 to send message that will be only be send/visible to employees users.
+TODO fix runbot tests
 
 Installation
 ============
