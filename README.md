@@ -1,7 +1,5 @@
-[![Runbot Status](http://runbot.adhoc.com.ar/runbot/badge/flat/21/12.0.svg)](http://runbot.adhoc.com.ar/runbot/repo/github-com-ingadhoc-miscellaneous-21)
-[![Build Status](https://travis-ci.org/ingadhoc/miscellaneous.svg?branch=12.0)](https://travis-ci.org/ingadhoc/miscellaneous)
-[![Coverage Status](https://coveralls.io/repos/ingadhoc/miscellaneous/badge.png?branch=12.0)](https://coveralls.io/r/ingadhoc/miscellaneous?branch=12.0)
-[![Code Climate](https://codeclimate.com/github/ingadhoc/miscellaneous/badges/gpa.svg)](https://codeclimate.com/github/ingadhoc/miscellaneous)
+Status](https://coveralls.io/repos/ingadhoc/miscellaneous/badge.png?branch=12.0)](https://coveralls.io/r/ingadhoc/miscellaneous?branch=12.0) [![Code 
+Climate](https://codeclimate.com/github/ingadhoc/miscellaneous/badges/gpa.svg)](https://codeclimate.com/github/ingadhoc/miscellaneous)
 
 # ADHOC Miscellaneous Modules
 
