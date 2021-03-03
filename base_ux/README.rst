@@ -24,6 +24,7 @@ Several Improvements:
     * Be able to use re python library and odoo.tools.html2plaintext()function in server actions, ir.cron, base.automation, etc.
     * Make parent field on res.company invisible as it is useless now
     * New generic wizard that leave us to merge records of any model, By the moment this can be used only via migration script or server action.
+    * Keep the activity's description when changing the activity type, regardless of the activity type's description, and change the activity user only if the activity type has a default user.
 
     **NOTE:** In order to use it you can go to server actions menu, search by "Merge Records" action and there:
 
