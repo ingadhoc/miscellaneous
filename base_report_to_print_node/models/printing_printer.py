@@ -190,8 +190,7 @@ class PrintingPrinter(models.Model):
             raise RedirectWarning(msg, action_id, _("Go to the configuration panel"))
         request_url = "{}/{}".format(PRINTNODE_URL, service)
         headers = {
-            "authorization": "Basic "
-            + base64.b64encode(api_key.encode("UTF-8")).decode("UTF-8"),
+            "authorization": "Basic " + base64.b64encode(api_key.encode("UTF-8")).decode("UTF-8"),
         }
         if data:
             headers["Content-Type"] = "application/json"
