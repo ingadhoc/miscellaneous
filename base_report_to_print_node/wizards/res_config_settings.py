@@ -14,6 +14,3 @@ class ResConfigSettings(models.TransientModel):
         string="Print Node Api Key",
         config_parameter="base_report_to_print_node.api_key",
     )
-
-    def check_api_key(self):
-        raise UserError(self.env["printing_printer"]._get_response("noop"))
