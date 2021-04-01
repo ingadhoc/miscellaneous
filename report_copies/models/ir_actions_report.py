@@ -3,7 +3,8 @@
 # directory
 ##############################################################################
 
-from odoo import api, fields, models
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
 
 
 class IrActionsReport(models.Model):
@@ -21,3 +22,8 @@ class IrActionsReport(models.Model):
             'ncopies': ncopies,
         })
         return res
+
+    @api.constrains('ncopies')
+    def _check_ncopies(self):
+        if self.filtered(lambda x: x.ncopies < 1):
+            raise ValidationError(_("The number of copies must be strict positive and different than zero."))
