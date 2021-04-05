@@ -3,22 +3,30 @@
 # directory
 ##############################################################################
 from odoo import models, api
+from odoo.addons.base.models import res_users
+
+
+original_has_multiple_groups = res_users.Users._has_multiple_groups
+
+
+def new_has_multiple_groups(self, group_ids):
+
+    user_types_category = self.env.ref('base.module_category_user_type', raise_if_not_found=False)
+    # remove internal groups that inherit internal groups
+    if user_types_category:
+        internal_groups = self.env['res.groups'].search([
+            ('category_id', '=', user_types_category.id),
+            ('implied_ids.category_id', '=', user_types_category.id)])
+        group_ids = list(set(group_ids) - set(internal_groups.ids))
+    return original_has_multiple_groups(self, group_ids)
+
+
+res_users.Users._has_multiple_groups = new_has_multiple_groups
 
 
 class ResUsers(models.Model):
 
     _inherit = 'res.users'
-
-    def _has_multiple_groups(self, group_ids):
-        user_types_category = self.env.ref(
-            'base.module_category_user_type', raise_if_not_found=False)
-        # remove internal groups that inherit internal groups
-        if user_types_category:
-            internal_groups = self.env['res.groups'].search([
-                ('category_id', '=', user_types_category.id),
-                ('implied_ids.category_id', '=', user_types_category.id)])
-            group_ids = list(set(group_ids) - set(internal_groups.ids))
-        return super()._has_multiple_groups(group_ids)
 
     @api.model
     def systray_get_activities(self):
