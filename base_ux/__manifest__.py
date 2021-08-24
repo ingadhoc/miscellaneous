@@ -19,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Base UX',
-    'version': '13.0.1.2.0',
+    'version': '13.0.1.3.0',
     'category': 'Base',
     'sequence': 14,
     'summary': '',
@@ -42,6 +42,7 @@
         'views/mail_template_view.xml',
         'views/res_company_view.xml',
         'views/res_users.xml',
+        'views/discuss_extension.xml',
         'wizards/merge_records_view.xml',
     ],
     'demo': [
