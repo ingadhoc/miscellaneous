@@ -34,5 +34,5 @@
         "static/src/xml/*.xml",
     ],
     'images': ['static/description/icon.jpg', 'static/description/main_screenshot.png'],
-    'installable': True,
+    'installable': False,
 }
