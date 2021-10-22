@@ -38,7 +38,7 @@
         'data/maintenance_data.xml',
         'views/maintenance_views.xml',
     ],
-    'installable': True,
+    'installable': False,
     'auto_install': False,
     'application': False,
 }

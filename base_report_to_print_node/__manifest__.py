@@ -25,5 +25,5 @@
     "license": "AGPL-3",
     "depends": ["base_report_to_printer"],
     "data": ["wizards/res_config_settings_view.xml"],
-    "installable": True,
+    'installable': False,
 }
