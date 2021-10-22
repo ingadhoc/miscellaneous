@@ -1,4 +1,4 @@
-[![Coverage Status](https://coveralls.io/repos/ingadhoc/miscellaneous/badge.png?branch=13.0)](https://coveralls.io/r/ingadhoc/miscellaneous?branch=13.0)
+[![Coverage Status](https://coveralls.io/repos/ingadhoc/miscellaneous/badge.png?branch=15.0)](https://coveralls.io/r/ingadhoc/miscellaneous?branch=15.0)
 [![Code Climate](https://codeclimate.com/github/ingadhoc/miscellaneous/badges/gpa.svg)](https://codeclimate.com/github/ingadhoc/miscellaneous)
 
 # ADHOC Miscellaneous Modules
@@ -8,7 +8,7 @@
 
 Translation Status
 ------------------
-[![Transifex Status](https://www.transifex.com/projects/p/ingadhoc-miscellaneous-13-0/chart/image_png)](https://www.transifex.com/projects/p/ingadhoc-miscellaneous-13-0)
+[![Transifex Status](https://www.transifex.com/projects/p/ingadhoc-miscellaneous-15-0/chart/image_png)](https://www.transifex.com/projects/p/ingadhoc-miscellaneous-15-0)
 
 ----
 
