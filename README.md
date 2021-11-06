@@ -1,6 +1,3 @@
-[![Coverage Status](https://coveralls.io/repos/ingadhoc/miscellaneous/badge.png?branch=15.0)](https://coveralls.io/r/ingadhoc/miscellaneous?branch=15.0)
-[![Code Climate](https://codeclimate.com/github/ingadhoc/miscellaneous/badges/gpa.svg)](https://codeclimate.com/github/ingadhoc/miscellaneous)
-
 # ADHOC Miscellaneous Modules
 
 [//]: # (addons)
