@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_merge_records_line_attribute,access.merge.records.line.attribute,model_merge_records_line_attribute,base.group_user,1,1,1,1
+access_merge_records_line,access.merge.records.line,model_merge_records_line,base.group_user,1,1,1,1
+access_merge_records,access.merge.records,model_merge_records,base.group_user,1,1,1,1
