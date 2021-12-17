@@ -36,11 +36,9 @@
                             </tree>
                         </field>
                     </group>
-                </sheet>
-                <footer>
                     <button name='action_merge' string='Merge Records' class='oe_highlight' type='object' confirm="Are you sure you want to merge this records? This operation can not be undone"/>
                     <button special="cancel" string="Cancel" type="object" class="btn btn-default oe_inline"/>
-                </footer>
+                </sheet>
             </form>
         </field>
     </record>
