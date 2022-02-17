@@ -8,6 +8,8 @@ import logging
 import os
 import time
 import urllib.request
+from ast import literal_eval
+from odoo.addons.server_mode.mode import get_mode
 from tempfile import mkstemp
 from urllib.error import HTTPError
 
@@ -83,6 +85,12 @@ class PrintingPrinter(models.Model):
 
         if not self.print_node_printer:
             return super().print_document(report, content, **print_opts)
+
+        test_enable = literal_eval(
+            self.env['ir.config_parameter'].sudo().get_param('print_node_enable_print_test', default='False'))
+        if get_mode() and not test_enable:
+            _logger.warning(_("Send to printer disable by server mode"))
+            return True
 
         fd, file_name = mkstemp()
         try:
