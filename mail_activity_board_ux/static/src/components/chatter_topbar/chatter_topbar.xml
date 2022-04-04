@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+    <t t-inherit="mail.ChatterTopbar" t-inherit-mode="extension">
+        <xpath
+            expr="//button[@t-on-click='_onListActivity']"
+            position="replace"
+        />
+    </t>
+</templates>

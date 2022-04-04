@@ -16,7 +16,7 @@ Mail Activity Board UX
 
 Several Improvements:
 
-* Hide "Activities" link in chatter because we are not using it and is making crash our chatter look and feel
+* Hide "Activities" link in chatter (added by dependence) because we are not using it and is making crash our chatter look and feel
 * Be able to edit the activities from the Activities Dashboard
 
 Installation
