@@ -19,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Mail Activity Board UX',
-    'version': '13.0.1.2.0',
+    'version': "15.0.1.0.0",
     'category': 'Base',
     'sequence': 14,
     'summary': '',
@@ -34,14 +34,16 @@
     'data': [
         'views/mail_activity_views.xml',
     ],
-    'qweb': [
-        'static/src/xml/inherit_chatter.xml',
-    ],
+    "assets": {
+        "web.assets_qweb": [
+            "mail_activity_board_ux/static/src/components/chatter_topbar/chatter_topbar.xml",
+        ],
+    },
     'demo': [
     ],
     'test': [
     ],
-    'installable': False,
+    'installable': True,
     'auto_install': False,
     'application': False,
 }
