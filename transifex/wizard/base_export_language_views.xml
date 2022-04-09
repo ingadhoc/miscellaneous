@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="wizard_lang_export" model="ir.ui.view">
+        <field name="name">Export Translations</field>
+        <field name="model">base.language.export</field>
+        <field name="inherit_id" ref="base.wizard_lang_export"/>
+        <field name="arch" type="xml">
+            <group states="choose">
+                <field name="api_key" attrs="{'invisible': [('format', '!=', 'po')]}"/>
+                <field name="organization_slug" attrs="{'invisible': [('format', '!=', 'po')]}"/>
+                <field name="project_slug" attrs="{'invisible': [('format', '!=', 'po')]}"/>
+            </group>
+            <button name="act_getfile" position="after">
+                <button name="action_transifex_push" string="Push To Transifex" type="object"/>
+            </button>
+        </field>
+    </record>
+</odoo>
