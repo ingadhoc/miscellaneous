@@ -11,6 +11,7 @@
         'base',
         'web',
     ],
+    'license': 'AGPL-3',
     'data': [
         'wizard/base_export_language_views.xml',
     ],
