@@ -47,14 +47,14 @@ class BaseLanguageExport(models.TransientModel):
             raise UserError(
                 'Se deben configura los siguientes parametros de transfiex: api_key, organization_slug, project_slug')
 
-        installed_langs = self.env['res.lang'].with_context(active_test=True).search([]).mapped('iso_code')
+        installed_langs = {x.iso_code: x.code for x in self.env['res.lang'].with_context(active_test=True).search([])}
 
         transifex_api.setup(auth=api_key)
         tx_organization = transifex_api.Organization.get(slug=organization_slug)
         tx_project = tx_organization.fetch('projects').get(slug=project_slug)
 
         tx_resources = tx_project.fetch('resources')
-        tx_project_languages = tx_project.fetch('languages').all()
+        tx_project_languages = {x.code: x.id for x in tx_project.fetch('languages').all()}
         tx_resources_names = [x.name for x in tx_resources]
         po_format = transifex_api.i18n_formats.get(organization=tx_organization, name='PO')
 
@@ -91,10 +91,10 @@ class BaseLanguageExport(models.TransientModel):
 
             # subimos traducciones existentes
             for tx_language in tx_project_languages:
-                if tx_language.code not in installed_langs:
-                    _logger.warning('Language %s not installed on database, skiping sync to transfiex', tx_language.code)
+                if tx_language not in installed_langs.keys():
+                    _logger.warning('Language %s not installed on database, skiping sync to transfiex', tx_language)
                     continue
-                content = _get_language_content(tx_language.code, module)
+                content = _get_language_content(installed_langs[tx_language], module)
                 # asincrono
                 # upload = transifex_api.resource_translations_async_uploads.create(
                 #     attributes={"content": content, "content_encoding": "text", "file_type": "default"},
@@ -104,7 +104,7 @@ class BaseLanguageExport(models.TransientModel):
 
                 # sincrono
                 res = transifex_api.resource_translations_async_uploads.upload(
-                    resource=resource, content=content, language=tx_language.id)
+                    resource=resource, content=content, language=tx_project_languages[tx_language])
                 _logger.info('Result: %s', res)
 
         # Actualmente trabajamos leyendo los idiomas que existen en transifex, pero si se quisieran crear desde runbot
