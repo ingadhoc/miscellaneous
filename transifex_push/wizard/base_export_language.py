@@ -47,7 +47,7 @@ class BaseLanguageExport(models.TransientModel):
             raise UserError(
                 'Se deben configura los siguientes parametros de transfiex: api_key, organization_slug, project_slug')
 
-        installed_langs = [x[0] for x in self.env['res.lang'].get_installed()]
+        installed_langs = self.env['res.lang'].with_context(active_test=True).search([]).mapped('iso_code')
 
         transifex_api.setup(auth=api_key)
         tx_organization = transifex_api.Organization.get(slug=organization_slug)
