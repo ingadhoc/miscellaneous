@@ -1,0 +1,45 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* transifex_push
+# 
+# Translators:
+# Juan José Scarafía <scarafia.juanjose@gmail.com>, 2022
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-04-13 17:30+0000\n"
+"PO-Revision-Date: 2022-04-11 18:15+0000\n"
+"Last-Translator: Juan José Scarafía <scarafia.juanjose@gmail.com>, 2022\n"
+"Language-Team: Spanish (https://www.transifex.com/adhoc/teams/133229/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Language: es\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: transifex_push
+#: model:ir.model.fields,field_description:transifex_push.field_base_language_export__api_key
+msgid "Api Key"
+msgstr ""
+
+#. module: transifex_push
+#: model:ir.model,name:transifex_push.model_base_language_export
+msgid "Language Export"
+msgstr "Exportar idioma"
+
+#. module: transifex_push
+#: model:ir.model.fields,field_description:transifex_push.field_base_language_export__organization_slug
+msgid "Organization Slug"
+msgstr ""
+
+#. module: transifex_push
+#: model:ir.model.fields,field_description:transifex_push.field_base_language_export__project_slug
+msgid "Project Slug"
+msgstr ""
+
+#. module: transifex_push
+#: model_terms:ir.ui.view,arch_db:transifex_push.wizard_lang_export
+msgid "Push To Transifex"
+msgstr ""

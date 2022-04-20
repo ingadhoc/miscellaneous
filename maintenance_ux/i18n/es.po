@@ -3,16 +3,16 @@
 # 	* maintenance_ux
 # 
 # Translators:
-# Juan Rivero <jr@adhoc.com.ar>, 2021
+# Juan José Scarafía <scarafia.juanjose@gmail.com>, 2022
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 13.0\n"
+"Project-Id-Version: Odoo Server 15.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-14 10:11+0000\n"
-"PO-Revision-Date: 2020-11-12 18:18+0000\n"
-"Last-Translator: Juan Rivero <jr@adhoc.com.ar>, 2021\n"
-"Language-Team: Spanish (https://www.transifex.com/adhoc/teams/46451/es/)\n"
+"POT-Creation-Date: 2022-04-20 11:19+0000\n"
+"PO-Revision-Date: 2022-04-11 18:14+0000\n"
+"Last-Translator: Juan José Scarafía <scarafia.juanjose@gmail.com>, 2022\n"
+"Language-Team: Spanish (https://www.transifex.com/adhoc/teams/133229/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -20,15 +20,10 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. module: maintenance_ux
-#: model:mail.template,subject:maintenance_ux.mail_template_maintenance_request_rating
-msgid "${object.name}: Service Rating Request"
-msgstr ""
-
-#. module: maintenance_ux
 #: model:mail.template,body_html:maintenance_ux.mail_template_maintenance_request_rating
 msgid ""
 "<div style=\"background:#F0F0F0;color:#515166;padding:10px 0px;font-family:Arial,Helvetica,sans-serif;font-size:14px;\">\n"
-"                % set access_token = object.rating_get_access_token()\n"
+"                <t t-set=\"access_token\" t-value=\"object.rating_get_access_token()\"/>\n"
 "                <table style=\"width:600px;margin:5px auto;\">\n"
 "                    <tbody>\n"
 "                        <tr>\n"
@@ -46,8 +41,8 @@ msgid ""
 "                        <tr>\n"
 "                            <td style=\"padding:15px 20px 10px 20px;\">\n"
 "                            <p>Hello,</p>\n"
-"                            <p>Please take a moment to rate our services related to the order \"<strong>${object.name}</strong>\"\n"
-"                            assigned to <strong>${object.rating_get_rated_partner_id().name}</strong>.</p>\n"
+"                            <p>Please take a moment to rate our services related to the order \"<strong><t t-out=\"object.name or ''\"/></strong>\"\n"
+"                            assigned to <strong><t t-out=\"object.rating_get_rated_partner_id().name or ''\"/></strong>.</p>\n"
 "                            <p>We appreciate your feedback. It helps us to improve continuously.</p>\n"
 "                            </td>\n"
 "                        </tr>\n"
@@ -67,17 +62,17 @@ msgid ""
 "                                            <table style=\"width:100%;text-align:center;\">\n"
 "                                                <tr>\n"
 "                                                    <td>\n"
-"                                                        <a href=\"/rating/${access_token}/10\">\n"
-"                                                        <img alt=\"Satisfied\" src=\"/rating/static/src/img/rating_10.png\" title=\"Satisfied\"/>\n"
+"                                                        <a t-attf-href=\"/rate/{{ access_token }}/5\">\n"
+"                                                        <img alt=\"Satisfied\" src=\"/rating/static/src/img/rating_5.png\" title=\"Satisfied\"/>\n"
 "                                                        </a>\n"
 "                                                    </td>\n"
 "                                                    <td>\n"
-"                                                        <a href=\"/rating/${access_token}/5\">\n"
-"                                                        <img alt=\"Not satisfied\" src=\"/rating/static/src/img/rating_5.png\" title=\"Not satisfied\"/>\n"
+"                                                        <a t-attf-href=\"/rate/{{ access_token }}/3\">\n"
+"                                                        <img alt=\"Not satisfied\" src=\"/rating/static/src/img/rating_3.png\" title=\"Not satisfied\"/>\n"
 "                                                        </a>\n"
 "                                                    </td>\n"
 "                                                    <td>\n"
-"                                                        <a href=\"/rating/${access_token}/1\">\n"
+"                                                        <a t-attf-href=\"/rate/{{ access_token }}/1\">\n"
 "                                                        <img alt=\"Highly Dissatisfied\" src=\"/rating/static/src/img/rating_1.png\" title=\"Highly Dissatisfied\"/>\n"
 "                                                        </a>\n"
 "                                                    </td>\n"
@@ -89,7 +84,7 @@ msgid ""
 "                            </td>\n"
 "                        </tr>\n"
 "                        <tr>\n"
-"                            <td style=\"padding:15px 20px 10px 20px;\">${object.user_id.signature | safe}</td>\n"
+"                            <td style=\"padding:15px 20px 10px 20px;\" t-out=\"object.user_id.signature or ''\"/>\n"
 "                        </tr>\n"
 "                    </tbody>\n"
 "                </table>\n"
@@ -100,11 +95,42 @@ msgstr ""
 #. module: maintenance_ux
 #: model:ir.model,name:maintenance_ux.model_maintenance_request
 msgid "Maintenance Request"
-msgstr "Solicitud de Mantenimiento"
+msgstr "Petición de mantenimiento"
 
 #. module: maintenance_ux
+#: model:mail.template,name:maintenance_ux.mail_template_maintenance_request_rating
+msgid "Maintenance: Rating Request"
+msgstr ""
+
+#. module: maintenance_ux
+#: model:ir.model.fields,field_description:maintenance_ux.field_maintenance_request__rating_ids
 #: model_terms:ir.ui.view,arch_db:maintenance_ux.maintenance_maintenance_request_view_form_inherit_rating
 msgid "Rating"
+msgstr ""
+
+#. module: maintenance_ux
+#: model:ir.model.fields,field_description:maintenance_ux.field_maintenance_request__rating_avg
+msgid "Rating Average"
+msgstr ""
+
+#. module: maintenance_ux
+#: model:ir.model.fields,field_description:maintenance_ux.field_maintenance_request__rating_last_feedback
+msgid "Rating Last Feedback"
+msgstr ""
+
+#. module: maintenance_ux
+#: model:ir.model.fields,field_description:maintenance_ux.field_maintenance_request__rating_last_image
+msgid "Rating Last Image"
+msgstr ""
+
+#. module: maintenance_ux
+#: model:ir.model.fields,field_description:maintenance_ux.field_maintenance_request__rating_last_value
+msgid "Rating Last Value"
+msgstr ""
+
+#. module: maintenance_ux
+#: model:ir.model.fields,field_description:maintenance_ux.field_maintenance_request__rating_count
+msgid "Rating count"
 msgstr ""
 
 #. module: maintenance_ux
@@ -113,6 +139,16 @@ msgid "Ratings"
 msgstr ""
 
 #. module: maintenance_ux
+#: model:ir.model.fields,help:maintenance_ux.field_maintenance_request__rating_last_feedback
+msgid "Reason of the rating"
+msgstr ""
+
+#. module: maintenance_ux
 #: model_terms:ir.ui.view,arch_db:maintenance_ux.maintenance_maintenance_request_view_form_inherit_rating
 msgid "Send Rating Request"
+msgstr ""
+
+#. module: maintenance_ux
+#: model:mail.template,subject:maintenance_ux.mail_template_maintenance_request_rating
+msgid "{{object.name}}: Service Rating Request"
 msgstr ""
