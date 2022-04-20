@@ -1,0 +1,36 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* report_copies
+# 
+# Translators:
+# Juan José Scarafía <scarafia.juanjose@gmail.com>, 2022
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-04-20 11:13+0000\n"
+"PO-Revision-Date: 2022-04-11 18:14+0000\n"
+"Last-Translator: Juan José Scarafía <scarafia.juanjose@gmail.com>, 2022\n"
+"Language-Team: Spanish (https://www.transifex.com/adhoc/teams/133229/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Language: es\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: report_copies
+#: model:ir.model.fields,field_description:report_copies.field_ir_actions_report__ncopies
+msgid "Number of print copies"
+msgstr ""
+
+#. module: report_copies
+#: model:ir.model,name:report_copies.model_ir_actions_report
+msgid "Report Action"
+msgstr "Acción de informe"
+
+#. module: report_copies
+#: code:addons/report_copies/models/ir_actions_report.py:0
+#, python-format
+msgid "The number of copies must be strict positive and different than zero."
+msgstr ""
