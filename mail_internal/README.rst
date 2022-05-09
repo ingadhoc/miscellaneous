@@ -14,9 +14,8 @@
 Mail Internal
 =============
 
-This module add a Internal Message link in the chatter section that we let us
-to send message that will be only be send/visible to employees users.
-TODO fix runbot tests
+This module let us to send message to all internal users
+that are followers of the document.
 
 Installation
 ============
@@ -31,6 +30,7 @@ Configuration
 To configure this module, you need to:
 
 #. Nothing to configure
+#. Check users are using Notification: Handle in Odoo (User's Preferences)
 
 Usage
 =====
