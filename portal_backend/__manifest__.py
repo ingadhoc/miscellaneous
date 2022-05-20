@@ -19,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Portal Backend',
-    'version': "15.0.1.0.0",
+    'version': "15.0.1.1.0",
     'category': 'Base',
     'sequence': 14,
     'summary': '',
@@ -33,6 +33,7 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'security/ir_rule.xml',
     ],
     'installable': True,
     'auto_install': False,
