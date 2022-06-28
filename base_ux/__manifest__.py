@@ -19,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Base UX',
-    'version': "15.0.1.0.0",
+    'version': "15.0.1.1.0",
     'category': 'Base',
     'sequence': 14,
     'summary': '',
@@ -32,22 +32,16 @@
         'base',
         'mail',  # depends on mail for tracking on fields
     ],
-    'external_dependencies': {
-        'python': ['openupgradelib'],
-    },
     'assets': {
         'web.assets_backend': [
             '/static/src/js/discuss.jsc',
         ],
     },
     'data': [
-        'data/ir_actions_server_data.xml',
         'views/ir_actions_act_window_view.xml',
         'views/ir_translation_view.xml',
         'views/mail_template_view.xml',
         'views/res_company_view.xml',
-        'wizards/merge_records_view.xml',
-        'security/ir.model.access.csv',
     ],
     'demo': [
     ],
