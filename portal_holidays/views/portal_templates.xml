@@ -1,0 +1,7 @@
+<odoo>
+    <template id="my_holidays" name="Link to backend" inherit_id="portal.frontend_layout">
+        <xpath expr="//a[@id='o_logout']" position="before">
+            <a href="/web" class="dropdown-item" groups="base.group_portal" role="menuitem">Mis Ausencias</a>
+        </xpath>
+    </template>
+</odoo>
