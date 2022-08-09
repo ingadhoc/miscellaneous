@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+portal_holiday_user_allocation,portal-holiday-model_hr_leave_allocation,hr_holidays.model_hr_leave_allocation,portal_holidays,1,0,1,0
+portal_holiday_user_holidays,portal-holiday-model_hr_leave,hr_holidays.model_hr_leave,portal_holidays,1,1,1,0
+portal_holiday_calendar_event,portal-holiday-model_calendar_event,calendar.model_calendar_event,portal_holidays,1,0,0,0
+portal_holiday_mail_activity,portal-holiday-model_mail_activity,mail.model_mail_activity,portal_holidays,1,0,1,0
+portal_holiday_resource_calendar_leaves,portal-holiday-model_resource_calendar_leaves,resource.model_resource_calendar_leaves,portal_holidays,1,0,0,0
+portal_holiday_resource_calendar_attendance,portal-holiday-model_resource_calendar_attendance,resource.model_resource_calendar_attendance,portal_holidays,1,0,0,0
+portal_holiday_hr_employee_public,portal-holiday-model_hr_employee_public,hr.model_hr_employee_public,portal_holidays,1,0,0,0
+portal_holiday_calendar_attendee,portal-holiday-model_calendar_attendee,calendar.model_calendar_attendee,portal_holidays,1,0,0,0
+portal_holiday_resource_calendar,portal-holiday-model_resource_calendar,resource.model_resource_calendar,portal_holidays,1,0,0,0
+portal_holiday_hr_leave_type,portal-holiday-model_hr_leave_type,hr_holidays.model_hr_leave_type,portal_holidays,1,0,0,0
