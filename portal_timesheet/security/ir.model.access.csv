@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+portal_timesheet_account_analytic_account,portal-timesheet-model_account_analytic_account,analytic.model_account_analytic_account,portal_timesheet,1,1,0,0
+portal_timesheet_project_project,portal-timesheet-model_project_project,project.model_project_project,portal_timesheet,1,0,0,0
+portal_timesheet_project_task,portal-timesheet-model_project_task,project.model_project_task,portal_timesheet,1,1,0,0
+portal_timesheet_account_analytic_line,portal-timesheet-model_account_analytic_line,analytic.model_account_analytic_line,portal_timesheet,1,1,1,1
+portal_timesheet_uom_uom,portal-timesheet-model_uom_uom,uom.model_uom_uom,portal_timesheet,1,0,0,0
