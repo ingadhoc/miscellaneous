@@ -19,11 +19,11 @@
 ##############################################################################
 {
     "name": "Print Node Printing",
-    "version": "13.0.1.0.0",
+    "version": "15.0.1.0.0",
     "category": "Generic Modules/Base",
     "author": "ADHOC SA, Odoo Community Association (OCA)",
     "license": "AGPL-3",
     "depends": ["base_report_to_printer"],
     "data": ["wizards/res_config_settings_view.xml"],
-    'installable': False,
+    'installable': True,
 }
