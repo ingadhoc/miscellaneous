@@ -19,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Base UX',
-    'version': "15.0.1.1.0",
+    'version': "16.0.1.0.0",
     'category': 'Base',
     'sequence': 14,
     'summary': '',
@@ -39,7 +39,6 @@
     },
     'data': [
         'views/ir_actions_act_window_view.xml',
-        'views/ir_translation_view.xml',
         'views/mail_template_view.xml',
         'views/res_company_view.xml',
     ],
@@ -47,7 +46,7 @@
     ],
     'test': [
     ],
-    'installable': False,
+    'installable': True,
     'auto_install': False,
     'application': False,
 }
