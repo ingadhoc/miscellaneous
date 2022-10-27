@@ -36,7 +36,7 @@
         'views/report_templates.xml',
         'views/ir_actions_views.xml',
     ],
-    'installable': True,
+    'installable': False,
     'auto_install': False,
     'application': False,
 }
