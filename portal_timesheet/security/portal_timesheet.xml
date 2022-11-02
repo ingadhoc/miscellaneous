@@ -3,10 +3,7 @@
     <record id="portal_timesheet" model="res.groups">
         <field name="name">portal_timesheet</field>
         <field name="category_id" ref="base.module_category_operations_timesheets"/>
-    </record>
-
-    <record id="hr_timesheet.timesheet_menu_root" model="ir.ui.menu">
-        <field name="groups_id" eval="(4, ref('portal_timesheet.portal_timesheet'))"/>
+        <field name="share" eval="True"/>
     </record>
 
     <record id="hr_timesheet.view_task_form2_inherited" model="ir.ui.view">
