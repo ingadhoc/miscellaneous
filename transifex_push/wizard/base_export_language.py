@@ -14,7 +14,7 @@ class BaseLanguageExport(models.TransientModel):
 
     api_key = fields.Char(default='1/7dbfd1118bec5ef2dfac3528d8c5cea3dbd42164')
     organization_slug = fields.Char(default='adhoc')
-    project_slug = fields.Char(default='odoo-15-0')
+    project_slug = fields.Char(default='odoo-16-0')
 
     def action_transifex_push(self):
         self.ensure_one()
