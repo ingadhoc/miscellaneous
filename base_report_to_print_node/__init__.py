@@ -4,3 +4,7 @@
 ##############################################################################
 from . import models
 from . import wizards
+
+from odoo.addons.base_report_to_printer import __manifest__ as manifest
+
+manifest.pop('external_dependencies')
