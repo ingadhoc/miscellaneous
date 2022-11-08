@@ -6,10 +6,6 @@
         <field name="share" eval="True"/>
     </record>
 
-    <record id="hr_holidays.hr_leave_menu_my" model="ir.ui.menu">
-        <field name="groups_id" eval="(4, ref('portal_holidays.portal_holidays'))"/>
-    </record>
-
     <!-- La siguiente linea va en el módulo de personalizaciones de la empresa que requiera este módulo -->
     <!-- <record id="base.group_portal" model="res.groups">
         <field name="implied_ids" eval="[(4, ref('portal_holidays.portal_holidays'))]"/>
