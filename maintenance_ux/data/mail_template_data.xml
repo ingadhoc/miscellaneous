@@ -2,14 +2,14 @@
 <odoo>
     <record id="mail_template_maintenance_request_rating" model="mail.template">
         <field name="name">Maintenance: Rating Request</field>
-        <field name="email_from">{{object.rating_get_rated_partner_id().email or ''}}</field>
+        <field name="email_from">{{object._rating_get_operator().email or ''}}</field>
         <field name="subject">{{object.name}}: Service Rating Request</field>
         <field name="model_id" ref="maintenance_ux.model_maintenance_request"/>
-        <field name="partner_to">{{object.rating_get_partner_id().id}}</field>
+        <field name="partner_to">{{object._rating_get_partner().id}}</field>
         <field name="auto_delete" eval="True"/>
         <field name="body_html" type="html">
             <div style="background:#F0F0F0;color:#515166;padding:10px 0px;font-family:Arial,Helvetica,sans-serif;font-size:14px;">
-                <t t-set="access_token" t-value="object.rating_get_access_token()"/>
+                <t t-set="access_token" t-value="object._rating_get_access_token()"/>
                 <table style="width:600px;margin:5px auto;">
                     <tbody>
                         <tr>
@@ -28,7 +28,7 @@
                             <td style="padding:15px 20px 10px 20px;">
                             <p>Hello,</p>
                             <p>Please take a moment to rate our services related to the order "<strong><t t-out="object.name or ''"/></strong>"
-                            assigned to <strong><t t-out="object.rating_get_rated_partner_id().name or ''"/></strong>.</p>
+                            assigned to <strong><t t-out="object._rating_get_operator().name or ''"/></strong>.</p>
                             <p>We appreciate your feedback. It helps us to improve continuously.</p>
                             </td>
                         </tr>
