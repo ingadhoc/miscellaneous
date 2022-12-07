@@ -19,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Mail Activity Board UX',
-    'version': "15.0.1.0.0",
+    'version': "16.0.1.0.0",
     'category': 'Base',
     'sequence': 14,
     'summary': '',
@@ -43,7 +43,7 @@
     ],
     'test': [
     ],
-    'installable': False,
+    'installable': True,
     'auto_install': False,
     'application': False,
 }
