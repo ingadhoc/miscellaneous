@@ -27,7 +27,7 @@
         <field name="inherit_id" ref="mail_activity_board.mail_activity_view_tree"/>
         <field name="arch" type="xml">
             <field name="res_name" position="after">
-                <button name="open_origin" type="object" icon="fa-external-link"/>
+                <button name="open_origin" type="object" title="Open" icon="fa-external-link"/>
             </field>
             <tree>
                 <field name="res_model_id" invisible="1"/>
