@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add the button "Apps" for portal users in the dropdown menu in the frontend -->
+    <template id="link_to_backend" name="Link to backend" inherit_id="portal.user_dropdown">
+        <a id="o_backend_user_dropdown_link" position="attributes">
+            <attribute name="groups">base.group_user,portal_backend.group_portal_backend</attribute>
+        </a>
+    </template>
+</odoo>

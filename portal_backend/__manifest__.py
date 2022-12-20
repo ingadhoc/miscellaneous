@@ -19,22 +19,26 @@
 ##############################################################################
 {
     'name': 'Portal Backend',
-    'version': "15.0.1.0.0",
+    'version': "16.0.1.0.0",
     'category': 'Base',
     'sequence': 14,
     'summary': '',
     'author': 'ADHOC SA',
     'website': 'www.adhoc.com.ar',
     'license': 'AGPL-3',
-    'images': [
-    ],
     'depends': [
         'portal',
     ],
     'data': [
+        'security/res_groups.xml',
         'security/ir.model.access.csv',
+        'views/base_menus.xml',
+        'views/portal_templates.xml',
     ],
-    'installable': False,
+    'demo': [
+        'demo/res_users_demo.xml',
+    ],
+    'installable': True,
     'auto_install': False,
     'application': False,
 }
