@@ -4,8 +4,6 @@ from odoo import models
 from odoo.http import request
 from odoo.tools import ustr
 
-from odoo.addons.web.controllers.main import HomeStaticTemplateHelpers
-
 
 class Http(models.AbstractModel):
     _inherit = 'ir.http'
@@ -14,18 +12,16 @@ class Http(models.AbstractModel):
         user = request.env.user
 
         session_info = super().session_info()
-        if self.env.user.has_group('base.group_portal'):
+        if self.env.user.has_group('portal_backend.group_portal_backend'):
             # the following is only useful in the context of a webclient bootstrapping
             # but is still included in some other calls (e.g. '/web/session/authenticate')
             # to avoid access errors and unnecessary information, it is only included for users
             # with access to the backend ('internal'-type users)
-            qweb_checksum = HomeStaticTemplateHelpers.get_qweb_templates_checksum(debug=request.session.debug, bundle="web.assets_qweb")
             menus = request.env['ir.ui.menu'].load_menus(request.session.debug)
             ordered_menus = {str(k): v for k, v in menus.items()}
             menu_json_utf8 = json.dumps(ordered_menus, default=ustr, sort_keys=True).encode()
             session_info['cache_hashes'].update({
                 "load_menus": hashlib.sha512(menu_json_utf8).hexdigest()[:64], # sha512/256
-                "qweb": qweb_checksum,
             })
             session_info.update({
                 # current_company should be default_company

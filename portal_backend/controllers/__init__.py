@@ -3,4 +3,4 @@
 # directory
 ##############################################################################
 
-from . import portal
+from . import patch_web_controller_utils

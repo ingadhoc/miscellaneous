@@ -11,10 +11,41 @@
    :alt: License: AGPL-3
 
 ==============
-POrtal Backend
+Portal Backend
 ==============
 
-This module is for generated an environment to be able to use portal users in backend.
+This module creates a new user type "Portal Backend" that grants access to the Odoo backend. However, users with this group won't be able to use any app by default. To enable app access for Portal Backend users, it is necessary an specific module "portal_app" that defines the app permissions for this user group.
+
+To create the necessary groups and categories for "portal_app", you can use the following template:
+
+App category inheriting from portal advanced:
+
+.. code-block:: xml
+
+    <record model="ir.module.category" id="category_portal_app">
+        <field name="name">Portal app</field>
+        <field name="parent_id" ref="portal_backend.category_portal_advanced"/>
+    </record>
+
+Group to give access to Portal Backend users to use that app:
+
+.. code-block:: xml
+
+    <record id="group_portal_backend_app" model="res.groups">
+        <field name="name">Portal app</field>
+        <field name="category_id" ref="category_portal_app"/>
+    </record>
+
+You can also create a set of groups that inherit (or not) from each other, but the category always have to be "category_portal_app", because the views are different for each type of user. Here's an example:
+
+.. code-block:: xml
+
+    <record id="group_portal_backend_app_2" model="res.groups">
+        <field name="name">Portal app 2</field>
+        <field name="category_id" ref="category_portal_app"/>
+        <field name="implied_ids" eval="[Command.link(ref('group_portal_backend_app'))]"/>
+    </record>
+
 
 Installation
 ============
