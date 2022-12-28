@@ -61,8 +61,8 @@
         <field name="context">{}</field>
         <field name="view_ids"
             eval="[(5, 0, 0),
-                    (0, 0, {'view_mode': 'kanban', 'view_id': ref('mail_activity_board.mail_activity_view_kanban')}),
                     (0, 0, {'view_mode': 'tree', 'view_id': ref('mail_activity_board_ux.mail_activity_view_tree')}),
+                    (0, 0, {'view_mode': 'kanban', 'view_id': ref('mail_activity_board.mail_activity_view_kanban')}),
                     (0, 0, {'view_mode': 'form', 'view_id': ref('mail_activity_board.mail_activity_view_form_board')}),
                     (0, 0, {'view_mode': 'calendar'}),
                     (0, 0, {'view_mode': 'pivot'}),
