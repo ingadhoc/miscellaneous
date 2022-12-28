@@ -35,8 +35,8 @@
         'views/mail_activity_views.xml',
     ],
     "assets": {
-        "web.assets_qweb": [
-            "mail_activity_board_ux/static/src/components/chatter_topbar/chatter_topbar.xml",
+        "web.assets_backend": [
+            ('remove', 'mail_activity_board/static/src/components/chatter_topbar/chatter_topbar.xml'),
         ],
     },
     'demo': [
