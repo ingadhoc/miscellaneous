@@ -6,19 +6,7 @@
         <field name="share" eval="True"/>
     </record>
 
-    <record id="hr_holidays.hr_leave_menu_my" model="ir.ui.menu">
-        <field name="groups_id" eval="(4, ref('portal_holidays.portal_holidays'))"/>
-    </record>
-
-    <record id="hr_holidays.hr_holidays_menu_manager_payroll_to_report" model="ir.ui.menu">
-        <field name="groups_id" eval="(4, ref('portal_holidays.portal_holidays'))"/>
-    </record>
-
-    <record id="hr_holidays.menu_open_employee_leave" model="ir.ui.menu">
-        <field name="groups_id" eval="(4, ref('portal_holidays.portal_holidays'))"/>
-    </record>
-
-    <record id="hr_holidays.menu_open_department_leave_approve" model="ir.ui.menu">
+    <record id="hr_holidays.menu_hr_holidays_root" model="ir.ui.menu">
         <field name="groups_id" eval="(4, ref('portal_holidays.portal_holidays'))"/>
     </record>
 
