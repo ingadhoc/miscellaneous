@@ -19,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Portal Holidays',
-    'version': '13.0.1.0.0',
+    'version': '13.0.1.4.0',
     'category': 'Base',
     'sequence': 14,
     'summary': '',
@@ -37,7 +37,7 @@
         'security/ir.model.access.csv',
         'views/portal_templates.xml',
     ],
-    'installable': True,
+    'installable': False,
     'auto_install': False,
     'application': False,
 }
