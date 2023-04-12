@@ -38,6 +38,9 @@
         'data/maintenance_data.xml',
         'views/maintenance_views.xml',
     ],
+    'demo':[
+        'demo/maintenance_demo.xml',
+    ],
     'installable': True,
     'auto_install': False,
     'application': False,

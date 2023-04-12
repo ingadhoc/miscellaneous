@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="rating_maintenance_1" model="rating.rating">
+        <field name="access_token">MAINTENANCE_1</field>
+        <field name="res_model_id" ref="maintenance.model_maintenance_request"/>
+        <field name="rated_partner_id" ref="base.partner_demo"/>
+        <field name="partner_id" ref="base.partner_admin"/>
+        <field name="create_date" eval="datetime.now()"/>
+        <field name="res_id" ref="maintenance.m_request_3"/>
+    </record>
+    <function model="maintenance.request" name="rating_apply"
+            eval="([ref('maintenance.m_request_3')], 5, 'MAINTENANCE_1', None, 'Good Job')"/>
+
+    <record id="rating_maintenance_2" model="rating.rating">
+        <field name="access_token">MAINTENANCE_2</field>
+        <field name="res_model_id" ref="maintenance.model_maintenance_request"/>
+        <field name="rated_partner_id" ref="base.partner_demo"/>
+        <field name="partner_id" ref="base.partner_admin"/>
+        <field name="create_date" eval="datetime.now()"/>
+        <field name="res_id" ref="maintenance.m_request_6"/>
+    </record>
+    <function model="maintenance.request" name="rating_apply"
+            eval="([ref('maintenance.m_request_6')], 2, 'MAINTENANCE_2', None, 'Not as good as expected')"/>
+</odoo>
