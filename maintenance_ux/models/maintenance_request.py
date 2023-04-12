@@ -15,7 +15,7 @@ class MaintenanceRequest(models.Model):
         for order in self:
             order.rating_send_request(rating_template, force_send=True)
 
-    def rating_get_partner_id(self):
+    def _rating_get_partner(self):
         if self.user_id.partner_id:
             return self.user_id.partner_id
         return self.env['res.partner']
