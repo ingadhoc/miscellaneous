@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="employee_potal_advanced" model="hr.employee">
+        <field name="name">John Portal Advanced</field>
+        <field name="user_id" ref="portal_backend.user_portal_advanced"/>
+        <field name="department_id" ref="hr.dep_rd"/>
+        <field name="parent_id" ref="hr.employee_admin"/>
+        <field name="job_id" ref="hr.job_developer"/>
+        <field name="job_title">Junior Developer</field>
+        <field name="category_ids" eval="[(6, 0, [ref('hr.employee_category_4')])]"/>
+        <field name="work_location_id" ref="hr.work_location_1"/>
+        <field name="image_1920" type="base64" file="portal_backend/static/img/advanced_partner-image.png"/>
+        <field name="create_date">2022-01-01 00:00:00</field>
+    </record>
+
+    <!-- allocations -->
+    <record id="hr_holidays_allocation_cl_pa" model="hr.leave.allocation">
+        <field name="name">Paid Time Off for John Portal Advanced</field>
+        <field name="holiday_status_id" ref="hr_holidays.holiday_status_cl"/>
+        <field name="number_of_days">10</field>
+        <field name="employee_id" ref="portal_holidays.employee_potal_advanced"/>
+        <field name="employee_ids" eval="[(4, ref('portal_holidays.employee_potal_advanced'))]"/>
+        <field name="state">confirm</field>
+        <field name="date_from" eval="time.strftime('%Y-1-1')"/>
+        <field name="date_to" eval="time.strftime('%Y-12-31')"/>
+    </record>
+    <function model="hr.leave.allocation" name="action_validate">
+        <value eval="ref('portal_holidays.hr_holidays_allocation_cl_pa')"/>
+    </function>
+
+    <record id="hr_holidays_allocation_vc_pa" model="hr.leave.allocation">
+        <field name="name">Time Management Training</field>
+        <field name="holiday_status_id" ref="hr_holidays.holiday_status_training"/>
+        <field name="number_of_days">7</field>
+        <field name="employee_id" ref="portal_holidays.employee_potal_advanced"/>
+        <field name="employee_ids" eval="[(4, ref('portal_holidays.employee_potal_advanced'))]"/>
+        <field name="state">confirm</field>
+        <field name="date_from" eval="time.strftime('%Y-1-1')"/>
+        <field name="date_to" eval="time.strftime('%Y-12-31')"/>
+    </record>
+
+    <!-- leave request -->
+    <record id="portal_holidays.employee_potal_advanced" model="hr.employee">
+        <field name="leave_manager_id" ref="base.user_admin"/>
+    </record>
+
+    <record id="hr_holidays_cl_pa" model="hr.leave">
+        <field name="name">Trip with Family</field>
+        <field name="holiday_status_id" ref="hr_holidays.holiday_status_cl"/>
+        <field eval="time.strftime('%Y-%m-05')" name="date_from"/>
+        <field eval="time.strftime('%Y-%m-08')" name="date_to"/>
+        <field eval="time.strftime('%Y-%m-05')" name="request_date_from"/>
+        <field eval="time.strftime('%Y-%m-08')" name="request_date_to"/>
+        <field name="employee_id" ref="portal_holidays.employee_potal_advanced"/>
+        <field name="employee_ids" eval="[(4, ref('portal_holidays.employee_potal_advanced'))]"/>
+    </record>
+
+    <record id="hr_holidays_sl_pa" model="hr.leave">
+        <field name="name">Sick day</field>
+        <field name="holiday_status_id" ref="hr_holidays.holiday_status_sl"/>
+        <field eval="(datetime.now()+relativedelta(months=1, day=3, weekday=0)).strftime('%Y-%m-%d 01:00:00')" name="date_from"/>
+        <field eval="(datetime.now()+relativedelta(months=1, day=3, weekday=0) + relativedelta(weekday=2)).strftime('%Y-%m-%d 23:00:00')" name="date_to"/>
+        <field eval="(datetime.now()+relativedelta(months=1, day=3, weekday=0)).strftime('%Y-%m-%d 01:00:00')" name="request_date_from"/>
+        <field eval="(datetime.now()+relativedelta(months=1, day=3, weekday=0) + relativedelta(weekday=2)).strftime('%Y-%m-%d 23:00:00')" name="request_date_to"/>
+        <field name="employee_id" ref="portal_holidays.employee_potal_advanced"/>
+        <field name="employee_ids" eval="[(4, ref('portal_holidays.employee_potal_advanced'))]"/>
+        <field name="state">confirm</field>
+    </record>
+
+ </odoo>
