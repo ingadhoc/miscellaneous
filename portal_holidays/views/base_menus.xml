@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_holidays.menu_hr_holidays_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[Command.link(ref('portal_holidays.group_portal_backend_holiday'))]"/>
+    </record>
+</odoo>

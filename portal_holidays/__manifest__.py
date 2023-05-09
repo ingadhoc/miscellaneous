@@ -19,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Portal Holidays',
-    'version': '13.0.1.4.0',
+    'version': '16.0.1.0.0',
     'category': 'Base',
     'sequence': 14,
     'summary': '',
@@ -33,11 +33,17 @@
         'hr_holidays',
     ],
     'data': [
-        'security/portal_holidays.xml',
+        'security/res_groups.xml',
+        'security/ir_rule.xml',
         'security/ir.model.access.csv',
-        'views/portal_templates.xml',
+        'views/base_menus.xml',
+        'views/hr_employee_views.xml',
     ],
-    'installable': False,
+    'demo': [
+        'demo/hr_demo.xml',
+        'demo/res_users_demo.xml',
+    ],
+    'installable': True,
     'auto_install': False,
     'application': False,
 }
