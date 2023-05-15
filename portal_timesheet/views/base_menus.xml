@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_timesheet.timesheet_menu_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[Command.link(ref('portal_timesheet.group_portal_backend_timesheet'))]"/>
+    </record>
+
+    <record id="hr_timesheet.timesheet_menu_activity_user" model="ir.ui.menu">
+        <field name="groups_id" eval="[Command.link(ref('portal_timesheet.group_portal_backend_timesheet'))]"/>
+    </record>
+</odoo>

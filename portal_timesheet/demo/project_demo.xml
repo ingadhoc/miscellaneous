@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="project.project_project_1" model="project.project">
+        <field name="message_partner_ids" eval="[(4, ref('portal_backend.partner_portal_advanced'))]"/>
+    </record>
+ </odoo>

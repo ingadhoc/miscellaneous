@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="employee_potal_advanced" model="hr.employee">
+        <field name="name">John Portal Advanced</field>
+        <field name="user_id" ref="portal_backend.user_portal_advanced"/>
+        <field name="department_id" ref="hr.dep_rd"/>
+        <field name="parent_id" ref="hr.employee_admin"/>
+        <field name="job_id" ref="hr.job_developer"/>
+        <field name="job_title">Junior Developer</field>
+        <field name="category_ids" eval="[(6, 0, [ref('hr.employee_category_4')])]"/>
+        <field name="work_location_id" ref="hr.work_location_1"/>
+        <field name="image_1920" type="base64" file="portal_backend/static/img/advanced_partner-image.png"/>
+        <field name="create_date">2022-01-01 00:00:00</field>
+    </record>
+ </odoo>
