@@ -6,3 +6,4 @@ from . import res_users
 from . import ir_http
 from . import mail_thread
 from . import mail_activity_mixin
+from . import ir_attachment
