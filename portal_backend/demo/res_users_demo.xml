@@ -18,8 +18,8 @@
 
     <record id="user_portal_advanced" model="res.users" context="{'no_reset_password': True}">
         <field name="partner_id" ref="partner_portal_advanced"/>
-        <field name="login">portal+</field>
-        <field name="password">portal+</field>
+        <field name="login">portal-backend</field>
+        <field name="password">portal-backend</field>
         <field name="company_id" ref="base.main_company"/>
         <field name="company_ids" eval="[Command.link(ref('base.main_company'))]"/>
         <field name="signature"><![CDATA[<span>-- <br/>Mr Advanced portal</span>]]></field>
