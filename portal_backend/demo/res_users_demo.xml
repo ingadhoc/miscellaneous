@@ -8,7 +8,7 @@
         <field name="street">41 Lakes Street</field>
         <field name="city">Rosario</field>
         <field name="zip">2000</field>
-        <field name='country_id' ref='base.us'/>
+        <field name='country_id' ref='base.ar'/>
         <field name='state_id' ref='base.state_ar_s'/>
         <field name="phone">+54 555-555-5555</field>
         <field name="email">portaladvanced@yourcompany.example.com</field>
