@@ -1,0 +1,89 @@
+<odoo>
+    <record id="view_ir_model_dynamic_message_tree" model="ir.ui.view">
+        <field name="name">ir.model.dynamic_message.tree</field>
+        <field name="model">ir.model.dynamic_message</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="model_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_ir_model_dynamic_message_form" model="ir.ui.view">
+        <field name="name">ir.model.dynamic_message.form</field>
+        <field name="model">ir.model.dynamic_message</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button string="Create / Update" type="object" name="confirm" class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <field name="id" invisible="1"/>
+                    <field name="model_name" invisible="1"/>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="description"/>
+                            <field name="model_id" force_save="True" options="{'no_create': True, 'no_open': True}" attrs="{'readonly': ['|', ('line_ids', '!=', []), ('id', '!=', False)]}"/>
+                        </group>
+                        <group>
+                            <field name="alert_type"/>
+                            <field name="view_to_inherit_id" domain="[('arch_db', 'like', '&lt;sheet&gt;'), ('type', '=', 'form'), ('model', '=', model_name), ('mode', '=', 'primary')]"/>
+                            <field name="view_id" groups="base.group_no_one" readonly="True"/>
+                            <field name="field_id" groups="base.group_no_one" readonly="True"/>
+                            <field name="depends"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Lines">
+                            <field name="line_ids">
+                                <tree>
+                                    <field name="description" optional="hide"/>
+                                    <field name="domain" optional="show"/>
+                                    <field name="message" optional="show"/>
+                                    <field name="code" optional="show"/>
+                                    <field name="model_name" invisible="True"/>
+                                </tree>
+                                <form>
+                                    <p>En las expresiones, del lado derecho, se puede usar el string "EXP:[expresion]" para poner codigo dinamico. A la hora de pasar el dominio al calculo solo se
+                                    dejará la expresion. Es importante que "EXP" se ponga con comillas dobles y no comillas simples tal como se muestra en los ejemplos. Las variables disponibles son:
+                                    <ul>
+                                        <li>rec: registro que se está evaluando</li>
+                                        <li>las mismas variables disponibles en un campo calculado, por ej "datetime.datetime.now()" y "dateutil.relativedelta.relativedelta":</li>
+                                    </ul>
+                                    Por ej:
+                                    <ul>
+                                        <li>[("create_date", "=", "EXP: datetime.datetime.now() - dateutil.relativedelta.relativedelta(days=-10)")]</li>
+                                        <li>[("partner_id", "in", ["EXP: rec.child_ids.ids"])]</li>
+                                    </ul>
+                                    </p>
+                                    <group>
+                                        <field name="description"/>
+                                        <field name="domain" widget="domain" options="{'model': 'model_name', 'in_dialog': True}" />
+                                        <field name="message"/>
+                                        <field name="code"/>
+                                        <field name="model_name" invisible="True"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Code">
+                            <field name="code"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ir_model_dynamic_message" model="ir.actions.act_window">
+        <field name="name">Dynamic Messages</field>
+        <field name="res_model">ir.model.dynamic_message</field>
+        <field name="target">current</field>
+        <field name='view_mode'>tree,form</field>
+    </record>
+
+    <menuitem id="menu_ir_model_dynamic_message" groups="group_dynamic_messages_manager" sequence="100" action="action_ir_model_dynamic_message" web_icon="fa fa-info,#f1c40f,#34495e"/>
+</odoo>

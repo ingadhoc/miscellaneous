@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- <record model="ir.module.category" id="dynamic_messages_manager">
+        <field name="name">Manage Dynamic Messages</field>
+    </record> -->
+
+    <record id="group_dynamic_messages_manager" model="res.groups">
+        <field name="name">Manage Dynamic Messages</field>
+        <!-- <field name="name">Portal Holiday</field>
+        <field name="category_id" ref="category_portal_holiday"/> -->
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+</odoo>
