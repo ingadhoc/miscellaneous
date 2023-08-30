@@ -1,7 +1,7 @@
 from odoo import models, api
 from odoo.tools import html2plaintext
 from odoo.tools.safe_eval import wrap_module
-
+import pdb
 class IrActionsServer(models.Model):
 
     _inherit = 'ir.actions.server'
@@ -15,5 +15,6 @@ class IrActionsServer(models.Model):
         eval_context.update({
             're': self.re,
             'html2plaintext': html2plaintext,
+            'pdb_set_trace': pdb.set_trace,
         })
         return eval_context
