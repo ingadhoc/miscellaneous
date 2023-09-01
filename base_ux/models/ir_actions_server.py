@@ -1,7 +1,7 @@
 from odoo import models, api
 from odoo.tools import html2plaintext
 import re
-
+import pdb
 
 class IrActionsServer(models.Model):
 
@@ -14,5 +14,6 @@ class IrActionsServer(models.Model):
         eval_context.update({
             're': re,
             'html2plaintext': html2plaintext,
+            'pdb_set_trace' : pdb.set_trace,
         })
         return eval_context
