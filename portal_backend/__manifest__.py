@@ -19,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Portal Backend',
-    'version': "16.0.1.0.0",
+    'version': "16.0.1.1.0",
     'category': 'Base',
     'sequence': 14,
     'summary': '',
@@ -32,12 +32,12 @@
     'data': [
         'security/res_groups.xml',
         'security/ir.model.access.csv',
-        'views/base_menus.xml',
         'views/portal_templates.xml',
     ],
     'demo': [
         'demo/res_users_demo.xml',
     ],
+    'post_init_hook': 'post_init',
     'installable': True,
     'auto_install': False,
     'application': False,
