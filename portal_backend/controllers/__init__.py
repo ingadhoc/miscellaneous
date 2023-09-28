@@ -4,3 +4,4 @@
 ##############################################################################
 
 from . import patch_web_controller_utils
+from . import discuss
