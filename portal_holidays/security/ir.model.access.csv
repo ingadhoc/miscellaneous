@@ -1,7 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 portal_holiday_user_allocation,portal-holiday-model_hr_leave_allocation,hr_holidays.model_hr_leave_allocation,group_portal_backend_holiday,1,1,1,0
 portal_holiday_user_holidays,portal-holiday-model_hr_leave,hr_holidays.model_hr_leave,group_portal_backend_holiday,1,1,1,0
-portal_holiday_calendar_attendee,portal-holiday-model_calendar_attendee,calendar.model_calendar_attendee,group_portal_backend_holiday,1,1,1,0
+portal_holiday_calendar_attendee,portal-holiday-model_calendar_attendee,calendar.model_calendar_attendee,portal_backend.group_portal_backend,1,1,1,0
 portal_holiday_calendar_event,portal-holiday-model_calendar_event,calendar.model_calendar_event,group_portal_backend_holiday,1,1,1,0
 portal_holiday_hr_department,portal-holiday-model_hr_department,hr.model_hr_department,group_portal_backend_holiday,1,0,0,0
 portal_holiday_hr_employee_public,portal-holiday-model_hr_employee_public,hr.model_hr_employee_public,group_portal_backend_holiday,1,0,0,0
