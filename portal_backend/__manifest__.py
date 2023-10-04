@@ -32,7 +32,6 @@
     'data': [
         'security/res_groups.xml',
         'security/ir.model.access.csv',
-        'views/base_menus.xml',
         'views/portal_templates.xml',
     ],
     'demo': [

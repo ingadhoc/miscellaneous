@@ -7,3 +7,4 @@ from . import ir_attachment
 from . import ir_http
 from . import mail_thread
 from . import mail_activity_mixin
+from . import ir_ui_menu
