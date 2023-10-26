@@ -17,7 +17,7 @@
         'views/mail_activity_type_views.xml',
         'data/ir_cron_data.xml',
     ],
-    'installable': True,
+    'installable': False,
     'auto_install': False,
     'application': False,
 }

@@ -15,5 +15,5 @@
         'wizard/base_export_language_views.xml',
     ],
     'post_init_hook': 'post_init',
-    'installable': True,
+    'installable': False,
 }
