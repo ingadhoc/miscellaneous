@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="kr_ppal_view_tree" model="ir.ui.view">
+    <field name="name">Kr principales</field>
+    <field name="model">kr.ppal</field>
+    <field name="arch" type="xml">
+        <tree>
+            <field name="codigo"/>
+            <field name="descripcion"/>
+        </tree>
+    </field>
+</record>
+
+<record model="ir.actions.act_window" id="action_kr_ppal">
+    <field name="name">KR ppales</field>
+    <field name="res_model">kr.ppal</field>
+    <field name="view_mode">tree</field>
+</record>
+
+<menuitem id="menu_okr_config" name="Objetivos ppales" parent="okr.objetivo_base_menu" sequence="5" groups="base.group_user"/>
+<menuitem action="action_kr_ppal" id="menu_kr_ppal" sequence="7" parent="okr.menu_okr_config"/>
+
+</odoo>

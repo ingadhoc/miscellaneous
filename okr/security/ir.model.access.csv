@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_kr_ppal,access_kr_ppal,model_kr_ppal,base.group_user,1,1,1,1
+access_okr_objetivo,access_okr_objetivo,model_okr_objetivo,base.group_user,1,1,1,1
+access_okr_objetivo_line,access_okr_objetivo_line,model_okr_objetivo_line,base.group_user,1,1,1,1
