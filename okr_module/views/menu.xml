@@ -1,0 +1,13 @@
+<odoo>
+    <menuitem
+        id="okr_menu"
+        name="OKR"
+        sequence="80"/>
+
+    <menuitem
+        id="okr_main"
+        name="OKR"
+        action="okr_menu_action"
+        parent="okr_menu"
+        sequence="10"/>
+</odoo>

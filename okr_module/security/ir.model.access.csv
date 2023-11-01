@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+okr_module.access_okr_base,access_okr_base,okr_module.model_okr_base,base.group_user,1,1,1,1
+okr_module.access_okr_base_line,access_okr_base_line,okr_module.model_okr_base_line,base.group_user,1,1,1,1
