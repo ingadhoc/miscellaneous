@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <!-- okr.objective form view -->
+    <record id="okr_objective_view_form" model="ir.ui.view">
+        <field name="name">okr.objective.view.form</field>
+        <field name="model">okr.objective</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <field name="company_id" invisible="1"/>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="description"/>
+                        <group>
+                            <field name="department_id"/>
+                            <field name="partner_id"/>
+                        </group>
+                        <group>
+                            <field name="year"/>
+                            <field name="quarter"/>
+                            <field name="is_commitment"/>
+                        </group>
+                    </group>
+                    <page name="Comments">
+                        <field name="comments"/>
+                    </page>
+                    <page name="Next Q">
+                        <field name="next_q_comments"/>
+                    </page>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- okr.objective tree view -->
+    <record id="okr_objective_view_tree" model="ir.ui.view">
+        <field name="name">okr.objective.view.tree</field>
+        <field name="model">okr.objective</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="department_id"/>
+                <field name="partner_id"/>
+                <field name="year" optional="hide"/>
+                <field name="quarter" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+</odoo>
