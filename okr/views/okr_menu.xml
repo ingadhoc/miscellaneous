@@ -1,0 +1,5 @@
+<odoo>
+    <menuitem id="okr_menu" name="OKR"/>
+    <menuitem id="okr_area" name="Okr por area" parent="okr_menu"/>
+    <menuitem id="okr_objetivos" action="okr_action" parent="okr_area"/>
+</odoo>
