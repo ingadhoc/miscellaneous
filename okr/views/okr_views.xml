@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+<!-- Accion de venta -->
+    <record id="okr_action" model="ir.actions.act_window">
+        <field name="name">Okr</field>
+        <field name="res_model">okr</field>
+    </record>
+
+<!-- Vista tree-->
+    <record id="okr_view_tree" model="ir.ui.view">
+        <field name="name">okr.view.tree</field>
+        <field name="model">okr</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" string="Title"/>
+                <field name="description"/>
+            </tree>
+        </field>
+    </record>
+
+<!-- Vista form-->
+    <record id="okr_view_tree" model="ir.ui.view">
+        <field name="name">okir.view.form</field>
+        <field name="model">okr</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="name" string="Title"/>
+                <field name="description"/>
+            </form>
+        </field>
+    </record>
+
+</odoo>
