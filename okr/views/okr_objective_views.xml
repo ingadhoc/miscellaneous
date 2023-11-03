@@ -1,0 +1,33 @@
+<odoo>
+
+    <record id="view_okr_objective_tree" model="ir.ui.view">
+        <field name="name">okr.objective.tree</field>
+        <field name="model">okr.objective</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_okr_objective_form" model="ir.ui.view">
+        <field name="name">okr.objective.form</field>
+        <field name="model">okr.objective</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="name"/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_okr_objective" model="ir.actions.act_window">
+        <field name="name">OKR Objectives</field>
+        <field name="res_model">okr.objective</field>
+        <field name="target">current</field>
+        <field name='view_mode'>tree,form</field>
+    </record>
+
+    <!-- groups="group_okr_objective" -->
+    <menuitem id="menu_okr_objective" sequence="100" action="action_okr_objective" web_icon="fa fa-info,#f1c40f,#34495e"/>
+
+</odoo>
