@@ -1,0 +1,32 @@
+<odoo>
+
+    <record id="view_okr_key_result_tree" model="ir.ui.view">
+        <field name="name">okr.key_result.tree</field>
+        <field name="model">okr.key_result</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_okr_key_result_form" model="ir.ui.view">
+        <field name="name">okr.key_result.form</field>
+        <field name="model">okr.key_result</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="name"/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_okr_key_result" model="ir.actions.act_window">
+        <field name="name">OKR Key Results</field>
+        <field name="res_model">okr.key_result</field>
+        <field name="target">current</field>
+        <field name='view_mode'>tree,form</field>
+    </record>
+
+    <menuitem id="menu_okr_key_result" sequence="100" string="Key Results" action="action_okr_key_result" parent="menu_okr_objective"/>
+
+</odoo>
