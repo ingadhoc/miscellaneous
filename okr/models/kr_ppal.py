@@ -4,7 +4,7 @@ from odoo import models, fields
 class KrPPal(models.Model):
     _name = "kr.ppal"
     _description = "Kr ppal"
-    _rec_name = 'descripcion'
+    _rec_name = 'description'
 
-    codigo = fields.Char(required=True)
-    descripcion = fields.Char(required=True)
+    code = fields.Char(required=True)
+    description = fields.Char(required=True)

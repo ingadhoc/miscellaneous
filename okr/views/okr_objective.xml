@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="objetivo_view_form" model="ir.ui.view">
+    <field name="name">Objetivo</field>
+    <field name="model">okr.objective</field>
+    <field name="arch" type="xml">
+        <form>
+            <group>
+                <group>
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="progress"/>
+                    <field name="weight"/>
+                    <field name="comments"/>
+                    <field name="department_id"/>
+                </group>
+                <group>
+                    <field name="period"/>
+                    <field name="year"/>
+                </group>
+            </group>
+            <notebook>
+                <page id="line_tab"
+                      name="line_tab"
+                      string="Okr Lines">
+                    <field name="key_result_ids"
+                        widget="section_and_note_one2many"
+                        mode="tree,kanban">
+                        <tree editable="bottom" string="Okr Lines">
+                            <field name="name"/>
+                            <field name="description"/>
+                            <field name="progress"/>
+                            <field name="weight"/>
+                            <field name="comments"/>
+                            <field name="objective"/>
+                            <field name="target"/>
+                            <field name="result"/>
+                            <field name="user_id"/>
+                            <field name="plan_de_accion"/>
+                            <field name="interdependencias"/>
+                            <field name="realizado_en_el_q"/>
+                            <field name="notas_proximo_q"/>
+                        </tree>
+                    </field>
+                </page>
+            </notebook>
+        </form>
+    </field>
+</record>
+
+<record id="objetivo_view_tree" model="ir.ui.view">
+    <field name="name">Objetivo</field>
+    <field name="model">okr.objective</field>
+    <field name="arch" type="xml">
+        <tree>
+            <field name="name"/>
+            <field name="description"/>
+            <field name="progress"/>
+            <field name="weight"/>
+            <field name="comments"/>
+            <field name="department_id"/>
+            <field name="period"/>
+            <field name="year"/>
+        </tree>
+    </field>
+</record>
+
+<record model="ir.ui.view" id="view_objetive_search">
+    <field name="name">okr.objective.search</field>
+    <field name="model">okr.objective</field>
+    <field name="arch" type="xml">
+        <search>
+            <field name="department_id"/>
+        </search>
+    </field>
+</record>
+
+<record id='objective_book_action' model="ir.actions.act_window">
+    <field name="name">Objective</field>
+    <field name="res_model">okr.objective</field>
+    <field name="view_mode">tree,form</field>
+    <field name="search_view_id" ref="view_objetive_search"/>
+</record>
+
+<menuitem name="OKR" id="objetivo_base_menu" sequence="0"/>
+<menuitem name="Objetivo" id="objetivo_principal_menu"
+parent="objetivo_base_menu" action="objective_book_action" sequence="2"/>
+
+</odoo>

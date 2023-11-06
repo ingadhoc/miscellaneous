@@ -2,28 +2,28 @@
 <odoo noupdate="True">
 
     <record model='kr.ppal' id='kr_1'>
-        <field name='codigo'>01</field>
-        <field name='descripcion'>Crecer</field>
+        <field name='code'>01</field>
+        <field name='description'>Crecer</field>
     </record>
 
     <record model='kr.ppal' id='kr_2'>
-        <field name='codigo'>02</field>
-        <field name='descripcion'>Internacionalizar</field>
+        <field name='code'>02</field>
+        <field name='description'>Internacionalizar</field>
     </record>
 
     <record model='kr.ppal' id='kr_3'>
-        <field name='codigo'>03</field>
-        <field name='descripcion'>Agregar valor al cliente</field>
+        <field name='code'>03</field>
+        <field name='description'>Agregar valor al cliente</field>
     </record>
 
     <record model='kr.ppal' id='kr_4'>
-        <field name='codigo'>04</field>
-        <field name='descripcion'>Producto robusto</field>
+        <field name='code'>04</field>
+        <field name='description'>Producto robusto</field>
     </record>
 
     <record model='kr.ppal' id='kr_5'>
-        <field name='codigo'>05</field>
-        <field name='descripcion'>Equipo motivado y feliz</field>
+        <field name='code'>05</field>
+        <field name='description'>Equipo motivado y feliz</field>
     </record>
 
 </odoo>

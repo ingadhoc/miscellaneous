@@ -6,8 +6,8 @@
     <field name="model">kr.ppal</field>
     <field name="arch" type="xml">
         <tree>
-            <field name="codigo"/>
-            <field name="descripcion"/>
+            <field name="code"/>
+            <field name="description"/>
         </tree>
     </field>
 </record>

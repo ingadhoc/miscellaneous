@@ -1,3 +1,3 @@
 from . import kr_ppal
-from . import objetivo
-from . import objetivo_line
+from . import okr_key_result
+from . import okr_objective
