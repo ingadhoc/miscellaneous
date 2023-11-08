@@ -7,6 +7,7 @@ class OkrObjetivo(models.Model):
     _name = "okr.objective"
     _description = "OKR Objective"
     _inherit = ['mail.thread', 'mail.activity.mixin']
+    _check_company_auto = True
     _rec_name = 'name'
 
     name = fields.Many2one('kr.ppal', required=True)
@@ -22,6 +23,9 @@ class OkrObjetivo(models.Model):
         default=time.strftime('%Y'),
     )
     user_id = fields.Many2one('res.users', string="Responsible")
+    company_id = fields.Many2one(
+        'res.company', default=lambda self: self.env.company,
+        help="Company for whose invoices the mandate can be used.")
 
     @api.depends('key_result_ids')
     def _compute_progress(self):

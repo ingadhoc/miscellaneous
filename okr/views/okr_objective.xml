@@ -20,15 +20,14 @@
                     <group>
                         <field name="period"/>
                         <field name="year"/>
+                        <field name="company_id" groups="base.group_multi_company" required="1"/>
                     </group>
                 </group>
                 <notebook>
                     <page id="line_tab"
                           name="line_tab"
                           string="Okr Lines">
-                        <field name="key_result_ids"
-                            widget="section_and_note_one2many"
-                            mode="tree,kanban">
+                        <field name="key_result_ids">
                             <tree editable="bottom" string="Okr Lines" default_order="progress">
                                 <field name="name"/>
                                 <field name="description"/>
@@ -42,6 +41,7 @@
                                 <field name="plan_de_accion"/>
                                 <field name="realizado_en_el_q"/>
                                 <field name="notas_proximo_q"/>
+                                <field name="interdependencies" widget="many2many_tags"/>
                             </tree>
                         </field>
                     </page>
@@ -70,6 +70,7 @@
             <field name="department_id"/>
             <field name="period"/>
             <field name="year"/>
+            <field name="company_id" groups="base.group_multi_company" required="1"/>
         </tree>
     </field>
 </record>
