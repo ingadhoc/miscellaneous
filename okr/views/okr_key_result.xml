@@ -16,7 +16,7 @@
         <field name="user_id"/>
         <field name="plan_de_accion"/>
         <field name="comments"/>
-        <field name="interdependencias"/>
+        <field name="interdependencies" string="Interdependencies" widget="many2many_tags"/>
         <field name="realizado_en_el_q"/>
         <field name="notas_proximo_q"/>
     </tree>

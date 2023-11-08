@@ -11,7 +11,7 @@ class OkrObjetivo(models.Model):
     name = fields.Many2one('kr.ppal', required=True)
     description = fields.Char(required=True)
     department_id = fields.Many2one('hr.department')
-    progress = fields.Integer(string="Progress", compute='_compute_progress',help="Progress from zero knowledge (0%) to fully mastered (100%).", default=0)
+    progress = fields.Integer(string="Progress", compute='_compute_progress',help="Progress from zero knowledge (0%) to fully mastered (100%).", default=0, store=True)
     weight = fields.Selection([('inspiracional', 'Inspiracional'), ('commitment', 'Commitment')])
     comments = fields.Char()
     key_result_ids = fields.One2many('okr.key_result', 'objective')
@@ -20,6 +20,7 @@ class OkrObjetivo(models.Model):
         required=True,
         default=time.strftime('%Y'),
     )
+    user_id = fields.Many2one('res.users', string="Responsible")
 
     @api.depends('key_result_ids')
     def _compute_progress(self):

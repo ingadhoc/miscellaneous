@@ -16,6 +16,6 @@ class OkrObjetivoLine(models.Model):
     result = fields.Integer()
     user_id = fields.Many2one('res.users', string="Responsible")
     plan_de_accion = fields.Char()
-    interdependencias = fields.Char()
+    interdependencies = fields.Many2many('hr.objective')
     realizado_en_el_q = fields.Char()
     notas_proximo_q = fields.Char()

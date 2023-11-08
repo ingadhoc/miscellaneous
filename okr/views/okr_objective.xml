@@ -10,6 +10,7 @@
                 <group>
                     <field name="name"/>
                     <field name="description"/>
+                    <field name="user_id"/>
                     <field name="progress"/>
                     <field name="weight"/>
                     <field name="comments"/>
@@ -27,7 +28,7 @@
                     <field name="key_result_ids"
                         widget="section_and_note_one2many"
                         mode="tree,kanban">
-                        <tree editable="bottom" string="Okr Lines">
+                        <tree editable="bottom" string="Okr Lines" default_order="progress">
                             <field name="name"/>
                             <field name="description"/>
                             <field name="progress"/>
@@ -38,7 +39,6 @@
                             <field name="result"/>
                             <field name="user_id"/>
                             <field name="plan_de_accion"/>
-                            <field name="interdependencias"/>
                             <field name="realizado_en_el_q"/>
                             <field name="notas_proximo_q"/>
                         </tree>
@@ -53,9 +53,10 @@
     <field name="name">Objetivo</field>
     <field name="model">okr.objective</field>
     <field name="arch" type="xml">
-        <tree>
+        <tree default_order="progress">
             <field name="name"/>
             <field name="description"/>
+            <field name="user_id"/>
             <field name="progress"/>
             <field name="weight"/>
             <field name="comments"/>
@@ -72,6 +73,7 @@
     <field name="arch" type="xml">
         <search>
             <field name="department_id"/>
+            <filter name="group_by_department_id" string="Group by department_id" context="{'group_by': 'department_id'}"/>
         </search>
     </field>
 </record>
@@ -81,6 +83,7 @@
     <field name="res_model">okr.objective</field>
     <field name="view_mode">tree,form</field>
     <field name="search_view_id" ref="view_objetive_search"/>
+    <field name="context">{'search_default_group_by_department_id': True}</field>
 </record>
 
 <menuitem name="OKR" id="objetivo_base_menu" sequence="0"/>
