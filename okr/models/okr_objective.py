@@ -6,6 +6,7 @@ from odoo.exceptions import UserError
 class OkrObjetivo(models.Model):
     _name = "okr.objective"
     _description = "OKR Objective"
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _rec_name = 'name'
 
     name = fields.Many2one('kr.ppal', required=True)

@@ -6,45 +6,52 @@
     <field name="model">okr.objective</field>
     <field name="arch" type="xml">
         <form>
-            <group>
+            <sheet>
                 <group>
-                    <field name="name"/>
-                    <field name="description"/>
-                    <field name="user_id"/>
-                    <field name="progress"/>
-                    <field name="weight"/>
-                    <field name="comments"/>
-                    <field name="department_id"/>
+                    <group>
+                        <field name="name"/>
+                        <field name="description"/>
+                        <field name="user_id"/>
+                        <field name="progress"/>
+                        <field name="weight"/>
+                        <field name="comments"/>
+                        <field name="department_id"/>
+                    </group>
+                    <group>
+                        <field name="period"/>
+                        <field name="year"/>
+                    </group>
                 </group>
-                <group>
-                    <field name="period"/>
-                    <field name="year"/>
-                </group>
-            </group>
-            <notebook>
-                <page id="line_tab"
-                      name="line_tab"
-                      string="Okr Lines">
-                    <field name="key_result_ids"
-                        widget="section_and_note_one2many"
-                        mode="tree,kanban">
-                        <tree editable="bottom" string="Okr Lines" default_order="progress">
-                            <field name="name"/>
-                            <field name="description"/>
-                            <field name="progress"/>
-                            <field name="weight"/>
-                            <field name="comments"/>
-                            <field name="objective"/>
-                            <field name="target"/>
-                            <field name="result"/>
-                            <field name="user_id"/>
-                            <field name="plan_de_accion"/>
-                            <field name="realizado_en_el_q"/>
-                            <field name="notas_proximo_q"/>
-                        </tree>
-                    </field>
-                </page>
-            </notebook>
+                <notebook>
+                    <page id="line_tab"
+                          name="line_tab"
+                          string="Okr Lines">
+                        <field name="key_result_ids"
+                            widget="section_and_note_one2many"
+                            mode="tree,kanban">
+                            <tree editable="bottom" string="Okr Lines" default_order="progress">
+                                <field name="name"/>
+                                <field name="description"/>
+                                <field name="progress"/>
+                                <field name="weight"/>
+                                <field name="comments"/>
+                                <field name="objective"/>
+                                <field name="target"/>
+                                <field name="result"/>
+                                <field name="user_id"/>
+                                <field name="plan_de_accion"/>
+                                <field name="realizado_en_el_q"/>
+                                <field name="notas_proximo_q"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </sheet>
+            <div class="oe_chatter">
+                <field name="message_follower_ids" widget="mail_followers"/>
+                <field name="activity_ids" widget="mail_activity"/>
+                <field name="message_ids" widget="mail_thread"/>
+            </div>
         </form>
     </field>
 </record>
