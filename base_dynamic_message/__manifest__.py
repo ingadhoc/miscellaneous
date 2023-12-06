@@ -19,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Dynamic Message',
-    'version': '16.0.1.1.0',
+    'version': "17.0.1.0.0",
     'category': 'Base',
     'sequence': 14,
     'summary': '',
@@ -38,7 +38,7 @@
     ],
     'demo': [
     ],
-    'installable': False,
+    'installable': True,
     'auto_install': False,
     'application': False,
 }

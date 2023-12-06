@@ -26,7 +26,7 @@
                         <group>
                             <field name="name"/>
                             <field name="description"/>
-                            <field name="model_id" force_save="True" options="{'no_create': True, 'no_open': True}" attrs="{'readonly': ['|', ('line_ids', '!=', []), ('id', '!=', False)]}"/>
+                            <field name="model_id" force_save="True" options="{'no_create': True, 'no_open': True}" readonly="line_ids or id"/>
                         </group>
                         <group>
                             <field name="alert_type"/>
@@ -44,7 +44,7 @@
                                     <field name="domain" optional="show"/>
                                     <field name="message" optional="show"/>
                                     <field name="code" optional="show"/>
-                                    <field name="model_name" invisible="True"/>
+                                    <field name="model_name" column_invisible="True"/>
                                 </tree>
                                 <form>
                                     <p>En las expresiones, del lado derecho, se puede usar el string "EXP:[expresion]" para poner codigo dinamico. A la hora de pasar el dominio al calculo solo se
