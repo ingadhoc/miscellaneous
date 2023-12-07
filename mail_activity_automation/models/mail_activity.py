@@ -13,5 +13,5 @@ class MailActivity(models.Model):
     def _action_done(self, feedback=False, attachment_ids=None):
         if self._context.get('from_bot') and self.activity_type_id.mail_template_ids:
             for mail_template in self.activity_type_id.mail_template_ids:
-                self.env[self.res_model].browse(self.res_id).message_post_with_template(mail_template.id)
+                self.env[self.res_model].browse(self.res_id).message_post_with_source(mail_template)
         return super()._action_done(feedback=feedback, attachment_ids=attachment_ids)
