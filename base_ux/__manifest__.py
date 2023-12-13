@@ -19,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Base UX',
-    'version': "16.0.1.0.0",
+    'version': "17.0.1.0.0",
     'category': 'Base',
     'sequence': 14,
     'summary': '',
@@ -32,11 +32,6 @@
         'base',
         'mail',  # depends on mail for tracking on fields
     ],
-    'assets': {
-        'web.assets_backend': [
-            '/static/src/js/discuss.jsc',
-        ],
-    },
     'data': [
         'views/ir_actions_act_window_view.xml',
         'views/mail_template_view.xml',
@@ -46,7 +41,7 @@
     ],
     'test': [
     ],
-    'installable': False,
+    'installable': True,
     'auto_install': False,
     'application': False,
 }
