@@ -10,12 +10,14 @@
                 <field name="binding_model_id" invisible="1"/>
             </field>
             <group position="before">
-                <button name="create_action" string="Add in the 'Action' menu" type="object"
-                    attrs="{'invisible':['|', ('res_model','=', False), ('binding_model_id', '!=', False)]}"
-                    help="Display an option on related documents to open this action"/>
-                <button name="unlink_action" string="Remove from the 'Action' menu" type="object"
-                    attrs="{'invisible':[('binding_model_id','=',False)]}"
-                    help="Remove the contextual action related this action"/>
+                <div class="d-flex align-item-end justify-content-end mt8">
+                    <button name="create_action" string="Add in the 'Action' menu" type="object"
+                        invisible="not res_model or binding_model_id"
+                        help="Display an option on related documents to open this action"/>
+                    <button name="unlink_action" string="Remove from the 'Action' menu" type="object"
+                        invisible="not binding_model_id"
+                        help="Remove the contextual action related this action"/>
+                </div>
             </group>
         </field>
     </record>
