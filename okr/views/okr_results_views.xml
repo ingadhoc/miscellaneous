@@ -1,13 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
 <odoo>
-<!-- Accion de venta -->
-    <record id="okr_action" model="ir.actions.act_window">
-        <field name="name">Okr</field>
-        <field name="res_model">okr</field>
-    </record>
+    <data>
+    <!-- Accion de venta -->
+        <record id="okr_results_action" model="ir.actions.act_window">
+            <field name="name">Okr Results</field>
+            <field name="res_model">okr.results</field>
+        </record>
 
 <!-- Vista tree-->
-    <record id="okr_view_tree" model="ir.ui.view">
+    <!-- <record id="okr_view_tree" model="ir.ui.view">
         <field name="name">okr.view.tree</field>
         <field name="model">okr</field>
         <field name="arch" type="xml">
@@ -17,41 +18,45 @@
                 <field name="area"/>
             </tree>
         </field>
-    </record>
+    </record> -->
 
 <!-- Vista form-->
     <record id="okr_view_form" model="ir.ui.view">
         <field name="name">okir.view.form</field>
-        <field name="model">okr</field>
+        <field name="model">okr.results</field>
         <field name="arch" type="xml">
             <form>
-                <sheet string="Gestión de Okrs">
+                <sheet string="Resultados Okr">
                     <group>
                         <group>
-                            <field name="name" help="Resumen del Objetivo / KR"/>
+                            <field name="name"/>
                         </group>
                     </group>
                     <group>
-                        <field name="description" help="pDescripcion ampliada del Objetivo / KR"/>
+                        <field name="description" />
                     </group>
                     <group>
                         <group>
-                            <field name="area" />
-                            <field name="progress" />
-                            <field name="weight" />
+                            <field name="area"/>
+                            <field name="progress"/>
+                            <field name="weight"/>
+                            <field name="target"/>
+                            <field name="results"/>
                         </group>
                         <group>
                             <field name="number_q"/>
-                            <field name="type" />
-                            <field name="users_id" can_create="True" can_write="True" />
+                            <field name="type"/>
+                            <field name="responsible" can_create="True" can_write="True"/>
+                            <field name="users_id" can_create="True" can_write="True"/>
                         </group>
                     </group>
                     <group>
-                    <separator/>
+                        <separator/>
                     </group>
                 </sheet>
             </form>
         </field>
     </record>
 
+    </data>
 </odoo>

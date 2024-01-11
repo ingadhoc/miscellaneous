@@ -1,9 +1,9 @@
-from odoo import models,fields
+from odoo import api, models,fields
 
 
-class Okr(models.Model):
-    _name = 'okr'
-    _description= 'Gestión de Okrs'
+class OkrResults(models.Model):
+    _name = 'okr.results'
+    _description= 'Resultados Okr'
     _order = "id desc"
 
     name= fields.Char(required=True,)
@@ -16,3 +16,12 @@ class Okr(models.Model):
     responsible = fields.Many2one('res.users')
     target = fields.Integer(required=True, default=0)
     users_id = fields.Many2one('res.users')
+    results = fields.Integer()
+
+    @api.depends('results', 'target')
+    def _compute_progress(self):
+        for rec in self:
+            if rec.results and rec.target:
+                rec.progress = (rec.results / rec.target)*100
+            else:
+                rec.progress = 0
