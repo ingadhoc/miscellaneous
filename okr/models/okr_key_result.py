@@ -1,16 +1,14 @@
-from odoo import models,fields
+from odoo import models, fields, api
 from datetime import date
 
-class OKR(models.Model):
-    _name = 'okr'
-    _description= 'Okr Management'
+class OkrKeyResult(models.Model):
+    _name = 'okr.key.result'
+    _description= 'OKR Key Result'
 
     name = fields.Char(required=True)
     description = fields.Char()
-    company_id = fields.Many2one('res.company')
     responsible = fields.Many2one('res.users', required=True)
-    date_start = fields.Date(required=True, default=date.today())
-    date_end = fields.Date(required=True)
+    objective = fields.Many2one('okr.objective', required=True)
     priority = fields.Selection([
         ('very_high', 'Muy Alta'),
         ('high', 'ALta'),
@@ -28,3 +26,10 @@ class OKR(models.Model):
         ('error', 'Errores'),
     ], string='Unit of Measure', required=True)
     result = fields.Float(required=True)
+    progress = fields.Float(compute="_compute_progress")
+    comments = fields.Text()
+
+    @api.depends('result', 'target')
+    def _compute_progress(self):
+        for rec in self:
+            rec.progress = (rec.result / rec.target)*100

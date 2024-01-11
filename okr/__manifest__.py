@@ -7,10 +7,11 @@
     ],
     "views":[
         'security/ir.model.access.csv',
-        'views/okr_views.xml.xml',
+        'views/okr_key_result_views.xml',
+        'views/okr_objective_views.xml.xml',
     ],
     "license": "AGPL-3",
     "installable": True,
     "auto_install": False,
-    "application": True,
+    "application": False,
 }
