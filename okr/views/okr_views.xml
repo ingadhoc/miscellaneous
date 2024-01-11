@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+
+    <record id="okr_view_form" model="ir.ui.view">
+        <field name="name">okr.view.form</field>
+        <field name="model">okr</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <group>
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="company_id"/>
+                </group>
+                <group>
+                    <field name="priority"/>
+                    <field name="responsible"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                </group>
+                <page name="Resultados">
+                    <field name="target"/>
+                    <field name="target_uom"/>
+                    <field name="result"/>
+                </page>
+            </form>
+        </field>
+    </record>
+
+    <record id="okr_view_tree" model="ir.ui.view">
+        <field name="name">okr.view.tree</field>
+        <field name="model">okr</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" string="Title"/>
+                <field name="priority"/>
+                <field name="target"/>
+                <field name="target_uom"/>
+                <field name="result"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_okr" model="ir.actions.act_window">
+        <field name="name">okr</field>
+        <field name="res_model">okr</field>
+        <field name="view_mode">form,tree</field>
+    </record>
+
+</odoo>
