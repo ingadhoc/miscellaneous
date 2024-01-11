@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+
+    <record id="okr_plan_view_form" model="ir.ui.view">
+        <field name="name">okr.plan.view.form</field>
+        <field name="model">okr.plan</field>
+        <field name="arch" type="xml">
+            <form string="OKR Plan">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="quarter_ids"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="okr_plan_action" model="ir.actions.act_window">
+        <field name="name">okr.plan</field>
+        <field name="res_model">okr.plan</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="okr_menu_root" name="OKR"/>
+
+    <menuitem id="okr_plan_menu_act" name="OKR Plan" parent="okr_menu_root" action="okr_plan_action"/>
+
+</odoo>
