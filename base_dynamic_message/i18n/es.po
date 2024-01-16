@@ -1,0 +1,214 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* base_dynamic_message
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-12-15 14:09+0000\n"
+"PO-Revision-Date: 2023-12-15 14:09+0000\n"
+"Language-Team: Spanish (https://app.transifex.com/adhoc/teams/46451/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Language: es\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+
+#. module: base_dynamic_message
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__alert_type
+msgid "Alert Type"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__code
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__code
+#: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
+msgid "Code"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
+msgid "Create / Update"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__create_uid
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__create_date
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.constraint,message:base_dynamic_message.constraint_ir_model_dynamic_message_unique_level_per_model
+msgid ""
+"Debe haber un unico registro por modelo, vista heredada y tipo de alerta"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__depends
+msgid "Depends"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__description
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__description
+msgid "Description"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__display_name
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__domain
+msgid "Domain"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__dynamic_message_id
+msgid "Dynamic Message"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.actions.act_window,name:base_dynamic_message.action_ir_model_dynamic_message
+#: model:ir.ui.menu,name:base_dynamic_message.menu_ir_model_dynamic_message
+msgid "Dynamic Messages"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
+msgid ""
+"En las expresiones, del lado derecho, se puede usar el string \"EXP:[expresion]\" para poner codigo dinamico. A la hora de pasar el dominio al calculo solo se\n"
+"                                    dejará la expresion. Es importante que \"EXP\" se ponga con comillas dobles y no comillas simples tal como se muestra en los ejemplos. Las variables disponibles son:"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__field_id
+msgid "Field"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__id
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__id
+msgid "ID"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__write_uid
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__write_date
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__line_ids
+msgid "Line"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
+msgid "Lines"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:res.groups,name:base_dynamic_message.group_dynamic_messages_manager
+msgid "Manage Dynamic Messages"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__message
+msgid "Message"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__model_id
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__model_name
+msgid "Model"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__model_name
+msgid "Model Name"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__name
+msgid "Name"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
+msgid "Por ej:"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__view_id
+msgid "View"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__view_to_inherit_id
+msgid "View To Inherit"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
+msgid ""
+"[(\"create_date\", \"=\", \"EXP: datetime.datetime.now() - "
+"dateutil.relativedelta.relativedelta(days=-10)\")]"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
+msgid "[(\"partner_id\", \"in\", [\"EXP: rec.child_ids.ids\"])]"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.fields.selection,name:base_dynamic_message.selection__ir_model_dynamic_message__alert_type__danger
+msgid "danger"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.fields.selection,name:base_dynamic_message.selection__ir_model_dynamic_message__alert_type__info
+msgid "info"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model,name:base_dynamic_message.model_ir_model_dynamic_message
+msgid "ir.model.dynamic_message"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model,name:base_dynamic_message.model_ir_model_dynamic_message_line
+msgid "ir.model.dynamic_message.line"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
+msgid ""
+"las mismas variables disponibles en un campo calculado, por ej "
+"\"datetime.datetime.now()\" y \"dateutil.relativedelta.relativedelta\":"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
+msgid "rec: registro que se está evaluando"
+msgstr ""
+
+#. module: base_dynamic_message
+#: model:ir.model.fields.selection,name:base_dynamic_message.selection__ir_model_dynamic_message__alert_type__warning
+msgid "warning"
+msgstr ""
