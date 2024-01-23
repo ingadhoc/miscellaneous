@@ -19,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Mail Activity Board UX',
-    'version': "16.0.1.0.0",
+    'version': "17.0.1.0.0",
     'category': 'Base',
     'sequence': 14,
     'summary': '',
@@ -36,14 +36,14 @@
     ],
     "assets": {
         "web.assets_backend": [
-            ('remove', 'mail_activity_board/static/src/components/chatter_topbar/chatter_topbar.xml'),
+            ('remove', 'mail_activity_board/static/src/components/chatter/chatter.xml'),
         ],
     },
     'demo': [
     ],
     'test': [
     ],
-    'installable': False,
+    'installable': True,
     'auto_install': False,
     'application': False,
 }
