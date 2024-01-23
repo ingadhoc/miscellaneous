@@ -30,20 +30,20 @@
                 <button name="open_origin" type="object" title="Open" icon="fa-external-link"/>
             </field>
             <tree>
-                <field name="res_model_id" invisible="1"/>
-                <field name="res_model" invisible="1"/>
-                <field name="chaining_type" invisible="1"/>
+                <field name="res_model_id" column_invisible="True"/>
+                <field name="res_model" column_invisible="True"/>
+                <field name="chaining_type" column_invisible="True"/>
 
-                <button icon="fa-check-circle" title="Mark as Done" help="Mark as Done" disabled="True" attrs="{'invisible': [('chaining_type', '=', 'suggest')]}"
+                <button icon="fa-check-circle" title="Mark as Done" help="Mark as Done" disabled="True" invisible="chaining_type == 'suggest'"
                     name="action_done" type="object" context="{'mail_activity_quick_update': True}"/>
-                <button icon="fa-check-circle" title="Mark as Done" help="Mark as Done" attrs="{'invisible': [('chaining_type', '=', 'trigger')]}"
+                <button icon="fa-check-circle" title="Mark as Done" help="Mark as Done" invisible="chaining_type == 'trigger'"
                     name="action_done" type="object" context="{'mail_activity_quick_update': True}"/>
 
-                <button icon="fa-clock-o" title="Done &amp; Schedule Next" help="Done &amp; Schedule Next" attrs="{'invisible': [('chaining_type', '=', 'trigger')]}"
+                <button icon="fa-clock-o" title="Done &amp; Schedule Next" help="Done &amp; Schedule Next" invisible="chaining_type == 'trigger'"
                     name="action_done_schedule_next" type="object" context="{'mail_activity_quick_update': True}"/>
-                <button icon="fa-clock-o" title="Done &amp; Launch Next" help="Done &amp; Launch Next" attrs="{'invisible': [('chaining_type', '!=', 'trigger')]}"
+                <button icon="fa-clock-o" title="Done &amp; Launch Next" help="Done &amp; Launch Next" invisible="chaining_type != 'trigger'"
                     name="action_done_schedule_next" type="object" context="{'mail_activity_quick_update': True}"/>
-                <button icon="fa-trash" title="Discard" help="Discard" special="cancel"/>
+                <button icon="fa-trash" title="Discard" help="Discard" name="unlink" type="object"/>
                 <button icon="fa-pencil" title="Edit" help="Edit" type="object" name="open_activity_dashboard_form"/>
             </tree>
             <tree position="attributes">
