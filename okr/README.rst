@@ -10,38 +10,11 @@
    :target: https://www.gnu.org/licenses/agpl
    :alt: License: AGPL-3
 
-===========
-Gestion OKR
-===========
+===
+OKR
+===
 
 Este módulo realiza el manejo de la gestion de OKRs de Adhoc sa.
-
-.. code-block:: xml
-
-    <record model="ir.module.category" id="category_portal_app">
-        <field name="name">Portal app</field>
-        <field name="parent_id" ref="portal_backend.category_portal_advanced"/>
-    </record>
-
-Group to give access to Portal Backend users to use that app:
-
-.. code-block:: xml
-
-    <record id="group_portal_backend_app" model="res.groups">
-        <field name="name">Portal app</field>
-        <field name="category_id" ref="category_portal_app"/>
-    </record>
-
-You can also create a set of groups that inherit (or not) from each other, but the category always have to be "category_portal_app", because the views are different for each type of user. Here's an example:
-
-.. code-block:: xml
-
-    <record id="group_portal_backend_app_2" model="res.groups">
-        <field name="name">Portal app 2</field>
-        <field name="category_id" ref="category_portal_app"/>
-        <field name="implied_ids" eval="[Command.link(ref('group_portal_backend_app'))]"/>
-    </record>
-
 
 Installation
 ============
