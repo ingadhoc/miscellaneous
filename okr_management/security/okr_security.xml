@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data noupdate="0">
+    <record id="group_okr_user" model="res.groups">
+        <field name="name">OKR User</field>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="group_okr_manager" model="res.groups">
+        <field name="name">OKR Manager</field>
+        <field name="implied_ids" eval="[(4, ref('okr_management.group_okr_user'))]"/>
+    </record>
+</data>
+</odoo>

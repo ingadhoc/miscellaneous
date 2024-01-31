@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <!-- okr.key_result form view -->
+    <record id="okr_key_result_view_form" model="ir.ui.view">
+        <field name="name">okr.key_result.view.form</field>
+        <field name="model">okr.key_result</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <field name="company_id" invisible="1"/>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="description"/>
+                        <group>
+                            <field name="department_id"/>
+                            <field name="partner_id"/>
+                        </group>
+                        <group>
+                            <field name="year"/>
+                            <field name="quarter"/>
+                            <field name="is_commitment"/>
+                            <field name="depends_department_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <page name="Comments">
+                        <field name="comments"/>
+                    </page>
+                    <page name="Next Q">
+                        <field name="next_q_comments"/>
+                    </page>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>
