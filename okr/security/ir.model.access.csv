@@ -1,3 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-okr.access_okr_objective,access_okr_objective,okr.model_okr_objective,base.group_user,1,0,0,0
-okr.access_okr_key_result,access_okr_key_result,okr.model_okr_key_result,base.group_user,1,0,0,0
+okr.access_okr_objective,access_okr_objective,okr.model_okr_objective,base.group_okr_user,1,0,0,0
+okr.access_okr_objective,access_okr_objective,okr.model_okr_objective,base.group_okr_manager,1,1,1,1
+okr.access_okr_key_result,access_okr_key_result,okr.model_okr_key_result,base.group_okr_user,1,0,0,0
+okr.access_okr_key_result,access_okr_key_result,okr.model_okr_key_result,base.group_okr_manager,1,1,1,1
