@@ -32,4 +32,7 @@ class OkrKeyResult(models.Model):
     @api.depends('result', 'target')
     def _compute_progress(self):
         for rec in self:
-            rec.progress = (rec.result / rec.target)*100
+            if rec.target:
+                rec.progress = (rec.result / rec.target)*100
+            else:
+                rec.progress = 0

@@ -19,9 +19,11 @@
                     <field name="result"/>
                     <field name="progress"/>
                 </group>
-                <page name="Comentarios">
-                    <field name="comments"/>
-                </page>
+                <notebook>
+                    <page name="Comentarios">
+                        <field name="comments"/>
+                    </page>
+                </notebook>
             </form>
         </field>
     </record>
@@ -48,6 +50,6 @@
         <field name='view_mode'>tree,form</field>
     </record>
 
-    <menuitem id="menu_okr_key_result" action="action_okr_key_result" parent="menu_okr_objective"/>
+    <menuitem id="menu_okr_key_result" sequence="100" action="action_okr_key_result" parent="menu_okr_objective"/>
 
 </odoo>

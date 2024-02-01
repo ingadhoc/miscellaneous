@@ -1,5 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_okr_key_result,access_okr_key_result,model_okr_key_result,okr_key_result_user,1,0,0,0
-access_okr_key_result,access_okr_key_result,model_okr_key_result,okr_key_result_manager,1,1,1,1
-access_okr_objective,access_okr_objective,model_okr_objective,okr_objective_user,1,0,0,0
-access_okr_objective,access_okr_objective,model_okr_objective,okr_objective_manager,1,1,1,1

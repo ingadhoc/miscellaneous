@@ -42,6 +42,6 @@
         <field name='view_mode'>tree,form</field>
     </record>
 
-    <menuitem id="menu_okr_objective" action="action_okr_objective"/>
+    <menuitem id="menu_okr_objective" sequence="100" action="action_okr_objective"/>
 
 </odoo>
