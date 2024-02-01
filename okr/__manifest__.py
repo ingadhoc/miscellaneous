@@ -8,10 +8,16 @@
     'website': 'www.adhoc.com.ar',
     'license': 'AGPL-3',
     'depends': [
+        'mail',
+        'hr'
     ],
     'data': [
+        'security/res_groups.xml',
+        'security/ir_rule.xml',
         'security/ir.model.access.csv',
-        'views/okr_views.xml',
+        'views/okr_objective.xml',
+        'views/okr_result.xml',
+        'views/menu.xml'
     ],
     'demo': [
     ],
