@@ -19,7 +19,8 @@
             <form>
                 <field name="name"/>
                 <field name="progress"/>
-                <field name="action_plan" />
+                <field name="action_plan"/>
+                <field name="okr_type"/>
             </form>
         </field>
     </record>

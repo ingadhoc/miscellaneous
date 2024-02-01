@@ -14,19 +14,12 @@ class OkrManagement(models.Model):
         compute='_compute_okr_progress',
         store = False,
     )
+    okr_type = fields.Selection(
+        selection=[
+            ('commitment', 'Commitment'),
+            ('inspiracional', 'Inspiracional'),
+        ],
+    )
     result = fields.Float()
     action_plan = fields.Text()
     comments = fields.Text()
-
-    def _compute_okr_progress(self):
-        prog = 0
-        for okr in self:
-            if not okr.progress:
-                prog = 0
-            elif okr.progress:
-                okr.progress = okr.progress
-            elif self.progress < 0 or self.progress > 100:
-                raise UserError('Valor de progreso invalido')
-            else:
-                prog = 0
-        okr.progress = prog
