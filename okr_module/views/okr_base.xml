@@ -6,6 +6,20 @@
         <field name="arch" type="xml">
             <tree create="1">
                 <field name="name"/>
+                <field name="user_id" string="User in charge"/>
+                <field name="completed_percentage"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="tree_okr_base_line" model="ir.ui.view">
+        <field name="name">Tree OKR Line</field>
+        <field name="model">okr.base.line</field>
+        <field name="arch" type="xml">
+            <tree create="1">
+                <field name="name"/>
+                <field name="okr_base_id" string="Main OKR"/>
+                <field name="user_id" string="User in charge"/>
                 <field name="completed_percentage"/>
             </tree>
         </field>
@@ -16,23 +30,66 @@
         <field name="model">okr.base</field>
         <field name="arch" type="xml">
             <form create="1">
-            <field name="name"/>
-            <field name="completed_percentage"/>
+            <group>
+                <group>
+                    <field name="name"/>
+                    <field name="type"/>
+                    <field name="user_id"/>
+                    <field name="completed_percentage"/>
+                </group>
+            </group>
             <field name="kr_line_ids">
                 <tree create="1">
                     <field name="name"/>
                     <field name="actual_value"/>
                     <field name="target"/>
                     <field name="completed_percentage"/>
+                    <field name="weight"/>
+                    <field name="user_id"/>
                 </tree>
             </field>
             </form>
         </field>
     </record>
 
+    <record id="okr_base_search" model="ir.ui.view">
+        <field name="name">okr.base.search_view</field>
+        <field name="model">okr.base</field>
+        <field name="arch" type="xml">
+            <search>
+                <group expand="0" string="Group By">
+                    <filter string="User in Charge" name="user_id" domain="[]" context="{'group_by':'user_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="okr_base_line_search" model="ir.ui.view">
+        <field name="name">okr.base.line.search_view</field>
+        <field name="model">okr.base.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <filter name="user_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="Main OKR" name="okr_base_id" domain="[]" context="{'group_by':'okr_base_id'}"/>
+                    <filter string="User in Charge" name="user_id" domain="[]" context="{'group_by':'user_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
     <record id="okr_menu_action" model="ir.actions.act_window">
 		<field name="name">Menu OKR</field>
 		<field name="res_model">okr.base</field>
+		<field name="view_mode">tree,form</field>
+		<field name="domain">[]</field>
+		<field name="help" type="html">
+			<p class="oe_view_nocontent_create">Segui tus OKR</p>
+		</field>
+	</record>
+    <record id="okr_line_menu_action" model="ir.actions.act_window">
+		<field name="name">OKR lines</field>
+		<field name="res_model">okr.base.line</field>
 		<field name="view_mode">tree,form</field>
 		<field name="domain">[]</field>
 		<field name="help" type="html">

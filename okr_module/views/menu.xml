@@ -10,4 +10,10 @@
         action="okr_menu_action"
         parent="okr_menu"
         sequence="10"/>
+    <menuitem
+        id="okr_line"
+        name="OKR lines"
+        action="okr_line_menu_action"
+        parent="okr_menu"
+        sequence="20"/>
 </odoo>
