@@ -7,7 +7,7 @@
     ],
     "views":[
         'security/okr_security.xml',
-        'security/ir.model.access.csv'
+        'security/ir.model.access.csv',
         'views/okr_objective.xml',
         'views/okr_key_result.xml',
         'views/okr_menuitems.xml',
