@@ -4,10 +4,16 @@
     "version": "16.0.1.0",
     "depends": [
         'base',
+        'mail',
+        'hr',
     ],
     'data': [
+        'security/res_groups.xml',
+        'security/ir_rule.xml',
         'security/ir.model.access.csv',
-        'views/okr_view.xml',
+        'views/okr_objective.xml',
+        'views/okr_result.xml',
+        'views/menu.xml',
     ],
     "license": "AGPL-3",
     "installable": True,

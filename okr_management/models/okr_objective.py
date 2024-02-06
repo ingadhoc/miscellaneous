@@ -1,22 +1,17 @@
-##############################################################################
-# For copyright and license notices, see __manifest__.py file in module root
-# directory
-##############################################################################
-
-
 from odoo import models, fields, api
 
-class OKR(models.Model):
-    _name = 'okr.okr'
-    _description = 'Objectives and Key Results'
+class OkrObjective(models.Model):
+    _name = 'okr.objective'
+    _description = 'Objectives OKRs'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _order = 'progress'
 
     name = fields.Char(string='Objective', required=True)
     description = fields.Text(string='Description')
-    target_value = fields.Float(string='Target Value')
-    quarter = fields.Selection(required=True)
+    user_id = fields.Many2one('res.users', string='Responsible')
+    quarter = fields.Selection(selection=[('q1','Q1'), ('q2','Q2'),('q3','Q3'),('q4','Q4'),])
     year = fields.Datetime(required=True)
     is_current_quarter = fields.Boolean(compute="_compute_is_current_quarter", store=True)
-    current_value = fields.Float(string='Current Value')
     start_date = fields.Date(string='Start Date')
     end_date = fields.Date(string='End Date')
     notes = fields.Text(string='Notes')
@@ -26,18 +21,11 @@ class OKR(models.Model):
         ('done', 'Done'),
         ('cancelled', 'Cancelled'),
     ], string='Status', default='draft')
-    progress_percentage = fields.Float(string='Progress Percentage', compute='_compute_progress_percentage', store=True)
     duration_days = fields.Integer(string='Duration (Days)', compute='_compute_duration_days', store=True)
+    progress = fields.Float()
+    okr_type = fields.Selection(selection=[('commitment','Commitment'), ('inspirational','Inspirational'),])
+    company_id = fields.Many2one('res.company')
 
-
-    @api.depends('current_value', 'target_value')
-    def _compute_progress_percentage(self):
-        for okr in self:
-            if okr.target_value:
-                okr.progress_percentage = (okr.current_value / okr.target_value) * 100
-            else:
-                okr.progress_percentage = 0.0
-    
     @api.depends('quarter', 'year')
     def _compute_is_current_quarter(self):
         for okr in self:
@@ -62,3 +50,4 @@ class OKR(models.Model):
                 okr.duration_days = delta.days
             else:
                 okr.duration_days = 0
+

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem id="menu_okr" name="OKR"/>
+        <menuitem id="menu_okr_objective" name="Objective" parent="menu_okr" action="action_okr_objective"/>
+        <menuitem id="menu_okr_result" name="Result" parent="menu_okr" action="action_okr_result"/>
+    </data>
+</odoo>
