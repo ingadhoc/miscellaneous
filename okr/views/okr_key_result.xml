@@ -12,22 +12,24 @@
                         <field name="name"/>
                         <field name="description"/>
                         <group>
-                            <field name="department_id"/>
+                            <!-- <field name="department_id"/> -->
                             <field name="partner_id"/>
                         </group>
                         <group>
                             <field name="year"/>
                             <field name="quarter"/>
                             <field name="is_commitment"/>
-                            <field name="depends_department_ids" widget="many2many_tags"/>
+                            <!-- <field name="depends_department_ids" widget="many2many_tags"/> -->
                         </group>
                     </group>
-                    <page name="Comments">
-                        <field name="comments"/>
-                    </page>
-                    <page name="Next Q">
-                        <field name="next_q_comments"/>
-                    </page>
+                    <notebook>
+                        <page name="Comments">
+                            <field name="comments"/>
+                        </page>
+                        <page name="Next Q">
+                            <field name="next_q_comments"/>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>

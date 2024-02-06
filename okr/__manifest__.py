@@ -5,8 +5,9 @@
     "depends": [
         'base',
     ],
-    "views":[
+    "data":[
         'security/okr_security.xml',
+        'security/ir_rules.xml',
         'security/ir.model.access.csv',
         'views/okr_objective.xml',
         'views/okr_key_result.xml',
