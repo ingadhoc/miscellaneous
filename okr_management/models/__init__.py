@@ -1,5 +1,2 @@
-##############################################################################
-# For copyright and license notices, see __manifest__.py file in module root
-# directory
-##############################################################################
-from . import okr
+from . import okr_objective
+from . import okr_result

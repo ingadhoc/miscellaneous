@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_okr_admin,access_okr,okr.model_okr_okr,base.group_user,1,1,1,1
+access_okr_objective_user,okr.objective.user,okr_management.model_okr_objective,group_okr_user,1,1,1,1
+access_okr_result_user,okr.result.user,okr_management.model_okr_result,group_okr_user,1,1,1,1
