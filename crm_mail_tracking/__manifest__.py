@@ -1,6 +1,6 @@
 ##############################################################################
 #
-#    Copyright (C) 2018  ADHOC SA  (http://www.adhoc.com.ar)
+#    Copyright (C) 2019  ADHOC SA  (http://www.adhoc.com.ar)
 #    All Rights Reserved.
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -18,32 +18,25 @@
 #
 ##############################################################################
 {
-    'name': 'Mail Activity Board UX',
-    'version': "17.0.1.0.0",
+    'name': 'CRM Mail Tracking',
+    'version': '16.0.1.0.0',
     'category': 'Base',
     'sequence': 14,
     'summary': '',
     'author': 'ADHOC SA',
     'website': 'www.adhoc.com.ar',
     'license': 'AGPL-3',
+    'images': [
+    ],
     'depends': [
-        'mail_activity_board',
+        'crm',
+        'mail_tracking',
     ],
-    'external_dependencies': {
-    },
     'data': [
-        'views/mail_activity_views.xml',
     ],
-    "assets": {
-        "web.assets_backend": [
-            ('remove', 'mail_activity_board/static/src/components/chatter/chatter.xml'),
-        ],
-    },
     'demo': [
     ],
-    'test': [
-    ],
-    'installable': True,
-    'auto_install': False,
+    'installable': False,
+    'auto_install': True,
     'application': False,
 }
