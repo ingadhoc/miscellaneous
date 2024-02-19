@@ -11,4 +11,4 @@ class MailThread(models.AbstractModel):
         si tiene un email_from y utiliza email_from.lower()
         """
         if not (self._name == 'crm.lead' and not self.email_from):
-            super()._add_extra_recipients_suggestions(self, suggestions, field_mail, reason)
+            super()._add_extra_recipients_suggestions(suggestions, field_mail, reason)
