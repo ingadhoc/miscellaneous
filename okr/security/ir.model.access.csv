@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_okr_plan_user,access.okr.plan.user,model_okr_plan,base.group_user,1,1,1,1
+access_okr_quarter_user,access.okr.quarter.user,model_okr_quarter,base.group_user,1,1,1,1
+access_okr_objective_user,access.okr.objective.user,model_okr_objective,base.group_user,1,1,1,1
+access_okr_kr_user,access.okr.kr.user,model_okr_kr,base.group_user,1,1,1,1
