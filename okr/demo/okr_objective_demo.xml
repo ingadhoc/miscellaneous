@@ -1,0 +1,79 @@
+<odoo>
+
+    <record id="okr_objective_year_crecer" model="okr.objective">
+        <field name="name">Crecer</field>
+        <field name="description">Crecer en toda la organizacion poniendo foco en lo internacional</field>
+        <field name="type">commitment</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="from_date" eval="time.strftime('%Y-1-1')"/>
+        <field name="to_date" eval="time.strftime('%Y-12-31')"/>
+    </record>
+
+    <record id="okr_objective_year_valor" model="okr.objective">
+        <field name="name">Valor al Cliente</field>
+        <field name="description">Aportar mas valor al cliente de manera cada vez mas tecnologica y sistematica</field>
+        <field name="type">inspirational</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="from_date" eval="time.strftime('%Y-1-1')"/>
+        <field name="to_date" eval="time.strftime('%Y-12-31')"/>
+    </record>
+
+    <record id="okr_objective_q1_crecer" model="okr.objective">
+        <field name="name">Crecer internacionalmente, consolidando Uruguay</field>
+        <field name="description">Crecer en toda la organizacion poniendo foco en lo internacional</field>
+        <field name="type">commitment</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="from_date" eval="time.strftime('%Y-1-1')"/>
+        <field name="to_date" eval="(DateTime.today() + relativedelta(months=3, days=-1, day=1)).strftime('%Y-%m-%d %H:%M:00')"/>
+    </record>
+
+    <record id="okr_objective_q1_valor" model="okr.objective">
+        <field name="name">Agregar valor al cliente,,Agregar valor a traves de mayor agilidad y mejor comunicacion</field>
+        <field name="description">Aportar mas valor al cliente de manera cada vez mas tecnologica y sistematica</field>
+        <field name="type">inspirational</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="from_date" eval="time.strftime('%Y-1-1')"/>
+        <field name="to_date" eval="(DateTime.today() + relativedelta(months=3, days=-1, day=1)).strftime('%Y-%m-%d %H:%M:00')"/>
+    </record>
+
+    <record id="okr_objective_q1_crecer_admin" model="okr.objective">
+        <field name="name">Crecer</field>
+        <field name="description">Lograr escalabilidad en los procesos masivos</field>
+        <field name="type">commitment</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="from_date" eval="time.strftime('%Y-1-1')"/>
+        <field name="to_date" eval="(DateTime.today() + relativedelta(months=3, days=-1, day=1)).strftime('%Y-%m-%d %H:%M:00')"/>
+        <field name="department_id" ref="hr.dep_administration"/>
+    </record>
+
+    <record id="okr_objective_q1_sustentabilidad_admin" model="okr.objective">
+        <field name="name">Sustentabilidad</field>
+        <field name="description">Ser robustos en los procesos actuales en búsqueda de la seguridad de los mismos</field>
+        <field name="type">inspirational</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="from_date" eval="time.strftime('%Y-1-1')"/>
+        <field name="to_date" eval="(DateTime.today() + relativedelta(months=3, days=-1, day=1)).strftime('%Y-%m-%d %H:%M:00')"/>
+        <field name="department_id" ref="hr.dep_administration"/>
+    </record>
+
+    <record id="okr_objective_q1_valor_rd" model="okr.objective">
+        <field name="name">Agregar valor al cliente</field>
+        <field name="description">Agregar valor a traves de mayor agilidad y mejor comunicacion</field>
+        <field name="type">commitment</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="from_date" eval="time.strftime('%Y-1-1')"/>
+        <field name="to_date" eval="(DateTime.today() + relativedelta(months=3, days=-1, day=1)).strftime('%Y-%m-%d %H:%M:00')"/>
+        <field name="department_id" ref="hr.dep_rd_be"/>
+    </record>
+
+    <record id="okr_objective_q1_sustentabilidad_rd" model="okr.objective">
+        <field name="name">Sustentabilidad</field>
+        <field name="description">Actualizar clientes a full, lanzar la 17 y trabajar en cultura de seguridad</field>
+        <field name="type">inspirational</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="from_date" eval="time.strftime('%Y-1-1')"/>
+        <field name="to_date" eval="(DateTime.today() + relativedelta(months=3, days=-1, day=1)).strftime('%Y-%m-%d %H:%M:00')"/>
+        <field name="department_id" ref="hr.dep_rd_be"/>
+    </record>
+
+ </odoo>

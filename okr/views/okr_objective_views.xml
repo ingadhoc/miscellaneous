@@ -5,7 +5,15 @@
         <field name="model">okr.objective</field>
         <field name="arch" type="xml">
             <tree>
+                <field name="from_date"/>
+                <field name="to_date" optional="hide"/>
                 <field name="name"/>
+                <field name="description" optional="hide"/>
+                <field name="department_id" optional="show"/>
+                <field name="user_id" optional="show"/>
+                <field name="type"/>
+                <field name="progress"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
             </tree>
         </field>
     </record>
@@ -15,8 +23,86 @@
         <field name="model">okr.objective</field>
         <field name="arch" type="xml">
             <form>
-                <field name="name"/>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="description"/>
+                    </group>
+                    <group>
+                        <group>
+                            <!-- <field name="parent_id"/> -->
+                            <field
+                                string="Date"
+                                name="from_date"
+                                widget="daterange"
+                                options="{'end_date_field': 'to_date'}"/>
+                            <field name="department_id"/>
+                            <field name="user_id"/>
+                        </group>
+                        <group>
+                            <field name="type"/>
+                            <field name="progress"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Key Results" name="key_results">
+                            <field name="key_result_ids">
+                                <tree editable="bottom" open_form_view="True">
+                                    <field name="name"/>
+                                    <field name="description" optional="hide"/>
+                                    <field name="user_id" optional="show"/>
+                                    <field name="department_ids" widget="many2many_tags" optional="hide"/>
+                                    <field name="weight" optional="show"/>
+                                    <field name="target"/>
+                                    <field name="result"/>
+                                    <field name="progress" optional="show"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
             </form>
+        </field>
+    </record>
+
+    <record id="view_okr_objective_search" model="ir.ui.view">
+        <field name="name">okr.objective.search</field>
+        <field name="model">okr.objective</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="department_id"/>
+                <field name="user_id"/>
+                <field name="type"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <separator/>
+                <filter name="from_date" date="from_date"/>
+                <separator/>
+                <filter name="of_the_company" string="Of The Company" domain="[('department_id', '=', False)]"/>
+                <filter name="of_departments" string="Of Departments" domain="[('department_id', '!=', False)]"/>
+                <separator/>
+                <filter name="current" string="Current" domain="[('from_date', '&lt;=', context_today().strftime('%Y-%m-%d')), ('to_date', '&gt;=', context_today().strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter invisible="1" string="Late Activities" name="activities_overdue"
+                    domain="[('my_activity_date_deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]"
+                    help="Show all records which has next action date is before today"/>
+                <filter invisible="1" string="Today Activities" name="activities_today"
+                    domain="[('my_activity_date_deadline', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter invisible="1" string="Future Activities" name="activities_upcoming_all"
+                    domain="[('my_activity_date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))]"/>
+                <group>
+                    <filter string="From Date" name="groupby_from_date" context="{'group_by': 'from_date'}"/>
+                </group>
+            </search>
         </field>
     </record>
 
@@ -25,9 +111,11 @@
         <field name="res_model">okr.objective</field>
         <field name="target">current</field>
         <field name='view_mode'>tree,form</field>
+        <field name='context'>{'search_default_current': 1, 'search_default_of_departments': 1}</field>
     </record>
 
-    <!-- groups="group_okr_objective" -->
-    <menuitem id="menu_okr_objective" sequence="100" action="action_okr_objective" web_icon="fa fa-info,#f1c40f,#34495e"/>
+    <menuitem id="menu_okr_main" sequence="40" name="OKR" web_icon="fa fa-info,#f1c40f,#34495e"/>
+    <menuitem id="menu_okr" sequence="10" name="OKR" parent="menu_okr_main"/>
+    <menuitem id="menu_okr_objective" sequence="10" action="action_okr_objective" parent="menu_okr"/>
 
 </odoo>

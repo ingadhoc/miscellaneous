@@ -6,6 +6,14 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
+                <field name="description" optional="hide"/>
+                <field name="user_id" optional="show"/>
+                <field name="department_ids" widget="many2many_tags" optional="hide"/>
+                <field name="weight"/>
+                <field name="target"/>
+                <field name="result"/>
+                <field name="progress"/>
+                <field name="company_id" groups="base.group_multi_company"/>
             </tree>
         </field>
     </record>
@@ -15,8 +23,55 @@
         <field name="model">okr.key_result</field>
         <field name="arch" type="xml">
             <form>
-                <field name="name"/>
+                <group>
+                    <field name="name"/>
+                    <field name="description"/>
+                </group>
+                <group>
+                    <group>
+                        <field name="user_id"/>
+                        <field name="department_ids" widget="many2many_tags"/>
+                        <field name="weight"/>
+                    </group>
+                    <group>
+                        <field name="target"/>
+                        <field name="result"/>
+                        <field name="progress"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                </group>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
             </form>
+        </field>
+    </record>
+
+    <record id="view_okr_key_result_search" model="ir.ui.view">
+        <field name="name">okr.key_result.search</field>
+        <field name="model">okr.key_result</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="user_id"/>
+                <field name="department_ids"/>
+                <field name="weight"/>
+                <field name="target"/>
+                <field name="result"/>
+                <field name="progress"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <separator/>
+                <filter invisible="1" string="Late Activities" name="activities_overdue"
+                    domain="[('my_activity_date_deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]"
+                    help="Show all records which has next action date is before today"/>
+                <filter invisible="1" string="Today Activities" name="activities_today"
+                    domain="[('my_activity_date_deadline', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter invisible="1" string="Future Activities" name="activities_upcoming_all"
+                    domain="[('my_activity_date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))]"/>
+            </search>
         </field>
     </record>
 
@@ -27,6 +82,6 @@
         <field name='view_mode'>tree,form</field>
     </record>
 
-    <menuitem id="menu_okr_key_result" sequence="100" string="Key Results" action="action_okr_key_result" parent="menu_okr_objective"/>
+    <menuitem id="menu_okr_key_result" sequence="20" name="Key Results" action="action_okr_key_result" parent="menu_okr"/>
 
 </odoo>
