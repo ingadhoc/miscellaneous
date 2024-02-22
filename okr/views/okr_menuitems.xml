@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <!-- OKR main menu-->
+    <menuitem
+        id="okr_root_menu"
+        name="OKR Management"
+        sequence="90"
+        web_icon="okr,static/description/icon.png"
+        groups="base.group_user">
+
+        <menuitem
+            id="okr_overview_menu"
+            name="Overview"
+            action="okr.okr_objective_action_view"
+            sequence="10"
+            groups="okr.group_okr_user"/>
+    
+    </menuitem>
+
+</odoo>
