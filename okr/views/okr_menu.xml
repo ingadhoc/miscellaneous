@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="okr_menu" name="OKR Management"/>
+    <!-- groups="group_okr_objective"  -->
+    <menuitem id="okr_objective_menu" name="OKR Objectives" action="okr_objective_action" parent="okr_menu"/>
+    <!-- groups="group_okr_key_result"  -->
+    <!-- web_icon="fa fa-info,#f1c40f,#34495e" -->
+    <menuitem id="okr_key_result_menu" name="OKR Key Results" action="okr_key_result_action" parent = "okr_menu"/>
+
+</odoo>
+
