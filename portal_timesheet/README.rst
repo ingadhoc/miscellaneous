@@ -14,7 +14,7 @@
 Portal Timesheet
 ================
 
-This module add an new group to use portal with absence management in backend.
+This module adds a new group that allows the portal backend user to manage its own timesheets. 
 
 #. This module creates the necessary groups to be able to give permissions to a portal user for timesheet, but the installation of the module alone does nothing, it is then necessary to choose the portal group that includes this functionality and add these groups as inheritance.
 
