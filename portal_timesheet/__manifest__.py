@@ -19,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Portal Timesheet',
-    'version': '16.0.1.0.0',
+    'version': "17.0.1.0.0",
     'category': 'Base',
     'sequence': 14,
     'summary': '',
@@ -31,6 +31,8 @@
     'depends': [
         'portal_backend',
         'hr_timesheet',
+        'timesheet_grid',
+        'calendar', # added to avoid creating bridge module portal_timesheet_calendar
     ],
     'data': [
         'security/res_groups.xml',
@@ -43,7 +45,7 @@
         'demo/project_demo.xml',
         'demo/res_users_demo.xml',
     ],
-    'installable': False,
+    'installable': True,
     'auto_install': False,
     'application': False,
 }
