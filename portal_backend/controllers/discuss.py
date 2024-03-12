@@ -2,10 +2,9 @@ from odoo import http, _
 from odoo.exceptions import UserError
 from odoo.http import request
 
-from odoo.addons.mail.controllers.discuss import DiscussController
+from odoo.addons.mail.controllers.attachment import AttachmentController
 
-
-class PortalBackendDiscussController(DiscussController):
+class PortalBackendAttachmentController(AttachmentController):
 
     @http.route('/mail/attachment/delete', methods=['POST'], type='json', auth='public')
     def mail_attachment_delete(self, attachment_id, access_token=None, **kwargs):
