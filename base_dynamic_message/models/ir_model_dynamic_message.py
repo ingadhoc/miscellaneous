@@ -83,7 +83,7 @@ for rec in self:
                 'priority': 999,
                 'arch_db': """
 <sheet position="before">
-    <div class="alert alert-%s mb-0" role="alert" attrs="{'invisible': [('%s', '=', False)]}">
+    <div class="alert alert-%s mb-0" role="alert" invisible="not %s">
         <field name="%s" nolabel="1" readonly="1"/>
     </div>
 </sheet>
