@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ir_rule_okr_objective_read_user" model="ir.rule">
+            <field name="name">okr.objective.user</field>
+            <field name="model_id" ref="okr.model_okr_objective"/>
+            <field name="domain_force">[]</field>
+            <field name="groups" eval="[(4, ref('group_okr_user'))]"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <field name="perm_read" eval="1"/>
+        </record>
+
+        <record id="ir_rule_okr_objective_crud_user" model="ir.rule">
+            <field name="name">okr.objective.user</field>
+            <field name="model_id" ref="okr.model_okr_objective"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_okr_user'))]"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="perm_read" eval="1"/>
+        </record>
+
+        <record id="ir_rule_okr_objective_manager" model="ir.rule">
+            <field name="name">okr.objective.user</field>
+            <field name="model_id" ref="okr.model_okr_objective"/>
+            <field name="domain_force">[]</field>
+            <field name="groups" eval="[(4, ref('group_okr_manager'))]"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="perm_read" eval="1"/>
+        </record>
+
+        <record id="ir_rule_okr_result_read_user" model="ir.rule">
+            <field name="name">okr.result.user</field>
+            <field name="model_id" ref="okr.model_okr_result"/>
+            <field name="domain_force">[]</field>
+            <field name="groups" eval="[(4, ref('group_okr_user'))]"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <field name="perm_read" eval="1"/>
+        </record>
+
+        <record id="ir_rule_okr_result_crud_user" model="ir.rule">
+            <field name="name">okr.result.user</field>
+            <field name="model_id" ref="okr.model_okr_result"/>
+            <field name="domain_force">['|', ('user_id', '=', user.id), ('objective_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_okr_user'))]"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="perm_read" eval="1"/>
+        </record>
+
+        <record id="ir_rule_okr_result_manager" model="ir.rule">
+            <field name="name">okr.result.user</field>
+            <field name="model_id" ref="okr.model_okr_result"/>
+            <field name="domain_force">[]</field>
+            <field name="groups" eval="[(4, ref('group_okr_manager'))]"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="perm_read" eval="1"/>
+        </record>
+    </data>
+</odoo>
