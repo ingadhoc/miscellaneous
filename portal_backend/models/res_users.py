@@ -82,12 +82,12 @@ class GroupsView(models.Model):
                 groups_to_move += self._get_groups_between_separator(separator[0])
 
         # Create new group for portal backend views
-        new_arch_pb_parent_group = E.group(*groups_to_move, invisible=str(user_type_field_name != group_portal_backend.id))
+        new_arch_pb_parent_group = E.group(*groups_to_move, invisible=f'{user_type_field_name} != {group_portal_backend.id}')
 
         # Set attributes
-        pb_field_attributes = {'readonly': [(user_type_field_name, '!=', group_portal_backend.id)]}
+        pb_field_attributes = f"{user_type_field_name} != {group_portal_backend.id}"
         for field in new_arch_pb_parent_group.iter('field'):
-            field.set("invisible", json.dumps(pb_field_attributes))
+            field.set("readonly", pb_field_attributes)
 
         # Add the new group to the arch view
         arch.append(new_arch_pb_parent_group)
