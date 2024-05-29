@@ -19,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Portal Timesheet',
-    'version': '16.0.1.0.0',
+    'version': '16.0.2.0.0',
     'category': 'Base',
     'sequence': 14,
     'summary': '',
@@ -34,6 +34,7 @@
     ],
     'data': [
         'security/res_groups.xml',
+        'security/ir_rule.xml',
         'security/ir.model.access.csv',
         'views/base_menus.xml',
         'views/hr_employee_views.xml',
