@@ -15,7 +15,6 @@ class MailActivity(models.Model):
             for mail_template in self.activity_type_id.mail_template_ids:
                 self.env[self.res_model].browse(self.res_id).message_post_with_source(
                     mail_template,
-                    message_type='comment',
                     subtype_xmlid='mail.mt_comment'
                 )
         return super()._action_done(feedback=feedback, attachment_ids=attachment_ids)
