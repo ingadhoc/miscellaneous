@@ -9,7 +9,7 @@
     <!-- Portal backend user group -->
     <record id="group_portal_backend" model="res.groups">
         <field name="name">Portal Backend</field>
-        <field name="category_id" ref="base.module_category_user_type"/>
+        <field name="category_id" ref="category_portal_advanced"/>
         <field name="implied_ids" eval="[Command.link(ref('base.group_portal'))]"/>
     </record>
 
