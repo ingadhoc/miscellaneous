@@ -3,22 +3,10 @@
 # directory
 ##############################################################################
 from odoo import models, api
-from odoo.addons.base.models.res_users import Users, name_selection_groups
+from odoo.addons.base.models.res_users import name_selection_groups
 from odoo.addons.base.models.ir_model import MODULE_UNINSTALL_FLAG
 from lxml import etree
 from lxml.builder import E
-import json
-
-
-def new_check_one_user_type(self):
-    """ Monkey patch to bypass this constrain since the portal backend users have portal and portal_backend groups.
-        The native method checks if at least there is one user with two user types so it always gonna return False.
-        It is necessary to do it as a patch because the constraint is called when a module updates user group.
-    """
-    return True
-
-
-Users._check_one_user_type = new_check_one_user_type
 
 
 class ResUsers(models.Model):
@@ -115,3 +103,24 @@ class GroupsView(models.Model):
                 return groups
             else:
                 return
+
+    @api.model
+    def get_groups_by_application(self):
+        res = super().get_groups_by_application()
+        for index, (category, kind, groups, *rest) in enumerate(res):
+            if category == self.env.ref('base.module_category_user_type'):
+                group_portal_backend = self.env.ref('portal_backend.group_portal_backend')
+                if group_portal_backend.id not in groups.ids:
+                    updated_groups = self.env['res.groups'].browse(groups.ids + [group_portal_backend.id])
+                    res[index] = (category, kind, updated_groups, *rest)
+                break
+        return res
+
+    def get_application_groups(self, domain):
+        res = super().get_application_groups(domain)
+        category_user_type = self.env.ref('base.module_category_user_type')
+        if res.mapped('category_id') == category_user_type:
+            group_portal_backend = self.env.ref('portal_backend.group_portal_backend')
+            if group_portal_backend.id not in res.ids:
+                res += group_portal_backend
+        return res
