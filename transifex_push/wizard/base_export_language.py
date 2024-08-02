@@ -45,7 +45,7 @@ class BaseLanguageExport(models.TransientModel):
         _logger.info('Pushing translations to transifex')
         if not api_key or not organization_slug or not project_slug:
             raise UserError(
-                'Se deben configura los siguientes parametros de transfiex: api_key, organization_slug, project_slug')
+                'Se deben configurar los siguientes parametros de transfiex: api_key, organization_slug, project_slug')
 
         installed_langs = {x.iso_code: x.code for x in self.env['res.lang'].with_context(active_test=True).search([])}
 
@@ -53,14 +53,16 @@ class BaseLanguageExport(models.TransientModel):
         tx_organization = transifex_api.Organization.get(slug=organization_slug)
         tx_project = tx_organization.fetch('projects').get(slug=project_slug)
 
-        tx_resources = tx_project.fetch('resources')
         tx_project_languages = {x.code: x.id for x in tx_project.fetch('languages').all()}
-        tx_resources_names = [x.name for x in tx_resources]
         po_format = transifex_api.i18n_formats.get(organization=tx_organization, name='PO')
 
         for module in modules:
             module_name = module.name
-            if module_name not in tx_resources_names:
+            try:
+                # obtenemos el resource de esta manera ya que filter o get con slug o name no hacen busqueda exacta y si coincide
+                # la primer parte nos devuelve varios resultados
+                resource = transifex_api.resources.get('%s:r:%s' % (tx_project.id, module_name))
+            except:
                 attributes = {
                     "accept_translations": True,
                     "name": module_name,
@@ -72,10 +74,7 @@ class BaseLanguageExport(models.TransientModel):
                 }
                 _logger.info("Creating missing resource %s on transifex project %s", module_name, tx_project.name)
                 resource = transifex_api.Resource.create(attributes=attributes, relationships=relationships)
-            # obtenemos el resource de esta manera ya que filter o get con slug o name no hacen busqueda exacta y si coincide
-            # la primer parte nos devuelve varios resultados
-            resource = transifex_api.resources.get('%s:r:%s' % (tx_project.id, module_name))
-
+            
             # subimos .pot (terminos en ingles)
             content = _get_language_content(False, module)
             # asincrono (por ahora no usamos)))
