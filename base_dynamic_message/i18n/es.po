@@ -2,12 +2,16 @@
 # This file contains the translation of the following modules:
 # 	* base_dynamic_message
 # 
+# Translators:
+# ayecod, 2024
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-15 14:09+0000\n"
+"POT-Creation-Date: 2024-03-21 12:23+0000\n"
 "PO-Revision-Date: 2023-12-15 14:09+0000\n"
+"Last-Translator: ayecod, 2024\n"
 "Language-Team: Spanish (https://app.transifex.com/adhoc/teams/46451/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -18,14 +22,14 @@ msgstr ""
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__alert_type
 msgid "Alert Type"
-msgstr ""
+msgstr "Tipo de alerta"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__code
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__code
 #: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
 msgid "Code"
-msgstr ""
+msgstr "Clave"
 
 #. module: base_dynamic_message
 #: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
@@ -36,13 +40,13 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__create_uid
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__create_uid
 msgid "Created by"
-msgstr ""
+msgstr "Creado por"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__create_date
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__create_date
 msgid "Created on"
-msgstr ""
+msgstr "Creado en"
 
 #. module: base_dynamic_message
 #: model:ir.model.constraint,message:base_dynamic_message.constraint_ir_model_dynamic_message_unique_level_per_model
@@ -59,18 +63,18 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__description
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__description
 msgid "Description"
-msgstr ""
+msgstr "Descripción"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__display_name
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__display_name
 msgid "Display Name"
-msgstr ""
+msgstr "Nombre a mostrar"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__domain
 msgid "Domain"
-msgstr ""
+msgstr "Dominio"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__dynamic_message_id
@@ -93,19 +97,19 @@ msgstr ""
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__field_id
 msgid "Field"
-msgstr ""
+msgstr "Campo"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__id
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__id
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__write_uid
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__write_uid
 msgid "Last Updated by"
-msgstr ""
+msgstr "Última actualización por"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__write_date
