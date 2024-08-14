@@ -1,7 +1,7 @@
 {
     "name": "OKR Managment",
     "author": "Adhoc SA",
-    "version": "16.0.1.0",
+    "version": "17.0.1.0",
     "depends": [
         'base',
         'mail',
