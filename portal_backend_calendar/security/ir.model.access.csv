@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_calendar_attendee_portal_backend_calendar,portal_backend_calendar.model_calendar_attendee,calendar.model_calendar_attendee,portal_backend.group_portal_backend,1,1,1,0
