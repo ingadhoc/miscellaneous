@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="okr_objective_users_read_rule" model="ir.rule">
+            <field name="name">okr.objective.users.read</field>
+            <field name="model_id" ref="okr.model_okr_objective"/>
+            <field name="domain_force">[]</field>
+            <field name="groups" eval="[(4, ref('group_okr_user'))]"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <field name="perm_read" eval="1"/>
+        </record>
+
+        <record id="okr_objective_users_all_rule" model="ir.rule">
+            <field name="name">okr.objective.user.all</field>
+            <field name="model_id" ref="okr.model_okr_objective"/>
+            <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('group_okr_user'))]"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="perm_read" eval="1"/>
+        </record>
+
+        <record id="okr_key_result_users_read_rule" model="ir.rule">
+            <field name="name">okr.key_result.users.read</field>
+            <field name="model_id" ref="okr.model_okr_key_result"/>
+            <field name="domain_force">[]</field>
+            <field name="groups" eval="[(4, ref('group_okr_user'))]"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <field name="perm_read" eval="1"/>
+        </record>
+
+        <record id="okr_key_result_users_all_rule" model="ir.rule">
+            <field name="name">okr.key_result.users.all</field>
+            <field name="model_id" ref="okr.model_okr_key_result"/>
+            <field name="domain_force">['|', ('partner_id', '=', user.partner_id.id), ('objective_id.partner_id', '=', user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('group_okr_user'))]"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="perm_read" eval="1"/>
+        </record>
+
+    </data>
+</odoo>
