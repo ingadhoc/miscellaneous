@@ -1,0 +1,75 @@
+<odoo>
+<data noupdate="0">
+
+
+    <record model="ir.module.category" id="module_category_okr">
+        <field name="name">OKR</field>
+    </record>
+    <record id="group_okr_user" model="res.groups">
+        <field name="name">User</field>
+        <field name="category_id" ref="module_category_okr"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="group_okr_manager" model="res.groups">
+        <field name="name">Manager</field>
+        <field name="category_id" ref="module_category_okr"/>
+        <field name="implied_ids" eval="[(4, ref('group_okr_user'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+</data>
+<data noupdate="1">
+
+    <record id="okr_objective_comp_rule" model="ir.rule">
+        <field name="name">OKR objective company rule</field>
+        <field name="model_id" ref="model_okr_objective"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="okr_key_result_comp_rule" model="ir.rule">
+        <field name="name">OKR Key Result company rule</field>
+        <field name="model_id" ref="model_okr_key_result"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="okr_key_result_user_rule_by_objective" model="ir.rule">
+        <field name="name">OKR Key Result user rule by objective</field>
+        <field name="model_id" ref="model_okr_key_result"/>
+        <field name="groups" eval="[(4, ref('okr.group_okr_user'))]"/>
+        <field name="domain_force">[('objective_id.user_id', '=', user.id)]</field>
+    </record>
+
+    <record id="okr_key_result_user_rule" model="ir.rule">
+        <field name="name">OKR Key Result user rule</field>
+        <field name="model_id" ref="model_okr_key_result"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('okr.group_okr_user'))]"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="perm_create" eval="False"/>
+    </record>
+
+    <record id="okr_key_result_manager_rule" model="ir.rule">
+        <field name="name">OKR Key Result manager rule</field>
+        <field name="model_id" ref="model_okr_key_result"/>
+        <field name="groups" eval="[(4, ref('okr.group_okr_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <record id="okr_objective_user_rule" model="ir.rule">
+        <field name="name">OKR Objective user rule</field>
+        <field name="model_id" ref="model_okr_objective"/>
+        <field name="groups" eval="[(4, ref('okr.group_okr_user'))]"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="perm_unlink" eval="False"/>
+        <field name="perm_create" eval="False"/>
+    </record>
+
+    <record id="okr_objective_manager_rule" model="ir.rule">
+        <field name="name">OKR Objective manager rule</field>
+        <field name="model_id" ref="model_okr_objective"/>
+        <field name="groups" eval="[(4, ref('okr.group_okr_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+</data>
+</odoo>
