@@ -3,15 +3,17 @@
 # 	* base_dynamic_message
 # 
 # Translators:
+# mas-adhoc, 2024
 # ayecod, 2024
+# feg, 2024
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-21 12:23+0000\n"
+"POT-Creation-Date: 2024-08-06 01:32+0000\n"
 "PO-Revision-Date: 2023-12-15 14:09+0000\n"
-"Last-Translator: ayecod, 2024\n"
+"Last-Translator: feg, 2024\n"
 "Language-Team: Spanish (https://app.transifex.com/adhoc/teams/46451/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -34,7 +36,7 @@ msgstr "Clave"
 #. module: base_dynamic_message
 #: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
 msgid "Create / Update"
-msgstr ""
+msgstr "Crear / Actualizar"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__create_uid
@@ -53,11 +55,12 @@ msgstr "Creado en"
 msgid ""
 "Debe haber un unico registro por modelo, vista heredada y tipo de alerta"
 msgstr ""
+"Debe haber un único registro por modelo, vista heredada y tipo de alerta"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__depends
 msgid "Depends"
-msgstr ""
+msgstr "Depende"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__description
@@ -79,13 +82,13 @@ msgstr "Dominio"
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__dynamic_message_id
 msgid "Dynamic Message"
-msgstr ""
+msgstr "Mensaje dinámico"
 
 #. module: base_dynamic_message
 #: model:ir.actions.act_window,name:base_dynamic_message.action_ir_model_dynamic_message
 #: model:ir.ui.menu,name:base_dynamic_message.menu_ir_model_dynamic_message
 msgid "Dynamic Messages"
-msgstr ""
+msgstr "Mensajes dinámicos"
 
 #. module: base_dynamic_message
 #: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
@@ -115,43 +118,43 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__write_date
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__write_date
 msgid "Last Updated on"
-msgstr ""
+msgstr "Última actualización el"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__line_ids
 msgid "Line"
-msgstr ""
+msgstr "Línea"
 
 #. module: base_dynamic_message
 #: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
 msgid "Lines"
-msgstr ""
+msgstr "Líneas"
 
 #. module: base_dynamic_message
 #: model:res.groups,name:base_dynamic_message.group_dynamic_messages_manager
 msgid "Manage Dynamic Messages"
-msgstr ""
+msgstr "Administrar mensajes dinámicos"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__message
 msgid "Message"
-msgstr ""
+msgstr "Mensaje"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__model_id
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__model_name
 msgid "Model"
-msgstr ""
+msgstr "Modelo"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__model_name
 msgid "Model Name"
-msgstr ""
+msgstr "Nombre del modelo"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__name
 msgid "Name"
-msgstr ""
+msgstr "Nombre"
 
 #. module: base_dynamic_message
 #: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
@@ -161,12 +164,12 @@ msgstr ""
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__view_id
 msgid "View"
-msgstr ""
+msgstr "Vista"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__view_to_inherit_id
 msgid "View To Inherit"
-msgstr ""
+msgstr "Vista a heredar"
 
 #. module: base_dynamic_message
 #: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
@@ -183,7 +186,7 @@ msgstr ""
 #. module: base_dynamic_message
 #: model:ir.model.fields.selection,name:base_dynamic_message.selection__ir_model_dynamic_message__alert_type__danger
 msgid "danger"
-msgstr ""
+msgstr "peligro"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields.selection,name:base_dynamic_message.selection__ir_model_dynamic_message__alert_type__info
@@ -215,4 +218,4 @@ msgstr ""
 #. module: base_dynamic_message
 #: model:ir.model.fields.selection,name:base_dynamic_message.selection__ir_model_dynamic_message__alert_type__warning
 msgid "warning"
-msgstr ""
+msgstr "advertencia"
