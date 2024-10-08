@@ -3,16 +3,16 @@
 # 	* portal_timesheet
 # 
 # Translators:
-# Juan José Scarafía <scarafia.juanjose@gmail.com>, 2024
 # Florencia Battaglia, 2024
+# Juan José Scarafía <scarafia.juanjose@gmail.com>, 2024
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-06 01:35+0000\n"
+"POT-Creation-Date: 2024-09-26 20:22+0000\n"
 "PO-Revision-Date: 2024-05-22 16:01+0000\n"
-"Last-Translator: Florencia Battaglia, 2024\n"
+"Last-Translator: Juan José Scarafía <scarafia.juanjose@gmail.com>, 2024\n"
 "Language-Team: Spanish (https://app.transifex.com/adhoc/teams/46451/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -44,7 +44,7 @@ msgstr "Tarea"
 #. module: portal_timesheet
 #: model:ir.model.fields,field_description:portal_timesheet.field_project_project__total_timesheet_time
 msgid "Total Timesheet Time"
-msgstr "Tiempo total de la hoja de asistencia"
+msgstr "Tiempo total del parte de horas"
 
 #. module: portal_timesheet
 #: model:ir.model.fields,help:portal_timesheet.field_project_project__total_timesheet_time
