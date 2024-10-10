@@ -25,7 +25,7 @@ class ResUsers(models.Model):
 
     def _is_internal(self):
         self.ensure_one()
-        if self.has_group('portal_backend.group_portal_backend') and self.env.context.get('portal_bypass'):
+        if self.sudo().has_group('portal_backend.group_portal_backend') and self.env.context.get('portal_bypass'):
             return True
         return super()._is_internal()
 
