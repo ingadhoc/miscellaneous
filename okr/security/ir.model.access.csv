@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_kr_ppal_user,access_kr_ppal_user,model_kr_ppal,group_okr_user,1,1,1,1
+access_kr_ppal_manager,access_kr_ppal_manager,model_kr_ppal,group_okr_manager,1,1,1,1
+access_okr_key_result_user,access_okr_key_result_user,model_okr_key_result,group_okr_user,1,1,0,0
+access_okr_key_result_manager,access_okr_key_result_manager,model_okr_key_result,group_okr_manager,1,1,1,1
+access_okr_objective_user,access_okr_objective_user,model_okr_objective,group_okr_user,1,1,0,0
+access_okr_objective_manager,access_okr_objective_manager,model_okr_objective,group_okr_manager,1,1,1,1
