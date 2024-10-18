@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+
+    <record id="okr_vkey_result_iew_form" model="ir.ui.view">
+        <field name="name">okr.key.result.view.form</field>
+        <field name="model">okr.key.result</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <group>
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="responsible"/>
+                    <field name="objective"/>
+                </group>
+                <group>
+                    <field name="priority"/>
+                    <field name="target"/>
+                    <field name="target_uom"/>
+                    <field name="result"/>
+                    <field name="progress"/>
+                </group>
+                <notebook>
+                    <page name="Comentarios">
+                        <field name="comments"/>
+                    </page>
+                </notebook>
+            </form>
+        </field>
+    </record>
+
+    <record id="okr_key_result_view_tree" model="ir.ui.view">
+        <field name="name">okr.key.result.view.tree</field>
+        <field name="model">okr.key.result</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" string="Title"/>
+                <field name="objective"/>
+                <field name="priority"/>
+                <field name="target"/>
+                <field name="target_uom"/>
+                <field name="result"/>
+                <field name="progress"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_okr_key_result" model="ir.actions.act_window">
+        <field name="name">okr key result</field>
+        <field name="res_model">okr.key.result</field>
+        <field name='view_mode'>tree,form</field>
+    </record>
+
+    <menuitem id="menu_okr_key_result" sequence="100" action="action_okr_key_result" parent="menu_okr_objective"/>
+
+</odoo>
