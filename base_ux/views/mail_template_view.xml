@@ -24,20 +24,22 @@
         </field>
     </record>
 
-    <record id="view_mail_template_tree" model="ir.ui.view">
-        <field name="name">view_mail_template_tree</field>
+    <!-- TODO: revisar si hace falta, desactivada en migra a v18 porque da problemas -->
+    <!-- <record id="view_mail_template_list1" model="ir.ui.view">
+        <field name="name">view_mail_template_list1</field>
         <field name="model">mail.template</field>
-        <field name="type">tree</field>
-        <field name="inherit_id" ref="mail.email_template_tree"/>
+        <field name="type">list</field>
+        <field name="priority">99</field>
+        <field name="inherit_id" ref="mail.view_mail_tree"/>
         <field name="arch" type="xml">
-            <xpath expr="//tree[1]" position="attributes">
+            <xpath expr="//list" position="attributes">
                 <attribute name="decoration-muted">not active</attribute>
             </xpath>
-            <field name="partner_to" position="after">
+            <xpath expr="//field[@name='date']" position="after">
                 <field name="active" column_invisible="True"/>
-            </field>
+            </xpath>
         </field>
-    </record>
+    </record> -->
 
     <record id="mail.action_email_template_tree_all" model="ir.actions.act_window">
         <field name="context">{'search_default_active': True, 'active_test': False}</field>
