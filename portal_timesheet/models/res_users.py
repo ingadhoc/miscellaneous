@@ -6,7 +6,7 @@ class User(models.Model):
 
 
     def get_last_validated_timesheet_date(self):
-        if not self.user_has_groups('portal_timesheet.group_portal_backend_timesheet'):
+        if not self.env.user.has_group('portal_timesheet.group_portal_backend_timesheet'):
             return super().get_last_validated_timesheet_date()
         else:
             return self.sudo().employee_id.last_validated_timesheet_date
