@@ -1,17 +1,13 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# 	* crm_mail_tracking
-# 
-# Translators:
-# Juan José Scarafía <scarafia.juanjose@gmail.com>, 2024
+# 	* base_exception_ux
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-04 20:02+0000\n"
-"PO-Revision-Date: 2024-02-05 17:12+0000\n"
-"Last-Translator: Juan José Scarafía <scarafia.juanjose@gmail.com>, 2024\n"
+"POT-Creation-Date: 2024-09-06 17:53+0000\n"
+"PO-Revision-Date: 2024-01-11 21:15+0000\n"
 "Language-Team: Spanish (https://app.transifex.com/adhoc/teams/46451/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,7 +15,7 @@ msgstr ""
 "Language: es\n"
 "Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
-#. module: crm_mail_tracking
-#: model:ir.model,name:crm_mail_tracking.model_mail_thread
-msgid "Email Thread"
-msgstr "Hilo de correo electrónico"
+#. module: base_exception_ux
+#: model:ir.model,name:base_exception_ux.model_base_exception_method
+msgid "Exception Rule Methods"
+msgstr ""
