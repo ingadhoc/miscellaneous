@@ -14,7 +14,7 @@ class BaseLanguageExport(models.TransientModel):
 
     api_key = fields.Char(default='1/7dbfd1118bec5ef2dfac3528d8c5cea3dbd42164')
     organization_slug = fields.Char(default='adhoc')
-    project_slug = fields.Char(default='odoo-16-0')
+    project_slug = fields.Char(default='odoo-18-0')
 
     def action_transifex_push(self):
         self.ensure_one()
@@ -33,13 +33,6 @@ class BaseLanguageExport(models.TransientModel):
             with contextlib.closing(io.BytesIO()) as buf:
                 tools.trans_export(lang_code, [module.name], buf, 'po', self._cr)
                 content = buf.getvalue().decode("utf-8")
-                #  y luego pasando "content_encoding": "text",
-
-                # la otra alternativa es subirlo como base64 pero no sabemos como hacer con metodo "upload" (sincrono),
-                # haciendo algo asi (y luego pasando "content_encoding": "base64",)
-                # content = base64.encodebytes(buf.getvalue())
-
-            # f = open(tmp_file)
             return content
 
         _logger.info('Pushing translations to transifex')
@@ -77,14 +70,6 @@ class BaseLanguageExport(models.TransientModel):
             
             # subimos .pot (terminos en ingles)
             content = _get_language_content(False, module)
-            # asincrono (por ahora no usamos)))
-            # upload = transifex_api.resource_strings_async_uploads.create(
-            #     attributes={"content": content, "content_encoding": "text"}, relationships={"resource": resource})
-            # # chequear estado (este codigo que sugiere no va pero si nos funcoona)
-            # upload.attributes['status']
-            # # cuando llegue a succeeded o sea distinto de "pending"
-            # upload.reload()
-            # si lo quisieramos hacer sincrono podemos hacerlo así, pero para que no tarde mucho, dejamos que se haga en back
             res = transifex_api.resource_strings_async_uploads.upload(resource=resource, content=content)
             _logger.info('Result: %s', res)
 
@@ -94,23 +79,7 @@ class BaseLanguageExport(models.TransientModel):
                     _logger.warning('Language %s not installed on database, skiping sync to transfiex', tx_language)
                     continue
                 content = _get_language_content(installed_langs[tx_language], module)
-                # asincrono
-                # upload = transifex_api.resource_translations_async_uploads.create(
-                #     attributes={"content": content, "content_encoding": "text", "file_type": "default"},
-                #     relationships={"resource": resource, 'language': tx_language,})
-                # upload.attributes['status']
-                # upload.reload()
 
-                # sincrono
                 res = transifex_api.resource_translations_async_uploads.upload(
                     resource=resource, content=content, language=tx_project_languages[tx_language])
                 _logger.info('Result: %s', res)
-
-        # Actualmente trabajamos leyendo los idiomas que existen en transifex, pero si se quisieran crear desde runbot
-        # se podría ahcer algo asi
-        # # CREAR IDIOMA EN PROYECTO SI NO EXISTE
-        # language = transifex_api.Language.get(code="pt_BR")
-        # languages = project.fetch('languages')
-        # if language not in languages:
-        #     project.add('languages', [language])
-        #     project.save(translation_memory_fillup=True)
