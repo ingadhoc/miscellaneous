@@ -1,6 +1,8 @@
-from odoo import models, tools, fields
+from odoo import models, fields
 from transifex.api import transifex_api
 from odoo.exceptions import UserError
+from odoo.tools.translate import trans_export
+
 # import base64
 import contextlib
 import io
@@ -31,7 +33,7 @@ class BaseLanguageExport(models.TransientModel):
         """
         def _get_language_content(lang_code, module):
             with contextlib.closing(io.BytesIO()) as buf:
-                tools.trans_export(lang_code, [module.name], buf, 'po', self._cr)
+                trans_export(lang_code, [module.name], buf, 'po', self._cr)
                 content = buf.getvalue().decode("utf-8")
             return content
 
