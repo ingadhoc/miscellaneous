@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="action_cron_execution_call" model="ir.actions.server">
+        <field name="name">Adelantar ejecución de cron</field>
+        <field name="model_id" ref="integrator.model_integrator_integration"/>
+        <field name="type">ir.actions.server</field>
+        <field name="state">code</field>
+        <field name="code">
+record.cron_id.sudo().write({'nextcall': datetime.datetime.now()})
+        </field>
+    </record>
+
+</odoo>

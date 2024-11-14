@@ -1,0 +1,59 @@
+<odoo>
+
+<!-- SEARCH VIEW -->
+<record id="view_integrator_integration_script_filter" model="ir.ui.view">
+    <field name="name">integrator.integration.script.select</field>
+    <field name="model">integrator.integration.script</field>
+    <field name="arch" type="xml">
+        <search>
+            <field name="name"/>
+        </search>
+    </field>
+</record>
+
+<!-- FORMVIEW -->
+<record id="view_integrator_integration_script_form" model="ir.ui.view">
+    <field name="name">integrator.integration.script.form</field>
+    <field name="model">integrator.integration.script</field>
+    <field name="arch" type="xml">
+        <form>
+            <sheet>
+                <label for="name" class="oe_edit_only" />
+                <h1><field name="name" /></h1>
+                <notebook>
+                    <page string="Python Code" name='code'>
+                        <field name="code" widget="ace" options="{'mode': 'python'}" placeholder="Enter Python code here. Help about Python expression is available in the help tab of this document."/>
+                    </page>
+                </notebook>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<!-- TREEVIEW -->
+<record id="view_integrator_integration_script_tree" model="ir.ui.view">
+    <field name="name">integrator.integration.script.tree</field>
+    <field name="model">integrator.integration.script</field>
+    <field name="arch" type="xml">
+        <tree>
+            <!-- <field name="partner_id" groups="base.group_user"/> -->
+            <field name="name" />
+        </tree>
+    </field>
+</record>
+
+<record id="action_integrator_integration_script" model="ir.actions.act_window">
+    <field name="name">Scripts</field>
+    <field name="res_model">integrator.integration.script</field>
+    <field name="view_mode">tree,form</field>
+    <field name="context"></field>
+</record>
+
+<menuitem
+    id="menu_integrator_integration_scripts"
+    sequence="10"
+    parent="menu_integrator_integrations"
+    action="action_integrator_integration_script"
+    />
+
+</odoo>
