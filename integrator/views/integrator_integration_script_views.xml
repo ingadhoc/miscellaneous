@@ -36,7 +36,6 @@
     <field name="model">integrator.integration.script</field>
     <field name="arch" type="xml">
         <tree>
-            <!-- <field name="partner_id" groups="base.group_user"/> -->
             <field name="name" />
         </tree>
     </field>
