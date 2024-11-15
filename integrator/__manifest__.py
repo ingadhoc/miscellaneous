@@ -27,35 +27,15 @@
     'depends': [
         'base', 'mail',
     ],
-    # Lo estamos agregando a la imagen ??
-    # 'external_dependencies': {
-    #     'python': [
-    #         'odooly',
-    #     ],
-    # },
     'data': [
-        # 'data/mail_message_subtype_data.xml',
         'data/ir_server_action.xml',
-        # 'data/mail_templates.xml',
         'security/integrator_security.xml',
         'security/ir.model.access.csv',
         'views/ir_ui_menuitem.xml',
         'views/integrator_account_views.xml',
         'views/integrator_integration_views.xml',
         'views/integrator_integration_script_views.xml',
-        # 'data/log_cleaning_cron.xml',
-        # 'data/integration_type_data.xml',
-        # 'wizards/integrator_account_wizard_view.xml',
     ],
-    # Este asset lo agregamos para poder usar html en las notificaciones usando el tag odumbo_notification
-    # En versiones futuras revisar si sigue siendo necesario, si no pasar a display_notification
-    # 'assets': {
-    #     'web.assets_backend': [
-    #         'integrator/static/src/webclient/actions/client_action.js',
-    #     ]
-    # },
-    # Esto no lo agrego porque entiendo ya lo hacemos en repo de odooly
-    # 'post_load': 'patch_odooly',
     'installable': True,
     'auto_install': False,
     'application': True,

@@ -26,16 +26,9 @@ result = False
 class IntegratorIntegrationScript(models.Model):
 
     _name = "integrator.integration.script"
-    # _inherit = ["portal.mixin"]
     _description = "integrator.integration.script"
 
     name = fields.Char(required=True)
-    # partner_id = fields.Many2one(
-    #     "res.partner", string='Partner',
-    #     ondelete='restrict', default=lambda self: self.env.user.partner_id)
-    # commercial_partner_id = fields.Many2one(
-    #     'res.partner', string='Commercial Entity', compute_sudo=True,
-    #     related='partner_id.commercial_partner_id', store=True, readonly=True,)
     code = fields.Text(default=DEFAULT_CODE, required=True)
 
     @api.model_create_multi

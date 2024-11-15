@@ -109,11 +109,4 @@
     action="action_integrator_integration"
     />
 
-<!-- <menuitem
-    id="menu_integrator_integration_logging"
-    sequence="9"
-    parent="menu_integrator_integrations"
-    action="action_integrator_integration_logging"
-    /> -->
-
 </odoo>

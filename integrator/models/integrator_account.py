@@ -33,15 +33,6 @@ class IntegratorAccount(models.Model):
         self.test_connection()
         self.write({'state': 'confirmed'})
 
-    # def test_connection(self):
-    #     for rec in self:
-    #         _logger.info("Testing Connection on '%s'" % (rec.name))
-    #         if hasattr(rec, '%s_test_connection' % rec.account_type):
-    #             getattr(rec, '%s_test_connection' % rec.account_type)()
-    #         else:
-    #             _logger.warning("Account '%s' has no test method!" %
-    #                             rec.account_type)
-
     def test_connection(self):
         """ Odoo Connection Test.
         Returns True if successful.
@@ -91,24 +82,3 @@ class IntegratorAccount(models.Model):
                 "The Odoo version on the remote system is not supported. "
                 "Please upgrade to v13.0 or higher")
         return True
-
-    # def _get_alias(self):
-    #     if not self.channel_alias:
-    #         odoo = self._odoo_get_client()
-    #         channel = odoo.env.ref("__integrator__.odumbo_channel")
-    #         channel_id = channel.id if channel else False
-    #         if not channel:
-    #             fields = ['id', 'name', 'description']
-    #             data = ["__integrator__.odumbo_channel", 'Odumbo', 'Errors communicated by Odumbo integrations']
-    #             channel = odoo.env['mail.channel'].load(fields, [data])
-    #             channel_id = channel.get('ids')[0]
-
-    #         alias = odoo.env.ref("__integrator__.odumbo_channel_alias")
-    #         if not alias:
-    #             fields = ['id', 'alias_name', 'alias_model_id/.id', 'alias_force_thread_id']
-    #             data = ["__integrator__.odumbo_channel_alias", 'odumbo', odoo.env.ref("mail.model_mail_channel").id, channel_id]
-    #             alias = odoo.env['mail.alias'].load(fields, [data])
-    #             alias_id = alias.get('ids')[0]
-    #             alias = odoo.env['mail.alias'].browse(alias_id)
-    #         self.channel_alias = alias.name_get()[1]
-    #     return self.channel_alias

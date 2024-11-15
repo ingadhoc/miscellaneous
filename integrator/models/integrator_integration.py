@@ -28,19 +28,6 @@ class IntegratorIntegration(models.Model):
     _mailing_enabled = True
 
     name = fields.Char(required=True, tracking=True, store=True, compute='_compute_name', default=lambda self: _('New'))
-    # sync_number = fields.Char('Synchronization Number', copy=False, index=True, default='NaN')
-    # version = fields.Selection([
-    #     ('stable', 'Stable'),
-    #     ('development', 'Development')],
-    #     tracking=True, required=True, default='stable', states={'confirmed': [('readonly', True)]})
-    # integration_type_id = fields.Many2one('integration.type', required=True)
-    # is_odoo_odoo = fields.Boolean(compute='_compute_is_odoo_odoo', store=True)
-    # partner_id = fields.Many2one(
-    #     'res.partner', string='Partner', tracking=True,
-    #     ondelete='restrict', default=lambda self: self.env.user.partner_id)
-    # commercial_partner_id = fields.Many2one(
-    #     'res.partner', string='Commercial Entity', compute_sudo=True,
-    #     related='partner_id.commercial_partner_id', store=True, readonly=True,)
     state = fields.Selection([('draft', 'Draft'),
                               ('confirmed', 'Confirmed')],
                              copy=False, default='draft', required=True,
@@ -55,13 +42,6 @@ class IntegratorIntegration(models.Model):
     cron_nextcall = fields.Datetime(related='cron_id.nextcall', string="Next Call Execution")
 
     # Odoo2odoo Specific Fields
-
-    # odoo_db1 = fields.Many2one(
-    #     "integrator.account", string="Odoo Database 1",
-    #     states={'confirmed': [('readonly', True)]},
-    #     tracking=True,
-    #     domain="[('account_type', '=', 'odoo'), ('commercial_partner_id', '=', commercial_partner_id), ('state', '!=', 'draft')]",
-    #     context={'default_account_type': 'odoo'})
     odoo_db2 = fields.Many2one(
         "integrator.account", string="Remote Db",
         required=True,
@@ -74,28 +54,6 @@ class IntegratorIntegration(models.Model):
         copy=True, context={'active_test': False})
     error_count = fields.Integer()
     active = fields.Boolean("Active", default=True)
-
-    # @api.depends('integration_type_id')
-    # def _compute_is_odoo_odoo(self):
-    #     for rec in self:
-    #         rec.is_odoo_odoo = rec.integration_type_id.application == 'odoo'
-
-    # def _get_sync(self, sandbox_mode=False, context={}):
-    #     if self.odoo_db2:
-    #         odoo2 = self.odoo_db2._odoo_get_client()
-    #     ctx = self._get_sync_context()
-    #     ctx.update(context)
-    #     return Sync(odoo, odoo2, sandbox_mode, ctx) if self.version == 'stable' else SyncDev(odoo, odoo2, sandbox_mode, ctx)
-
-    # def _get_sync_context(self):
-    #     self.ensure_one()
-    #     fields = [
-    #         'id',
-    #         'sync_number',
-    #     ]
-    #     ctx = self.read(fields)[0]
-    #     ctx.update(user_call='is_cron' not in self.env.context)
-    #     return ctx
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -144,17 +102,6 @@ class IntegratorIntegration(models.Model):
         self.env["ir.cron"].sudo().browse(cron_ids).unlink()
 
         return result
-
-    # def _create_sequence(self):
-    #     for rec in self:
-    #         if not self.env['ir.sequence'].sudo().search([('code', '=', 'integration.sync.%s' % rec.id)], limit=1):
-    #             self.env['ir.sequence'].sudo().create({
-    #                 'name': "Integrator Sync %s" % rec.id,
-    #                 'code': "integration.sync.%s" % rec.id,
-    #                 'prefix': '#',
-    #                 'padding': 6,
-    #             })
-    #     return True
 
     def _create_cron(self, interval=30):
         """ Create a cron task associated to the given records without one
@@ -206,21 +153,6 @@ class IntegratorIntegration(models.Model):
             raise UserError(_("This synchronization is currently being executed. "
                               "Please try again in a few minutes"))
 
-    # @api.model
-    # def _gc_integration_logs(self):
-    #     Logs = self.env['integrator.integration.logging']
-    #     logs_to_archive = Logs
-    #     logs_to_remove = Logs
-
-    #     logs_to_archive |= Logs.search([
-    #         ('create_date', '<', fields.Datetime.now() - relativedelta(days=15)),
-    #     ])
-    #     logs_to_remove |= Logs.with_context({'active_test': False}).search([
-    #         ('create_date', '<', fields.Datetime.now() - relativedelta(days=30)),
-    #     ])
-    #     logs_to_archive.action_archive()
-    #     logs_to_remove.unlink()
-
     def back_to_draft(self):
         for rec in self:
             rec.write({'state': 'draft'})
@@ -232,15 +164,6 @@ class IntegratorIntegration(models.Model):
         self.write({'state': 'confirmed'})
         self.script_line_ids.write({'state': 'pending', 'next_offset': False})
         self.last_cron_execution = datetime.datetime.now()
-
-    # def test(self):
-    #     for rec in self:
-    #         if hasattr(rec, '%s_test' % rec.integration_type_id.application):
-    #             return getattr(rec, '%s_test' % rec.integration_type_id.application)()
-    #         else:
-    #             _logger.warning(
-    #                 "Integration '%s' has no %s_test method!" %
-    #                 (rec.name, rec.integration_type_id.application))
 
     def sync(self):
         """ Sync for Odoo Integrations.
@@ -280,57 +203,8 @@ class IntegratorIntegration(models.Model):
         elif self._context.get('cron_id'):
             self.env['ir.cron'].browse(self._context.get('cron_id'))._trigger()
 
-    # def _format_summary_sync_msg(self, result):
-    #     if result['info'] or result['warning'] or result['error']:
-    #         return _(
-    #             """
-    #             <h3>Synchronization {sync_number}</h3>
-    #             <p>Summary of updated data:</p>
-    #             <ul>
-    #             <li>Info: <strong>{info}</strong></li>
-    #             <li>Warnings: <strong>{warning}</strong></li>
-    #             <li>Errors: <strong>{error}</strong></li>
-    #             </ul>
-    #             <p>Check all the log lines here <strong><a class="alert-link"
-    #             " href="/web#action=integrator.action_integrator_integration_logging" role="button">View logs.</a>
-    #             """).format(
-    #                 sync_number=self.sync_number,
-    #                 info=len(result['info']),
-    #                 warnings=len(result['warning']),
-    #                 errors=len(result['error']),
-    #             )
-    #     else:
-    #         return _(
-    #             """
-    #             <h3>Synchronization {sync_number}</h3>
-    #             <p>No changes were made on the synchronized accounts.</p>
-    #             """).format(sync_number=self.sync_number)
 
-    # def _log_sync_result(self, result):
-    #     ''' Create integration logs from results.
-    #         Expected format: {
-    #             'info': [msg],
-    #             'warning': [msg],
-    #             'error': [msg],
-    #             'metrics': {}
-    #         }
-    #     '''
-    #     if 'metrics' in result:
-    #         del(result['metrics'])
-    #     # Create logs
-    #     log_vals = []
-    #     for type, messages in result.items():
-    #         for msg in messages:
-    #             log_vals.append({
-    #                 'integration_id': self.id,
-    #                 'sync_number': self.sync_number,
-    #                 'log_type': type,
-    #                 'message': msg,
-    #             })
-    #     self.env['integrator.integration.logging'].sudo().create(log_vals)
-    #     # Create a summary of changes
-        # message = self._format_summary_sync_msg(result)
-        # self.sudo().message_post(subtype_id=self.env.ref('integrator.mt_log').id, body=message)
+
 
         # TODO: post error Odumbo channel
         # Post errors
@@ -643,70 +517,3 @@ class IntegratorIntegration(models.Model):
             'type': 'ir.actions.act_window',
             'target': 'new',
         }
-
-    # def _get_error_log_url(self):
-    #     base_url = self.get_base_url()
-    #     action = self.env.ref("integrator.action_integrator_integration_logging_errors")
-    #     path = '/web#&action=%s&model=integrator.integration.logging&view_type=' % (action.id)
-    #     return base_url + path
-
-    # def test_synchronization(self):
-    #     """ Mthod to be override by specifics integrations tests.
-    #     Return an empty dict if no errors. Otherwise return a dict with errors
-    #     """
-    #     return dict()
-
-
-# class IntegratorColoredFormatter(ColoredFormatter):
-#     def format(self, record):
-#         record.prefix = COLOR_PATTERN % (30 + record.color, 40, record.prefix)
-#         return ColoredFormatter.format(self, record)
-
-
-# class IntegrationType(models.Model):
-#     _name = 'integration.type'
-#     _description = 'Integration Type'
-
-#     name = fields.Char()
-#     application = fields.Selection([('odoo', 'Odoo')], required=True,)
-
-
-# class Sync():
-#     ''' Class that represents a generic synchronizations between two accounts '''
-
-#     def __init__(self, odoo, odoo2=None, sandbox_mode=False, ctx={}):
-#         self.odoo = odoo
-#         if odoo2:
-#             self.odoo2 = odoo2
-#         self.sandbox_mode = sandbox_mode
-#         self.ctx = ctx
-#         self.result = {'info': [], 'warning': [], 'error': []}
-#         # Logger
-#         sync_logger = logging.getLogger(self.__class__.__name__)
-#         myHandler = logging.StreamHandler()
-#         # Change Odoo log format
-#         format = '%(asctime)s %(pid)s %(levelname)s %(name)s:: %(prefix)s %(message)s'
-#         myFormatter = IntegratorColoredFormatter(format)
-#         myHandler.setFormatter(myFormatter)
-#         sync_logger.handlers.clear()
-#         sync_logger.addHandler(myHandler)
-#         sync_logger.propagate = False
-#         self.logger = logging.LoggerAdapter(sync_logger, extra={
-#             'prefix': "[SANDBOX][Integration %s]" % ctx.get('id') if self.sandbox_mode else "[Integration %s]" % ctx.get('id'),
-#             'color': random.randint(1, 7),
-#         })
-
-#     def _ensure_field(self, field_model, field_name):
-#         if self.odoo.env[field_model]._fields.get(field_name):
-#             return True
-#         else:
-#             if hasattr(self, '_create_field_%s' % field_name):
-#                 return getattr(self, '_create_field_%s' % field_name)()
-#             else:
-#                 self.result['error'].append("Field %s no found in the model %s." % (field_name, field_model))
-
-
-# class SyncDev(Sync):
-#     ''' Class that represents a generic Dev synchronizations between two accounts '''
-
-#     pass
