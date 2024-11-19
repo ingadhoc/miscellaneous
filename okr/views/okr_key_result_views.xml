@@ -1,0 +1,49 @@
+<odoo>
+    <record id="view_okr_key_result_tree" model="ir.ui.view">
+        <field name="name">okr.key_result.tree</field>
+        <field name="model">okr.key_result</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="department_id"/>
+                <field name="user_id"/>
+                <field name="objective_id"/>
+                <field name="progress"/>
+                <field name="weight"/>
+                <field name="target"/>
+                <field name="result"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_okr_key_result_form" model="ir.ui.view">
+        <field name="name">okr.key_result.form</field>
+        <field name="model">okr.key_result</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="description"/>
+                        <field name="department_id"/>
+                        <field name="user_id"/>
+                        <field name="objective_id"/>
+                        <field name="progress"/>
+                        <field name="weight"/>
+                        <field name="target"/>
+                        <field name="result"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="okr_key_result_action" model="ir.actions.act_window">
+        <field name="name">OKR Key Result</field>
+        <field name="res_model">okr.key_result</field>
+        <field name='view_mode'>tree,form</field>
+    </record>
+
+</odoo>
+
