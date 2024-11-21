@@ -1,0 +1,10 @@
+<odoo>
+    <data>
+        <menuitem name="Okr"
+                id="okr_menu"
+                web_icon="okr,static/description/icon.png"/>
+        <menuitem id="okr_area" name="OKR" parent="okr_menu"/>
+        <menuitem id="okr_objetivos" name="Objetivos" action="okr_action" parent="okr_area"/>
+        <menuitem id="okr_results" name="Resultados" sequence="100" action="okr_results_action" parent="okr_menu"/>
+    </data>
+</odoo>
