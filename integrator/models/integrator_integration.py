@@ -249,7 +249,7 @@ class IntegratorIntegration(models.Model):
         def sync_model(
                 target_db, model_name, common_fields=[],
                 boolean_fields=[], m2o_fields=[], m2m_fields=[], domain=[],
-                sort="id", offset=0, limit=None, target_model_name=None):
+                sort="id", offset=0, limit=100, target_model_name=None):
             """ Helper method for allowing users to synchronize a model
             across two different Odoo clients.
             """
@@ -371,9 +371,10 @@ class IntegratorIntegration(models.Model):
                 # Generate XML ids for M2O Fields
                 for m2o_field in m2o_fields or []:
                     if item[m2o_field]:
-                        rec_id = item[m2o_field].id
+                        rec_id = item[m2o_field][0]
                         # esta operacion no tiene ejecuta ninguna ninguna llamada rpc, lo resuelve localmente odooly
-                        rel_model_name = item[m2o_field]._model._name
+                        # rel_model_name = item[m2o_field]._model._name
+                        rel_model_name = self.env['ir.model.fields'].search([('name', '=', m2o_field), ('model', '=', model_name)], limit=1).relation
                         item[m2o_field] = get_external_id(rel_model_name, rec_id)
                     else:
                         item[m2o_field] = False
@@ -382,7 +383,8 @@ class IntegratorIntegration(models.Model):
                 for m2m_field in m2m_fields or []:
                     if item[m2m_field]:
                         rec_ids = item[m2m_field]
-                        rel_model_name = item[m2m_field]._model._name
+                        # rel_model_name = item[m2m_field]._model._name
+                        rel_model_name = self.env['ir.model.fields'].search([('name', '=', m2m_field), ('model', '=', model_name)], limit=1).relation
                         item[m2m_field] = ','.join([get_external_id(rel_model_name, rec_id) for rec_id in rec_ids.ids])
                     else:
                         item[m2m_field] = False
@@ -444,6 +446,7 @@ class IntegratorIntegration(models.Model):
         # The following libraries and variables
         # will be available for any job.
         locals_dict = {
+            "self": self,
             "db2": self.odoo_db2._odoo_get_client(),
             "last_cron_execution": self.last_cron_execution,
             "last_sync_start": self.last_sync_start,
