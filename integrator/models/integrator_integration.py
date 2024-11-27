@@ -444,6 +444,7 @@ class IntegratorIntegration(models.Model):
         # The following libraries and variables
         # will be available for any job.
         locals_dict = {
+            "self": self,
             "db2": self.odoo_db2._odoo_get_client(),
             "last_cron_execution": self.last_cron_execution,
             "last_sync_start": self.last_sync_start,
