@@ -20,7 +20,6 @@
         <field name="holiday_status_id" ref="hr_holidays.holiday_status_cl"/>
         <field name="number_of_days">10</field>
         <field name="employee_id" ref="portal_holidays.employee_potal_advanced"/>
-        <field name="employee_ids" eval="[(4, ref('portal_holidays.employee_potal_advanced'))]"/>
         <field name="state">confirm</field>
         <field name="date_from" eval="time.strftime('%Y-1-1')"/>
         <field name="date_to" eval="time.strftime('%Y-12-31')"/>
@@ -34,7 +33,6 @@
         <field name="holiday_status_id" ref="hr_holidays.holiday_status_training"/>
         <field name="number_of_days">7</field>
         <field name="employee_id" ref="portal_holidays.employee_potal_advanced"/>
-        <field name="employee_ids" eval="[(4, ref('portal_holidays.employee_potal_advanced'))]"/>
         <field name="state">confirm</field>
         <field name="date_from" eval="time.strftime('%Y-1-1')"/>
         <field name="date_to" eval="time.strftime('%Y-12-31')"/>
@@ -53,7 +51,6 @@
         <field eval="time.strftime('%Y-%m-05')" name="request_date_from"/>
         <field eval="time.strftime('%Y-%m-08')" name="request_date_to"/>
         <field name="employee_id" ref="portal_holidays.employee_potal_advanced"/>
-        <field name="employee_ids" eval="[(4, ref('portal_holidays.employee_potal_advanced'))]"/>
     </record>
 
     <record id="hr_holidays_sl_pa" model="hr.leave">
@@ -64,7 +61,6 @@
         <field eval="(datetime.now()+relativedelta(months=1, day=3, weekday=0)).strftime('%Y-%m-%d 01:00:00')" name="request_date_from"/>
         <field eval="(datetime.now()+relativedelta(months=1, day=3, weekday=0) + relativedelta(weekday=2)).strftime('%Y-%m-%d 23:00:00')" name="request_date_to"/>
         <field name="employee_id" ref="portal_holidays.employee_potal_advanced"/>
-        <field name="employee_ids" eval="[(4, ref('portal_holidays.employee_potal_advanced'))]"/>
         <field name="state">confirm</field>
     </record>
 
