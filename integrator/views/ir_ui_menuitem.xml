@@ -1,0 +1,18 @@
+<odoo>
+
+    <menuitem
+        name="Integrator"
+        id="menu_integrator"
+        sequence="20"
+        groups="group_user,base.group_portal"
+        web_icon="integrator,static/description/icon.png"
+        />
+
+    <menuitem
+        id="menu_integrator_integrations"
+        sequence="5"
+        name="Integrations"
+        parent="menu_integrator"
+        />
+
+</odoo>
