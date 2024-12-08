@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-02 19:05+0000\n"
+"POT-Creation-Date: 2024-12-06 06:32+0000\n"
 "PO-Revision-Date: 2024-11-14 16:03+0000\n"
 "Last-Translator: Juan José Scarafía <scarafia.juanjose@gmail.com>, 2024\n"
 "Language-Team: Spanish (https://app.transifex.com/adhoc/teams/46451/es/)\n"
@@ -26,6 +26,9 @@ msgstr "Grupos de acceso"
 
 #. module: portal_backend
 #: model:ir.model.fields,field_description:portal_backend.field_mail_activity_mixin__activity_ids
+#: model:ir.model.fields,field_description:portal_backend.field_product_pricelist__activity_ids
+#: model:ir.model.fields,field_description:portal_backend.field_product_product__activity_ids
+#: model:ir.model.fields,field_description:portal_backend.field_product_template__activity_ids
 #: model:ir.model.fields,field_description:portal_backend.field_res_partner__activity_ids
 #: model:ir.model.fields,field_description:portal_backend.field_res_users__activity_ids
 msgid "Activities"
@@ -38,6 +41,9 @@ msgstr "Mixin de actividad"
 
 #. module: portal_backend
 #: model:ir.model.fields,field_description:portal_backend.field_mail_activity_mixin__activity_state
+#: model:ir.model.fields,field_description:portal_backend.field_product_pricelist__activity_state
+#: model:ir.model.fields,field_description:portal_backend.field_product_product__activity_state
+#: model:ir.model.fields,field_description:portal_backend.field_product_template__activity_state
 #: model:ir.model.fields,field_description:portal_backend.field_res_partner__activity_state
 #: model:ir.model.fields,field_description:portal_backend.field_res_users__activity_state
 msgid "Activity State"
@@ -54,7 +60,9 @@ msgid "Attachment"
 msgstr "Archivo adjunto"
 
 #. module: portal_backend
-#: model:ir.model.fields,field_description:portal_backend.field_calendar_event__message_attachment_count
+#: model:ir.model.fields,field_description:portal_backend.field_account_analytic_account__message_attachment_count
+#: model:ir.model.fields,field_description:portal_backend.field_crm_team__message_attachment_count
+#: model:ir.model.fields,field_description:portal_backend.field_crm_team_member__message_attachment_count
 #: model:ir.model.fields,field_description:portal_backend.field_discuss_channel__message_attachment_count
 #: model:ir.model.fields,field_description:portal_backend.field_extract_mixin__message_attachment_count
 #: model:ir.model.fields,field_description:portal_backend.field_iap_account__message_attachment_count
@@ -65,6 +73,10 @@ msgstr "Archivo adjunto"
 #: model:ir.model.fields,field_description:portal_backend.field_mail_thread_main_attachment__message_attachment_count
 #: model:ir.model.fields,field_description:portal_backend.field_mail_thread_phone__message_attachment_count
 #: model:ir.model.fields,field_description:portal_backend.field_phone_blacklist__message_attachment_count
+#: model:ir.model.fields,field_description:portal_backend.field_product_category__message_attachment_count
+#: model:ir.model.fields,field_description:portal_backend.field_product_pricelist__message_attachment_count
+#: model:ir.model.fields,field_description:portal_backend.field_product_product__message_attachment_count
+#: model:ir.model.fields,field_description:portal_backend.field_product_template__message_attachment_count
 #: model:ir.model.fields,field_description:portal_backend.field_res_partner__message_attachment_count
 #: model:ir.model.fields,field_description:portal_backend.field_res_users__message_attachment_count
 msgid "Attachment Count"
@@ -76,7 +88,9 @@ msgid "Email Thread"
 msgstr "Hilo de correo electrónico"
 
 #. module: portal_backend
-#: model:ir.model.fields,field_description:portal_backend.field_calendar_event__message_follower_ids
+#: model:ir.model.fields,field_description:portal_backend.field_account_analytic_account__message_follower_ids
+#: model:ir.model.fields,field_description:portal_backend.field_crm_team__message_follower_ids
+#: model:ir.model.fields,field_description:portal_backend.field_crm_team_member__message_follower_ids
 #: model:ir.model.fields,field_description:portal_backend.field_discuss_channel__message_follower_ids
 #: model:ir.model.fields,field_description:portal_backend.field_extract_mixin__message_follower_ids
 #: model:ir.model.fields,field_description:portal_backend.field_iap_account__message_follower_ids
@@ -87,6 +101,10 @@ msgstr "Hilo de correo electrónico"
 #: model:ir.model.fields,field_description:portal_backend.field_mail_thread_main_attachment__message_follower_ids
 #: model:ir.model.fields,field_description:portal_backend.field_mail_thread_phone__message_follower_ids
 #: model:ir.model.fields,field_description:portal_backend.field_phone_blacklist__message_follower_ids
+#: model:ir.model.fields,field_description:portal_backend.field_product_category__message_follower_ids
+#: model:ir.model.fields,field_description:portal_backend.field_product_pricelist__message_follower_ids
+#: model:ir.model.fields,field_description:portal_backend.field_product_product__message_follower_ids
+#: model:ir.model.fields,field_description:portal_backend.field_product_template__message_follower_ids
 #: model:ir.model.fields,field_description:portal_backend.field_res_partner__message_follower_ids
 #: model:ir.model.fields,field_description:portal_backend.field_res_users__message_follower_ids
 msgid "Followers"
@@ -104,6 +122,9 @@ msgstr "Menú"
 
 #. module: portal_backend
 #: model:ir.model.fields,field_description:portal_backend.field_mail_activity_mixin__activity_date_deadline
+#: model:ir.model.fields,field_description:portal_backend.field_product_pricelist__activity_date_deadline
+#: model:ir.model.fields,field_description:portal_backend.field_product_product__activity_date_deadline
+#: model:ir.model.fields,field_description:portal_backend.field_product_template__activity_date_deadline
 #: model:ir.model.fields,field_description:portal_backend.field_res_partner__activity_date_deadline
 #: model:ir.model.fields,field_description:portal_backend.field_res_users__activity_date_deadline
 msgid "Next Activity Deadline"
@@ -111,6 +132,9 @@ msgstr "Fecha límite de la siguiente actividad"
 
 #. module: portal_backend
 #: model:ir.model.fields,field_description:portal_backend.field_mail_activity_mixin__activity_summary
+#: model:ir.model.fields,field_description:portal_backend.field_product_pricelist__activity_summary
+#: model:ir.model.fields,field_description:portal_backend.field_product_product__activity_summary
+#: model:ir.model.fields,field_description:portal_backend.field_product_template__activity_summary
 #: model:ir.model.fields,field_description:portal_backend.field_res_partner__activity_summary
 #: model:ir.model.fields,field_description:portal_backend.field_res_users__activity_summary
 msgid "Next Activity Summary"
@@ -118,6 +142,9 @@ msgstr "Resumen de la siguiente actividad"
 
 #. module: portal_backend
 #: model:ir.model.fields,field_description:portal_backend.field_mail_activity_mixin__activity_type_id
+#: model:ir.model.fields,field_description:portal_backend.field_product_pricelist__activity_type_id
+#: model:ir.model.fields,field_description:portal_backend.field_product_product__activity_type_id
+#: model:ir.model.fields,field_description:portal_backend.field_product_template__activity_type_id
 #: model:ir.model.fields,field_description:portal_backend.field_res_partner__activity_type_id
 #: model:ir.model.fields,field_description:portal_backend.field_res_users__activity_type_id
 msgid "Next Activity Type"
@@ -130,6 +157,9 @@ msgstr ""
 
 #. module: portal_backend
 #: model:ir.model.fields,field_description:portal_backend.field_mail_activity_mixin__activity_user_id
+#: model:ir.model.fields,field_description:portal_backend.field_product_pricelist__activity_user_id
+#: model:ir.model.fields,field_description:portal_backend.field_product_product__activity_user_id
+#: model:ir.model.fields,field_description:portal_backend.field_product_template__activity_user_id
 #: model:ir.model.fields,field_description:portal_backend.field_res_partner__activity_user_id
 #: model:ir.model.fields,field_description:portal_backend.field_res_users__activity_user_id
 msgid "Responsible User"
@@ -137,6 +167,9 @@ msgstr "Usuario responsable"
 
 #. module: portal_backend
 #: model:ir.model.fields,help:portal_backend.field_mail_activity_mixin__activity_state
+#: model:ir.model.fields,help:portal_backend.field_product_pricelist__activity_state
+#: model:ir.model.fields,help:portal_backend.field_product_product__activity_state
+#: model:ir.model.fields,help:portal_backend.field_product_template__activity_state
 #: model:ir.model.fields,help:portal_backend.field_res_partner__activity_state
 #: model:ir.model.fields,help:portal_backend.field_res_users__activity_state
 msgid ""

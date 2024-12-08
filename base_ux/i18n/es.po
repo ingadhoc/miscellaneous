@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-14 20:12+0000\n"
+"POT-Creation-Date: 2024-12-06 00:22+0000\n"
 "PO-Revision-Date: 2024-11-14 20:12+0000\n"
 "Last-Translator: Juan José Scarafía <scarafia.juanjose@gmail.com>, 2024\n"
 "Language-Team: Spanish (https://app.transifex.com/adhoc/teams/46451/es/)\n"
@@ -42,17 +42,6 @@ msgstr "Actividad"
 #: model_terms:ir.ui.view,arch_db:base_ux.view_window_action_form
 msgid "Add in the 'Action' menu"
 msgstr "Agregar al menú \"Acciones\""
-
-#. module: base_ux
-#: model:ir.model.fields,field_description:base_ux.field_ir_actions_act_window__algolia_search
-#: model:ir.model.fields,field_description:base_ux.field_ir_actions_server__algolia_search
-#: model:ir.model.fields,field_description:base_ux.field_mail_activity__algolia_search
-#: model:ir.model.fields,field_description:base_ux.field_mail_template__algolia_search
-#: model:ir.model.fields,field_description:base_ux.field_res_company__algolia_search
-#: model:ir.model.fields,field_description:base_ux.field_res_country_state__algolia_search
-#: model:ir.model.fields,field_description:base_ux.field_res_partner__algolia_search
-msgid "Algolia Search"
-msgstr "Busqueda Avanzada"
 
 #. module: base_ux
 #: model_terms:ir.ui.view,arch_db:base_ux.view_company_search
