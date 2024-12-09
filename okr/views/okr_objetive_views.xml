@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="open_view_okr_objetives" model="ir.actions.act_window">
+            <field name="name">Objetivos</field>
+            <field name="res_model">okr.objetives</field>
+            <field name="view_mode">tree,kanban,form,activity</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="view_id" eval="False"/>
+        </record>
+    </data>
+</odoo>
