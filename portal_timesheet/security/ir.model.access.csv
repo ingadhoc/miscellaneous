@@ -11,3 +11,5 @@ portal_timesheet_timer_timer,portal-timesheet-model_timer_timer,timer.model_time
 portal_timesheet_uom_category,portal-timesheet-model_uom_category,uom.model_uom_category,group_portal_backend_timesheet,1,0,0,0
 portal_timesheet_uom_uom,portal-timesheet-model_uom_uom,uom.model_uom_uom,group_portal_backend_timesheet,1,0,0,0
 portal_timesheet_calendar_attendee,portal-timesheet-model_calendar_attendee,calendar.model_calendar_attendee,group_portal_backend_timesheet,1,0,0,0
+portal_timesheet_access_hr_department_public,hr.department.public,hr.model_hr_department,group_portal_backend_timesheet,1,0,0,0
+
