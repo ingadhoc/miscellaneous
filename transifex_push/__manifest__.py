@@ -1,7 +1,6 @@
 {
     'name': "Transifex Push",
     'summary': "Helper module to push translations to Transifex",
-    'description': "Helper module to push translations to Transifex",
     'author': "ADHOC SA",
     'website': "http://runbot.odoo.com",
     'category': 'Website',
