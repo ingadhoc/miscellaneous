@@ -18,35 +18,34 @@
 #
 ##############################################################################
 {
-    'name': 'Portal Timesheet',
-    'version': "18.0.1.1.0",
-    'category': 'Base',
-    'sequence': 14,
-    'summary': '',
-    'author': 'ADHOC SA',
-    'website': 'www.adhoc.com.ar',
-    'license': 'AGPL-3',
-    'images': [
+    "name": "Portal Timesheet",
+    "version": "18.0.1.1.0",
+    "category": "Base",
+    "sequence": 14,
+    "summary": "",
+    "author": "ADHOC SA",
+    "website": "www.adhoc.com.ar",
+    "license": "AGPL-3",
+    "images": [],
+    "depends": [
+        "portal_backend",
+        "hr_timesheet",
+        "timesheet_grid",
+        "calendar",  # added to avoid creating bridge module portal_timesheet_calendar
     ],
-    'depends': [
-        'portal_backend',
-        'hr_timesheet',
-        'timesheet_grid',
-        'calendar', # added to avoid creating bridge module portal_timesheet_calendar
+    "data": [
+        "security/res_groups.xml",
+        "security/ir_rule.xml",
+        "security/ir.model.access.csv",
+        "views/base_menus.xml",
+        "views/hr_employee_views.xml",
     ],
-    'data': [
-        'security/res_groups.xml',
-        'security/ir_rule.xml',
-        'security/ir.model.access.csv',
-        'views/base_menus.xml',
-        'views/hr_employee_views.xml',
-    ],
-    'demo': [
+    "demo": [
         # 'demo/hr_demo.xml',
-        'demo/project_demo.xml',
-        'demo/res_users_demo.xml',
+        "demo/project_demo.xml",
+        "demo/res_users_demo.xml",
     ],
-    'installable': True,
-    'auto_install': False,
-    'application': False,
+    "installable": True,
+    "auto_install": False,
+    "application": False,
 }

@@ -19,29 +19,28 @@
 ##############################################################################
 
 {
-    'name': 'Maintenance UX',
-    'version': "18.0.1.0.0",
-    'category': 'Projects & Services',
-    'sequence': 14,
-    'summary': '',
-    'author': 'ADHOC SA',
-    'website': 'www.adhoc.com.ar',
-    'license': 'AGPL-3',
-    'images': [
+    "name": "Maintenance UX",
+    "version": "18.0.1.0.0",
+    "category": "Projects & Services",
+    "sequence": 14,
+    "summary": "",
+    "author": "ADHOC SA",
+    "website": "www.adhoc.com.ar",
+    "license": "AGPL-3",
+    "images": [],
+    "depends": [
+        "maintenance",
+        "rating",
     ],
-    'depends': [
-        'maintenance',
-        'rating',
+    "data": [
+        "data/mail_template_data.xml",
+        "data/maintenance_data.xml",
+        "views/maintenance_views.xml",
     ],
-    'data': [
-        'data/mail_template_data.xml',
-        'data/maintenance_data.xml',
-        'views/maintenance_views.xml',
+    "demo": [
+        "demo/maintenance_demo.xml",
     ],
-    'demo':[
-        'demo/maintenance_demo.xml',
-    ],
-    'installable': True,
-    'auto_install': False,
-    'application': False,
+    "installable": True,
+    "auto_install": False,
+    "application": False,
 }

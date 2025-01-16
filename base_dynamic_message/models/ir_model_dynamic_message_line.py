@@ -1,19 +1,22 @@
-from odoo import models, fields, api
 import re
+
+from odoo import api, fields, models
 
 
 class IrModelDynamicMessageLine(models.Model):
-    _name = 'ir.model.dynamic_message.line'
-    _description = 'ir.model.dynamic_message.line'
+    _name = "ir.model.dynamic_message.line"
+    _description = "ir.model.dynamic_message.line"
 
-    dynamic_message_id = fields.Many2one('ir.model.dynamic_message', required=True, ondelete='cascade')
+    dynamic_message_id = fields.Many2one("ir.model.dynamic_message", required=True, ondelete="cascade")
     description = fields.Text()
     domain = fields.Char()
-    message = fields.Html(required=True,)
-    model_name = fields.Char(related='dynamic_message_id.model_id.model')
-    code = fields.Text(compute='_compute_code', store=True, readonly=False)
+    message = fields.Html(
+        required=True,
+    )
+    model_name = fields.Char(related="dynamic_message_id.model_id.model")
+    code = fields.Text(compute="_compute_code", store=True, readonly=False)
 
-    @api.depends('message', 'domain')
+    @api.depends("message", "domain")
     def _compute_code(self):
         for rec in self:
             if rec.domain:
@@ -34,7 +37,7 @@ class IrModelDynamicMessageLine(models.Model):
                 rec.code = """
 if rec in rec.filtered_domain(%s):
     messages.append('%s')
-""" % (domain, str(rec.message).replace('<p>', '').replace('</p>', ''))
+""" % (domain, str(rec.message).replace("<p>", "").replace("</p>", ""))
             else:
                 rec.code = False
                 # code = self.filtered_domain(self.env['account.payment.method']._get_payment_method_domain(payment_method_code))
