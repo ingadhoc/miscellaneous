@@ -19,7 +19,7 @@
 ##############################################################################
 {
     'name': 'Portal Holidays',
-    'version': "18.0.1.1.0",
+    'version': "18.0.1.2.0",
     'category': 'Base',
     'sequence': 14,
     'summary': '',
@@ -31,6 +31,7 @@
     'depends': [
         'portal_backend',
         'hr_holidays',
+        'hr_holidays_attendance'
     ],
     'data': [
         'security/res_groups.xml',
