@@ -12,6 +12,7 @@
         <field name="work_location_id" ref="hr.work_location_1"/>
         <field name="image_1920" type="base64" file="portal_backend/static/img/advanced_partner-image.png"/>
         <field name="create_date">2022-01-01 00:00:00</field>
+        <field name="leave_manager_id" ref="base.user_admin"/>
     </record>
 
     <!-- allocations -->
@@ -36,11 +37,6 @@
         <field name="state">confirm</field>
         <field name="date_from" eval="time.strftime('%Y-1-1')"/>
         <field name="date_to" eval="time.strftime('%Y-12-31')"/>
-    </record>
-
-    <!-- leave request -->
-    <record id="employee_potal_advanced" model="hr.employee">
-        <field name="leave_manager_id" ref="base.user_admin"/>
     </record>
 
     <record id="hr_holidays_cl_pa" model="hr.leave">
