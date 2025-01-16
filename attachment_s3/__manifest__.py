@@ -6,7 +6,7 @@
     "name": "Attachments on S3 storage",
     "summary": "Store assets and attachments on a S3 compatible object storage",
     "version": "17.0.1.0.0",
-    "author": "Camptocamp,Odoo Community Association (OCA)",
+    "author": "Camptocamp, Odoo Community Association (OCA), ADHOC SA",
     "license": "AGPL-3",
     "category": "Knowledge Management",
     "depends": ["base", "base_attachment_object_storage"],
