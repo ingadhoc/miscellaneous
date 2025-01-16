@@ -84,9 +84,9 @@ class GroupsView(models.Model):
         xml_content = etree.tostring(arch)
         if xml_content != view.arch:
             new_context = dict(view._context)
-            new_context.pop('install_filename', None)
-            new_context['lang'] = None
-            view.with_context(new_context).write({'arch': xml_content})
+            new_context.pop("install_filename", None)
+            new_context["lang"] = None
+            view.with_context(**new_context).write({"arch": xml_content})
 
     def _get_groups_between_separator(self, element):
         """ Get all the groups after a determined separator.
