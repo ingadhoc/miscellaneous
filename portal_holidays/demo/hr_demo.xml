@@ -39,7 +39,7 @@
     </record>
 
     <!-- leave request -->
-    <record id="portal_holidays.employee_potal_advanced" model="hr.employee">
+    <record id="employee_potal_advanced" model="hr.employee">
         <field name="leave_manager_id" ref="base.user_admin"/>
     </record>
 
