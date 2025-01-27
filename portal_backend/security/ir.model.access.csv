@@ -10,3 +10,6 @@ access_mail_activity_type_portal,access_mail_activity_type_portal.portal,mail.mo
 access_mail_channel_portal,mail.group.portal,mail.model_discuss_channel,portal_backend.group_portal_backend,1,0,1,0
 access_mail_followers_portal,mail.followers.portal,mail.model_mail_followers,portal_backend.group_portal_backend,1,0,0,0
 access_mail_message_subtype_portal,mail.message.subtype.portal,mail.model_mail_message_subtype,portal_backend.group_portal_backend,1,0,0,0
+access_mail_scheduled_message_portal,mail.scheduled.message.portal,mail.model_mail_scheduled_message,portal_backend.group_portal_backend,1,0,0,0
+access_mail_alias_portal,mail.alias.portal,mail.model_mail_alias,portal_backend.group_portal_backend,1,0,0,0
+access_mail_alias_domain_portal,mail.alias.domain.portal,mail.model_mail_alias_domain,portal_backend.group_portal_backend,1,0,0,0
