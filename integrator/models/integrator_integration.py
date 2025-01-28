@@ -247,7 +247,7 @@ class IntegratorIntegration(models.Model):
     def odoo_run_job(self, job):
         """ Run a single job """
         def sync_model(
-                target_db, model_name, common_fields=[],
+                target_db, model_name, common_fields=[], datetime_fields=[],
                 boolean_fields=[], m2o_fields=[], m2m_fields=[], domain=[],
                 sort="id", offset=0, limit=100, target_model_name=None):
             """ Helper method for allowing users to synchronize a model
@@ -343,10 +343,9 @@ class IntegratorIntegration(models.Model):
             #####
             # Finish creating XML ids for modules data
             #####
-
             # Perform READ operation a single time
             _logger.debug("[sync_model] Reading remote data for model %s", model_name)
-            all_fields = common_fields + boolean_fields + m2o_fields + m2m_fields
+            all_fields = common_fields + boolean_fields + datetime_fields + m2o_fields + m2m_fields
             items = records.read(all_fields)
 
             _logger.debug("[sync_model] Adapting data previous to import for model %s", model_name)
@@ -364,7 +363,7 @@ class IntegratorIntegration(models.Model):
             for item in items:
                 # Convert to string boolean fields (So that load don't fail because we search_read and load expects
                 # different kind of data)
-                for boolean_field in boolean_fields or []:
+                for boolean_field in (boolean_fields + datetime_fields) or []:
                     if item[boolean_field]:
                         item[boolean_field] = str(item[boolean_field])
 
@@ -385,7 +384,7 @@ class IntegratorIntegration(models.Model):
                         rec_ids = item[m2m_field]
                         # rel_model_name = item[m2m_field]._model._name
                         rel_model_name = self.env['ir.model.fields'].search([('name', '=', m2m_field), ('model', '=', model_name)], limit=1).relation
-                        item[m2m_field] = ','.join([get_external_id(rel_model_name, rec_id) for rec_id in rec_ids.ids])
+                        item[m2m_field] = ','.join([get_external_id(rel_model_name, rec_id) for rec_id in rec_ids])
                     else:
                         item[m2m_field] = False
 
@@ -408,6 +407,7 @@ class IntegratorIntegration(models.Model):
             with_context["bypass_base_automation"] = True
 
             _logger.debug("[sync_model] Loading records on target db for model %s", model_name)
+            
             outcome = target_db.env[target_model_name or model_name].with_context(
                 **with_context).load(
                     [fields_map[field] for field in all_fields], values)
