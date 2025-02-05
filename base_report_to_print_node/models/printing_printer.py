@@ -20,7 +20,6 @@ _logger = logging.getLogger(__name__)
 
 
 class PrintingPrinter(models.Model):
-
     _inherit = "printing.printer"
 
     print_node_printer = fields.Boolean(string="Print Node Printer?")
@@ -71,13 +70,12 @@ class PrintingPrinter(models.Model):
                 printer.write(vals)
 
     def print_document(self, report, content, **print_opts):
-        """ Print a file
+        """Print a file
         Format could be pdf, qweb-pdf, raw, ...
         """
         if len(self) != 1:
             _logger.error(
-                "Print Node print called with %s but singleton is expeted."
-                "Check printers configuration." % self
+                "Print Node print called with %s but singleton is expeted." "Check printers configuration." % self
             )
             return super().print_document(report, content, **print_opts)
 
@@ -96,13 +94,14 @@ class PrintingPrinter(models.Model):
 
         try:
             res = self._submit_job(
-                self.uri, options.get("format", "pdf"), file_name, options,
+                self.uri,
+                options.get("format", "pdf"),
+                file_name,
+                options,
             )
-            _logger.info("Printing job '{}' for document {}".format(res, file_name))
+            _logger.info(f"Printing job '{res}' for document {file_name}")
         except Exception as e:
-            _logger.error(
-                "Could not submit job to print node. This is what we get:\n%s" % e
-            )
+            _logger.error("Could not submit job to print node. This is what we get:\n%s" % e)
         return True
 
     def enable(self):
@@ -112,9 +111,7 @@ class PrintingPrinter(models.Model):
 
     def disable(self):
         print_node_printers = self.filtered("print_node_printer")
-        print_node_printers.write(
-            {"status": "unavailable", "status_message": "disabled by user"}
-        )
+        print_node_printers.write({"status": "unavailable", "status_message": "disabled by user"})
         return super(PrintingPrinter, self - print_node_printers).disable()
 
     # API interaction
@@ -122,21 +119,21 @@ class PrintingPrinter(models.Model):
     @api.model
     def ReadFile(self, pathname):
         """Read contents of a file and return content.
-           Args:
-             pathname: string, (path)name of file.
-           Returns:
-           string: contents of file.
+        Args:
+          pathname: string, (path)name of file.
+        Returns:
+        string: contents of file.
         """
         try:
             f = open(pathname, "rb")
             try:
                 s = f.read()
-            except IOError as error:
+            except OSError as error:
                 _logger.info("Error reading %s\n%s", pathname, error)
             finally:
                 f.close()
                 return s
-        except IOError as error:
+        except OSError as error:
             _logger.error("Error opening %s\n%s", pathname, error)
             return None
 
@@ -164,7 +161,7 @@ class PrintingPrinter(models.Model):
         # Make the title unique for each job, since the printer by default will
         # name the print job file the same as the title.
         datehour = time.strftime("%b%d%H%M", time.localtime())
-        title = "{}{}".format(datehour, jobsrc)
+        title = f"{datehour}{jobsrc}"
 
         data = {
             "printerId": printerid,
@@ -177,18 +174,14 @@ class PrintingPrinter(models.Model):
 
     @api.model
     def _get_response(self, service, data=None):
-        api_key = (
-            self.env["ir.config_parameter"]
-            .sudo()
-            .get_param("base_report_to_print_node.api_key")
-        )
+        api_key = self.env["ir.config_parameter"].sudo().get_param("base_report_to_print_node.api_key")
         if not api_key:
             dummy, action_id = self.env["ir.model.data"].get_object_reference(
                 "base_setup", "action_general_configuration"
             )
             msg = _("You haven't configured your 'Print Node Api Key'.")
             raise RedirectWarning(msg, action_id, _("Go to the configuration panel"))
-        request_url = "{}/{}".format(PRINTNODE_URL, service)
+        request_url = f"{PRINTNODE_URL}/{service}"
         headers = {
             "authorization": "Basic " + base64.b64encode(api_key.encode("UTF-8")).decode("UTF-8"),
         }
@@ -199,7 +192,5 @@ class PrintingPrinter(models.Model):
             req = urllib.request.Request(request_url, data_json, headers)
             response = urllib.request.urlopen(req, timeout=TIMEOUT).read()
         except HTTPError:
-            raise UserError(
-                _("Could not connect to print node. Check your configuration")
-            )
+            raise UserError(_("Could not connect to print node. Check your configuration"))
         return json.loads(response.decode("utf-8"))

@@ -19,24 +19,23 @@
 ##############################################################################
 
 {
-    'name': 'Report Copies',
-    'version': "15.0.1.0.0",
-    'category': 'Web & Reports',
-    'sequence': 14,
-    'summary': '',
-    'author': 'ADHOC SA',
-    'website': 'www.adhoc.com.ar',
-    'license': 'AGPL-3',
-    'images': [
+    "name": "Report Copies",
+    "version": "15.0.1.0.0",
+    "category": "Web & Reports",
+    "sequence": 14,
+    "summary": "",
+    "author": "ADHOC SA",
+    "website": "www.adhoc.com.ar",
+    "license": "AGPL-3",
+    "images": [],
+    "depends": [
+        "web",
     ],
-    'depends': [
-        'web',
+    "data": [
+        "views/report_templates.xml",
+        "views/ir_actions_views.xml",
     ],
-    'data': [
-        'views/report_templates.xml',
-        'views/ir_actions_views.xml',
-    ],
-    'installable': False,
-    'auto_install': False,
-    'application': False,
+    "installable": False,
+    "auto_install": False,
+    "application": False,
 }

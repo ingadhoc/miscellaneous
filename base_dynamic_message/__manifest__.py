@@ -18,27 +18,25 @@
 #
 ##############################################################################
 {
-    'name': 'Dynamic Message',
-    'version': "18.0.1.0.0",
-    'category': 'Base',
-    'sequence': 14,
-    'summary': '',
-    'author': 'ADHOC SA',
-    'website': 'www.adhoc.com.ar',
-    'license': 'AGPL-3',
-    'images': [
+    "name": "Dynamic Message",
+    "version": "18.0.1.0.0",
+    "category": "Base",
+    "sequence": 14,
+    "summary": "",
+    "author": "ADHOC SA",
+    "website": "www.adhoc.com.ar",
+    "license": "AGPL-3",
+    "images": [],
+    "depends": [
+        "base",
     ],
-    'depends': [
-        'base',
+    "data": [
+        "security/res_groups.xml",
+        "security/ir.model.access.csv",
+        "views/ir_model_dynamic_message_views.xml",
     ],
-    'data': [
-        'security/res_groups.xml',
-        'security/ir.model.access.csv',
-        'views/ir_model_dynamic_message_views.xml',
-    ],
-    'demo': [
-    ],
-    'installable': True,
-    'auto_install': False,
-    'application': False,
+    "demo": [],
+    "installable": True,
+    "auto_install": False,
+    "application": False,
 }

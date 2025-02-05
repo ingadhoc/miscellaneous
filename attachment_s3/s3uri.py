@@ -4,8 +4,7 @@
 import re
 
 
-class S3Uri(object):
-
+class S3Uri:
     _url_re = re.compile("^s3:///*([^/]*)/?(.*)", re.IGNORECASE | re.UNICODE)
 
     def __init__(self, uri):

@@ -18,33 +18,28 @@
 #
 ##############################################################################
 {
-    'name': 'Portal Holidays',
-    'version': "18.0.1.2.0",
-    'category': 'Base',
-    'sequence': 14,
-    'summary': '',
-    'author': 'ADHOC SA',
-    'website': 'www.adhoc.com.ar',
-    'license': 'AGPL-3',
-    'images': [
+    "name": "Portal Holidays",
+    "version": "18.0.1.2.0",
+    "category": "Base",
+    "sequence": 14,
+    "summary": "",
+    "author": "ADHOC SA",
+    "website": "www.adhoc.com.ar",
+    "license": "AGPL-3",
+    "images": [],
+    "depends": ["portal_backend", "hr_holidays", "hr_holidays_attendance"],
+    "data": [
+        "security/res_groups.xml",
+        "security/ir_rule.xml",
+        "security/ir.model.access.csv",
+        "views/base_menus.xml",
+        "views/hr_employee_views.xml",
     ],
-    'depends': [
-        'portal_backend',
-        'hr_holidays',
-        'hr_holidays_attendance'
+    "demo": [
+        "demo/hr_demo.xml",
+        "demo/res_users_demo.xml",
     ],
-    'data': [
-        'security/res_groups.xml',
-        'security/ir_rule.xml',
-        'security/ir.model.access.csv',
-        'views/base_menus.xml',
-        'views/hr_employee_views.xml',
-    ],
-    'demo': [
-        'demo/hr_demo.xml',
-        'demo/res_users_demo.xml',
-    ],
-    'installable': True,
-    'auto_install': False,
-    'application': False,
+    "installable": True,
+    "auto_install": False,
+    "application": False,
 }

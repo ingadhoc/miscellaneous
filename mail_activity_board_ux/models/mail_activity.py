@@ -7,11 +7,11 @@ class MailActivity(models.Model):
 
     def open_activity_dashboard_form(self):
         return {
-            'type': 'ir.actions.act_window',
-            'res_model': self._name,
-            'view_type': 'form',
-            'view_mode': 'form',
-            'target': 'current',
-            'res_id': self.id,
-            'context': dict(self._context),
+            "type": "ir.actions.act_window",
+            "res_model": self._name,
+            "view_type": "form",
+            "view_mode": "form",
+            "target": "current",
+            "res_id": self.id,
+            "context": dict(self._context),
         }

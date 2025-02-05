@@ -1,8 +1,8 @@
-from odoo import models, fields
+from odoo import fields, models
 
 
 class MailActivityMixin(models.AbstractModel):
-    _inherit = 'mail.activity.mixin'
+    _inherit = "mail.activity.mixin"
 
     activity_ids = fields.One2many(
         groups="base.group_user, portal_backend.group_portal_backend",

@@ -23,7 +23,7 @@ except ImportError:
     _logger.debug("Cannot 'import boto3'.")
 
 
-class S3BucketClientRegistry(object):
+class S3BucketClientRegistry:
     bucket_dict = {}
 
     @classmethod
@@ -131,9 +131,7 @@ class IrAttachment(models.Model):
             try:
                 bucket = self._get_s3_bucket(name=s3uri.bucket())
             except exceptions.UserError:
-                _logger.exception(
-                    "error reading attachment '%s' from object storage", fname
-                )
+                _logger.exception("error reading attachment '%s' from object storage", fname)
                 return ""
             try:
                 key = s3uri.item()
@@ -164,7 +162,7 @@ class IrAttachment(models.Model):
                 # TODO handle this on a better way
                 try:
                     if obj.content_length:
-                        _logger.info('Skip uploading object %s, already exists', filename)
+                        _logger.info("Skip uploading object %s, already exists", filename)
                         return filename
                 except Exception:
                     pass
@@ -173,9 +171,7 @@ class IrAttachment(models.Model):
                 except ClientError as error:
                     # log verbose error from s3, return short message for user
                     _logger.exception("Error during storage of the file %s" % filename)
-                    raise exceptions.UserError(
-                        _("The file could not be stored: %s") % str(error)
-                    ) from None
+                    raise exceptions.UserError(_("The file could not be stored: %s") % str(error)) from None
         else:
             _super = super()
             filename = _super._store_file_write(key, bin_data)
