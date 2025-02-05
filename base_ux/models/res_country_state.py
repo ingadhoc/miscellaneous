@@ -6,7 +6,6 @@ from odoo import models
 
 
 class ResCountryState(models.Model):
+    _inherit = "res.country.state"
 
-    _inherit = 'res.country.state'
-
-    _order = 'country_id,name'
+    _order = "country_id,name"

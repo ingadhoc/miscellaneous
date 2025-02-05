@@ -18,22 +18,20 @@
 #
 ##############################################################################
 {
-    'name': 'Base Exception UX',
-    'version': "16.0.1.0.0",
-    'category': 'Base',
-    'sequence': 14,
-    'summary': '',
-    'author': 'ADHOC SA',
-    'website': 'www.adhoc.com.ar',
-    'license': 'AGPL-3',
-    'depends': [
-        'base_exception',
+    "name": "Base Exception UX",
+    "version": "16.0.1.0.0",
+    "category": "Base",
+    "sequence": 14,
+    "summary": "",
+    "author": "ADHOC SA",
+    "website": "www.adhoc.com.ar",
+    "license": "AGPL-3",
+    "depends": [
+        "base_exception",
     ],
-    'data': [
-    ],
-    'demo': [
-    ],
-    'installable': False,
-    'auto_install': True,
-    'application': False,
+    "data": [],
+    "demo": [],
+    "installable": False,
+    "auto_install": True,
+    "application": False,
 }

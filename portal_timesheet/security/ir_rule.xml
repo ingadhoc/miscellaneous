@@ -22,5 +22,5 @@
         <field name="perm_read" eval="True"/>
         <field name="perm_unlink" eval="True"/>
         <field name="perm_write" eval="True"/>
-    </record>    
+    </record>
 </odoo>

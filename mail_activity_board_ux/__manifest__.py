@@ -18,32 +18,29 @@
 #
 ##############################################################################
 {
-    'name': 'Mail Activity Board UX',
-    'version': "17.0.1.0.0",
-    'category': 'Base',
-    'sequence': 14,
-    'summary': '',
-    'author': 'ADHOC SA',
-    'website': 'www.adhoc.com.ar',
-    'license': 'AGPL-3',
-    'depends': [
-        'mail_activity_board',
+    "name": "Mail Activity Board UX",
+    "version": "17.0.1.0.0",
+    "category": "Base",
+    "sequence": 14,
+    "summary": "",
+    "author": "ADHOC SA",
+    "website": "www.adhoc.com.ar",
+    "license": "AGPL-3",
+    "depends": [
+        "mail_activity_board",
     ],
-    'external_dependencies': {
-    },
-    'data': [
-        'views/mail_activity_views.xml',
+    "external_dependencies": {},
+    "data": [
+        "views/mail_activity_views.xml",
     ],
     "assets": {
         "web.assets_backend": [
-            ('remove', 'mail_activity_board/static/src/components/chatter/chatter.xml'),
+            ("remove", "mail_activity_board/static/src/components/chatter/chatter.xml"),
         ],
     },
-    'demo': [
-    ],
-    'test': [
-    ],
-    'installable': False,
-    'auto_install': False,
-    'application': False,
+    "demo": [],
+    "test": [],
+    "installable": False,
+    "auto_install": False,
+    "application": False,
 }
