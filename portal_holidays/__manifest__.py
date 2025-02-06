@@ -19,7 +19,7 @@
 ##############################################################################
 {
     "name": "Portal Holidays",
-    "version": "18.0.1.4.0",
+    "version": "18.0.1.5.0",
     "category": "Base",
     "sequence": 14,
     "summary": "",
@@ -32,8 +32,9 @@
         "security/res_groups.xml",
         "security/ir_rule.xml",
         "security/ir.model.access.csv",
-        "views/base_menus.xml",
         "views/hr_employee_views.xml",
+        "views/portal_holidays_views.xml",
+        "views/base_menus.xml",
     ],
     "demo": [
         "demo/hr_demo.xml",
