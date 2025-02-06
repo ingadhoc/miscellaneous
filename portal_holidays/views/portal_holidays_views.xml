@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add My Time Off Action for portal holidays users -->
+    <record id="hr_leave_action_my_portal_holidays" model="ir.actions.act_window">
+        <field name="name">My Time Off</field>
+        <field name="res_model">hr.leave</field>
+        <field name="view_mode">list,kanban</field>
+        <field name="context">{"search_default_group_date_from": True}</field>
+        <field name="search_view_id" ref="hr_holidays.hr_leave_view_search_my"/>
+        <field name="domain">[('user_id', '=', uid)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Keep track of your PTOs.
+            </p><p>
+                A great way to keep track on your time off requests, sick days, and approval status.
+            </p>
+        </field>
+    </record>
+
+    <record id="hr_leave_action_my_view_tree_portal_holidays" model="ir.actions.act_window.view">
+        <field name="sequence">1</field>
+        <field name="view_mode">list</field>
+        <field name="act_window_id" ref="hr_leave_action_my_portal_holidays"/>
+        <field name="view_id" ref="hr_holidays.hr_leave_view_tree_my"/>
+    </record>
+
+    <!-- Add My Allocations Action for portal holidays users -->
+    <record id="hr_leave_allocation_action_my_portal_holidays" model="ir.actions.act_window">
+        <field name="name">My Allocations</field>
+        <field name="res_model">hr.leave.allocation</field>
+        <field name="view_mode">list,kanban</field>
+        <field name="search_view_id" ref="hr_holidays.hr_leave_allocation_view_search_my"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new time off allocation request
+            </p><p>
+                Time Off Officers allocate time off days to employees (e.g. paid time off).<br/>
+                Employees request allocations to Time Off Officers (e.g. recuperation days).
+            </p>
+        </field>
+        <field name="context">{'search_default_year': 1 , 'is_employee_allocation': True}</field>
+        <field name="domain">[('employee_id.user_id', '=', uid)]</field>
+    </record>
+
+    <record id="hr_leave_allocation_action_my_view_tree_portal_holidays" model="ir.actions.act_window.view">
+        <field name="sequence">1</field>
+        <field name="view_mode">list</field>
+        <field name="act_window_id" ref="hr_leave_allocation_action_my_portal_holidays"/>
+        <field name="view_id" ref="hr_holidays.hr_leave_allocation_view_tree_my"/>
+    </record>
+</odoo>
