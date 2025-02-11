@@ -7,6 +7,7 @@
 
     <record id="group_portal_backend_timesheet" model="res.groups">
         <field name="name">Portal Timesheet</field>
+        <field name="comment">Allows portal backend users to access the application dashboard to record hours worked on tasks and projects that have been shared with them.</field>
         <field name="category_id" ref="category_portal_timesheet"/>
     </record>
 </odoo>
