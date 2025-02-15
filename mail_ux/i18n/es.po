@@ -1,0 +1,40 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* mail_ux
+# 
+# Translators:
+# Juan José Scarafía <scarafia.juanjose@gmail.com>, 2025
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-14 16:15+0000\n"
+"PO-Revision-Date: 2025-02-14 15:15+0000\n"
+"Last-Translator: Juan José Scarafía <scarafia.juanjose@gmail.com>, 2025\n"
+"Language-Team: Spanish (https://app.transifex.com/adhoc/teams/46451/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Language: es\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+
+#. module: mail_ux
+#: model:ir.model,name:mail_ux.model_mail_compose_message
+msgid "Email composition wizard"
+msgstr "Asistente de redacción de correo electrónico"
+
+#. module: mail_ux
+#: model:ir.model,name:mail_ux.model_ir_http
+msgid "HTTP Routing"
+msgstr "Enrutamiento HTTP "
+
+#. module: mail_ux
+#: model:ir.model.fields,field_description:mail_ux.field_res_users__send_message_delay
+msgid "Send Message Delay"
+msgstr ""
+
+#. module: mail_ux
+#: model:ir.model,name:mail_ux.model_res_users
+msgid "User"
+msgstr "Usuario"
