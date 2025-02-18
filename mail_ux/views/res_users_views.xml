@@ -5,7 +5,7 @@
         <field name="inherit_id" ref="mail.view_users_form_simple_modif_mail"/>
         <field name="arch" type="xml">
             <field name="notification_type" position="after">
-                <field name="send_message_delay"/>
+                <field name="send_message_delay" string= "Send message delay (seg)"/>
             </field>
         </field>
     </record>
@@ -16,7 +16,7 @@
         <field name="inherit_id" ref="mail.view_users_form_mail"/>
         <field name="arch" type="xml">
             <field name="notification_type" position="after">
-                <field name="send_message_delay"/>
+                <field name="send_message_delay" string= "Send message delay (seg)"/>
             </field>
         </field>
     </record>
