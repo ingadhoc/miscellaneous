@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-16 13:14+0000\n"
+"POT-Creation-Date: 2025-02-17 16:45+0000\n"
 "PO-Revision-Date: 2024-12-02 19:05+0000\n"
 "Last-Translator: Juan José Scarafía <scarafia.juanjose@gmail.com>, 2025\n"
 "Language-Team: Spanish (https://app.transifex.com/adhoc/teams/46451/es/)\n"
@@ -20,9 +20,16 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
 #. module: portal_holidays
+#: model:res.groups,comment:portal_holidays.group_portal_backend_holiday
+msgid ""
+"Allows portal backend users to access the application dashboard to request "
+"leave days."
+msgstr ""
+
+#. module: portal_holidays
 #: model:ir.module.category,name:portal_holidays.category_portal_holiday
 #: model:res.groups,name:portal_holidays.group_portal_backend_holiday
-msgid "Portal Holiday"
+msgid "Portal Holidays"
 msgstr "Portal de Vacaciones"
 
 #. module: portal_holidays
