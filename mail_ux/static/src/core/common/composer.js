@@ -45,13 +45,14 @@ patch(Composer.prototype, {
                 {
                 'attachment_ids': attachments.map(attachment => attachment.id),
                 'author_id': user.partnerId,
-                'body': body,
+                'body': params.post_data.body,
                 'model': postThread.model,
                 'res_id': postThread.id,
                 'is_note': postData.isNote,
                 'partner_ids': params.post_data.partner_ids || [],
                 'scheduled_date': formattedScheduledDate,
                 'notification_parameters': JSON.stringify(params.post_data),
+                'subject':  postThread.name,
             }])
         }
     }
