@@ -4,6 +4,7 @@ import { useService } from "@web/core/utils/hooks";
 import { user } from "@web/core/user";
 import { session } from "@web/session";
 import { toRaw } from "@odoo/owl";
+import { isEventHandled } from "@web/core/utils/misc";
 
 patch(Composer.prototype, {
 
@@ -54,6 +55,31 @@ patch(Composer.prototype, {
                 'notification_parameters': JSON.stringify(params.post_data),
                 'subject':  postThread.name,
             }])
+        }
+    },
+    /**
+     * @override
+     */
+    onKeydown(ev) {
+        const composer = toRaw(this.props.composer);
+        if (ev.key === "Enter") {
+            if (isEventHandled(ev, "NavigableList.select") || !this.state.active) {
+                ev.preventDefault();
+                return;
+            }
+
+            const shouldPost = this.props.mode === "extended" ? ev.ctrlKey : !ev.shiftKey;
+            if (!shouldPost) {
+                return;
+            }
+            ev.preventDefault();
+            if (composer.message) {
+                this.editMessage();
+            } else {
+                this.sendScheduleMessage();
+            }
+        } else {
+            super.onKeydown(ev);
         }
     }
 })
