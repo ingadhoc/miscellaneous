@@ -4,6 +4,7 @@
 ##############################################################################
 from odoo import api, models
 from odoo.osv import expression
+from odoo.tools.safe_eval import safe_eval
 
 
 class ResPartner(models.Model):
@@ -22,4 +23,16 @@ class ResPartner(models.Model):
             )
             .mapped("partner_id.id")
         )
-        return expression.AND([domain, [("id", "in", internal_users)]])
+        allow_ids_str = (
+            self.env["ir.config_parameter"].sudo().get_param("mail_log_only_internal.allow_log_partner_ids", "[]")
+        )
+
+        try:
+            allow_ids = safe_eval(allow_ids_str)
+            if not isinstance(allow_ids, list):
+                allow_ids = []
+        except Exception:
+            allow_ids = []
+
+        allowed_partner_ids = internal_users + allow_ids
+        return expression.AND([domain, [("id", "in", allowed_partner_ids)]])
