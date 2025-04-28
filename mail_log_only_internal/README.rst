@@ -14,7 +14,7 @@
 Mail Log Only Internal
 ======================
 
-Only internal user can be mentioned in notes
+Only internal user can be mentioned in notes. Other users can also be mentioned by adding them to the system parameters by entering "mail_log_only_internal.allow_log_partner_ids" as the key and the user ID as the value in parentheses. E.g., [2, 5]
 
 Installation
 ============
