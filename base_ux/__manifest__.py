@@ -18,35 +18,32 @@
 #
 ##############################################################################
 {
-    'name': 'Base UX',
-    'version': "16.0.2.0.0",
-    'category': 'Base',
-    'sequence': 14,
-    'summary': '',
-    'author': 'ADHOC SA',
-    'website': 'www.adhoc.com.ar',
-    'license': 'AGPL-3',
-    'images': [
+    "name": "Base UX",
+    "version": "16.0.2.0.0",
+    "category": "Base",
+    "sequence": 14,
+    "summary": "",
+    "author": "ADHOC SA",
+    "website": "www.adhoc.com.ar",
+    "license": "AGPL-3",
+    "images": [],
+    "depends": [
+        "base",
+        "mail",  # depends on mail for tracking on fields
     ],
-    'depends': [
-        'base',
-        'mail',  # depends on mail for tracking on fields
-    ],
-    'assets': {
-        'web.assets_backend': [
-            '/static/src/js/discuss.jsc',
+    "assets": {
+        "web.assets_backend": [
+            "/static/src/js/discuss.jsc",
         ],
     },
-    'data': [
-        'views/ir_actions_act_window_view.xml',
-        'views/mail_template_view.xml',
-        'views/res_company_view.xml',
+    "data": [
+        "views/ir_actions_act_window_view.xml",
+        "views/mail_template_view.xml",
+        "views/res_company_view.xml",
     ],
-    'demo': [
-    ],
-    'test': [
-    ],
-    'installable': True,
-    'auto_install': False,
-    'application': False,
+    "demo": [],
+    "test": [],
+    "installable": True,
+    "auto_install": False,
+    "application": False,
 }
