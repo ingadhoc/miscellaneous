@@ -4,9 +4,9 @@
 ##############################################################################
 from lxml import etree
 from lxml.builder import E
-from odoo import api, models
+from odoo import Command, api, models
 from odoo.addons.base.models.ir_model import MODULE_UNINSTALL_FLAG
-from odoo.addons.base.models.res_users import name_selection_groups
+from odoo.addons.base.models.res_users import get_selection_groups, is_selection_groups, name_selection_groups
 
 
 class ResUsers(models.Model):
@@ -29,6 +29,29 @@ class ResUsers(models.Model):
         if self.sudo().has_group("portal_backend.group_portal_backend") and self.env.context.get("portal_bypass"):
             return True
         return super()._is_internal()
+
+    def write(self, vals):
+        # if the user is removed from the backend portal, then we remove them from the groups that depend on the backend portal (e.g. portal_holidays)
+        group_portal_backend = self.env.ref("portal_backend.group_portal_backend", raise_if_not_found=False)
+        category_advanced = self.env.ref("portal_backend.category_portal_advanced", raise_if_not_found=False)
+        categories = self.env["ir.module.category"].search([("parent_id", "=", category_advanced.id)])
+        groups = (
+            self.env["res.groups"].search([("category_id", "in", categories.ids)])
+            if categories
+            else self.env["res.groups"]
+        )
+        remove = False
+        if group_portal_backend:
+            for k, v in vals.items():
+                if is_selection_groups(k):
+                    ids = get_selection_groups(k)
+                    if group_portal_backend.id in ids and v != group_portal_backend.id:
+                        if self.with_context(active_test=False).filtered(lambda u: group_portal_backend in u.groups_id):
+                            remove = True
+        res = super().write(vals)
+        if remove and groups:
+            self.groups_id = [Command.unlink(g.id) for g in groups]
+        return res
 
 
 class GroupsView(models.Model):
