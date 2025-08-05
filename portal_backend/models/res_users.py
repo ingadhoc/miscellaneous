@@ -34,12 +34,6 @@ class ResUsers(models.Model):
         # if the user is removed from the backend portal, then we remove them from the groups that depend on the backend portal (e.g. portal_holidays)
         group_portal_backend = self.env.ref("portal_backend.group_portal_backend", raise_if_not_found=False)
         category_advanced = self.env.ref("portal_backend.category_portal_advanced", raise_if_not_found=False)
-        categories = self.env["ir.module.category"].search([("parent_id", "=", category_advanced.id)])
-        groups = (
-            self.env["res.groups"].search([("category_id", "in", categories.ids)])
-            if categories
-            else self.env["res.groups"]
-        )
         remove = False
         if group_portal_backend:
             for k, v in vals.items():
@@ -49,8 +43,15 @@ class ResUsers(models.Model):
                         if self.with_context(active_test=False).filtered(lambda u: group_portal_backend in u.groups_id):
                             remove = True
         res = super().write(vals)
-        if remove and groups:
-            self.groups_id = [Command.unlink(g.id) for g in groups]
+        if remove:
+            categories = self.env["ir.module.category"].search([("parent_id", "=", category_advanced.id)])
+            groups = (
+                self.env["res.groups"].search([("category_id", "in", categories.ids)])
+                if categories
+                else self.env["res.groups"]
+            )
+            if groups:
+                self.groups_id = [Command.unlink(g.id) for g in groups]
         return res
 
 
