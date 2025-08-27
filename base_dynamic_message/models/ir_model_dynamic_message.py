@@ -68,7 +68,7 @@ for rec in self:
             field_name = "x_dynamic_message_%i" % rec.id
             field_vals = {
                 "name": field_name,
-                "field_description": "Dynamic Message",
+                "field_description": "Dynamic Message %i" % rec.id,
                 "state": "manual",
                 "store": False,
                 "ttype": "html",
