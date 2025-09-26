@@ -4,7 +4,7 @@
     "author": "ADHOC SA",
     "website": "http://runbot.odoo.com",
     "category": "Website",
-    "version": "18.0.1.0.0",
+    "version": "19.0.1.0.0",
     "depends": [
         "base",
         "web",
@@ -14,5 +14,5 @@
         "wizard/base_export_language_views.xml",
     ],
     "post_init_hook": "post_init",
-    "installable": False,
+    "installable": True,
 }
