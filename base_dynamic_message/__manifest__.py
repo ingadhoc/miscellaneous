@@ -36,7 +36,7 @@
         "views/ir_model_dynamic_message_views.xml",
     ],
     "demo": [],
-    'installable': False,
+    "installable": False,
     "auto_install": False,
     "application": False,
 }
