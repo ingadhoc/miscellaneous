@@ -20,7 +20,7 @@
 
 {
     "name": "Maintenance UX",
-    "version": "18.0.1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Projects & Services",
     "sequence": 14,
     "summary": "",
@@ -40,7 +40,7 @@
     "demo": [
         "demo/maintenance_demo.xml",
     ],
-    "installable": False,
+    "installable": True,
     "auto_install": False,
     "application": False,
 }
