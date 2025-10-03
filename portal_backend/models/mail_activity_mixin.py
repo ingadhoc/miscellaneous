@@ -22,3 +22,6 @@ class MailActivityMixin(models.AbstractModel):
     activity_summary = fields.Char(
         groups="base.group_user, portal_backend.group_portal_backend",
     )
+    my_activity_date_deadline = fields.Date(
+        groups="base.group_user, portal_backend.group_portal_backend",
+    )
