@@ -25,7 +25,7 @@ Only install the module.
 Configuration
 =============
 
-There is nothing to configure.
+Each user will be allowed to set it own "delay time" for sending messages and/or notes. To set it up just go to "My preferences" by clicking in the avatar in the top-right corner, then in the field "Send message delay" just fill it up with the delay time expected (in seconds), and Save it.
 
 Usage
 =====
