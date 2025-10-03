@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Parent Category -->
+    <!-- Category for Portal Backend -->
     <record model="ir.module.category" id="category_portal_advanced">
         <field name="name">Advanced Portal</field>
+        <field name="sequence">100</field>
     </record>
+
 
     <!-- Portal backend user group -->
     <record id="group_portal_backend" model="res.groups">
-        <field name="name">Portal Backend</field>
+        <field name="name">Role / Portal Backend</field>
         <field name="comment">Portal backend users have specific access rights. They usually do not belong to the usual Odoo groups but are able to access certain applications.</field>
-        <field name="category_id" ref="category_portal_advanced"/>
         <field name="implied_ids" eval="[Command.link(ref('base.group_portal'))]"/>
     </record>
+
 </odoo>
