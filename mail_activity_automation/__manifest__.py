@@ -1,6 +1,6 @@
 {
     "name": "Mail Activity Automation",
-    "version": "18.0.1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Communications",
     "sequence": 14,
     "summary": "",
@@ -15,7 +15,7 @@
         "views/mail_activity_type_views.xml",
         "data/ir_cron_data.xml",
     ],
-    "installable": False,
+    "installable": True,
     "auto_install": False,
     "application": False,
 }
