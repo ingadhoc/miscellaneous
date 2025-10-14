@@ -3,7 +3,7 @@
 # directory
 ##############################################################################
 from odoo import api, models
-from odoo.osv import expression
+from odoo.fields import Domain
 from odoo.tools.safe_eval import safe_eval
 
 
@@ -18,7 +18,7 @@ class ResPartner(models.Model):
             self.env["res.users"]
             .search(
                 [
-                    ("groups_id", "in", internal_group.id),
+                    ("group_ids", "in", internal_group.id),
                 ]
             )
             .mapped("partner_id.id")
@@ -35,4 +35,4 @@ class ResPartner(models.Model):
             allow_ids = []
 
         allowed_partner_ids = internal_users + allow_ids
-        return expression.AND([domain, [("id", "in", allowed_partner_ids)]])
+        return Domain.AND([domain, [("id", "in", allowed_partner_ids)]])
