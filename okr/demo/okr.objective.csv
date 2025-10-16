@@ -1,0 +1,9 @@
+id,name,department_id,description,from_date,to_date,type,user_id
+okr_objective_q1_sustentabilidad_crecer,Crecer,Management / Administration,Lograr escalabilidad en los procesos masivos,2024-01-01,2024-02-29,Commitment,Mitchell Admin
+okr_objective_q1_sustentabilidad_admin,Sustentabilidad,Management / Administration,Ser robustos en los procesos actuales en búsqueda de la seguridad de los mismos,2024-01-01,2024-02-29,Commitment,Mitchell Admin
+okr_objective_q1_sustentabilidad_valor,Agregar valor al cliente,Management / Research & Development / R&D USA,Agregar valor a traves de mayor agilidad y mejor comunicacion,2024-01-01,2024-02-29,Commitment,Mitchell Admin
+okr_objective_q1_sustentabilidad_rd,Sustentabilidad,Management / Research & Development / R&D USA,"Actualizar clientes a full, lanzar la 17 y trabajar en cultura de seguridad",2024-01-01,2024-02-29,Commitment,Mitchell Admin
+okr_objective_q1_valor,Agregar valor al cliente,,Agregar valor a traves de mayor agilidad y mejor comunicacion,2024-01-01,2024-02-29,Commitment,Mitchell Admin
+okr_objective_q1_crecer,Crecer,,"Crecer internacionalmente, consolidando Uruguay",2024-01-01,2024-02-29,Commitment,Mitchell Admin
+okr_objective_year_crecer,Crecer,,Crecer en toda la organizacion poniendo foco en lo internacional,2024-01-01,eval(time.strftime('%Y-12-31')),Inspirational,Mitchell Admin
+okr_objective_year_valor,Valor al cliente,,Aportar mas valor al cliente de manera cada vez mas tecnologica y sistematica,2024-01-01,eval(time.strftime('%Y-12-31')),Commitment,Mitchell Admin
