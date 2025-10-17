@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="hr_holidays.menu_hr_holidays_root" model="ir.ui.menu">
-        <field name="groups_id" eval="[Command.link(ref('portal_holidays.group_portal_backend_holiday'))]"/>
+        <field name="group_ids" eval="[Command.link(ref('portal_holidays.group_portal_backend_holiday'))]"/>
     </record>
 
     <!-- Restrict new portal holidays menus to base group_user -->
     <record id="hr_holidays.hr_leave_menu_my" model="ir.ui.menu">
-        <field name="groups_id" eval="[Command.set([ref('base.group_user')])]"/>
+        <field name="group_ids" eval="[Command.set([ref('base.group_user')])]"/>
     </record>
 
     <record id="hr_holidays.menu_open_allocation" model="ir.ui.menu">
-        <field name="groups_id" eval="[Command.set([ref('base.group_user')])]"/>
+        <field name="group_ids" eval="[Command.set([ref('base.group_user')])]"/>
     </record>
 
     <!-- Add portal holidays menu for My Time Off -->
