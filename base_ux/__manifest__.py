@@ -19,7 +19,7 @@
 ##############################################################################
 {
     "name": "Base UX",
-    "version": "18.0.3.0.0",
+    "version": "18.0.4.0.0",
     "category": "Base",
     "sequence": 14,
     "summary": "",
@@ -35,6 +35,7 @@
         "views/ir_actions_act_window_view.xml",
         "views/mail_template_view.xml",
         "views/res_company_view.xml",
+        "views/base_partner_merge_view.xml",
     ],
     "demo": [],
     "test": [],

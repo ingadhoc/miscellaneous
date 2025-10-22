@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="base_partner_merge_automatic_wizard_form_inherit" model="ir.ui.view">
+        <field name="name">base.partner.merge.automatic.wizard.form.inherit</field>
+        <field name="model">base.partner.merge.automatic.wizard</field>
+        <field name="inherit_id" ref="base.base_partner_merge_automatic_wizard_form"/>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_merge']" position="attributes">
+                <attribute name="confirm">¿Desea confirmar la fusión de contactos?</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>
