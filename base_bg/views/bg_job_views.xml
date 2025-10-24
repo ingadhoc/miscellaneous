@@ -91,7 +91,7 @@
                 <filter string="Today" name="today" domain="[('create_date', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]"/>
                 <filter string="This Week" name="this_week" domain="[('create_date', '&gt;=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
                 <separator/>
-                <group expand="0" string="Group By">
+                <group>
                     <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
                     <filter string="Model" name="group_model" context="{'group_by': 'model'}"/>
                     <filter string="User" name="group_user" context="{'group_by': 'create_uid'}"/>
