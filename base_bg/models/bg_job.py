@@ -182,7 +182,9 @@ class BgJob(models.Model):
 
         :param result: The result of the job execution
         """
-        channel = self.env["discuss.channel"].with_user(self.create_uid).channel_get([self.create_uid.partner_id.id])
+        channel = (
+            self.env["discuss.channel"].with_user(self.create_uid)._get_or_create_chat([self.create_uid.partner_id.id])
+        )
         partner_root_id = self.env.ref("base.partner_root").id
         channel.message_post(
             body=Markup(result),
