@@ -13,7 +13,7 @@ _logger = logging.getLogger(__name__)
 class BaseLanguageExport(models.TransientModel):
     _inherit = "base.language.export"
 
-    api_key = fields.Char(default="1/7dbfd1118bec5ef2dfac3528d8c5cea3dbd42164")
+    api_key = fields.Char()
     organization_slug = fields.Char(default="adhoc")
     project_slug = fields.Char(default="odoo-18-0")
 
