@@ -105,10 +105,7 @@ for rec in self:
         self.mapped("field_id").sudo().unlink()
         self.mapped("view_id").sudo().unlink()
 
-    _sql_constraints = [
-        (
-            "unique_level_per_model",
-            "UNIQUE(model_id, alert_type, view_to_inherit_id)",
-            "Debe haber un unico registro por modelo, vista heredada y tipo de alerta",
-        )
-    ]
+    _unique_level_per_model = models.Constraint(
+        "UNIQUE(model_id, alert_type, view_to_inherit_id)",
+        "Debe haber un unico registro por modelo, vista heredada y tipo de alerta",
+    )
