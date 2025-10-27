@@ -1,8 +1,8 @@
 import logging
 from datetime import timedelta
 
-from markupsafe import Markup
 from odoo import _, api, fields, models
+from odoo.addons.web.controllers.utils import clean_action
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
@@ -145,7 +145,7 @@ class BgJob(models.Model):
                     "end_time": fields.Datetime.now(),
                 }
             )
-            self._notify_user(result)
+            self._notify_user(action=result, record_ids=record_ids)
         except Exception as e:
             self._handle_job_error(e)
             raise
@@ -176,19 +176,28 @@ class BgJob(models.Model):
             )
             _logger.error("Job %s failed permanently: %s", self.name, error_msg)
 
-    def _notify_user(self, result: str):
+    def _notify_user(
+        self,
+        type: str = "info",
+        result: dict | None = None,
+    ):
         """
-        Notify user about job status
+        Notify the user who created the job about its completion.
 
-        :param result: The result of the job execution
+        :param type: Type of notification (default: "info")
+        :param result: Result of the job execution, can include an action to perform
         """
-        channel = self.env["discuss.channel"].with_user(self.create_uid).channel_get([self.create_uid.partner_id.id])
-        partner_root_id = self.env.ref("base.partner_root").id
-        channel.message_post(
-            body=Markup(result),
-            author_id=partner_root_id,
-            message_type="comment",
-            subtype_xmlid="mail.mt_comment",
+        values = {
+            "type": type,
+            "message": _("Background Job %s Finished") % self.name,
+        }
+        if isinstance(result, dict):
+            action = result
+            action = clean_action(action, self.env)
+            values["action_button"] = action
+        self.create_uid._bus_send(
+            "action_notification",
+            values,
         )
 
     @api.model
@@ -235,4 +244,4 @@ class BgJob(models.Model):
         for job in jobs:
             job.write({"state": "failed", "error_message": _("Job timed out")})
             message = _("Job %s timed out") % job.name
-            job._notify_user(message)
+            job._notify_user(message=message)

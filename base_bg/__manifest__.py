@@ -28,11 +28,15 @@
     "depends": [
         "base",
         "mail",
+        "bus",
     ],
     "data": [
         "security/ir.model.access.csv",
         "views/bg_job_views.xml",
         "data/ir_cron_data.xml",
+    ],
+    "web.assets_backend": [
+        "base_bg/static/src/services/*.js",
     ],
     "installable": True,
     "auto_install": False,
