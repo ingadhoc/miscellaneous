@@ -39,7 +39,7 @@ class BaseBg(models.AbstractModel):
         job_vals["args_json"] = list(args) if args else []
         job_vals["kwargs_json"] = kwargs
         self.env["bg.job"].create(job_vals)
-        self._trigger_crons()
+        self.sudo()._trigger_crons()
         title = _("Process sent to background successfully")
         message = _("You will be notified when it is done.")
         return {
