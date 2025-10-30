@@ -1,5 +1,5 @@
 {
-    "name": "Transifex Push",
+    "name": "Transifex PushTest",
     "summary": "Helper module to push translations to Transifex",
     "author": "ADHOC SA",
     "website": "http://runbot.odoo.com",
