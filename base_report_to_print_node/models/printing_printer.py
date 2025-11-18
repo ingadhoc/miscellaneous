@@ -95,7 +95,7 @@ class PrintingPrinter(models.Model):
         try:
             res = self._submit_job(
                 self.uri,
-                options.get("format", "pdf"),
+                options.get("format", report.report_type),
                 file_name,
                 options,
             )
@@ -152,6 +152,8 @@ class PrintingPrinter(models.Model):
         """
         if jobtype in ["qweb-pdf", "pdf", "aeroo"]:
             jobtype = "pdf"
+        elif jobtype in ["qweb-text"]:
+            jobtype = "txt"
         else:
             raise UserError(_("Jobtype %s not implemented for Print Node") % (jobtype))
 
@@ -166,7 +168,7 @@ class PrintingPrinter(models.Model):
         data = {
             "printerId": printerid,
             "title": title,
-            "contentType": "pdf_base64",
+            "contentType": "pdf_base64" if jobtype == "pdf" else "raw_base64",
             "content": content,
             "source": "created by odoo db: %s" % self.env.cr.dbname,
         }
