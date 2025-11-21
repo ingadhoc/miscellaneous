@@ -3,15 +3,15 @@
 # 	* base_ux
 # 
 # Translators:
-# Juan José Scarafía <scarafia.juanjose@gmail.com>, 2024
+# ADHOC - Bot <transbot@adhoc.com.ar>, 2025
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 18.0+e\n"
+"Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-03 12:07+0000\n"
-"PO-Revision-Date: 2024-11-14 20:12+0000\n"
-"Last-Translator: Juan José Scarafía <scarafia.juanjose@gmail.com>, 2024\n"
+"POT-Creation-Date: 2025-11-17 17:48+0000\n"
+"PO-Revision-Date: 2025-11-17 17:48+0000\n"
+"Last-Translator: ADHOC - Bot <transbot@adhoc.com.ar>, 2025\n"
 "Language-Team: Spanish (https://app.transifex.com/adhoc/teams/46451/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -65,6 +65,17 @@ msgid "Country state"
 msgstr "Provincia del país"
 
 #. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_ir_actions_act_window__display_name
+#: model:ir.model.fields,field_description:base_ux.field_ir_actions_server__display_name
+#: model:ir.model.fields,field_description:base_ux.field_mail_activity__display_name
+#: model:ir.model.fields,field_description:base_ux.field_mail_template__display_name
+#: model:ir.model.fields,field_description:base_ux.field_res_company__display_name
+#: model:ir.model.fields,field_description:base_ux.field_res_country_state__display_name
+#: model:ir.model.fields,field_description:base_ux.field_res_partner__display_name
+msgid "Display Name"
+msgstr "Nombre para mostrar"
+
+#. module: base_ux
 #: model_terms:ir.ui.view,arch_db:base_ux.view_window_action_form
 msgid "Display an option on related documents to open this action"
 msgstr "Agrega la acción en el modelo relacionado para ejecutar la misma."
@@ -73,6 +84,17 @@ msgstr "Agrega la acción en el modelo relacionado para ejecutar la misma."
 #: model:ir.model,name:base_ux.model_mail_template
 msgid "Email Templates"
 msgstr "Plantillas de correo electrónico"
+
+#. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_ir_actions_act_window__id
+#: model:ir.model.fields,field_description:base_ux.field_ir_actions_server__id
+#: model:ir.model.fields,field_description:base_ux.field_mail_activity__id
+#: model:ir.model.fields,field_description:base_ux.field_mail_template__id
+#: model:ir.model.fields,field_description:base_ux.field_res_company__id
+#: model:ir.model.fields,field_description:base_ux.field_res_country_state__id
+#: model:ir.model.fields,field_description:base_ux.field_res_partner__id
+msgid "ID"
+msgstr ""
 
 #. module: base_ux
 #: model_terms:ir.ui.view,arch_db:base_ux.view_window_action_form
@@ -88,3 +110,8 @@ msgstr "Quitar acción contextual relacionada a esta acción"
 #: model:ir.model,name:base_ux.model_ir_actions_server
 msgid "Server Action"
 msgstr "Acción de servidor"
+
+#. module: base_ux
+#: model_terms:ir.ui.view,arch_db:base_ux.base_partner_merge_automatic_wizard_form_inherit
+msgid "¿Desea confirmar la fusión de contactos?"
+msgstr ""
