@@ -1,0 +1,95 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* portal_holidays
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-21 10:10+0000\n"
+"PO-Revision-Date: 2025-11-21 10:10+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: portal_holidays
+#: model_terms:ir.actions.act_window,help:portal_holidays.hr_leave_action_my_portal_holidays
+msgid ""
+"A great way to keep track on your time off requests, sick days, and approval"
+" status."
+msgstr ""
+
+#. module: portal_holidays
+#: model:res.groups.privilege,name:portal_holidays.privilege_portal_advanced_holiday
+msgid "Advanced Holidays"
+msgstr ""
+
+#. module: portal_holidays
+#: model:res.groups,comment:portal_holidays.group_portal_backend_holiday
+msgid ""
+"Allows portal backend users to access the application dashboard to request "
+"leave days."
+msgstr ""
+
+#. module: portal_holidays
+#: model_terms:ir.actions.act_window,help:portal_holidays.hr_leave_allocation_action_my_portal_holidays
+msgid "Create a new time off allocation request"
+msgstr ""
+
+#. module: portal_holidays
+#: model:ir.model.fields,field_description:portal_holidays.field_hr_leave_allocation__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: portal_holidays
+#: model:ir.model.fields,field_description:portal_holidays.field_hr_leave_allocation__id
+msgid "ID"
+msgstr ""
+
+#. module: portal_holidays
+#: model_terms:ir.actions.act_window,help:portal_holidays.hr_leave_action_my_portal_holidays
+msgid "Keep track of your PTOs."
+msgstr ""
+
+#. module: portal_holidays
+#: model:ir.actions.act_window,name:portal_holidays.hr_leave_allocation_action_my_portal_holidays
+#: model:ir.ui.menu,name:portal_holidays.menu_open_allocation_portal_holidays
+msgid "My Allocations"
+msgstr ""
+
+#. module: portal_holidays
+#: model:ir.actions.act_window,name:portal_holidays.hr_leave_action_my_portal_holidays
+#: model:ir.ui.menu,name:portal_holidays.hr_leave_menu_my_portal_holidays
+msgid "My Time Off"
+msgstr ""
+
+#. module: portal_holidays
+#: model:res.groups,name:portal_holidays.group_portal_backend_holiday
+msgid "Portal Backend: Holidays"
+msgstr ""
+
+#. module: portal_holidays
+#: model:ir.model,name:portal_holidays.model_hr_leave_allocation
+msgid "Time Off Allocation"
+msgstr ""
+
+#. module: portal_holidays
+#: model_terms:ir.actions.act_window,help:portal_holidays.hr_leave_allocation_action_my_portal_holidays
+msgid ""
+"Time Off Officers allocate time off days to employees (e.g. paid time off).<br>\n"
+"                Employees request allocations to Time Off Officers (e.g. recuperation days)."
+msgstr ""
+
+#. module: portal_holidays
+#: model:ir.model.fields,field_description:portal_holidays.field_hr_leave_allocation__employee_overtime
+msgid "Total Overtime"
+msgstr ""
+
+#. module: portal_holidays
+#. odoo-python
+#: code:addons/portal_holidays/models/hr_leave_allocation.py:0
+msgid "You can only create allocations for yourself."
+msgstr ""
