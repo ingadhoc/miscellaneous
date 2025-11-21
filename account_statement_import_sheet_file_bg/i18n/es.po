@@ -1,0 +1,31 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* account_statement_import_sheet_file_bg
+# 
+# Translators:
+# migration.bot.adhoc, 2025
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-19 14:20+0000\n"
+"PO-Revision-Date: 2025-11-19 14:20+0000\n"
+"Last-Translator: migration.bot.adhoc, 2025\n"
+"Language-Team: Spanish (https://app.transifex.com/adhoc/teams/46451/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Language: es\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+
+#. module: account_statement_import_sheet_file_bg
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_bg/models/account_statement_import.py:0
+msgid "Error importing bank statement: %s"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_bg
+#: model:ir.model,name:account_statement_import_sheet_file_bg.model_account_statement_import
+msgid "Import Bank Statement Files"
+msgstr "Importar archivos de extracto bancario"
