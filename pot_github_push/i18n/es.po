@@ -1,0 +1,31 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* pot_github_push
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-22 09:05+0000\n"
+"PO-Revision-Date: 2025-11-20 18:20+0000\n"
+"Language-Team: Spanish (https://app.transifex.com/adhoc/teams/46451/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Language: es\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+
+#. module: pot_github_push
+#: model:ir.model.fields,field_description:pot_github_push.field_pot_generator__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: pot_github_push
+#: model:ir.model.fields,field_description:pot_github_push.field_pot_generator__id
+msgid "ID"
+msgstr ""
+
+#. module: pot_github_push
+#: model:ir.model,name:pot_github_push.model_pot_generator
+msgid "Simple POT Generator"
+msgstr ""
