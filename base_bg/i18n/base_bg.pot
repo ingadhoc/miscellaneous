@@ -1,0 +1,339 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* base_bg
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-22 10:05+0000\n"
+"PO-Revision-Date: 2025-11-22 10:05+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__args_json
+msgid "Args Json"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model,name:base_bg.model_bg_job
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_form
+msgid "Background Job"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model,name:base_bg.model_base_bg
+msgid "Background Job Mixin"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.actions.server,name:base_bg.ir_cron_bg_job_monitor_ir_actions_server
+msgid "Background Job Monitor"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.actions.server,name:base_bg.ir_cron_bg_job_runner_ir_actions_server
+msgid "Background Job Runner"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.actions.act_window,name:base_bg.action_bg_job
+#: model:ir.ui.menu,name:base_bg.menu_bg_job_root
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_list
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
+msgid "Background Jobs"
+msgstr ""
+
+#. module: base_bg
+#: model_terms:ir.actions.act_window,help:base_bg.action_bg_job
+msgid ""
+"Background jobs are created automatically when you perform operations\n"
+"                that take a long time to complete. They allow you to continue working\n"
+"                while the system processes your request in the background."
+msgstr ""
+
+#. module: base_bg
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_form
+msgid "Cancel"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__cancel_time
+msgid "Cancel Time"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields.selection,name:base_bg.selection__bg_job__state__canceled
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
+msgid "Canceled"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__context_json
+msgid "Context Json"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,help:base_bg.field_bg_job__context_json
+msgid "Context to be used when executing the job, serialized as JSON"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: base_bg
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
+msgid "Creation Date"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,help:base_bg.field_bg_job__retry_count
+msgid "Current number of retry attempts"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_base_bg__display_name
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields.selection,name:base_bg.selection__bg_job__state__done
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
+msgid "Done"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__duration
+msgid "Duration"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__end_time
+msgid "End Time"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields.selection,name:base_bg.selection__bg_job__state__enqueued
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
+msgid "Enqueued"
+msgstr ""
+
+#. module: base_bg
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_form
+msgid "Error"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__error_message
+msgid "Error Message"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,help:base_bg.field_bg_job__error_message
+msgid "Error message from the last failed execution"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields.selection,name:base_bg.selection__bg_job__state__failed
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
+msgid "Failed"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,help:base_bg.field_bg_job__name
+msgid "Human readable job name"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_base_bg__id
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__id
+msgid "ID"
+msgstr ""
+
+#. module: base_bg
+#. odoo-python
+#: code:addons/base_bg/models/bg_job.py:0
+msgid "Job %s timed out"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__name
+msgid "Job Name"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,help:base_bg.field_bg_job__duration
+msgid "Job execution duration in seconds"
+msgstr ""
+
+#. module: base_bg
+#. odoo-python
+#: code:addons/base_bg/models/bg_job.py:0
+msgid "Job timed out"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.ui.menu,name:base_bg.menu_bg_job
+msgid "Jobs"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,help:base_bg.field_bg_job__kwargs_json
+msgid "Keyword arguments for the method call, serialized as JSON"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__kwargs_json
+msgid "Kwargs Json"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__max_retries
+msgid "Max Retries"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,help:base_bg.field_bg_job__max_retries
+msgid "Maximum number of retry attempts"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__method
+msgid "Method"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__model
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
+msgid "Model"
+msgstr ""
+
+#. module: base_bg
+#: model_terms:ir.actions.act_window,help:base_bg.action_bg_job
+msgid "No background jobs found!"
+msgstr ""
+
+#. module: base_bg
+#. odoo-python
+#: code:addons/base_bg/models/bg_job.py:0
+msgid "Only enqueued jobs can be canceled"
+msgstr ""
+
+#. module: base_bg
+#. odoo-python
+#: code:addons/base_bg/models/bg_job.py:0
+msgid "Only enqueued jobs can be executed"
+msgstr ""
+
+#. module: base_bg
+#. odoo-python
+#: code:addons/base_bg/models/bg_job.py:0
+msgid "Only failed jobs can be retried"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,help:base_bg.field_bg_job__args_json
+msgid "Positional arguments for the method call, serialized as JSON"
+msgstr ""
+
+#. module: base_bg
+#. odoo-python
+#: code:addons/base_bg/models/base_bg.py:0
+msgid "Process sent to background successfully"
+msgstr ""
+
+#. module: base_bg
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_form
+msgid "Retry"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__retry_count
+msgid "Retry Count"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields.selection,name:base_bg.selection__bg_job__state__running
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
+msgid "Running"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__start_time
+msgid "Start Time"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__state
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
+msgid "State"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,help:base_bg.field_bg_job__method
+msgid "The method name to be executed"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,help:base_bg.field_bg_job__model
+msgid "The model name on which the job method will be executed"
+msgstr ""
+
+#. module: base_bg
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
+msgid "This Week"
+msgstr ""
+
+#. module: base_bg
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
+msgid "Today"
+msgstr ""
+
+#. module: base_bg
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
+msgid "User"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,help:base_bg.field_bg_job__end_time
+msgid "When the job execution finished"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,help:base_bg.field_bg_job__start_time
+msgid "When the job execution started"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,help:base_bg.field_bg_job__cancel_time
+msgid "When the job was canceled"
+msgstr ""
+
+#. module: base_bg
+#. odoo-python
+#: code:addons/base_bg/models/base_bg.py:0
+msgid "You will be notified when it is done."
+msgstr ""
