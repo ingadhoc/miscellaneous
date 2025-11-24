@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="1">
+
+    <record model='kr.ppal' id='kr_1'>
+        <field name='code'>01</field>
+        <field name='description'>Crecer</field>
+    </record>
+
+    <record model='kr.ppal' id='kr_2'>
+        <field name='code'>02</field>
+        <field name='description'>Internacionalizar</field>
+    </record>
+
+    <record model='kr.ppal' id='kr_3'>
+        <field name='code'>03</field>
+        <field name='description'>Agregar valor al cliente</field>
+    </record>
+
+    <record model='kr.ppal' id='kr_4'>
+        <field name='code'>04</field>
+        <field name='description'>Producto robusto</field>
+    </record>
+
+    <record model='kr.ppal' id='kr_5'>
+        <field name='code'>05</field>
+        <field name='description'>Equipo motivado y feliz</field>
+    </record>
+
+</odoo>
