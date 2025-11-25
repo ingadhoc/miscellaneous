@@ -16,7 +16,7 @@ class AccountStatementImport(models.TransientModel):
     def import_file_button(self):
         """Process the file chosen in the wizard, create a bank statement
         and return a link to its reconciliation page."""
-        if not self._context.get("bg_job"):
+        if not self.env.context.get("bg_job"):
             return self.bg_enqueue("import_file_button")
         else:
             try:
