@@ -11,8 +11,9 @@ import urllib.request
 from tempfile import mkstemp
 from urllib.error import HTTPError
 
-from odoo import _, api, fields, models
 from odoo.exceptions import RedirectWarning, UserError
+
+from odoo import _, api, fields, models
 
 PRINTNODE_URL = "https://api.printnode.com"
 TIMEOUT = 20
@@ -96,7 +97,7 @@ class PrintingPrinter(models.Model):
 
         try:
             res = self._submit_job(
-                self.uri, options.get("format", "pdf"), file_name, options,
+                self.uri, options.get("format", report.report_type), file_name, options,
             )
             _logger.info("Printing job '{}' for document {}".format(res, file_name))
         except Exception as e:
@@ -155,6 +156,8 @@ class PrintingPrinter(models.Model):
         """
         if jobtype in ["qweb-pdf", "pdf", "aeroo"]:
             jobtype = "pdf"
+        elif jobtype in ["qweb-text"]:
+            jobtype = "txt"
         else:
             raise UserError(_("Jobtype %s not implemented for Print Node") % (jobtype))
 
@@ -169,7 +172,7 @@ class PrintingPrinter(models.Model):
         data = {
             "printerId": printerid,
             "title": title,
-            "contentType": "pdf_base64",
+            "contentType": "pdf_base64" if jobtype == "pdf" else "raw_base64",
             "content": content,
             "source": "created by odoo db: %s" % self.env.cr.dbname,
         }
