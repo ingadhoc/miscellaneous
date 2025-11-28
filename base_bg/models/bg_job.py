@@ -145,7 +145,8 @@ class BgJob(models.Model):
                     "end_time": fields.Datetime.now(),
                 }
             )
-            self._notify_user(result)
+            if result:
+                self._notify_user(result)
         except Exception as e:
             self._handle_job_error(e)
             raise
