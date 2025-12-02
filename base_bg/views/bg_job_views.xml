@@ -12,13 +12,15 @@
                   decoration-success="state == 'done'"
                   decoration-danger="state == 'failed'"
                   decoration-muted="state == 'canceled'">
+                <field string="" name="priority"/>
                 <field name="name"/>
                 <field name="model"/>
                 <field name="method"/>
                 <field name="state"/>
                 <field name="create_date"/>
                 <field name="duration"/>
-                <field name="retry_count"/>
+                <field string="Retries" name="retry_count"/>
+                <button name="action_open_records" string="Open Records" type="object" icon="fa-bars"/>
             </list>
         </field>
     </record>
@@ -37,6 +39,9 @@
                     <field name="state" widget="statusbar" statusbar_visible="enqueued,running,done"/>
                 </header>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" name="action_open_records" string="Open Records" type="object" icon="fa-bars"/>
+                    </div>
                     <div class="oe_title">
                         <h1>
                             <field name="name" readonly="1"/>
@@ -49,6 +54,7 @@
                             <field name="create_uid" readonly="1"/>
                         </group>
                         <group>
+                            <field name="priority" readonly="1"/>
                             <field name="max_retries" readonly="1"/>
                             <field name="retry_count" readonly="1"/>
                         </group>

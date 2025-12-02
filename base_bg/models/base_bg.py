@@ -1,8 +1,9 @@
-import logging
+##############################################################################
+# For copyright and license notices, see __manifest__.py file in module root
+# directory
+##############################################################################
 
 from odoo import _, api, models
-
-_logger = logging.getLogger(__name__)
 
 
 class BaseBg(models.AbstractModel):
