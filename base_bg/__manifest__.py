@@ -19,7 +19,7 @@
 ##############################################################################
 {
     "name": "Base Background Jobs",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.0.1",
     "category": "Technical",
     "author": "ADHOC SA",
     "website": "https://www.adhoc.com.ar",
@@ -33,6 +33,9 @@
         "security/ir.model.access.csv",
         "views/bg_job_views.xml",
         "data/ir_cron_data.xml",
+    ],
+    "demo": [
+        "demo/bg_job_demo.xml",
     ],
     "installable": True,
     "auto_install": False,

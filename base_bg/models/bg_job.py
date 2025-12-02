@@ -1,8 +1,12 @@
+##############################################################################
+# For copyright and license notices, see __manifest__.py file in module root
+# directory
+##############################################################################
 import logging
 from datetime import timedelta
 
 from markupsafe import Markup
-from odoo import _, api, fields, models
+from odoo import _, api, fields, models, tools
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
@@ -11,7 +15,7 @@ _logger = logging.getLogger(__name__)
 class BgJob(models.Model):
     _name = "bg.job"
     _description = "Background Job"
-    _order = "create_date desc"
+    _order = "priority, create_date desc"
 
     name = fields.Char(
         string="Job Name",
@@ -45,6 +49,10 @@ class BgJob(models.Model):
     )
     context_json = fields.Json(
         help="Context to be used when executing the job, serialized as JSON",
+    )
+    priority = fields.Integer(
+        default=10,
+        help="Job priority (lower number means higher priority)",
     )
     max_retries = fields.Integer(
         default=3,
@@ -113,6 +121,23 @@ class BgJob(models.Model):
             }
         )
 
+    def action_open_records(self) -> dict:
+        """
+        Action to open the records related to the job
+        """
+        self.ensure_one()
+        model = self.env[self.model]
+        kwargs = self.kwargs_json or {}
+        record_ids = kwargs.get("_record_ids", None)
+        records = model.browse(record_ids) if record_ids else model.browse()
+        return {
+            "name": _("Related Records"),
+            "type": "ir.actions.act_window",
+            "res_model": self.model,
+            "view_mode": "list,form",
+            "domain": [("id", "in", records.ids)],
+        }
+
     def run(self):
         """
         Executes the job
@@ -145,7 +170,8 @@ class BgJob(models.Model):
                     "end_time": fields.Datetime.now(),
                 }
             )
-            self._notify_user(result)
+            if result:
+                self._notify_user(result)
         except Exception as e:
             self._handle_job_error(e)
             raise
@@ -219,13 +245,13 @@ class BgJob(models.Model):
                 continue
 
     @api.model
-    def _cron_check_running_jobs(self, minutes: int = 300):
+    def _cron_check_running_jobs(self):
         """
         Check running background jobs.
 
         :param minutes: Time in minutes to consider a job as timed out (default: 300)
         """
-        cutoff_date = fields.Datetime.now() - timedelta(minutes=minutes)
+        cutoff_date = fields.Datetime.now() - timedelta(minutes=tools.config["limit_time_real_cron"])
         jobs = self.search(
             [
                 ("start_time", "<", cutoff_date),
