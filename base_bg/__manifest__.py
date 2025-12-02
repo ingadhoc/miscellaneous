@@ -34,6 +34,9 @@
         "views/bg_job_views.xml",
         "data/ir_cron_data.xml",
     ],
+    "demo": [
+        "demo/bg_job_demo.xml",
+    ],
     "installable": True,
     "auto_install": False,
     "application": False,
