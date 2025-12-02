@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="bg_job_demo_partner_1" model="res.partner">
+        <field name="name">BG Demo Customer</field>
+        <field name="email">bg.demo.customer@example.com</field>
+    </record>
+
+    <record id="bg_job_demo_partner_2" model="res.partner">
+        <field name="name">BG Demo Vendor</field>
+        <field name="email">bg.demo.vendor@example.com</field>
+    </record>
+
+    <record id="bg_job_demo_data_cleanup" model="bg.job">
+        <field name="name">Demo Data Cleanup</field>
+        <field name="model">res.partner</field>
+        <field name="method">exists</field>
+        <field name="priority">5</field>
+        <field name="state">done</field>
+        <field name="start_time">2024-01-01 08:00:00</field>
+        <field name="end_time">2024-01-01 08:05:00</field>
+        <field name="kwargs_json" eval="{'_record_ids': [ref('bg_job_demo_partner_1'), ref('bg_job_demo_partner_2')]}"/>
+        <field name="context_json" eval="{'lang': 'en_US'}"/>
+    </record>
+
+    <record id="bg_job_demo_follow_up" model="bg.job">
+        <field name="name">Demo Follow Up</field>
+        <field name="model">res.partner</field>
+        <field name="method">exists</field>
+        <field name="priority">15</field>
+        <field name="state">failed</field>
+        <field name="start_time">2024-01-02 10:00:00</field>
+        <field name="end_time">2024-01-02 12:00:00</field>
+        <field name="error_message">Timeout while sending follow up</field>
+    </record>
+</odoo>
