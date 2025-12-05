@@ -251,12 +251,9 @@ class BgJob(models.Model):
 
     @api.model
     def _cron_check_running_jobs(self):
-        """
-        Check running background jobs.
-
-        :param minutes: Time in minutes to consider a job as timed out (default: 300)
-        """
-        cutoff_date = fields.Datetime.now() - timedelta(minutes=tools.config["limit_time_real_cron"])
+        """Check running background jobs honoring the cron timeout (seconds)."""
+        timeout_seconds = tools.config.get("limit_time_real_cron") or 0
+        cutoff_date = fields.Datetime.now() - timedelta(seconds=timeout_seconds)
         jobs = self.search(
             [
                 ("start_time", "<", cutoff_date),
