@@ -1,19 +1,20 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
 # 	* base_bg
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-22 08:50+0000\n"
+"POT-Creation-Date: 2025-12-05 13:42+0000\n"
 "PO-Revision-Date: 2025-10-24 17:51+0000\n"
 "Language-Team: Spanish (https://app.transifex.com/adhoc/teams/46451/es/)\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
-"Language: es\n"
-"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
+"1 : 2;\n"
 
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__args_json
@@ -53,7 +54,8 @@ msgstr ""
 #: model_terms:ir.actions.act_window,help:base_bg.action_bg_job
 msgid ""
 "Background jobs are created automatically when you perform operations\n"
-"                that take a long time to complete. They allow you to continue working\n"
+"                that take a long time to complete. They allow you to "
+"continue working\n"
 "                while the system processes your request in the background."
 msgstr ""
 
@@ -180,6 +182,11 @@ msgid "Job execution duration in seconds"
 msgstr ""
 
 #. module: base_bg
+#: model:ir.model.fields,help:base_bg.field_bg_job__priority
+msgid "Job priority (lower number means higher priority)"
+msgstr ""
+
+#. module: base_bg
 #. odoo-python
 #: code:addons/base_bg/models/bg_job.py:0
 msgid "Job timed out"
@@ -255,14 +262,36 @@ msgid "Only failed jobs can be retried"
 msgstr ""
 
 #. module: base_bg
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_form
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_list
+msgid "Open Records"
+msgstr ""
+
+#. module: base_bg
 #: model:ir.model.fields,help:base_bg.field_bg_job__args_json
 msgid "Positional arguments for the method call, serialized as JSON"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__priority
+msgid "Priority"
 msgstr ""
 
 #. module: base_bg
 #. odoo-python
 #: code:addons/base_bg/models/base_bg.py:0
 msgid "Process sent to background successfully"
+msgstr ""
+
+#. module: base_bg
+#. odoo-python
+#: code:addons/base_bg/models/bg_job.py:0
+msgid "Related Records"
+msgstr ""
+
+#. module: base_bg
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_list
+msgid "Retries"
 msgstr ""
 
 #. module: base_bg
