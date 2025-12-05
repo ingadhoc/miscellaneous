@@ -23,8 +23,8 @@ class TestBgJob(TransactionCase):
         super().tearDown()
 
     def _set_cron_timeout(self, minutes: int):
-        """Utility to tweak cron timeout during tests."""
-        tools.config["limit_time_real_cron"] = minutes
+        """Utility to tweak cron timeout (expressed in minutes)."""
+        tools.config["limit_time_real_cron"] = int(minutes * 60)
 
     def _create_job(self, **vals):
         """Helper to build a bg.job record with sensible defaults."""
