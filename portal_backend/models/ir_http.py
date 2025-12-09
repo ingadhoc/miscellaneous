@@ -26,6 +26,9 @@ class Http(models.AbstractModel):
                     "load_menus": hashlib.sha512(menu_json_utf8).hexdigest()[:64],  # sha512/256
                 }
             )
+            # We need sudo since a user may not have access to ancestor companies
+            disallowed_ancestor_companies_sudo = user.company_ids.sudo().parent_ids - user.company_ids
+            all_companies_in_hierarchy_sudo = disallowed_ancestor_companies_sudo + user.company_ids
             session_info.update(
                 {
                     # current_company should be default_company
@@ -36,8 +39,20 @@ class Http(models.AbstractModel):
                                 "id": comp.id,
                                 "name": comp.name,
                                 "sequence": comp.sequence,
+                                "child_ids": (comp.child_ids & all_companies_in_hierarchy_sudo).ids,
+                                "parent_id": comp.parent_id.id,
                             }
                             for comp in user.company_ids
+                        },
+                        "disallowed_ancestor_companies": {
+                            comp.id: {
+                                "id": comp.id,
+                                "name": comp.name,
+                                "sequence": comp.sequence,
+                                "child_ids": (comp.child_ids & all_companies_in_hierarchy_sudo).ids,
+                                "parent_id": comp.parent_id.id,
+                            }
+                            for comp in disallowed_ancestor_companies_sudo
                         },
                     },
                     "show_effect": True,
