@@ -4,8 +4,10 @@
 ##############################################################################
 from datetime import timedelta
 from unittest.mock import patch
+from uuid import uuid4
 
 from odoo import fields, tools
+from odoo.addons.base_bg.models.base_bg import BaseBg
 from odoo.exceptions import UserError
 from odoo.tests.common import TransactionCase
 
@@ -15,6 +17,7 @@ class TestBgJob(TransactionCase):
         """Prepare environment references and keep cron timeout to restore later."""
         super(TestBgJob, self).setUp()
         self.BgJob = self.env["bg.job"]
+        self.base_bg_model = self.env["base.bg"]
         self._limit_time_real_cron = tools.config.get("limit_time_real_cron", 120)
 
     def tearDown(self):
@@ -35,6 +38,10 @@ class TestBgJob(TransactionCase):
         }
         defaults.update(vals)
         return self.BgJob.create(defaults)
+
+    def _job_by_name(self, name):
+        """Locate a bg.job record by its name."""
+        return self.BgJob.search([("name", "=", name)], limit=1)
 
     def test_create_bg_job(self):
         """Basic test for job creation."""
@@ -190,3 +197,36 @@ class TestBgJob(TransactionCase):
 
         mock_method.assert_called_once()
         mock_notify.assert_not_called()
+
+    def test_bg_enqueue_applies_custom_priority(self):
+        """bg_enqueue must propagate the provided priority into bg.job."""
+        job_name = f"Priority Test Job {uuid4().hex}"
+        with patch.object(BaseBg, "_trigger_crons"):
+            self.base_bg_model.bg_enqueue(
+                "dummy_priority_method",
+                name=job_name,
+                priority=3,
+            )
+
+        job = self._job_by_name(job_name)
+        self.assertTrue(job, "The priority test job should exist")
+        self.assertEqual(job.priority, 3)
+
+    def test_bg_enqueue_filters_unserializable_context_entries(self):
+        """Only JSON-safe context keys should be stored in bg.job."""
+        job_name = f"Context Test Job {uuid4().hex}"
+        partner = self.env["res.partner"].create({"name": "Context Partner"})
+        base_bg_ctx = self.base_bg_model.with_context(
+            serializable_flag="ok",
+            unserializable_partner=partner,
+            unserializable_env=self.env,
+        )
+        with patch.object(BaseBg, "_trigger_crons"):
+            base_bg_ctx.bg_enqueue(
+                "dummy_context_method",
+                name=job_name,
+            )
+
+        job = self._job_by_name(job_name)
+        self.assertTrue(job, "The context test job should exist")
+        self.assertEqual(job.context_json, {"serializable_flag": "ok"})

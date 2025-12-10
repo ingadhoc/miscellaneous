@@ -21,6 +21,7 @@ class BaseBg(models.AbstractModel):
         :param method: The method name to execute
 
         Special kwargs:
+            :param priority: Job priority (default: 10)
             :param max_retries: Maximum retry attempts (default: 3)
 
         :return: A display notification
@@ -72,10 +73,10 @@ class BaseBg(models.AbstractModel):
     @api.model
     def is_serializable(self, value: Any) -> bool:
         """
-        Método que verifica si un valor es serializable.
+        Checks if a value is JSON serializable.
 
-        :param self: Modelo ai.utils
-        :param value: Valor a verificar
+        :param value: The value to check
+        :return: True if serializable, False otherwise
         """
         try:
             json.dumps(value)
