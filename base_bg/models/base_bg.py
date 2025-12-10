@@ -3,6 +3,9 @@
 # directory
 ##############################################################################
 
+import json
+from typing import Any
+
 from odoo import _, api, models
 
 
@@ -22,14 +25,17 @@ class BaseBg(models.AbstractModel):
 
         :return: A display notification
         """
+        priority = kwargs.pop("priority", 10)
         max_retries = kwargs.pop("max_retries", 3)
+        context = {k: v for k, v in self.env.context.items() if self.is_serializable(v)}
         name = kwargs.pop("name", f"{self._name}.{method}")
         job_vals = {
             "name": name,
             "model": self._name,
             "method": method,
+            "priority": priority,
             "max_retries": max_retries,
-            "context_json": dict(self.env.context),
+            "context_json": context,
         }
 
         # Handle recordset: store IDs for later reconstruction
@@ -62,3 +68,17 @@ class BaseBg(models.AbstractModel):
         crons = self.env["ir.cron"].search([("code", "ilike", code)])
         for cron in crons:
             cron._trigger()
+
+    @api.model
+    def is_serializable(self, value: Any) -> bool:
+        """
+        Método que verifica si un valor es serializable.
+
+        :param self: Modelo ai.utils
+        :param value: Valor a verificar
+        """
+        try:
+            json.dumps(value)
+            return True
+        except Exception:
+            return False
