@@ -10,14 +10,17 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-28 20:45+0000\n"
-"PO-Revision-Date: 2025-10-28 12:53+0000\n"
-"Last-Translator: ADHOC - Bot <transbot@adhoc.com.ar>, 2025\n"
-"Language-Team: Spanish (https://app.transifex.com/adhoc/teams/46451/es/)\n"
+"PO-Revision-Date: 2025-12-11 18:10+0000\n"
+"Last-Translator: BAF <baf@adhoc.inc>\n"
+"Language-Team: Spanish <https://translation.dev-adhoc.com/projects/"
+"miscellaneous-19-0/miscellaneous-19-0-base_dynamic_message/es/>\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
-"Language: es\n"
-"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=(n == 1) ? 0 : ((n != 0 && n % 1000000 == 0)"
+" ? 1 : 2);\n"
+"X-Generator: Weblate 5.10.4\n"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__alert_type
@@ -46,7 +49,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__create_date
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__create_date
 msgid "Created on"
-msgstr "Creado en"
+msgstr "Creado el"
 
 #. module: base_dynamic_message
 #: model:ir.model.constraint,message:base_dynamic_message.constraint_ir_model_dynamic_message_unique_level_per_model
@@ -70,7 +73,7 @@ msgstr "Descripción"
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__display_name
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__display_name
 msgid "Display Name"
-msgstr "Nombre a mostrar"
+msgstr "Nombre para Mostrar"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__domain
@@ -94,6 +97,12 @@ msgid ""
 "En las expresiones, del lado derecho, se puede usar el string \"EXP:[expresion]\" para poner codigo dinamico. A la hora de pasar el dominio al calculo solo se\n"
 "                                    dejará la expresion. Es importante que \"EXP\" se ponga con comillas dobles y no comillas simples tal como se muestra en los ejemplos. Las variables disponibles son:"
 msgstr ""
+"En las expresiones, del lado derecho, se puede usar el string "
+"\"EXP:[expresion]\" para poner codigo dinamico. A la hora de pasar el "
+"dominio al calculo solo se\n"
+"                                    dejará la expresion. Es importante que "
+"\"EXP\" se ponga con comillas dobles y no comillas simples tal como se "
+"muestra en los ejemplos. Las variables disponibles son:"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__field_id
@@ -104,7 +113,7 @@ msgstr "Campo"
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__id
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__id
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__write_uid
@@ -157,7 +166,7 @@ msgstr "Nombre"
 #. module: base_dynamic_message
 #: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
 msgid "Por ej:"
-msgstr ""
+msgstr "Por ej:"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__view_id
@@ -175,11 +184,13 @@ msgid ""
 "[(\"create_date\", \"=\", \"EXP: datetime.datetime.now() - "
 "dateutil.relativedelta.relativedelta(days=-10)\")]"
 msgstr ""
+"[(\"create_date\", \"=\", \"EXP: datetime.datetime.now() - "
+"dateutil.relativedelta.relativedelta(days=-10)\")]"
 
 #. module: base_dynamic_message
 #: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
 msgid "[(\"partner_id\", \"in\", [\"EXP: rec.child_ids.ids\"])]"
-msgstr ""
+msgstr "[(\"partner_id\", \"in\", [\"EXP: rec.child_ids.ids\"])]"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields.selection,name:base_dynamic_message.selection__ir_model_dynamic_message__alert_type__danger
@@ -189,17 +200,17 @@ msgstr "peligro"
 #. module: base_dynamic_message
 #: model:ir.model.fields.selection,name:base_dynamic_message.selection__ir_model_dynamic_message__alert_type__info
 msgid "info"
-msgstr ""
+msgstr "info"
 
 #. module: base_dynamic_message
 #: model:ir.model,name:base_dynamic_message.model_ir_model_dynamic_message
 msgid "ir.model.dynamic_message"
-msgstr ""
+msgstr "ir.model.dynamic_message"
 
 #. module: base_dynamic_message
 #: model:ir.model,name:base_dynamic_message.model_ir_model_dynamic_message_line
 msgid "ir.model.dynamic_message.line"
-msgstr ""
+msgstr "ir.model.dynamic_message.line"
 
 #. module: base_dynamic_message
 #: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
@@ -207,11 +218,13 @@ msgid ""
 "las mismas variables disponibles en un campo calculado, por ej "
 "\"datetime.datetime.now()\" y \"dateutil.relativedelta.relativedelta\":"
 msgstr ""
+"las mismas variables disponibles en un campo calculado, por ej "
+"\"datetime.datetime.now()\" y \"dateutil.relativedelta.relativedelta\":"
 
 #. module: base_dynamic_message
 #: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
 msgid "rec: registro que se está evaluando"
-msgstr ""
+msgstr "rec: registro que se está evaluando"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields.selection,name:base_dynamic_message.selection__ir_model_dynamic_message__alert_type__warning
