@@ -10,14 +10,17 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-11-17 17:56+0000\n"
-"PO-Revision-Date: 2025-11-17 17:56+0000\n"
-"Last-Translator: ADHOC - Bot <transbot@adhoc.com.ar>, 2025\n"
-"Language-Team: Spanish (https://app.transifex.com/adhoc/teams/46451/es/)\n"
+"PO-Revision-Date: 2025-12-11 18:10+0000\n"
+"Last-Translator: BAF <baf@adhoc.inc>\n"
+"Language-Team: Spanish <https://translation.dev-adhoc.com/projects/"
+"miscellaneous-19-0/miscellaneous-19-0-portal_holidays/es/>\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
-"Language: es\n"
-"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=(n == 1) ? 0 : ((n != 0 && n % 1000000 == 0)"
+" ? 1 : 2);\n"
+"X-Generator: Weblate 5.10.4\n"
 
 #. module: portal_holidays
 #: model_terms:ir.actions.act_window,help:portal_holidays.hr_leave_action_my_portal_holidays
@@ -25,11 +28,13 @@ msgid ""
 "A great way to keep track on your time off requests, sick days, and approval"
 " status."
 msgstr ""
+"Una excelente manera de hacer seguimiento de tus solicitudes de tiempo "
+"libre, días por enfermedad y el estado de aprobación."
 
 #. module: portal_holidays
 #: model:res.groups.privilege,name:portal_holidays.privilege_portal_advanced_holiday
 msgid "Advanced Holidays"
-msgstr ""
+msgstr "Vacaciones Anticipadas"
 
 #. module: portal_holidays
 #: model:res.groups,comment:portal_holidays.group_portal_backend_holiday
@@ -37,38 +42,40 @@ msgid ""
 "Allows portal backend users to access the application dashboard to request "
 "leave days."
 msgstr ""
+"Permite que los usuarios del portal con acceso al backend ingresen al panel "
+"de la aplicación para solicitar días de ausencia."
 
 #. module: portal_holidays
 #: model_terms:ir.actions.act_window,help:portal_holidays.hr_leave_allocation_action_my_portal_holidays
 msgid "Create a new time off allocation request"
-msgstr ""
+msgstr "Crear una nueva solicitud de asignación de tiempo libre"
 
 #. module: portal_holidays
 #: model:ir.model.fields,field_description:portal_holidays.field_hr_leave_allocation__display_name
 msgid "Display Name"
-msgstr "Nombre para mostrar"
+msgstr "Nombre para Mostrar"
 
 #. module: portal_holidays
 #: model:ir.model.fields,field_description:portal_holidays.field_hr_leave_allocation__id
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #. module: portal_holidays
 #: model_terms:ir.actions.act_window,help:portal_holidays.hr_leave_action_my_portal_holidays
 msgid "Keep track of your PTOs."
-msgstr ""
+msgstr "Hacé seguimiento de tus días pagos de tiempo libre."
 
 #. module: portal_holidays
 #: model:ir.actions.act_window,name:portal_holidays.hr_leave_allocation_action_my_portal_holidays
 #: model:ir.ui.menu,name:portal_holidays.menu_open_allocation_portal_holidays
 msgid "My Allocations"
-msgstr ""
+msgstr "Mis Asignaciones"
 
 #. module: portal_holidays
 #: model:ir.actions.act_window,name:portal_holidays.hr_leave_action_my_portal_holidays
 #: model:ir.ui.menu,name:portal_holidays.hr_leave_menu_my_portal_holidays
 msgid "My Time Off"
-msgstr ""
+msgstr "Mis Ausencias"
 
 #. module: portal_holidays
 #: model:res.groups,name:portal_holidays.group_portal_backend_holiday
@@ -86,6 +93,11 @@ msgid ""
 "Time Off Officers allocate time off days to employees (e.g. paid time off).<br>\n"
 "                Employees request allocations to Time Off Officers (e.g. recuperation days)."
 msgstr ""
+"Los Responsables de Ausencias asignan días de ausencia a los empleados (por "
+"ejemplo, tiempo libre pago).\n"
+"<br>\n"
+"Los empleados solicitan asignaciones a los Responsables de Ausencias (por "
+"ejemplo, días de recuperación)."
 
 #. module: portal_holidays
 #: model:ir.model.fields,field_description:portal_holidays.field_hr_leave_allocation__employee_overtime
@@ -96,4 +108,4 @@ msgstr "Total de horas extraordinarias"
 #. odoo-python
 #: code:addons/portal_holidays/models/hr_leave_allocation.py:0
 msgid "You can only create allocations for yourself."
-msgstr ""
+msgstr "Solo podés crear asignaciones para vos mismo."
