@@ -153,6 +153,7 @@ class BgJob(models.Model):
             }
         )
         self.env.cr.commit()  # pylint: disable=invalid-commit
+
         try:
             context = self.context_json or {}
             context.update({"bg_job": True})
@@ -164,6 +165,7 @@ class BgJob(models.Model):
             record_ids = kwargs.pop("_record_ids", None)
             records = model.browse(record_ids).with_context(**context).with_user(self.create_uid)
             result = getattr(records, self.method)(*args, **kwargs)
+
             self.write(
                 {
                     "state": "done",
@@ -172,7 +174,9 @@ class BgJob(models.Model):
             )
             if result:
                 self._notify_user(result)
+                self.env.cr.commit()  # pylint: disable=invalid-commit
         except Exception as e:
+            self.env.cr.rollback()  # pylint: disable=invalid-commit
             self._handle_job_error(e)
             raise
 

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="rows_per_file_limit" model="ir.config_parameter">
+        <field name="key">account_statement_import_sheet_file_bg.rows_per_file_limit</field>
+        <field name="value">3000</field>
+    </record>
+</odoo>
