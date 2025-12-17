@@ -20,19 +20,51 @@ class AccountStatementImport(models.TransientModel):
         if not self._context.get("bg_job"):
             if self.sheet_mapping_id:
                 header_column = self.sheet_mapping_id.header_lines_skip_count
-                files = self.split_base64_excel(header_column, 1000)
+                # Get row limit from system parameter
+                rows_limit = (
+                    self.env["ir.config_parameter"]
+                    .sudo()
+                    .get_param("account_statement_import_sheet_file_bg.rows_per_file_limit")
+                )
+                # Only split if parameter exists and has a valid value
+                files = []
+                if rows_limit:
+                    try:
+                        rows_limit = int(rows_limit)
+                        files = self.split_base64_excel(header_column, rows_limit)
+                    except (ValueError, TypeError):
+                        files = []
+
                 if files:
-                    res = False
-                    for file in files:
+                    for idx, file in enumerate(files):
                         # Create wizard data to be passed to bg job
                         wizard_data = {
                             "statement_file": file,
                             "statement_filename": self.statement_filename,
                             "sheet_mapping_id": self.sheet_mapping_id.id,
+                            "part_number": idx + 1,
+                            "total_parts": len(files),
                         }
                         # Call bg_enqueue on empty recordset and pass data as kwargs
-                        res = self.env[self._name].bg_enqueue("import_file_button", wizard_data=wizard_data)
-                    return res
+                        # Add part number to job name for clarity
+                        job_name = f"{self._name}.import_file_button - Part {idx + 1}/{len(files)}"
+                        self.env[self._name].bg_enqueue(
+                            "import_file_button",
+                            wizard_data=wizard_data,
+                            name=job_name,
+                            max_retries=5,
+                        )
+                    # Return notification about all jobs enqueued
+                    return {
+                        "type": "ir.actions.client",
+                        "tag": "display_notification",
+                        "params": {
+                            "title": _("Process sent to background successfully"),
+                            "type": "success",
+                            "message": _("Processing %s files. You will be notified when each is done.") % len(files),
+                            "next": {"type": "ir.actions.act_window_close"},
+                        },
+                    }
                 # Pass wizard data for single file
                 wizard_data = {
                     "statement_file": self.statement_file,
@@ -48,7 +80,12 @@ class AccountStatementImport(models.TransientModel):
             return self.env[self._name].bg_enqueue("import_file_button", wizard_data=wizard_data)
         else:
             # Running in background job - recreate wizard from passed data
+            part_number = None
+            total_parts = None
             if wizard_data:
+                # Extract part info before creating wizard
+                part_number = wizard_data.pop("part_number", None)
+                total_parts = wizard_data.pop("total_parts", None)
                 wizard = self.create(wizard_data)
             else:
                 wizard = self
@@ -64,10 +101,15 @@ class AccountStatementImport(models.TransientModel):
                             break
 
                 if statement_id:
+                    statement = self.env["account.bank.statement"].browse(statement_id)
+
+                    # Add part info to statement name if split was done
+                    if part_number and total_parts:
+                        part_suffix = f" - Part {part_number}/{total_parts}"
+                        statement.write({"name": statement.name + part_suffix})
+
                     base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
                     url = f"{base_url}/odoo/account.bank.statement/{statement_id}"
-
-                    statement = self.env["account.bank.statement"].browse(statement_id)
                     name = statement.name or f"Statement {statement_id}"
 
                     res_html = (
@@ -93,7 +135,7 @@ class AccountStatementImport(models.TransientModel):
             input_workbook = load_workbook(read_buffer)
             input_worksheet = input_workbook.active
         except Exception:
-            return []
+            return [self.statement_file]
 
         all_rows = list(input_worksheet.rows)
         if not all_rows:
