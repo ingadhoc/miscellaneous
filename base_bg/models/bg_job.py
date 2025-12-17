@@ -236,7 +236,7 @@ class BgJob(models.Model):
             return
 
         code = "_cron_run_enqueued_jobs("
-        cron_ids = self.env["ir.cron"].search([], order="id").filtered(lambda c: c.code and code in c.code).ids
+        cron_ids = self.env["ir.cron"].search([("code", "ilike", code)], order="id").ids
         index, total = cron_ids.index(cron_id), len(cron_ids)
         jobs = self.search([("state", "=", "enqueued")]).filtered(lambda r: r.id % total == index)[:limit]
         self.env["ir.cron"]._commit_progress(remaining=len(jobs))

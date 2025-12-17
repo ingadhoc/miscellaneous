@@ -26,7 +26,7 @@ class BaseBg(models.AbstractModel):
 
         :return: A display notification
         """
-        priority = kwargs.pop("priority", 10)
+        priority = max(kwargs.pop("priority", 10), 0)
         max_retries = kwargs.pop("max_retries", 3)
         context = {k: v for k, v in self.env.context.items() if self.is_serializable(v)}
         name = kwargs.pop("name", f"{self._name}.{method}")
