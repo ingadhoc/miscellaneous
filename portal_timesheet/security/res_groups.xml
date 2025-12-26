@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record model="ir.module.category" id="category_portal_timesheet">
-        <field name="name">Portal Timesheet</field>
-        <field name="parent_id" ref="portal_backend.category_portal_advanced"/>
+    <record model="res.groups.privilege" id="privilege_portal_advanced_timesheet">
+        <field name="name">Advanced Timesheet</field>
+        <field name="description">Advanced timesheet permissions</field>
+        <field name="category_id" ref="portal_backend.category_portal_advanced"/>
+        <field name="sequence">10</field>
     </record>
 
-    <record id="group_portal_backend_timesheet" model="res.groups">
-        <field name="name">Portal Timesheet</field>
+    <record model="res.groups" id="group_portal_backend_timesheet" >
+        <field name="name">Portal Backend: Timesheets</field>
         <field name="comment">Allows portal backend users to access the application dashboard to record hours worked on tasks and projects that have been shared with them.</field>
-        <field name="category_id" ref="category_portal_timesheet"/>
+        <field name="privilege_id" ref="privilege_portal_advanced_timesheet"/>
+        <field name="implied_ids" eval="[Command.link(ref('portal_backend.group_portal_backend'))]"/>
     </record>
 </odoo>
