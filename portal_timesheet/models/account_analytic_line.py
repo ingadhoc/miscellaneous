@@ -11,3 +11,10 @@ class AccountAnalyticLine(models.Model):
         if self.env.user.has_group("portal_timesheet.group_portal_backend_timesheet"):
             self = self.sudo()
         return super()._get_favorite_project_id(employee_id=employee_id)
+
+    def _compute_readonly_timesheet(self):
+        # let portal users with portal_timesheet access to change project in timesheets
+        if self.env.user.has_group("portal_timesheet.group_portal_backend_timesheet"):
+            self.readonly_timesheet = False
+        else:
+            super()._compute_readonly_timesheet()

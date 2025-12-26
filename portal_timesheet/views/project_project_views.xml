@@ -1,0 +1,13 @@
+<odoo>
+    <!-- rule for avoiding error when portal timesheet portal enter on project view from timesheet -->
+    <record id="project_templates_view_form_inherited" model="ir.ui.view">
+            <field name="name">project.project.form.portal.timesheet</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="project.edit_project"/>
+            <field name="arch" type="xml">
+                <xpath expr="//chatter" position="attributes">
+                    <attribute name="groups">!portal_backend.group_portal_backend</attribute>
+                </xpath>
+            </field>
+    </record>
+</odoo>

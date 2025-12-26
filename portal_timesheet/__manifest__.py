@@ -19,7 +19,7 @@
 ##############################################################################
 {
     "name": "Portal Timesheet",
-    "version": "18.0.1.2.0",
+    "version": "19.0.1.0.0",
     "category": "Base",
     "sequence": 14,
     "summary": "",
@@ -39,13 +39,14 @@
         "security/ir.model.access.csv",
         "views/base_menus.xml",
         "views/hr_employee_views.xml",
+        "views/project_project_views.xml",
     ],
     "demo": [
         # 'demo/hr_demo.xml',
         "demo/project_demo.xml",
         "demo/res_users_demo.xml",
     ],
-    "installable": False,
+    "installable": True,
     "auto_install": False,
     "application": False,
 }
