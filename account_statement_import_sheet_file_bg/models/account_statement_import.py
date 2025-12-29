@@ -71,13 +71,13 @@ class AccountStatementImport(models.TransientModel):
                     "statement_filename": self.statement_filename,
                     "sheet_mapping_id": self.sheet_mapping_id.id if self.sheet_mapping_id else False,
                 }
-                return self.env[self._name].bg_enqueue("import_file_button", wizard_data=wizard_data)
+                return self.env[self._name].bg_enqueue("import_file_button", wizard_data=wizard_data)[0]
             # No sheet_mapping_id, pass basic data
             wizard_data = {
                 "statement_file": self.statement_file,
                 "statement_filename": self.statement_filename,
             }
-            return self.env[self._name].bg_enqueue("import_file_button", wizard_data=wizard_data)
+            return self.env[self._name].bg_enqueue("import_file_button", wizard_data=wizard_data)[0]
         else:
             # Running in background job - recreate wizard from passed data
             part_number = None
