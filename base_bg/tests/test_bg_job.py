@@ -77,11 +77,12 @@ class TestBgJob(TransactionCase):
         """Test cron method for checking timed out running jobs."""
         # Create a job that appears to be running for too long
         old_time = fields.Datetime.now() - timedelta(hours=6)
-        job = self._create_job(name="Timed Out Job", state="running", start_time=old_time)
+        job = self._create_job(name="Timed Out Job", state="running", start_time=old_time, max_retries=1)
 
         # Run the cron method
         self._set_cron_timeout(300)
-        self.BgJob._cron_check_running_jobs()
+        with patch("odoo.addons.base_bg.models.bg_job._logger.error"):
+            self.BgJob._cron_check_running_jobs()
 
         # Refresh the job from database
         job = self.BgJob.browse(job.id)
