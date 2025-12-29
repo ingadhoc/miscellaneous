@@ -180,7 +180,7 @@ class BgJob(models.Model):
             self._handle_job_error(e)
             raise
 
-    def _handle_job_error(self, error: Exception):
+    def _handle_job_error(self, error: Exception | str):
         """
         Handle job execution error
 
@@ -265,6 +265,7 @@ class BgJob(models.Model):
             ]
         )
         for job in jobs:
-            job.write({"state": "failed", "error_message": _("Job timed out")})
-            message = _("Job %s timed out") % job.name
-            job._notify_user(message)
+            job._handle_job_error(_("Job timed out"))
+            if job.state == "failed":
+                message = _("Job %s timed out") % job.name
+                job._notify_user(message)
