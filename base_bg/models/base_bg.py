@@ -14,7 +14,7 @@ class BaseBg(models.AbstractModel):
     _description = "Background Job Mixin"
 
     @api.model
-    def bg_enqueue(self, method: str, *args, **kwargs):
+    def bg_enqueue(self, method: str, *args, **kwargs) -> tuple[dict, models.BaseModel]:
         """
         Enqueue a background job for execution.
 
@@ -46,20 +46,23 @@ class BaseBg(models.AbstractModel):
         # Serialize arguments
         job_vals["args_json"] = list(args) if args else []
         job_vals["kwargs_json"] = kwargs
-        self.env["bg.job"].create(job_vals)
+        job = self.env["bg.job"].create(job_vals)
         self.sudo()._trigger_crons()
         title = _("Process sent to background successfully")
         message = _("You will be notified when it is done.")
-        return {
-            "type": "ir.actions.client",
-            "tag": "display_notification",
-            "params": {
-                "title": title,
-                "type": "success",
-                "message": message,
-                "next": {"type": "ir.actions.act_window_close"},
+        return (
+            {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": title,
+                    "type": "success",
+                    "message": message,
+                    "next": {"type": "ir.actions.act_window_close"},
+                },
             },
-        }
+            job,
+        )
 
     def _trigger_crons(self):
         """
