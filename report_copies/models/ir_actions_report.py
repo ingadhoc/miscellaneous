@@ -13,8 +13,8 @@ class IrActionsReport(models.Model):
     ncopies = fields.Integer(string="Number of print copies", default=1)
 
     @api.model
-    def _get_rendering_context(self, docids, data):
-        res = super()._get_rendering_context(docids, data)
+    def _get_rendering_context(self, report, docids, data):
+        res = super()._get_rendering_context(report, docids, data)
         ncopies = self.ncopies
         if self._context.get("force_email", False):
             ncopies = 1
