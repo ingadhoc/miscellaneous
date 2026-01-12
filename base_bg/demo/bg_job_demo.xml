@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Demo Partners -->
     <record id="bg_job_demo_partner_1" model="res.partner">
         <field name="name">BG Demo Customer</field>
         <field name="email">bg.demo.customer@example.com</field>
@@ -10,26 +11,104 @@
         <field name="email">bg.demo.vendor@example.com</field>
     </record>
 
-    <record id="bg_job_demo_data_cleanup" model="bg.job">
-        <field name="name">Demo Data Cleanup</field>
+    <!-- Single Job -->
+    <record id="bg_job_demo_single" model="bg.job">
+        <field name="name">Single Job - Data Cleanup</field>
         <field name="model">res.partner</field>
         <field name="method">exists</field>
         <field name="priority">5</field>
         <field name="state">done</field>
+        <field name="batch_id">single-batch-001</field>
         <field name="start_time">2024-01-01 08:00:00</field>
         <field name="end_time">2024-01-01 08:05:00</field>
+        <field name="kwargs_json" eval="{'_record_ids': [ref('bg_job_demo_partner_1')]}"/>
+        <field name="context_json" eval="{'lang': 'en_US'}"/>
+    </record>
+
+    <!-- Batch 1: Completed (3 jobs, all done) -->
+    <record id="bg_job_batch1_job3" model="bg.job">
+        <field name="name">Export Batch - Part 3/3</field>
+        <field name="model">res.partner</field>
+        <field name="method">exists</field>
+        <field name="priority">10</field>
+        <field name="state">done</field>
+        <field name="batch_id">batch-completed-001</field>
+        <field name="start_time">2024-01-02 09:20:00</field>
+        <field name="end_time">2024-01-02 09:30:00</field>
         <field name="kwargs_json" eval="{'_record_ids': [ref('bg_job_demo_partner_1'), ref('bg_job_demo_partner_2')]}"/>
         <field name="context_json" eval="{'lang': 'en_US'}"/>
     </record>
 
-    <record id="bg_job_demo_follow_up" model="bg.job">
-        <field name="name">Demo Follow Up</field>
+    <record id="bg_job_batch1_job2" model="bg.job">
+        <field name="name">Export Batch - Part 2/3</field>
+        <field name="model">res.partner</field>
+        <field name="method">exists</field>
+        <field name="priority">10</field>
+        <field name="state">done</field>
+        <field name="batch_id">batch-completed-001</field>
+        <field name="start_time">2024-01-02 09:10:00</field>
+        <field name="end_time">2024-01-02 09:20:00</field>
+        <field name="kwargs_json" eval="{'_record_ids': [ref('bg_job_demo_partner_2')]}"/>
+        <field name="context_json" eval="{'lang': 'en_US'}"/>
+        <field name="next_job_id" ref="bg_job_batch1_job3"/>
+    </record>
+
+    <record id="bg_job_batch1_job1" model="bg.job">
+        <field name="name">Export Batch - Part 1/3</field>
+        <field name="model">res.partner</field>
+        <field name="method">exists</field>
+        <field name="priority">10</field>
+        <field name="state">done</field>
+        <field name="batch_id">batch-completed-001</field>
+        <field name="start_time">2024-01-02 09:00:00</field>
+        <field name="end_time">2024-01-02 09:10:00</field>
+        <field name="kwargs_json" eval="{'_record_ids': [ref('bg_job_demo_partner_1')]}"/>
+        <field name="context_json" eval="{'lang': 'en_US'}"/>
+        <field name="next_job_id" ref="bg_job_batch1_job2"/>
+    </record>
+
+    <!-- Batch 2: Failed (3 jobs, 1 done, 1 failed, 1 canceled) -->
+    <record id="bg_job_batch2_job3" model="bg.job">
+        <field name="name">Validation Batch - Part 3/3</field>
+        <field name="model">res.partner</field>
+        <field name="method">exists</field>
+        <field name="priority">15</field>
+        <field name="state">canceled</field>
+        <field name="batch_id">batch-failed-002</field>
+        <field name="cancel_time">2024-01-03 14:10:00</field>
+        <field name="error_message">Canceled due to previous job failure in batch</field>
+        <field name="kwargs_json" eval="{'_record_ids': [ref('bg_job_demo_partner_1'), ref('bg_job_demo_partner_2')]}"/>
+        <field name="context_json" eval="{'lang': 'en_US'}"/>
+    </record>
+
+    <record id="bg_job_batch2_job2" model="bg.job">
+        <field name="name">Validation Batch - Part 2/3</field>
         <field name="model">res.partner</field>
         <field name="method">exists</field>
         <field name="priority">15</field>
         <field name="state">failed</field>
-        <field name="start_time">2024-01-02 10:00:00</field>
-        <field name="end_time">2024-01-02 12:00:00</field>
-        <field name="error_message">Timeout while sending follow up</field>
+        <field name="batch_id">batch-failed-002</field>
+        <field name="start_time">2024-01-03 14:05:00</field>
+        <field name="end_time">2024-01-03 14:10:00</field>
+        <field name="error_message">Validation error: Invalid data format</field>
+        <field name="kwargs_json" eval="{'_record_ids': [ref('bg_job_demo_partner_2')]}"/>
+        <field name="context_json" eval="{'lang': 'en_US'}"/>
+        <field name="next_job_id" ref="bg_job_batch2_job3"/>
     </record>
+
+    <record id="bg_job_batch2_job1" model="bg.job">
+        <field name="name">Validation Batch - Part 1/3</field>
+        <field name="model">res.partner</field>
+        <field name="method">exists</field>
+        <field name="priority">15</field>
+        <field name="state">done</field>
+        <field name="batch_id">batch-failed-002</field>
+        <field name="start_time">2024-01-03 14:00:00</field>
+        <field name="end_time">2024-01-03 14:05:00</field>
+        <field name="kwargs_json" eval="{'_record_ids': [ref('bg_job_demo_partner_1')]}"/>
+        <field name="context_json" eval="{'lang': 'en_US'}"/>
+        <field name="next_job_id" ref="bg_job_batch2_job2"/>
+    </record>
+
+
 </odoo>

@@ -3,10 +3,16 @@
 # directory
 ##############################################################################
 
-import json
-from typing import Any
+import uuid
+from datetime import date, datetime, time
+from decimal import Decimal
+from typing import TYPE_CHECKING, Any
 
 from odoo import _, api, models
+from odoo.models import BaseModel
+
+if TYPE_CHECKING:
+    from base_bg.models.bg_job import BgJob
 
 
 class BaseBg(models.AbstractModel):
@@ -14,42 +20,68 @@ class BaseBg(models.AbstractModel):
     _description = "Background Job Mixin"
 
     @api.model
-    def bg_enqueue(self, method: str, *args, **kwargs) -> tuple[dict, models.BaseModel]:
+    def bg_enqueue_records(
+        self, records: models.BaseModel, method: str, threshold: int | None = None, *args, **kwargs
+    ) -> tuple[dict, "BgJob"]:
         """
-        Enqueue a background job for execution.
+        Enqueue background jobs in batches based on record threshold.
 
-        :param method: The method name to execute
+        This is a model/API method and must be called on the model, passing
+        the target records as the first argument. Example:
+            self.env['base.bg'].bg_enqueue(records, 'method_name', threshold=..., ...)
 
-        Special kwargs:
+        :param method: The method name to execute on each batch
+        :param records: recordset or iterable of ids (or None) representing targets
+        :param threshold: Maximum number of records per job
+        :param args: Positional arguments for the method
+        :param kwargs: Keyword arguments for the method
             :param priority: Job priority (default: 10)
-            :param max_retries: Maximum retry attempts (default: 3)
-
-        :return: A display notification
+            :param max_retries: Maximum retries for the job (default: 3)
+        :return: A display notification and the created jobs
         """
+        # Normalize records into ids; allow None/empty to mean no targets
+        jobs = self.env["bg.job"]
+        model = records._name
+        record_ids = records.ids if records else []
         priority = max(kwargs.pop("priority", 10), 0)
         max_retries = kwargs.pop("max_retries", 3)
-        context = {k: v for k, v in self.env.context.items() if self.is_serializable(v)}
-        name = kwargs.pop("name", f"{self._name}.{method}")
-        job_vals = {
-            "name": name,
-            "model": self._name,
-            "method": method,
-            "priority": priority,
-            "max_retries": max_retries,
-            "context_json": context,
-        }
+        name = kwargs.get("name", "")
 
-        # Handle recordset: store IDs for later reconstruction
-        if self:
-            kwargs["_record_ids"] = self.ids
+        def _get_name(batch_id: str, queue_order: int) -> str:
+            return name or "%s.%s-%s-%s" % (model, method, batch_id[0:8], queue_order)
 
-        # Serialize arguments
-        job_vals["args_json"] = list(args) if args else []
-        job_vals["kwargs_json"] = kwargs
-        job = self.env["bg.job"].create(job_vals)
+        batch_id = str(uuid.uuid4())
+        total = len(record_ids) or 1
+        threshold = threshold or total
+        threshold = max(1, int(threshold))
+        prev_job = None
+        for i in range(0, total, threshold):
+            chunk_ids = record_ids[i : i + threshold]
+            queue_order = i // threshold
+            context = {k: self._json_safe(v) for k, v in self.env.context.items()}
+            job_vals = {
+                "name": _get_name(batch_id, queue_order),
+                "model": model,
+                "method": method,
+                "priority": priority,
+                "max_retries": max_retries,
+                "context_json": context,
+                "batch_id": batch_id,
+                "state": "enqueued" if queue_order == 0 else "waiting",
+            }
+            kwargs["_record_ids"] = list(chunk_ids) if chunk_ids else []
+            job_vals["args_json"] = list(args) if args else []
+            job_vals["kwargs_json"] = kwargs
+            job = self.env["bg.job"].create(job_vals)
+            jobs |= job
+            # Link previous job to current so sequence is established in one pass
+            if prev_job:
+                prev_job.next_job_id = job.id
+            prev_job = job
+
         self.sudo()._trigger_crons()
-        title = _("Process sent to background successfully")
-        message = _("You will be notified when it is done.")
+        title = _("Processes sent to background successfully")
+        message = _("You will be notified when they are done.")
         return (
             {
                 "type": "ir.actions.client",
@@ -61,8 +93,22 @@ class BaseBg(models.AbstractModel):
                     "next": {"type": "ir.actions.act_window_close"},
                 },
             },
-            job,
+            jobs,
         )
+
+    def bg_enqueue(self, method: str, threshold: int | None = None, *args, **kwargs) -> tuple[dict, "BgJob"]:
+        """
+        Instance-style enqueuing helper.
+
+        Usage:
+            _inherit = ['base.bg', ...]
+            ...
+            records.bg_enqueue('method_name', threshold=..., ...)
+
+        Delegates to the model API `bg_enqueue_records` using the calling
+        recordset as the `records` parameter.
+        """
+        return self.bg_enqueue_records(self, method, threshold, *args, **kwargs)
 
     def _trigger_crons(self):
         """
@@ -74,15 +120,37 @@ class BaseBg(models.AbstractModel):
             cron._trigger()
 
     @api.model
-    def is_serializable(self, value: Any) -> bool:
+    def _json_safe(self, value : Any) -> Any:
         """
-        Checks if a value is JSON serializable.
+        Convert a value into a JSON-serializable format.
 
-        :param value: The value to check
-        :return: True if serializable, False otherwise
+        :param value: The value to convert
+        :return: A JSON-serializable representation of the value
         """
-        try:
-            json.dumps(value)
-            return True
-        except Exception:
-            return False
+        if value is None:
+            return None
+
+        if isinstance(value, (str, int, float, bool)):
+            return value
+
+        if isinstance(value, Decimal):
+            return float(value)
+
+        if isinstance(value, (date, datetime, time)):
+            return value.isoformat()
+
+        if isinstance(value, (list, tuple, set)):
+            return [self._json_safe(v) for v in value]
+
+        if isinstance(value, dict):
+            return {
+                str(k): self._json_safe(v)
+                for k, v in value.items()
+            }
+
+        # Odoo recordsets
+        if isinstance(value, BaseModel):
+            return value.ids
+
+        # fallback seguro
+        return str(value)
