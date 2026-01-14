@@ -1,7 +1,7 @@
 /** @odoo-module **/
 
-import { ListController } from "@web/views/list/list_controller";
 import { patch } from "@web/core/utils/patch";
+import { ListController } from "@web/views/list/list_controller";
 
 patch(ListController.prototype, {
     async downloadExport(fields, import_compat, format) {
@@ -9,12 +9,12 @@ patch(ListController.prototype, {
         const recordCount = resIds ? resIds.length : (this.model.root.count || 0);
 
         const threshold = await this.model.orm.call(
-            "ir.config_parameter",
-            "get_param",
-            ["export_bg.record_threshold", "500"]
+            "ir.model",
+            "get_export_threshold",
+            []
         );
 
-        if (recordCount > parseInt(threshold)) {
+        if (recordCount > threshold) {
             const data = {
                 model: this.props.resModel,
                 fields: fields,
