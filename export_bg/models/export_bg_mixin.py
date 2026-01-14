@@ -4,13 +4,18 @@ import json
 
 import xlsxwriter
 from markupsafe import Markup
-from odoo import _, models
+from odoo import _, api, models
 from odoo.addons.web.controllers.export import CSVExport
 
 
 class IrModel(models.Model):
     _name = "ir.model"
     _inherit = ["ir.model", "base.bg"]
+
+    @api.model
+    def get_export_threshold(self):
+        """Get the threshold for background export without requiring admin permissions."""
+        return int(self.env["ir.config_parameter"].sudo().get_param("export_bg.record_threshold", "500"))
 
     def _prepare_export_data(self, data):
         params = json.loads(data)

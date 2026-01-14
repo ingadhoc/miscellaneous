@@ -15,12 +15,12 @@ patch(ExportDataDialog.prototype, {
             : root.count || 0;
 
         const threshold = await this.orm.call(
-            "ir.config_parameter",
-            "get_param",
-            ["export_bg.record_threshold", "500"]
+            "ir.model",
+            "get_export_threshold",
+            []
         );
 
-        if (recordCount > parseInt(threshold)) {
+        if (recordCount > threshold) {
             const format = this.availableFormats[this.state.selectedFormat].tag;
             const method = format === "csv" ? "web_export_csv" : "web_export_xlsx";
 
