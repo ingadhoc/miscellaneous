@@ -70,7 +70,12 @@ class TestBgJob(TransactionCase):
         """Test cron method for checking timed out running jobs."""
         # Create a job that appears to be running for too long
         old_time = fields.Datetime.now() - timedelta(hours=6)
-        job = self._create_job(name="Timed Out Job", state="running", start_time=old_time)
+        job = self._create_job(
+            name="Timed Out Job",
+            state="running",
+            start_time=old_time,
+            last_heartbeat=old_time,
+        )
 
         # Run the cron method
         self._set_cron_timeout(300)
@@ -84,7 +89,12 @@ class TestBgJob(TransactionCase):
         """Test that recent running jobs are not marked as timed out."""
         # Create a job that started recently
         recent_time = fields.Datetime.now() - timedelta(minutes=30)
-        job = self._create_job(name="Recent Job", state="running", start_time=recent_time)
+        job = self._create_job(
+            name="Recent Job",
+            state="running",
+            start_time=recent_time,
+            last_heartbeat=recent_time,
+        )
 
         # Run the cron method
         self._set_cron_timeout(300)

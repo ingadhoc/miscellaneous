@@ -33,8 +33,11 @@ class IrModel(models.Model):
         wb = xlsxwriter.Workbook(buf, {"in_memory": True})
         ws = wb.add_worksheet()
         ws.write_row(0, 0, headers)
+        bg_job = self.env.context.get("bg_job_record")
         for i, row in enumerate(export_data, 1):
             ws.write_row(i, 0, row)
+            if bg_job and i % 1000 == 0:  # Update heartbeat every 1000 rows
+                bg_job.update_heartbeat()
         wb.close()
         return self._save_attachment(
             params["model"],

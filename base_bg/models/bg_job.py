@@ -66,6 +66,10 @@ class BgJob(models.Model):
         readonly=True,
         help="When the job execution started",
     )
+    last_heartbeat = fields.Datetime(
+        readonly=True,
+        help="Last time the job confirmed it's still running",
+    )
     end_time = fields.Datetime(
         readonly=True,
         help="When the job execution finished",
@@ -138,6 +142,12 @@ class BgJob(models.Model):
             "domain": [("id", "in", records.ids)],
         }
 
+    def update_heartbeat(self):
+        """Update heartbeat to indicate the job is still alive"""
+        self.ensure_one()
+        self.write({"last_heartbeat": fields.Datetime.now()})
+        self.env.cr.commit()  # pylint: disable=invalid-commit
+
     def run(self):
         """
         Executes the job
@@ -146,10 +156,12 @@ class BgJob(models.Model):
         if self.state != "enqueued":
             raise UserError(_("Only enqueued jobs can be executed"))
 
+        now = fields.Datetime.now()
         self.write(
             {
                 "state": "running",
-                "start_time": fields.Datetime.now(),
+                "start_time": now,
+                "last_heartbeat": now,
             }
         )
         self.env.cr.commit()  # pylint: disable=invalid-commit
@@ -163,7 +175,7 @@ class BgJob(models.Model):
             args = self.args_json or []
             kwargs = self.kwargs_json or {}
             record_ids = kwargs.pop("_record_ids", None)
-            records = model.browse(record_ids).with_context(**context).with_user(self.create_uid)
+            records = model.browse(record_ids).with_context(**context, bg_job_record=self).with_user(self.create_uid)
             result = getattr(records, self.method)(*args, **kwargs)
 
             self.write(
@@ -256,7 +268,7 @@ class BgJob(models.Model):
         cutoff_date = fields.Datetime.now() - timedelta(seconds=timeout_seconds)
         jobs = self.search(
             [
-                ("start_time", "<", cutoff_date),
+                ("last_heartbeat", "<", cutoff_date),
                 ("state", "=", "running"),
             ]
         )
