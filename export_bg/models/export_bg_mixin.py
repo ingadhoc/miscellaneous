@@ -24,7 +24,7 @@ class IrModel(models.Model):
         return (
             params,
             [f["string"] for f in params["fields"]],
-            records.export_data([f["value"] for f in params["fields"]]).get("datas", []),
+            records.export_data([f.get("value") or f.get("id") for f in params["fields"]]).get("datas", []),
         )
 
     def web_export_csv(self, data):
