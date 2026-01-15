@@ -21,10 +21,15 @@ class IrModel(models.Model):
         params = json.loads(data)
         Model = self.env[params["model"]].with_context(**params.get("context", {}))
         records = Model.browse(params["ids"]) if params.get("ids") else Model.search(params.get("domain", []))
+
+        # Support both 'name' and 'value' keys for field names (templates use 'name', regular exports use 'value')
+        field_names = [f.get("name") or f.get("value") for f in params["fields"]]
+        field_labels = [f.get("label") or f.get("string") for f in params["fields"]]
+
         return (
             params,
-            [f["string"] for f in params["fields"]],
-            records.export_data([f["value"] for f in params["fields"]]).get("datas", []),
+            field_labels,
+            records.export_data(field_names).get("datas", []),
         )
 
     def web_export_csv(self, data):
