@@ -1,0 +1,54 @@
+<odoo>
+    <record id="view_okr_objective_tree" model="ir.ui.view">
+        <field name="name">okr.objective.tree</field>
+        <field name="model">okr.objective</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="department_id"/>
+                <field name="user_id"/>
+                <field name="type"/>
+                <field name="progress"/>
+                <field name="quarter"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_okr_objective_form" model="ir.ui.view">
+        <field name="name">okr.objective.form</field>
+        <field name="model">okr.objective</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="description"/>
+                        <field name="department_id"/>
+                        <field name="user_id"/>
+                        <field name="type"/>
+                        <field name="progress"/>
+                        <field name="quarter"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_okr_objective_search" model="ir.ui.view">
+        <field name="name">okr.objective.search</field>
+        <field name="model">okr.objective</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+            </search>
+        </field>
+    </record>
+
+    <record id="okr_objective_action" model="ir.actions.act_window">
+        <field name="name">OKR Objective</field>
+        <field name="res_model">okr.objective</field>
+        <field name='view_mode'>tree,form</field>
+    </record>
+    
+</odoo>
