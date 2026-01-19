@@ -35,6 +35,7 @@ class TestBgJob(TransactionCase):
             "name": "Test Job",
             "model": "res.partner",
             "method": "exists",
+            "batch_key": str(uuid4()),
         }
         defaults.update(vals)
         return self.BgJob.create(defaults)
@@ -102,6 +103,14 @@ class TestBgJob(TransactionCase):
         job = self.BgJob.browse(job.id)
         self.assertEqual(job.state, "running")  # Should still be running
 
+    def test_jobs_are_sorted_by_priority(self):
+        """Jobs with lower priority value should be returned first."""
+        low_priority = self._create_job(name="Low Priority", priority=20)
+        high_priority = self._create_job(name="High Priority", priority=0)
+
+        jobs = self.BgJob.search([("id", "in", [low_priority.id, high_priority.id])])
+        self.assertEqual(jobs[0], high_priority)
+
     def test_job_duration_computation(self):
         """Test that job duration is computed correctly."""
         start_time = fields.Datetime.now()
@@ -113,17 +122,6 @@ class TestBgJob(TransactionCase):
             end_time=end_time,
         )
         self.assertEqual(job.duration, 30.0)
-
-    def test_jobs_are_sorted_by_priority(self):
-        """Jobs with lower priority value should be returned first."""
-        low_priority = self._create_job(name="Low Priority", priority=20)
-        high_priority = self._create_job(name="High Priority", priority=0)
-
-        jobs = self.BgJob.search(
-            [("id", "in", [low_priority.id, high_priority.id])],
-            order="priority, create_date desc",
-        )
-        self.assertEqual(jobs[0], high_priority)
 
     def test_action_open_records_returns_expected_domain(self):
         """The helper action must target the provided record IDs."""
@@ -202,8 +200,10 @@ class TestBgJob(TransactionCase):
     def test_bg_enqueue_applies_custom_priority(self):
         """bg_enqueue must propagate the provided priority into bg.job."""
         job_name = f"Priority Test Job {uuid4().hex}"
+        partners = self.env["res.partner"].create([{"name": "Test Partner 1"}])
         with patch.object(BaseBg, "_trigger_crons"):
-            self.base_bg_model.bg_enqueue(
+            self.env["base.bg"].bg_enqueue_records(
+                partners,
                 "dummy_priority_method",
                 name=job_name,
                 priority=3,
@@ -216,18 +216,152 @@ class TestBgJob(TransactionCase):
     def test_bg_enqueue_filters_unserializable_context_entries(self):
         """Only JSON-safe context keys should be stored in bg.job."""
         job_name = f"Context Test Job {uuid4().hex}"
-        partner = self.env["res.partner"].create({"name": "Context Partner"})
-        base_bg_ctx = self.base_bg_model.with_context(
-            serializable_flag="ok",
-            unserializable_partner=partner,
-            unserializable_env=self.env,
-        )
+        partners = self.env["res.partner"].create([{"name": "Test Partner"}])
         with patch.object(BaseBg, "_trigger_crons"):
-            base_bg_ctx.bg_enqueue(
-                "dummy_context_method",
-                name=job_name,
-            )
+            self.env["base.bg"].with_context(
+                serializable_flag="ok",
+                unserializable_env=self.env,
+            ).bg_enqueue_records(partners, "dummy_context_method", name=job_name)
 
         job = self._job_by_name(job_name)
         self.assertTrue(job, "The context test job should exist")
         self.assertEqual(job.context_json, {"serializable_flag": "ok"})
+
+    def test_jobs_linking_and_states_after_enqueue(self):
+        """Ensure bg_enqueue links jobs via next_job_id and sets states correctly."""
+        partners = self.env["res.partner"].create([{"name": f"Partner {i}"} for i in range(3)])
+        job_name = f"Linked Batch Job {uuid4().hex}"
+        with patch.object(BaseBg, "_trigger_crons"):
+            _, jobs = self.env["base.bg"].bg_enqueue_records(partners, "dummy_batch_method", threshold=1, name=job_name)
+
+        self.assertEqual(len(jobs), 3)
+        # first must be enqueued and point to the next; others waiting
+        self.assertEqual(jobs[0].state, "enqueued")
+        self.assertEqual(jobs[0].next_job_id, jobs[1])
+        self.assertEqual(jobs[1].state, "waiting")
+        self.assertEqual(jobs[1].next_job_id, jobs[2])
+        self.assertEqual(jobs[2].state, "waiting")
+
+    def test_bg_enqueue_records_creates_job_when_no_records(self):
+        """Calling bg_enqueue_records with no records must still create a job."""
+        job_name = f"No Records Job {uuid4().hex}"
+        with patch.object(BaseBg, "_trigger_crons"):
+            _, job = self.env["base.bg"].bg_enqueue_records(self.env["res.partner"], "dummy_method", name=job_name)
+
+        self.assertTrue(job, "A job should have been created even with no records")
+        self.assertEqual(job.state, "enqueued")
+        self.assertEqual(job.kwargs_json.get("_record_ids"), [])
+
+    def test_bg_enqueue_records_splits_by_threshold(self):
+        """bg_enqueue_records must split partner records into multiple jobs by threshold."""
+        partners = self.env["res.partner"].create([{"name": f"Partner {i}"} for i in range(5)])
+        threshold = 2
+        job_name = f"Batch Partners {uuid4().hex}"
+
+        with patch.object(BaseBg, "_trigger_crons"):
+            _, jobs = self.env["base.bg"].bg_enqueue_records(
+                partners, "dummy_batch_method", threshold=threshold, name=job_name
+            )
+
+        # Expect 3 jobs: 2,2,1
+        self.assertEqual(len(jobs), 3)
+        batch_key = jobs[0].batch_key
+        self.assertTrue(batch_key)
+
+        sizes = [len(j.kwargs_json.get("_record_ids", [])) for j in jobs]
+        self.assertEqual(sizes, [2, 2, 1])
+
+        for i, job in enumerate(jobs):
+            self.assertEqual(job.batch_key, batch_key)
+            self.assertEqual(job.model, "res.partner")
+            self.assertEqual(job.method, "dummy_batch_method")
+            if i == 0:
+                self.assertEqual(job.state, "enqueued")
+            else:
+                self.assertEqual(job.state, "waiting")
+            if i < len(jobs) - 1:
+                self.assertEqual(job.next_job_id, jobs[i + 1])
+
+    def test_fail_first_job_cancels_following_batch_jobs(self):
+        """When a job fails permanently, all next jobs in the same batch are canceled."""
+        batch_key = str(uuid4())
+        # Create three linked jobs in the same batch
+        job1 = self._create_job(name="Failing Job", batch_key=batch_key, state="enqueued", max_retries=1)
+        job2 = self._create_job(name="Next Job 1", batch_key=batch_key, state="waiting")
+        job3 = self._create_job(name="Next Job 2", batch_key=batch_key, state="waiting")
+        job1.next_job_id = job2.id
+        job2.next_job_id = job3.id
+
+        # Force the job to be considered at its final retry and trigger error handling
+        job1.write({"retry_count": job1.max_retries - 1})
+
+        # Call the handler to simulate a permanent failure
+        with patch("odoo.addons.base_bg.models.bg_job._logger.error"):
+            job1._handle_job_error("Permanent failure")
+
+        # Refresh records from DB
+        job1 = self.BgJob.browse(job1.id)
+        job2 = self.BgJob.browse(job2.id)
+        job3 = self.BgJob.browse(job3.id)
+
+        self.assertEqual(job1.state, "failed")
+        self.assertEqual(job2.state, "canceled")
+        self.assertEqual(job3.state, "canceled")
+        # Canceled jobs must have a cancel_time and an explanatory error_message
+        self.assertIsNotNone(job2.cancel_time)
+        self.assertIn("Canceled due to previous job failure", job2.error_message)
+
+    def test_bg_enqueue_helper_delegates_to_bg_enqueue_records(self):
+        """bg_enqueue helper must delegate to bg_enqueue_records with self as records."""
+        job_name = f"Helper Test Job {uuid4().hex}"
+        with patch.object(type(self.base_bg_model), "_trigger_crons"), patch.object(
+            type(self.base_bg_model), "bg_enqueue_records"
+        ) as mock_enqueue_records:
+            self.env["base.bg"].bg_enqueue("dummy_method", threshold=5, name=job_name, priority=2)
+
+        mock_enqueue_records.assert_called_once_with(self.env["base.bg"], "dummy_method", 5, name=job_name, priority=2)
+
+    def test_is_serializable_filters_json_safe_values(self):
+        """is_serializable must return True for JSON serializable values and False otherwise."""
+        base_bg = self.env["base.bg"]
+        self.assertTrue(base_bg.is_serializable("string"))
+        self.assertTrue(base_bg.is_serializable(123))
+        self.assertTrue(base_bg.is_serializable([1, 2, 3]))
+        self.assertTrue(base_bg.is_serializable({"key": "value"}))
+        self.assertFalse(base_bg.is_serializable(self.env))  # Environment object
+        self.assertFalse(base_bg.is_serializable(lambda x: x))  # Function
+
+    def test_get_next_jobs_returns_chained_jobs(self):
+        """_get_next_jobs must return all subsequent jobs in the batch chain."""
+        job1 = self._create_job(name="Job 1", batch_key="test-batch")
+        job2 = self._create_job(name="Job 2", batch_key="test-batch")
+        job3 = self._create_job(name="Job 3", batch_key="test-batch")
+        job1.next_job_id = job2
+        job2.next_job_id = job3
+
+        next_jobs = job1._get_next_jobs()
+        self.assertEqual(next_jobs, job2 | job3)
+
+    def test_job_completion_enqueues_next_job(self):
+        """When a job completes successfully, the next job in batch must be enqueued."""
+        batch_key = str(uuid4())
+        partner = self.env["res.partner"].create({"name": "Test Partner"})
+        job1 = self._create_job(
+            name="First Job",
+            batch_key=batch_key,
+            state="enqueued",
+            kwargs_json={"_record_ids": [partner.id]},
+        )
+        job2 = self._create_job(
+            name="Next Job",
+            batch_key=batch_key,
+            state="waiting",
+        )
+        job1.next_job_id = job2
+
+        # Simulate job run completion
+        with patch.object(self.env.cr, "commit"):
+            job1.run()
+
+        job2.invalidate_recordset()
+        self.assertEqual(job2.state, "enqueued")
