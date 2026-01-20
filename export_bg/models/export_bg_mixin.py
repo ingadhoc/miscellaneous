@@ -23,7 +23,7 @@ class IrModel(models.Model):
         records = Model.browse(params["ids"]) if params.get("ids") else Model.search(params.get("domain", []))
 
         # Support both 'name' and 'value' keys for field names (templates use 'name', regular exports use 'value')
-        field_names = [f.get("name") or f.get("value") for f in params["fields"]]
+        field_names = [f.get("name") or f.get("value") or f.get("id") for f in params["fields"]]
         field_labels = [f.get("label") or f.get("string") for f in params["fields"]]
 
         return (
