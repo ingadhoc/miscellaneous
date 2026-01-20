@@ -1,6 +1,8 @@
 import base64
 import io
 import json
+import uuid
+from datetime import date, datetime, time
 
 import xlsxwriter
 from markupsafe import Markup
@@ -8,54 +10,136 @@ from odoo import _, api, models
 from odoo.addons.web.controllers.export import CSVExport
 
 
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, (datetime, date, time)):
+            return obj.isoformat()
+        return super().default(obj)
+
+
+class Base(models.AbstractModel):
+    _inherit = "base"
+
+    def _export_chunk_bg(self, data, export_id, export_format):
+        """Export a chunk of records in background.
+        This method processes a subset of records and creates an intermediate attachment.
+        When all chunks are processed, combines them into the final export file.
+        """
+        params = json.loads(data)
+
+        bg_job_id = self.env.context.get("bg_job_id")
+        job = self.env["bg.job"].browse(bg_job_id) if bg_job_id else None
+
+        chunk_num = 0
+        if job and job.batch_key:
+            chunk_num = self.env["bg.job"].search_count(
+                [
+                    ("batch_key", "=", job.batch_key),
+                    ("id", "<", job.id),
+                ]
+            )
+
+        field_names = [f.get("name") or f.get("value") or f.get("id") for f in params["fields"]]
+        field_labels = [f.get("label") or f.get("string") for f in params["fields"]]
+
+        export_data = self.export_data(field_names).get("datas", [])
+
+        if export_format == "csv":
+            content = CSVExport().from_data(params["fields"], field_labels, export_data).encode()
+            ext, mime = "csv", "text/csv;charset=utf8"
+        else:
+            content = json.dumps({"headers": field_labels, "rows": export_data}, cls=DateTimeEncoder).encode()
+            ext, mime = "json", "application/json"
+
+        self.env["ir.attachment"].create(
+            {
+                "name": f"export_{export_id}_chunk_{chunk_num}.{ext}",
+                "datas": base64.b64encode(content),
+                "mimetype": mime,
+                "res_model": False,
+                "res_id": False,
+                "description": export_id,
+            }
+        )
+
+        # Check if this is the last job in the batch. If so, combine all chunks into final file
+        # This ensures all chunks are processed before combining them
+        if job and not job._get_next_jobs():
+            return self.env["ir.model"]._combine_chunks(export_id, export_format)
+
+
 class IrModel(models.Model):
     _name = "ir.model"
-    _inherit = ["ir.model", "base.bg"]
+    _inherit = "ir.model"
 
     @api.model
     def get_export_threshold(self):
         """Get the threshold for background export without requiring admin permissions."""
         return int(self.env["ir.config_parameter"].sudo().get_param("export_bg.record_threshold", "500"))
 
-    def _prepare_export_data(self, data):
+    @api.model
+    def web_export(self, data, export_format):
+        """Export records in background using chunking when threshold is exceeded.
+        Creates multiple background jobs if the number of records exceeds the threshold.
+        Each job processes a chunk and creates an intermediate attachment.
+        The last job combines all chunks into the final export file.
+        """
         params = json.loads(data)
         Model = self.env[params["model"]].with_context(**params.get("context", {}))
-        records = Model.browse(params["ids"]) if params.get("ids") else Model.search(params.get("domain", []))
+        ids = params.get("ids")
+        domain = params.get("domain", [])
+        records = Model.browse(ids) if ids else Model.search(domain)
 
-        # Support both 'name' and 'value' keys for field names (templates use 'name', regular exports use 'value')
-        field_names = [f.get("name") or f.get("value") or f.get("id") for f in params["fields"]]
-        field_labels = [f.get("label") or f.get("string") for f in params["fields"]]
+        export_id = str(uuid.uuid4())
 
-        return (
-            params,
-            field_labels,
-            records.export_data(field_names).get("datas", []),
+        return self.env["base.bg"].bg_enqueue_records(
+            records,
+            "_export_chunk_bg",
+            threshold=self.get_export_threshold(),
+            data=data,
+            export_id=export_id,
+            export_format=export_format,
         )
 
-    def web_export_csv(self, data):
-        params, headers, export_data = self._prepare_export_data(data)
-        content = CSVExport().from_data(params["fields"], headers, export_data).encode()
-        return self._save_attachment(params["model"], content, ".csv", "text/csv;charset=utf8")
+    def _combine_chunks(self, export_id, export_format):
+        """Combine all export chunks into a single file.
+        For CSV: concatenates all chunks, removing headers from subsequent chunks.
+        For XLSX: creates a new workbook and writes all rows from all chunks.
+        """
+        chunks = self.env["ir.attachment"].search([("description", "=", export_id)], order="name")
 
-    def web_export_xlsx(self, data):
-        params, headers, export_data = self._prepare_export_data(data)
-        buf = io.BytesIO()
-        wb = xlsxwriter.Workbook(buf, {"in_memory": True})
-        ws = wb.add_worksheet()
-        ws.write_row(0, 0, headers)
-        for i, row in enumerate(export_data, 1):
-            ws.write_row(i, 0, row)
-        wb.close()
-        return self._save_attachment(
-            params["model"],
-            buf.getvalue(),
-            ".xlsx",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        )
+        if not chunks:
+            return Markup(f'<p>{_("No data to export.")}</p>')
 
-    def _save_attachment(self, model, content, ext, mime):
+        if export_format == "csv":
+            combined = b"".join(
+                base64.b64decode(c.datas) if i == 0 else b"\n".join(base64.b64decode(c.datas).split(b"\n")[1:])
+                for i, c in enumerate(chunks)
+            )
+            chunks.unlink()
+            return self._save_attachment(combined, ".csv", "text/csv;charset=utf8")
+        else:
+            buf = io.BytesIO()
+            wb = xlsxwriter.Workbook(buf, {"in_memory": True})
+            ws = wb.add_worksheet()
+            row_num = 0
+            for chunk in chunks:
+                chunk_data = json.loads(base64.b64decode(chunk.datas))
+                if row_num == 0:
+                    ws.write_row(0, 0, chunk_data["headers"])
+                    row_num = 1
+                for row in chunk_data["rows"]:
+                    ws.write_row(row_num, 0, row)
+                    row_num += 1
+            wb.close()
+            chunks.unlink()
+            return self._save_attachment(
+                buf.getvalue(), ".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+
+    def _save_attachment(self, content, ext, mime):
         att = self.env["ir.attachment"].create(
-            {"name": f"{model}{ext}", "datas": base64.b64encode(content), "mimetype": mime}
+            {"name": f"export{ext}", "datas": base64.b64encode(content), "mimetype": mime}
         )
         return Markup(
             f'<p>{_("Your export is ready!")}</p><p><a href="/web/content/{att.id}?download=true" class="btn btn-primary"><i class="fa fa-download"/> {_("Download")} {att.name}</a></p>'
