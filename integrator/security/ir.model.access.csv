@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_integrator_account_manager,integrator.account.manager,model_integrator_account,group_manager,1,1,1,1
+access_integrator_account_user,integrator.account.user,model_integrator_account,group_user,1,1,0,0
+access_integrator_integration_manager,integrator.integration.manager,model_integrator_integration,group_manager,1,1,1,1
+access_integrator_integration_user,integrator.integration.user,model_integrator_integration,group_user,1,1,0,0
+access_integrator_integration_script_manager,integrator.integration.script.manager,model_integrator_integration_script,group_manager,1,1,1,1
+access_integrator_integration_script_user,integrator.integration.script.user,model_integrator_integration_script,group_user,1,1,0,0
+access_integrator_integration_script_line_manager,integrator.integration.script.line.manager,model_integrator_integration_script_line,group_manager,1,1,1,1
+access_integrator_integration_script_line_user,integrator.integration.script.line.user,model_integrator_integration_script_line,group_user,1,1,0,0

@@ -1,0 +1,112 @@
+<odoo>
+
+<!-- SEARCH VIEW -->
+<record id="view_integrator_integration_filter" model="ir.ui.view">
+    <field name="name">integrator.integration.select</field>
+    <field name="model">integrator.integration</field>
+    <field name="arch" type="xml">
+        <search>
+            <field name="name" groups="base.group_user"/>
+            <filter domain="[('state', '=', 'confirmed')]" name="confirmed" string="Confirmed"/>
+            <group expand="0" string="Group By...">
+                <filter name="group_by_state" string="State" context="{'group_by':'state'}" groups="base.group_user"/>
+            </group>
+            <filter string="Archived" name="active" domain="[('active', '=', False)]"/>
+        </search>
+    </field>
+</record>
+
+<!-- FORMVIEW -->
+<record id="view_integrator_integration_form" model="ir.ui.view">
+    <field name="name">integrator.integration.form</field>
+    <field name="model">integrator.integration</field>
+    <field name="arch" type="xml">
+        <form>
+            <field name="state" invisible="1"/>
+            <header>
+            </header>
+            <sheet>
+                <field name="active" invisible="1"/>
+                <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                <div class="oe_button_box" name="button_box">
+                    <button name="sync" states="confirmed" class="oe_stat_button" type="object" icon="fa-refresh">
+                        <span>Sync Now</span>
+                    </button>
+                    <button name="test_and_confirm" states="draft" class="oe_stat_button" type="object" icon="fa-play">
+                        <span class="text-success">On</span>
+                    </button>
+                    <button name="back_to_draft" states="confirmed" class="oe_stat_button" type="object" icon="fa-stop">
+                        <span class="text-danger">Stop</span>
+                    </button>
+                    <button name="action_reset_last_sync" class="oe_stat_button" type="object" icon="fa-backward" groups="base.group_no_one">
+                        <span>Reset Last Sync</span>
+                    </button>
+                </div>
+                <label for="name" class="oe_edit_only" />
+                <h1><field name="name" /></h1>
+                <div name="integration_params">
+                    <group name="odoo">
+                        <group string="Odoo Account">
+                            <field name="odoo_db2" options="{'no_create': True}"/>
+                        </group>
+                        <group  string="Executions">
+                            <label for="cron_nextcall"/>
+                            <div class="o_row">
+                                <field name="cron_nextcall"/>
+                                <button name="integrator.action_cron_execution_call" type="action" icon="fa-clock-o" class="btn-link mb-1 px-0" string="Adelantar Ejecución"/>
+                            </div>
+                            <field name="last_cron_execution"/>
+                            <field name="last_sync_start"/>
+                        </group>
+                    </group>
+                </div>
+                <group string="Automation">
+                    <field name="script_line_ids" colspan="2" options="{'no_create': True}" nolabel="1" no_open="1">
+                        <tree editable="bottom">
+                            <field name="integration_id" invisible="1"/>
+                            <field name="sequence" widget="handle"/>
+                            <field name="script_id" />
+                            <field name="next_offset"/>
+                            <field name="state"/>
+                            <button name="odoo_run_script_now" title="Run script now" class="btn fa fa-play o_icon_button" type="object"/>
+                        </tree>
+                    </field>
+                </group>
+            </sheet>
+            <div class="oe_chatter">
+                <field name="message_follower_ids" widget="mail_followers"/>
+                <field name="activity_ids" widget="mail_activity"/>
+                <field name="message_ids" widget="mail_thread"/>
+            </div>
+        </form>
+    </field>
+</record>
+
+<!-- TREEVIEW -->
+<record id="view_integrator_integration_tree" model="ir.ui.view">
+    <field name="name">integrator.integration.tree</field>
+    <field name="model">integrator.integration</field>
+    <field name="arch" type="xml">
+        <tree decoration-muted="state == 'draft'">
+            <field name="name" />
+            <field name="last_cron_execution"/>
+            <field name="state"/>
+        </tree>
+    </field>
+</record>
+
+<record id="action_integrator_integration" model="ir.actions.act_window">
+    <field name="name">Integrations</field>
+    <field name="res_model">integrator.integration</field>
+    <field name="view_mode">tree,form</field>
+    <field name="context"></field>
+</record>
+
+<menuitem
+    id="menu_integrator_integration_integrations"
+    sequence="5"
+    parent="menu_integrator_integrations"
+    action="action_integrator_integration"
+    />
+
+</odoo>
