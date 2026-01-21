@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <menuitem
+            id="menu_okr"
+            name="OKRs"
+            groups="base.group_user"
+            sequence="20"/>
+            <!-- agregar un web icon -->
+
+        <menuitem
+            id="menu_okr_objetives"
+            name="Objetivos"
+            parent="menu_okr"
+            groups="base.group_user"
+            action="open_view_okr_objetives"
+            sequence="1"/>
+
+        <menuitem
+            id="menu_okr_kr"
+            name="KRs"
+            parent="menu_okr"
+            groups="base.group_user"
+            action="open_view_okr_kr"
+            sequence="2"/>
+
+    </data>
+</odoo>
