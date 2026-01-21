@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="objective_line_view_tree" model="ir.ui.view">
+    <field name="name">Objetivo</field>
+    <field name="model">okr.key_result</field>
+    <field name="arch" type="xml">
+    <tree>
+        <field name="name"/>
+        <field name="description"/>
+        <field name="progress"/>
+        <field name="weight"/>
+        <field name="comments"/>
+        <field name="target"/>
+        <field name="result"/>
+        <field name="user_id"/>
+        <field name="plan_de_accion"/>
+        <field name="comments"/>
+        <field name="interdependencies" string="Interdependencies" widget="many2many_tags"/>
+        <field name="realizado_en_el_q"/>
+        <field name="notas_proximo_q"/>
+    </tree>
+    </field>
+</record>
+
+</odoo>
