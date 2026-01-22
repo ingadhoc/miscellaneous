@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-05 13:42+0000\n"
+"POT-Creation-Date: 2026-01-22 16:20+0000\n"
 "PO-Revision-Date: 2025-12-11 18:10+0000\n"
 "Last-Translator: BAF <baf@adhoc.inc>\n"
 "Language-Team: Spanish <https://translation.dev-adhoc.com/projects/"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
-"Plural-Forms: nplurals=3; plural=(n == 1) ? 0 : ((n != 0 && n % 1000000 == 0)"
-" ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n == 1) ? 0 : ((n != 0 && n % 1000000 == "
+"0) ? 1 : 2);\n"
 "X-Generator: Weblate 5.10.4\n"
 
 #. module: base_bg
@@ -69,6 +69,27 @@ msgstr ""
 "                mientras el sistema procesa tu solicitud en segundo plano."
 
 #. module: base_bg
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
+msgid "Batch"
+msgstr ""
+
+#. module: base_bg
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_form
+msgid "Batch Jobs"
+msgstr ""
+
+#. module: base_bg
+#. odoo-python
+#: code:addons/base_bg/models/bg_job.py:0
+msgid "Batch Jobs: %s"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__batch_key
+msgid "Batch Key"
+msgstr ""
+
+#. module: base_bg
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_form
 msgid "Cancel"
 msgstr "Cancelar"
@@ -83,6 +104,12 @@ msgstr "Cancelar Tiempo"
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
 msgid "Canceled"
 msgstr "Cancelado"
+
+#. module: base_bg
+#. odoo-python
+#: code:addons/base_bg/models/bg_job.py:0
+msgid "Canceled due to previous job failure in batch"
+msgstr ""
 
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__context_json
@@ -113,6 +140,11 @@ msgstr "Fecha de Creación"
 #: model:ir.model.fields,help:base_bg.field_bg_job__retry_count
 msgid "Current number of retry attempts"
 msgstr "Número actual de intentos de reintento"
+
+#. module: base_bg
+#: model:ir.model.fields,help:base_bg.field_bg_job__state
+msgid "Current state of the job"
+msgstr ""
 
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_base_bg__display_name
@@ -165,15 +197,20 @@ msgid "Failed"
 msgstr "Fallido"
 
 #. module: base_bg
-#: model:ir.model.fields,help:base_bg.field_bg_job__name
-msgid "Human readable job name"
-msgstr "Nombre del trabajo legible para humanos"
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_form
+msgid "General Information"
+msgstr ""
 
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_base_bg__id
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__id
 msgid "ID"
 msgstr "ID"
+
+#. module: base_bg
+#: model:ir.model.fields,help:base_bg.field_bg_job__batch_key
+msgid "Identifier for related jobs in a batch"
+msgstr ""
 
 #. module: base_bg
 #. odoo-python
@@ -249,6 +286,16 @@ msgid "Model"
 msgstr "Modelo"
 
 #. module: base_bg
+#: model:ir.model.fields,field_description:base_bg.field_bg_job__next_job_id
+msgid "Next Job"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields,help:base_bg.field_bg_job__next_job_id
+msgid "Next job in the batch sequence"
+msgstr ""
+
+#. module: base_bg
 #: model_terms:ir.actions.act_window,help:base_bg.action_bg_job
 msgid "No background jobs found!"
 msgstr "¡No se encontraron trabajos en segundo plano!"
@@ -290,7 +337,7 @@ msgstr ""
 #. module: base_bg
 #. odoo-python
 #: code:addons/base_bg/models/base_bg.py:0
-msgid "Process sent to background successfully"
+msgid "Processes sent to background successfully"
 msgstr ""
 
 #. module: base_bg
@@ -357,6 +404,16 @@ msgid "User"
 msgstr ""
 
 #. module: base_bg
+#: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
+msgid "Waiting"
+msgstr ""
+
+#. module: base_bg
+#: model:ir.model.fields.selection,name:base_bg.selection__bg_job__state__waiting
+msgid "Waiting For Previous Job"
+msgstr ""
+
+#. module: base_bg
 #: model:ir.model.fields,help:base_bg.field_bg_job__end_time
 msgid "When the job execution finished"
 msgstr ""
@@ -374,5 +431,8 @@ msgstr ""
 #. module: base_bg
 #. odoo-python
 #: code:addons/base_bg/models/base_bg.py:0
-msgid "You will be notified when it is done."
+msgid "You will be notified when they are done."
 msgstr ""
+
+#~ msgid "Human readable job name"
+#~ msgstr "Nombre del trabajo legible para humanos"
