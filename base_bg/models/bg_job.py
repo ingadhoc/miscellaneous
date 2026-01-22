@@ -8,6 +8,7 @@ from datetime import timedelta
 from markupsafe import Markup
 from odoo import _, api, fields, models, tools
 from odoo.exceptions import UserError
+from odoo.fields import Domain
 
 _logger = logging.getLogger(__name__)
 
@@ -312,34 +313,43 @@ class BgJob(models.Model):
         return jobs
 
     @api.model
-    def _cron_run_enqueued_jobs(self, limit: int = 5):
+    def _get_next_job(self) -> "BgJob":
         """
-        Execute enqueued background jobs.
+        Get and lock the next available enqueued job atomically.
+        Uses SELECT FOR UPDATE SKIP LOCKED to safely acquire a job without race conditions.
 
-        :param limit: Maximum number of jobs to process (default: 5)
+        :return: Returns the locked job or an empty recordset.
         """
-        cron_id = (
-            self.env.context.get("cron_id", False)
-            or self.env["ir.cron.progress"].browse(self.env.context.get("ir_cron_progress_id")).cron_id.id
+        self.env.cr.execute(
+            """
+            SELECT id
+            FROM bg_job
+            WHERE state = 'enqueued'
+            ORDER BY priority ASC, create_date ASC
+            FOR UPDATE SKIP LOCKED
+            LIMIT 1;
+            """
         )
+        result = self.env.cr.fetchone()
+        return self.browse(result[0]) if result else self.env["bg.job"]
 
-        if not cron_id:
-            _logger.warning("No cron_id found in context, skipping _cron_run_enqueued_jobs")
+    @api.model
+    def _cron_run_enqueued_jobs(self):
+        """
+        Execute one enqueued background job using optimistic locking.
+
+        Uses SELECT FOR UPDATE SKIP LOCKED to allow multiple crons to safely
+        pick up jobs without conflicts. Each cron processes one available job
+        that isn't locked by other crons, naturally balancing the load.
+        """
+        job = self._get_next_job()
+        if not job:
             return
 
-        code = "_cron_run_enqueued_jobs("
-        cron_ids = self.env["ir.cron"].search([("code", "ilike", code)], order="id").ids
-        index, total = cron_ids.index(cron_id), len(cron_ids)
-        jobs = self.search([("state", "=", "enqueued")]).filtered(lambda r: r.id % total == index)[:limit]
-        self.env["ir.cron"]._commit_progress(remaining=len(jobs))
-        for job in jobs:
-            try:
-                job.run()
-                self.env["ir.cron"]._commit_progress(processed=1)
-            except Exception as e:
-                self.env.cr.rollback()
-                _logger.exception("Error executing job %s: %s", job.id, e)
-                continue
+        job.run()
+        # Trigger cron again if there are more jobs to process
+        if self.search_count(Domain("state", "=", "enqueued")):
+            self.env["base.bg"].sudo()._trigger_crons()
 
     @api.model
     def _cron_check_running_jobs(self):

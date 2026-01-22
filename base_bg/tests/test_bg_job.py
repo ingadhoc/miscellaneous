@@ -400,3 +400,51 @@ class TestBgJob(TransactionCase):
             base_bg.check_serializable(list_data)
         with self.assertRaises(ValueError):
             base_bg.check_serializable(function_data)
+
+    def test_get_next_job_returns_enqueued_job(self):
+        """_get_next_job should return an available enqueued job."""
+        job = self._create_job(name="Test Next Job", state="enqueued")
+        next_job = self.BgJob._get_next_job()
+        self.assertEqual(next_job, job)
+
+    def test_get_next_job_returns_empty_when_no_jobs(self):
+        """_get_next_job should return an empty recordset when no enqueued jobs exist."""
+        # Ensure no enqueued jobs
+        self.BgJob.search([("state", "=", "enqueued")]).unlink()
+        next_job = self.BgJob._get_next_job()
+        self.assertEqual(next_job, self.env["bg.job"])
+
+    def test_cron_run_enqueued_jobs_executes_job(self):
+        """_cron_run_enqueued_jobs should execute one enqueued job."""
+        partner = self.env["res.partner"].create({"name": "Test Partner"})
+        job = self._create_job(
+            name="Cron Run Test Job",
+            model="res.partner",
+            method="exists",
+            kwargs_json={"_record_ids": [partner.id]},
+            state="enqueued",
+        )
+        with patch.object(type(job), "run") as mock_run:
+            self.BgJob._cron_run_enqueued_jobs()
+            mock_run.assert_called_once()
+
+    def test_cron_run_enqueued_jobs_triggers_cron_if_more_jobs(self):
+        """_cron_run_enqueued_jobs should trigger crons if more jobs remain."""
+        partner = self.env["res.partner"].create({"name": "Test Partner"})
+        job1 = self._create_job(
+            name="Cron Trigger Test Job 1",
+            model="res.partner",
+            method="exists",
+            kwargs_json={"_record_ids": [partner.id]},
+            state="enqueued",
+        )
+        self._create_job(
+            name="Cron Trigger Test Job 2",
+            model="res.partner",
+            method="exists",
+            kwargs_json={"_record_ids": [partner.id]},
+            state="enqueued",
+        )
+        with patch.object(type(job1), "run"), patch.object(type(self.env["base.bg"]), "_trigger_crons") as mock_trigger:
+            self.BgJob._cron_run_enqueued_jobs()
+            mock_trigger.assert_called_once()
