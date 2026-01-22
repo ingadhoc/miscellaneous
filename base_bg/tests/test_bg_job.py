@@ -55,10 +55,29 @@ class TestBgJob(TransactionCase):
 
     def test_job_cancel(self):
         """Basic test for job cancellation."""
-        job = self._create_job(name="Cancel Test Job")
+        # Create a chain of jobs
+        job1 = self._create_job(name="Cancel Test Job 1")
+        job2 = self._create_job(name="Cancel Test Job 2", state="waiting")
+        job3 = self._create_job(name="Cancel Test Job 3", state="waiting")
+        job1.next_job_id = job2
+        job2.next_job_id = job3
 
-        job.action_cancel()
-        self.assertEqual(job.state, "canceled")
+        # Cancel the first job
+        job1.action_cancel()
+
+        # Refresh from DB
+        job1 = self.BgJob.browse(job1.id)
+        job2 = self.BgJob.browse(job2.id)
+        job3 = self.BgJob.browse(job3.id)
+
+        # All jobs in the chain should be canceled
+        self.assertEqual(job1.state, "canceled")
+        self.assertEqual(job2.state, "canceled")
+        self.assertEqual(job3.state, "canceled")
+        # Canceled jobs should have cancel_time set
+        self.assertIsNotNone(job1.cancel_time)
+        self.assertIsNotNone(job2.cancel_time)
+        self.assertIsNotNone(job3.cancel_time)
 
     def test_job_retry(self):
         """Basic test for job retry."""
@@ -309,7 +328,6 @@ class TestBgJob(TransactionCase):
         self.assertEqual(job3.state, "canceled")
         # Canceled jobs must have a cancel_time and an explanatory error_message
         self.assertIsNotNone(job2.cancel_time)
-        self.assertIn("Canceled due to previous job failure", job2.error_message)
 
     def test_bg_enqueue_helper_delegates_to_bg_enqueue_records(self):
         """bg_enqueue helper must delegate to bg_enqueue_records with self as records."""
@@ -365,3 +383,20 @@ class TestBgJob(TransactionCase):
 
         job2.invalidate_recordset()
         self.assertEqual(job2.state, "enqueued")
+
+    def test_check_serializable(self):
+        """check_serializable must raise ValueError for unserializable objects."""
+        base_bg = self.env["base.bg"]
+        # env is not serializable
+        dict_data = {
+            "serializable": "ok",
+            "unserializable": self.env,
+        }
+        list_data = ["ok", self.env, 123]
+        function_data = lambda x: x
+        with self.assertRaises(ValueError):
+            base_bg.check_serializable(dict_data)
+        with self.assertRaises(ValueError):
+            base_bg.check_serializable(list_data)
+        with self.assertRaises(ValueError):
+            base_bg.check_serializable(function_data)

@@ -121,12 +121,8 @@ class BgJob(models.Model):
         self.ensure_one()
         if self.state != "enqueued":
             raise UserError(_("Only enqueued jobs can be canceled"))
-        self.write(
-            {
-                "state": "canceled",
-                "cancel_time": fields.Datetime.now(),
-            }
-        )
+
+        (self | self._get_next_jobs()).cancel()
 
     def action_retry(self):
         """
@@ -135,13 +131,9 @@ class BgJob(models.Model):
         self.ensure_one()
         if self.state != "failed":
             raise UserError(_("Only failed jobs can be retried"))
-        self.write(
-            {
-                "state": "enqueued",
-                "retry_count": 0,
-                "error_message": False,
-            }
-        )
+
+        self.enqueue(retry=True)
+        self._get_next_jobs().wait()
 
     def action_open_records(self) -> dict:
         """
@@ -181,12 +173,7 @@ class BgJob(models.Model):
         if self.state != "enqueued":
             raise UserError(_("Only enqueued jobs can be executed"))
 
-        self.write(
-            {
-                "state": "running",
-                "start_time": fields.Datetime.now(),
-            }
-        )
+        self.start()
         self.env.cr.commit()  # pylint: disable=invalid-commit
 
         try:
@@ -202,15 +189,7 @@ class BgJob(models.Model):
 
             # Execute the method and capture the result
             result = getattr(records, self.method)(*args, **kwargs)
-            self.write(
-                {
-                    "state": "done",
-                    "end_time": fields.Datetime.now(),
-                }
-            )
-            if self.next_job_id:
-                self.next_job_id.state = "enqueued"
-                self.env["base.bg"].sudo()._trigger_crons()
+            self.finish()
             if result:
                 self._notify_user(result)
                 self.env.cr.commit()  # pylint: disable=invalid-commit
@@ -218,6 +197,71 @@ class BgJob(models.Model):
             self.env.cr.rollback()  # pylint: disable=invalid-commit
             self._handle_job_error(e)
             raise
+
+    def enqueue(self, retry: bool = False):
+        """Mark the job as enqueued."""
+        data = {
+            "state": "enqueued",
+        }
+        if retry:
+            data.update(
+                {
+                    "retry_count": 0,
+                    "error_message": False,
+                }
+            )
+        self.write(data)
+
+    def start(self):
+        """Mark the job as running and set the start time."""
+        self.write(
+            {
+                "state": "running",
+                "start_time": fields.Datetime.now(),
+            }
+        )
+
+    def finish(self):
+        """
+        Mark the job as done and set the end time.
+        Also enqueue the next job in the batch if it exists.
+        """
+        self.write(
+            {
+                "state": "done",
+                "end_time": fields.Datetime.now(),
+            }
+        )
+        self.filtered("next_job_id").mapped("next_job_id").enqueue()
+        self.env["base.bg"].sudo()._trigger_crons()
+
+    def wait(self):
+        """Mark the job as waiting for the previous job to complete."""
+        self.write(
+            {
+                "state": "waiting",
+            }
+        )
+
+    def fail(self, error_message: str):
+        """Mark the job as failed with an error message."""
+        self.write(
+            {
+                "state": "failed",
+                "end_time": fields.Datetime.now(),
+                "error_message": error_message,
+            }
+        )
+
+    def cancel(self, message: str | None = None):
+        """Cancel the jobs received."""
+        self.write(
+            {
+                "state": "canceled",
+                "cancel_time": fields.Datetime.now(),
+                "error_message": message,
+            }
+        )
 
     def _handle_job_error(self, error: Exception | str):
         """
@@ -228,28 +272,12 @@ class BgJob(models.Model):
         error_msg = str(error)
         self.retry_count += 1
         if self.retry_count < self.max_retries:
-            self.write(
-                {
-                    "state": "enqueued",
-                }
-            )
+            self.enqueue()
             _logger.warning("Job %s failed, scheduling retry #%d: %s", self.name, self.retry_count, error_msg)
         else:
             # Max retries reached, mark as failed
-            self.write(
-                {
-                    "state": "failed",
-                    "end_time": fields.Datetime.now(),
-                    "error_message": error_msg,
-                }
-            )
-            self._get_next_jobs().write(
-                {
-                    "state": "canceled",
-                    "cancel_time": fields.Datetime.now(),
-                    "error_message": _("Canceled due to previous job failure in batch"),
-                }
-            )
+            self.fail(error_msg)
+            self._get_next_jobs().cancel(message=_("Previous job in batch failed"))
             _logger.error("Job %s failed permanently: %s", self.name, error_msg)
 
     def _notify_user(self, result: str):
