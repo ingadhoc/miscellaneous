@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-08 19:23+0000\n"
+"POT-Creation-Date: 2026-01-22 19:04+0000\n"
 "PO-Revision-Date: 2026-01-08 19:23+0000\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -15,6 +15,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#. module: export_bg
+#: model:ir.model,name:export_bg.model_base
+msgid "Base"
+msgstr ""
 
 #. module: export_bg
 #: model:ir.model.fields,field_description:export_bg.field_ir_model__display_name
@@ -35,6 +40,12 @@ msgstr ""
 #. module: export_bg
 #: model:ir.model,name:export_bg.model_ir_model
 msgid "Models"
+msgstr ""
+
+#. module: export_bg
+#. odoo-python
+#: code:addons/export_bg/models/export_bg_mixin.py:0
+msgid "No data to export."
 msgstr ""
 
 #. module: export_bg
