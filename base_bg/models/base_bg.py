@@ -70,8 +70,8 @@ class BaseBg(models.AbstractModel):
             }
             job_kwargs = kwargs.copy()
             job_kwargs["_record_ids"] = list(chunk_ids) if chunk_ids else []
-            job_vals["args_json"] = list(args) if args else []
-            job_vals["kwargs_json"] = job_kwargs
+            job_vals["args_json"] = self.check_serializable(list(args)) if args else []
+            job_vals["kwargs_json"] = self.check_serializable(job_kwargs)
             job = self.env["bg.job"].create(job_vals)
             jobs |= job
             # Link previous job to current so sequence is established in one pass
@@ -105,8 +105,7 @@ class BaseBg(models.AbstractModel):
             ...
             records.bg_enqueue('method_name', threshold=..., ...)
 
-        Delegates to the model API `bg_enqueue_records` using the calling
-        recordset as the `records` parameter.
+        Delegates to the model API `bg_enqueue_records` using the calling recordset as the `records` parameter.
         """
         return self.bg_enqueue_records(self, method, threshold, *args, **kwargs)
 
@@ -127,8 +126,24 @@ class BaseBg(models.AbstractModel):
         :param value: The value to check
         :return: True if serializable, False otherwise
         """
+        if isinstance(value, dict):
+            return all(self.is_serializable(k) and self.is_serializable(v) for k, v in value.items())
+        if isinstance(value, (list, tuple)):
+            return all(self.is_serializable(item) for item in value)
         try:
             json.dumps(value)
             return True
         except Exception:
             return False
+
+    @api.model
+    def check_serializable(self, value: Any) -> Any:
+        """
+        Ensures a value is JSON serializable.
+
+        :param value: The value to check
+        :raises ValueError: If the value is not serializable
+        """
+        if not self.is_serializable(value):
+            raise ValueError(_("Value %s is not JSON serializable") % repr(value))
+        return value
