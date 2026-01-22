@@ -124,7 +124,8 @@ class AccountStatementImport(models.TransientModel):
 
     def split_base64_excel(self, header_rows_count, rows_per_file_limit):
         """Split Excel file into multiple parts to avoid overloading the system.
-        Returns empty list if file is not a valid Excel or if split is not needed."""
+        Returns empty list if file is not a valid Excel or if split is not needed.
+        Only processes rows where the date column is not empty."""
         if not self.statement_file:
             return []
 
@@ -143,6 +144,16 @@ class AccountStatementImport(models.TransientModel):
 
         header_rows = all_rows[:header_rows_count]
         data_rows = all_rows[header_rows_count:]
+
+        # Get the date column index from the sheet mapping using the parser's method
+        parser = self.env["account.statement.import.sheet.parser"]
+        header = parser.parse_header((input_workbook, input_worksheet), self.sheet_mapping_id)
+        date_column_indexes = parser._get_column_indexes(header, "timestamp_column", self.sheet_mapping_id)
+        date_column_index = date_column_indexes[0] if date_column_indexes else None
+
+        # Filter out rows where the date column is empty
+        data_rows = self._filter_rows_with_date(data_rows, date_column_index)
+
         start_row_index = 0
         total_data_rows = len(data_rows)
 
@@ -169,3 +180,20 @@ class AccountStatementImport(models.TransientModel):
 
             start_row_index = end_row_index
         return output_base64_list
+
+    def _filter_rows_with_date(self, data_rows, date_column_index):
+        """Filter data rows to only include rows where the date column is not empty.
+        If date_column_index is None, return all rows."""
+        if date_column_index is None:
+            return data_rows
+
+        filtered_rows = []
+        for row in data_rows:
+            # Check if the row has enough columns and the date column is not empty
+            if len(row) > date_column_index and row[date_column_index].value:
+                filtered_rows.append(row)
+            elif len(row) > date_column_index and not row[date_column_index].value:
+                # Stop processing when we find the first empty date
+                break
+
+        return filtered_rows
