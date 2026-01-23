@@ -167,6 +167,7 @@ class TestBgJob(TransactionCase):
             name="Runner Job",
             model="bg.job",
             method="dummy_success_method",
+            state="running",
             kwargs_json={"_record_ids": [target_job.id]},
         )
 
@@ -195,6 +196,7 @@ class TestBgJob(TransactionCase):
             name="Skip Notify Runner",
             model="bg.job",
             method="dummy_false_method",
+            state="running",
             kwargs_json={"_record_ids": [target_job.id]},
         )
 
@@ -367,7 +369,7 @@ class TestBgJob(TransactionCase):
         job1 = self._create_job(
             name="First Job",
             batch_key=batch_key,
-            state="enqueued",
+            state="running",
             kwargs_json={"_record_ids": [partner.id]},
         )
         job2 = self._create_job(
