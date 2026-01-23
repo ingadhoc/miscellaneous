@@ -40,34 +40,15 @@ patch(ExportDataDialog.prototype, {
                 import_compat: this.isCompatible,
             };
 
-<<<<<<< e792703361b22545f4f8e17c9c86deca306c7b8d
             this.state.disabled = true;
             const result = await this.orm.call(
-||||||| 5506347fdcde5c846885d14f231efa51aa8b2bae
-            const method = format === "csv" ? "web_export_csv" : "web_export_xlsx";
-            const actionResult = await this.model.orm.call(
-=======
-            const actionResult = await this.model.orm.call(
->>>>>>> 53e4d3ace0697389252819e21e08e2fd9c5fd8f2
                 "ir.model",
-<<<<<<< e792703361b22545f4f8e17c9c86deca306c7b8d
-                "bg_enqueue",
-                [method],
-                { data: JSON.stringify(data) }
-||||||| 5506347fdcde5c846885d14f231efa51aa8b2bae
-                "bg_enqueue",
-                [method],
-                {
-                    data: JSON.stringify(data),
-                }
-=======
                 "web_export",
                 [],
                 {
                     data: JSON.stringify(data),
                     export_format: format,
                 }
->>>>>>> 53e4d3ace0697389252819e21e08e2fd9c5fd8f2
             );
             this.state.disabled = false;
 
