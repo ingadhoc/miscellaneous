@@ -33,8 +33,8 @@ patch(ListController.prototype, {
                 }
             );
 
-            if (actionResult && actionResult.type === "ir.actions.client") {
-                this.env.services.action.doAction(actionResult);
+            if (actionResult && actionResult[0].type === "ir.actions.client") {
+                this.env.services.action.doAction(actionResult[0]);
             }
         } else {
             await super.downloadExport(...arguments);
