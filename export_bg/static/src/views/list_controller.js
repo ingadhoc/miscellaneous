@@ -52,9 +52,17 @@ patch(ExportDataDialog.prototype, {
             );
             this.state.disabled = false;
 
+<<<<<<< d8b2a1b32f8d5f7b53e6b057021cbbe0721e83ed
             const actionResult = result[0];
             if (actionResult && actionResult.type) {
                 this.env.services.action.doAction(actionResult);
+||||||| ded14565e127b647e6546ecdb3b750b0ad07c467
+            if (actionResult && actionResult.type === "ir.actions.client") {
+                this.env.services.action.doAction(actionResult);
+=======
+            if (actionResult && actionResult[0].type === "ir.actions.client") {
+                this.env.services.action.doAction(actionResult[0]);
+>>>>>>> 9f5f4ba998c3e2951570b8a03c138892cbda5b09
             }
         } else {
             await super.onClickExportButton();
