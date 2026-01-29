@@ -129,7 +129,8 @@ class IrModel(models.Model):
                     ws.write_row(0, 0, chunk_data["headers"])
                     row_num = 1
                 for row in chunk_data["rows"]:
-                    ws.write_row(row_num, 0, row)
+                    cleaned_row = [str(cell) if isinstance(cell, (dict, list)) else cell for cell in row]
+                    ws.write_row(row_num, 0, cleaned_row)
                     row_num += 1
             wb.close()
             chunks.unlink()
