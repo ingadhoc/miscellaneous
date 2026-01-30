@@ -9,3 +9,4 @@ from . import res_company
 from . import mail_template
 from . import ir_actions_server
 from . import mail_activity
+from . import mail_activity_schedule

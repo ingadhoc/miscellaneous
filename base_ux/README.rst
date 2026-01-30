@@ -21,6 +21,7 @@ Several Improvements:
     * Make parent field on res.company invisible as it is useless now
     * Keep the activity's description when changing the activity type, regardless of the activity type's description, and change the activity user only if the activity type has a default user.
     * Make company_registry field on res.company invisible as it is useless now
+    * Show or hide the activity badge widget depending on the number of activity types defined in the system (configurable threshold, default to 5).
 
 
 Installation

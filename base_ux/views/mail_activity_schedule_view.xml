@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Mejora UX: Muestra acceso rápido con badges + búsqueda completa
+        - Badges: Primeros N tipos según sequence (configurable)
+        - Desplegable: Todas las opciones para búsqueda adicional
+
+        Configuración:
+        Parámetro del sistema: base_ux.activity_quick_badges (default: 5)
+        Indica cuántos tipos mostrar como badges (ordenados por sequence)
+    -->
+    <record id="mail_activity_schedule_view_form_inherit" model="ir.ui.view">
+        <field name="name">mail.activity.schedule.view.form.inherit</field>
+        <field name="model">mail.activity.schedule</field>
+        <field name="inherit_id" ref="mail.mail_activity_schedule_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Campo invisible para almacenar los IDs de actividades frecuentes -->
+            <xpath expr="//field[@name='activity_type_id'][@widget='selection_badge_icons']" position="before">
+                <field name="quick_activity_ids" invisible="1"/>
+            </xpath>
+
+            <!-- Modificar el campo original para limitar las opciones mostradas como badges -->
+            <xpath expr="//field[@name='activity_type_id'][@widget='selection_badge_icons']" position="attributes">
+                <attribute name="domain">[('id', 'in', quick_activity_ids)]</attribute>
+            </xpath>
+
+            <!-- Agregar selector completo debajo para búsqueda adicional -->
+            <xpath expr="//field[@name='activity_type_id'][@widget='selection_badge_icons']" position="after">
+                <div class="o_row mt-2" style="max-width: 400px;">
+                    <small class="text-muted">¿No encontrás el tipo que buscas?</small>
+                    <field name="activity_type_id"
+                           widget="many2one"
+                           placeholder="Buscar otro tipo de actividad..."
+                           options="{'no_create': True, 'no_open': True}"
+                           nolabel="1"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
