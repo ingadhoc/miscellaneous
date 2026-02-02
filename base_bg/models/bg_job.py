@@ -5,6 +5,7 @@
 import logging
 from datetime import timedelta
 
+import psycopg2
 from markupsafe import Markup
 from odoo import _, api, fields, models, tools
 from odoo.exceptions import UserError
@@ -200,7 +201,7 @@ class BgJob(models.Model):
 
     def enqueue(self, retry: bool = False):
         """Mark the job as enqueued."""
-        data = {
+        data: dict[str, str | int | bool] = {
             "state": "enqueued",
         }
         if retry:
@@ -344,7 +345,13 @@ class BgJob(models.Model):
         pick up jobs without conflicts. Each cron processes one available job
         that isn't locked by other crons, naturally balancing the load.
         """
-        job = self._get_next_job()
+        try:
+            job = self._get_next_job()
+        except psycopg2.errors.SerializationFailure:
+            self.env.cr.rollback()
+            self.env["base.bg"].sudo()._trigger_crons()
+            return
+
         if not job:
             return
 
