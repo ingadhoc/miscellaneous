@@ -39,8 +39,18 @@ class Base(models.AbstractModel):
                 ]
             )
 
-        field_names = [f.get("name") or f.get("value") or f.get("id") for f in params["fields"]]
-        field_labels = [f.get("label") or f.get("string") for f in params["fields"]]
+        # Extract field names considering import_compat mode
+        import_compat = params.get("import_compat", True)
+
+        # For field_names (data extraction), always use the technical field name
+        # Only use 'value' as fallback when import_compat=True (for import compatibility)
+        if import_compat:
+            field_names = [f.get("name") or f.get("value") or f.get("id") for f in params["fields"]]
+            field_labels = field_names  # Use field names as headers for import compatibility
+        else:
+            # When not import_compat, use only 'name' or 'id' for field_names, not 'value'
+            field_names = [f.get("name") or f.get("id") for f in params["fields"]]
+            field_labels = [f.get("label") or f.get("string") for f in params["fields"]]
 
         export_data = self.export_data(field_names).get("datas", [])
 
