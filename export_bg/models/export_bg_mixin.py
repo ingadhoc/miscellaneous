@@ -14,6 +14,8 @@ class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, (datetime, date, time)):
             return obj.isoformat()
+        if isinstance(obj, (bytes, bytearray, memoryview)):
+            return base64.b64encode(bytes(obj)).decode()
         return super().default(obj)
 
 
