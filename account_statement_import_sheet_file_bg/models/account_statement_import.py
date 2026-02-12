@@ -7,6 +7,7 @@ from io import BytesIO
 
 from markupsafe import Markup
 from odoo import _, models
+from odoo.exceptions import UserError
 from openpyxl import Workbook, load_workbook
 
 
@@ -37,13 +38,28 @@ class AccountStatementImport(models.TransientModel):
 
                 if files:
                     for idx, file in enumerate(files):
+                        # Encode the file to string format, because background jobs cannot
+                        # be executed if the parameters passed are not serializable (the original format is bytes).
+                        # It is decoded back in import_file_button to be processed normally.
+                        csv_or_xls = None
+                        file_str = file
+                        if not isinstance(file, str):
+                            try:
+                                file_bytes = base64.b64decode(file)
+                                file_str = file_bytes.decode("utf-8")
+                                csv_or_xls = "csv"
+                            except Exception:
+                                file_str = base64.b64encode(file_bytes).decode("ascii")
+                                csv_or_xls = "xls"
+
                         # Create wizard data to be passed to bg job
                         wizard_data = {
-                            "statement_file": file,
+                            "statement_file": file_str,
                             "statement_filename": self.statement_filename,
                             "sheet_mapping_id": self.sheet_mapping_id.id,
                             "part_number": idx + 1,
                             "total_parts": len(files),
+                            "csv_or_xls": csv_or_xls,
                         }
                         # Call bg_enqueue on empty recordset and pass data as kwargs
                         # Add part number to job name for clarity
@@ -86,6 +102,16 @@ class AccountStatementImport(models.TransientModel):
                 # Extract part info before creating wizard
                 part_number = wizard_data.pop("part_number", None)
                 total_parts = wizard_data.pop("total_parts", None)
+                csv_or_xls = wizard_data.pop("csv_or_xls", None)
+                # Decode file from string back to bytes based on file type
+                statement_file = wizard_data.get("statement_file")
+                if statement_file and isinstance(statement_file, str):
+                    if csv_or_xls == "csv":
+                        # CSV files use UTF-8 encoding
+                        wizard_data["statement_file"] = base64.b64encode(statement_file.encode("utf-8"))
+                    elif csv_or_xls == "xls":
+                        # Excel files are already base64 encoded as ASCII strings
+                        wizard_data["statement_file"] = statement_file.encode("ascii")
                 wizard = self.create(wizard_data)
             else:
                 wizard = self
@@ -148,8 +174,11 @@ class AccountStatementImport(models.TransientModel):
         # Get the date column index from the sheet mapping using the parser's method
         parser = self.env["account.statement.import.sheet.parser"]
         header = parser.parse_header((input_workbook, input_worksheet), self.sheet_mapping_id)
-        date_column_indexes = parser._get_column_indexes(header, "timestamp_column", self.sheet_mapping_id)
-        date_column_index = date_column_indexes[0] if date_column_indexes else None
+        try:
+            date_column_indexes = parser._get_column_indexes(header, "timestamp_column", self.sheet_mapping_id)
+            date_column_index = date_column_indexes[0] if date_column_indexes else None
+        except Exception as e:
+            raise UserError(_("Error importing bank statement: %s") % str(e))
 
         # Filter out rows where the date column is empty
         data_rows = self._filter_rows_with_date(data_rows, date_column_index)
