@@ -9,3 +9,4 @@ class ResPartner(models.Model):
     _inherit = "res.partner"
 
     active = fields.Boolean(tracking=True)
+    mobile = fields.Char(tracking=True)
