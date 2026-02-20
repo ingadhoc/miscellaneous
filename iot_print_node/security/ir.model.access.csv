@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_add_iot_printnode_admin,add.iot.printnode.admin,model_add_iot_printnode,iot.group_iot_admin,1,1,1,1
+access_add_iot_printnode_user,add.iot.printnode.user,model_add_iot_printnode,base.group_user,1,1,1,0

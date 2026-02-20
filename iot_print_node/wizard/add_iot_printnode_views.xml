@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Form view for Add IoT PrintNode wizard -->
+    <record id="view_add_iot_printnode_form" model="ir.ui.view">
+        <field name="name">add.iot.printnode.form</field>
+        <field name="model">add.iot.printnode</field>
+        <field name="arch" type="xml">
+            <form string="Add IoT PrintNode">
+                <group>
+                    <field name="name" placeholder="e.g. Office Printer"/>
+                    <field name="print_node_api_key" password="True" placeholder="Enter your PrintNode API Key"/>
+                </group>
+                <footer>
+                    <button string="Add" name="action_add_iot_printnode_box" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action to open the wizard -->
+    <record id="action_add_iot_printnode" model="ir.actions.act_window">
+        <field name="name">Add IoT PrintNode</field>
+        <field name="res_model">add.iot.printnode</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Menu item under IoT -->
+    <menuitem
+        id="menu_add_iot_printnode"
+        name="Add PrintNode"
+        parent="iot.view_iot_selected_printer_local_action"
+        action="action_add_iot_printnode"
+        sequence="10"/>
+
+</odoo>

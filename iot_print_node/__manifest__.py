@@ -18,12 +18,16 @@
 #
 ##############################################################################
 {
-    "name": "Print Node Printing",
-    "version": "18.0.1.1.0",
+    "name": "IOT Print Node Printing",
+    "version": "19.0.0.1.0",
     "category": "Generic Modules/Base",
-    "author": "ADHOC SA, Odoo Community Association (OCA)",
+    "author": "ADHOC SA",
     "license": "AGPL-3",
-    "depends": ["base_report_to_printer"],
-    "data": ["wizards/res_config_settings_view.xml"],
-    "installable": False,
+    "depends": ["iot"],
+    "data": [
+        "security/ir.model.access.csv",
+        "views/iot_views.xml",
+        "wizard/add_iot_printnode_views.xml",
+    ],
+    "installable": True,
 }
