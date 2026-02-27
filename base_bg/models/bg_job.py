@@ -142,10 +142,7 @@ class BgJob(models.Model):
         Action to open the records related to the job
         """
         self.ensure_one()
-        model = self.env[self.model]
-        kwargs = self.kwargs_json or {}
-        record_ids = kwargs.get("_record_ids", None)
-        records = model.browse(record_ids) if record_ids else model.browse()
+        records = self._get_records()
         return {
             "name": _("Related Records"),
             "type": "ir.actions.act_window",
@@ -181,11 +178,10 @@ class BgJob(models.Model):
             context.update({"bg_job": True, "bg_job_id": self.id})
 
             # Extract record IDs if present in kwargs or args
-            model = self.env[self.model]
             args = list(self.args_json or [])
             kwargs = dict(self.kwargs_json or {})
-            record_ids = kwargs.pop("_record_ids", [])
-            records = model.browse(record_ids).with_context(**context).with_user(self.create_uid)
+            kwargs.pop("_record_ids")  # Remove _record_ids from kwargs if present
+            records = self._get_records().with_context(**context).with_user(self.create_uid)
 
             # Execute the method and capture the result
             result = getattr(records, self.method)(*args, **kwargs)
@@ -235,7 +231,7 @@ class BgJob(models.Model):
             }
         )
 
-    def fail(self, error_message: str):
+    def fail(self, error_message: str, notify: bool = True):
         """Mark the job as failed with an error message."""
         self.write(
             {
@@ -244,6 +240,12 @@ class BgJob(models.Model):
                 "error_message": error_message,
             }
         )
+        if notify:
+            message = _("Job %s failed: %s") % (self.name, error_message)
+            records = self._get_records().mapped(lambda r: r and r._get_html_link())
+            if records:
+                message += "<br/>" + _("Related records: %s") % (", ".join(records))
+            self._notify_user(message)
 
     def cancel(self, message: str | None = None):
         """Cancel the jobs received."""
@@ -254,6 +256,17 @@ class BgJob(models.Model):
                 "error_message": message,
             }
         )
+
+    def _get_records(self) -> models.BaseModel:
+        """
+        Helper method to retrieve the records related to the job based on the kwargs.
+
+        :return: A recordset of the related records
+        """
+        kwargs = dict(self.kwargs_json or {})
+        record_ids = kwargs.get("_record_ids", [])
+        records = self.env[self.model].browse(record_ids)
+        return records
 
     def _handle_job_error(self, error: Exception | str):
         """
