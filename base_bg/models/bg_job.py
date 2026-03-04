@@ -293,8 +293,8 @@ class BgJob(models.Model):
         """
         channel = (
             self.env["discuss.channel"]
-            .sudo()
             .with_user(self.create_uid)
+            .sudo()
             ._get_or_create_chat([self.create_uid.partner_id.id])
         )
         partner_root_id = self.env.ref("base.partner_root").id
