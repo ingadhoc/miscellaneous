@@ -1,0 +1,64 @@
+/*
+ * Estilos para el módulo base_company_dependant.
+ *
+ * .o_cd_m2o_wrapper   : wrapper del campo Many2One extendido.
+ * .o_cd_fallback      : activa el estilo «muted» cuando el valor es el fallback global.
+ * .o_cd_btn           : botón fa-building-o inline.
+ */
+
+/* ── Wrapper del campo extendido ─────────────────────────────────────────── */
+.o_cd_m2o_wrapper {
+    /* Asegurar que el wrapper no rompa el layout del formulario */
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+}
+
+.o_cd_m2o_wrapper > .flex-grow-1 {
+    min-width: 0; /* Evitar overflow en flex containers */
+}
+
+/* ── Estado fallback: texto del campo en gris/muted ─────────────────────── */
+.o_cd_fallback .o_input,
+.o_cd_fallback .o_form_uri,
+.o_cd_fallback .o_external_button,
+.o_cd_fallback .o_m2o_input {
+    color: var(--bs-secondary-color, #6c757d) !important;
+    font-style: italic;
+}
+
+/* En modo readonly, el texto se renderiza como un link */
+.o_cd_fallback .o_field_many2one_selection .o_form_uri {
+    color: var(--bs-secondary-color, #6c757d) !important;
+    font-style: italic;
+}
+
+/* ── Botón del ícono fa-building-o ──────────────────────────────────────── */
+.o_cd_btn {
+    flex-shrink: 0;
+    line-height: 1;
+    padding: 0 2px !important;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+}
+
+.o_cd_btn:hover {
+    opacity: 1;
+}
+
+.o_cd_btn .fa {
+    font-size: 0.9rem;
+}
+
+/* ── Diálogo ─────────────────────────────────────────────────────────────── */
+.o_cd_dialog .table th {
+    background-color: var(--bs-light, #f8f9fa);
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.o_cd_dialog .table td {
+    vertical-align: middle;
+}
