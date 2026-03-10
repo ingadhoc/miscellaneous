@@ -35,7 +35,6 @@
         "views/ir_actions_act_window_view.xml",
         "views/mail_template_view.xml",
         "views/res_company_view.xml",
-        "views/res_partner_views.xml",
         "views/base_partner_merge_view.xml",
         "views/mail_activity_schedule_view.xml",
     ],
