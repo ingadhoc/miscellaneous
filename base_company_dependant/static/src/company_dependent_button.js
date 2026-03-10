@@ -34,11 +34,11 @@ export class CompanyDependentButton extends Component {
 
     get title() {
         if (this.props.isSpecific === null) {
-            return _t("Cargando información de compañías…");
+            return _t("Loading company information…");
         }
         return this.props.isSpecific
-            ? _t("Valor específico para esta compañía. Clic para gestionar.")
-            : _t("Valor por defecto (fallback). Clic para gestionar.");
+            ? _t("Specific value for this company. Click to manage.")
+            : _t("Default value (fallback). Click to manage.");
     }
 
     async onClick() {
