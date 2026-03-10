@@ -122,14 +122,24 @@ class BaseCompanyDependant(models.AbstractModel):
             display_value = None
 
             if field.type == "many2one":
-                if raw_val:
-                    value_id = int(raw_val)
-                    display_value = self._resolve_m2o_display(field.comodel_name, value_id)
-                # raw_val == False => campo vacío de forma explícita
-                elif is_specific and raw_val is False:
-                    # Valor específico = vacío. is_specific=True, value_id=None.
-                    pass
+                if is_specific:
+                    # Valor almacenado explícitamente para esta compañía.
+                    # raw_val == False significa «vacío explícito»; value_id permanece None.
+                    if raw_val:
+                        value_id = int(raw_val)
+                        display_value = self._resolve_m2o_display(field.comodel_name, value_id)
+                else:
+                    # Valor heredado del fallback global (ir.default).
+                    # ir.default._get puede devolver un entero, un recordset o None/False.
+                    if fallback_value:
+                        try:
+                            fb_id = fallback_value.id if hasattr(fallback_value, "id") else int(fallback_value)
+                            value_id = fb_id
+                            display_value = self._resolve_m2o_display(field.comodel_name, fb_id)
+                        except (TypeError, ValueError):
+                            pass
             elif field.type in ("float", "integer"):
+                raw_val = raw_json[company_key] if is_specific else fallback_value
                 value_id = raw_val
                 display_value = str(raw_val) if raw_val is not None else None
 
