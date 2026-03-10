@@ -17,6 +17,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+import ast
 import json
 import logging
 
@@ -81,6 +82,44 @@ class BaseCompanyDependant(models.AbstractModel):
             pass
         return None
 
+    def _get_field_static_domain(self, field, model_obj):
+        """Devuelve el domain estático de un campo relacional como objeto Domain.
+
+        Maneja los tres formatos posibles del atributo ``field.domain``:
+
+        * **Callable** → se llama con ``model_obj`` y el resultado se convierte.
+        * **list / Domain** → se usa directamente.
+        * **str** → se parsea con ``ast.literal_eval``.
+          En Odoo 19, ``get_comodel_domain`` descarta los dominios string con
+          un ``return Domain.TRUE`` (los considera solo para el cliente), por lo
+          que es imprescindible este paso adicional.
+        """
+        raw = field.domain
+
+        # --- callable (puede devolver list, Domain o incluso str) ---
+        if callable(raw):
+            try:
+                raw = raw(model_obj)
+            except Exception:
+                return Domain.TRUE
+
+        # --- Domain / list ---
+        if isinstance(raw, (Domain, list)) and raw:
+            try:
+                return Domain(raw)
+            except Exception:
+                return Domain.TRUE
+
+        # --- string: parsear con ast.literal_eval (dominios simples) ---
+        if isinstance(raw, str) and raw.strip():
+            try:
+                parsed = ast.literal_eval(raw.strip())
+                return Domain(parsed)
+            except (ValueError, SyntaxError):
+                pass
+
+        return Domain.TRUE
+
     # ------------------------------------------------------------------
     # API pública (llamada desde el frontend via RPC)
     # ------------------------------------------------------------------
@@ -109,14 +148,16 @@ class BaseCompanyDependant(models.AbstractModel):
 
         raw_json = self._get_raw_json(model_obj._table, field_name, res_id)
 
-        # Fallback global: resolvemos mediante default_get para incluir también los
-        # defaults definidos en el código del modelo (default=...), no solo ir.default.
-        fallback_value = model_obj.default_get([field_name]).get(field_name)
-
         values = []
         for company in self.env.companies:
             company_key = str(company.id)
             is_specific = company_key in raw_json
+
+            # El fallback se resuelve por compañía para que cada fila muestre el
+            # default correcto según su propio contexto (plan contable, moneda, etc.)
+            # y no el de la compañía activa del usuario.
+            fallback_value = model_obj.with_company(company).default_get([field_name]).get(field_name)
+
             raw_val = raw_json[company_key] if is_specific else fallback_value
 
             value_id = None
@@ -146,12 +187,11 @@ class BaseCompanyDependant(models.AbstractModel):
 
             # Domain efectivo para el autocomplete de esta fila:
             # domain estático del campo + domain de compañía concreta.
-            # Ambos lados se normalizan con Domain() para soportar el caso en que
-            # _check_company_domain esté sobreescrito y devuelva una list.
+            # _get_field_static_domain maneja dominios string, list y callable.
             row_domain = []
             if field.type == "many2one":
                 comodel = self.env[field.comodel_name]
-                static_domain = Domain(field.get_comodel_domain(model_obj))
+                static_domain = self._get_field_static_domain(field, model_obj)
                 company_domain = Domain(comodel._check_company_domain(company))
                 row_domain = list(static_domain & company_domain)
 
@@ -194,8 +234,8 @@ class BaseCompanyDependant(models.AbstractModel):
         company = self.env["res.company"].browse(company_id)
         comodel = self.env[field.comodel_name]
 
-        # Normalizamos con Domain() para soportar overrides que devuelvan lista
-        static_domain = Domain(field.get_comodel_domain(model_obj))
+        # _get_field_static_domain maneja dominios string, list y callable
+        static_domain = self._get_field_static_domain(field, model_obj)
         company_domain = Domain(comodel._check_company_domain(company))
 
         effective = static_domain & company_domain
@@ -204,6 +244,11 @@ class BaseCompanyDependant(models.AbstractModel):
     @api.model
     def set_company_dependent_values(self, res_model, res_id, field_name, values_dict):
         """Guarda valores por compañía para un campo company_dependent.
+
+        Para valores explícitos (IDs o False) se usa el ORM con ``with_company``
+        de modo que los checks de compañía y las reglas de acceso se ejecuten
+        correctamente. Solo el caso ``"RESET"`` (eliminar la clave del JSON)
+        requiere una escritura directa, ya que el ORM no expone esa operación.
 
         :param values_dict: dict ``{str(company_id): value}`` donde *value* puede ser:
             - Un ID de registro (Many2one).
@@ -217,19 +262,24 @@ class BaseCompanyDependant(models.AbstractModel):
         if not field or not field.company_dependent:
             raise ValueError(f"El campo '{field_name}' en '{res_model}' no es company_dependent.")
 
-        raw_json = self._get_raw_json(model_obj._table, field_name, res_id)
+        record = model_obj.browse(res_id)
 
         for company_id_str, value in values_dict.items():
-            key = str(company_id_str)
+            company_id = int(company_id_str)
             if value == "RESET":
-                raw_json.pop(key, None)
+                # RESET: el ORM no tiene un mecanismo nativo para eliminar la
+                # clave de un campo company_dependent del JSON, así que se opera
+                # directamente sobre la columna y se invalida la caché a mano.
+                raw_json = self._get_raw_json(model_obj._table, field_name, res_id)
+                raw_json.pop(str(company_id), None)
+                self._write_raw_json(model_obj._table, field_name, res_id, raw_json)
+                record.invalidate_recordset([field_name])
             else:
-                raw_json[key] = value
+                # Valor explícito (ID o False): usamos el ORM con with_company
+                # para que check_company, ondelete y demás validaciones se apliquen.
+                company = self.env["res.company"].browse(company_id)
+                record.with_company(company).write({field_name: value})
 
-        self._write_raw_json(model_obj._table, field_name, res_id, raw_json)
-
-        # Invalida la caché del ORM para que la vista se refresque con el nuevo valor.
-        model_obj.browse(res_id).invalidate_recordset([field_name])
         return True
 
     @api.model
