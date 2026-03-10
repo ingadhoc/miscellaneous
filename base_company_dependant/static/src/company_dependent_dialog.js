@@ -33,7 +33,7 @@ export class CompanyDependentDialog extends Component {
         this.cdService = useService("company_dependent");
         this.notification = useService("notification");
 
-        this.title = _t("Valores por compañía: %s", this.props.fieldName);
+        this.title = _t("Company Values: %s", this.props.fieldName);
 
         this.state = useState({
             rows: [],           // [{company_id, company_name, is_specific, value_id, display_value}]
@@ -52,7 +52,7 @@ export class CompanyDependentDialog extends Component {
     // ---------------------------------------------------------------
 
     get autoCompletePlaceholder() {
-        return _t("Sin valor (vaciar explicitamente)");
+        return _t("No value (explicitly clear)");
     }
 
     /**
@@ -65,29 +65,49 @@ export class CompanyDependentDialog extends Component {
     }
 
     get resetButtonTitle() {
-        return _t("Restaurar al valor por defecto (elimina la clave del JSON)");
+        return _t("Restore to default value (removes the JSON key)");
     }
 
     get labelSpecific() {
-        return _t("Especifico");
+        return _t("Specific");
     }
 
     get labelDefault() {
-        return _t("Por Defecto");
+        return _t("Default");
     }
 
     get loadingText() {
-        return _t("Cargando valores por compania...");
+        return _t("Loading company values...");
     }
 
     get footerNoteHtml() {
-        // Devuelve partes separadas para el template (evita innerHTML crudo)
+        // Returns separate parts for the template (avoids raw innerHTML)
         return {
-            vaciar: _t("Vaciar"),
-            vaciarDesc: _t("guarda un valor vacio explicito (badge Especifico)."),
+            vaciar: _t("Clear"),
+            vaciarDesc: _t("saves an explicit empty value (Specific badge)."),
             reset: _t("Reset"),
-            resetDesc: _t("elimina la clave del JSON y restaura el valor por defecto global."),
+            resetDesc: _t("removes the JSON key and restores the global default value."),
         };
+    }
+
+    get labelCompany() {
+        return _t("Company");
+    }
+
+    get labelValue() {
+        return _t("Value");
+    }
+
+    get labelStatus() {
+        return _t("Status");
+    }
+
+    get labelSave() {
+        return _t("Save");
+    }
+
+    get labelDiscard() {
+        return _t("Discard");
     }
 
     // ---------------------------------------------------------------
@@ -259,7 +279,7 @@ export class CompanyDependentDialog extends Component {
         this.cdService.invalidate(this.props.resModel, this.props.resId);
 
         this.notification.add(
-            _t("Valores guardados correctamente."),
+            _t("Values saved successfully."),
             { type: "success" },
         );
 
