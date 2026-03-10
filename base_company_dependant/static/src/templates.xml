@@ -94,7 +94,7 @@
                                                     value="getDisplayValue(row)"
                                                     sources="getAutoCompleteSources(row)"
                                                     onChange="(info) => this.onAutoCompleteChange(row, info)"
-                                                    placeholder="autoCompletePlaceholder"
+                                                    placeholder="getRowPlaceholder(row)"
                                                     class="'o_input w-100'"
                                                 />
                                             </div>
