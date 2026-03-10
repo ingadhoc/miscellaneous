@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!--
+        Template extendido de Many2OneField.
+        Reemplaza al original ``web.Many2OneField`` añadiendo:
+          - wrapper div con clase dinámica o_cd_fallback (activa el estilo muted).
+          - CompanyDependentButton justo a la derecha del input.
+    -->
+    <t t-name="base_company_dependant.Many2OneField">
+        <!--
+            Usamos un wrapper posicionado para poder colocar el botón inline.
+            La clase o_cd_fallback activa el CSS que pone el texto en gris.
+        -->
+        <div class="o_cd_m2o_wrapper d-flex align-items-center gap-1 w-100"
+             t-att-class="{ 'o_cd_fallback': isCompanyDependent &amp;&amp; _cdState.isSpecific === false }">
+            <div class="flex-grow-1">
+                <Many2One t-props="m2oProps"/>
+            </div>
+            <CompanyDependentButton
+                t-if="isCompanyDependent"
+                fieldName="props.name"
+                record="props.record"
+                isSpecific="_cdState.isSpecific"
+                onSaved="() => this._loadCDMeta()"
+            />
+        </div>
+    </t>
+
+    <!-- ──────────────────────────────────────────────────────────────────── -->
+    <!--  CompanyDependentButton                                              -->
+    <!-- ──────────────────────────────────────────────────────────────────── -->
+    <t t-name="base_company_dependant.CompanyDependentButton">
+        <button
+            class="o_cd_btn btn btn-link p-0 ms-1"
+            type="button"
+            t-att-title="title"
+            t-on-click.prevent="onClick"
+        >
+            <i t-att-class="{
+                'fa fa-building-o': true,
+                'text-primary': props.isSpecific === true,
+                'text-muted':   props.isSpecific === false,
+                'text-secondary opacity-50': props.isSpecific === null,
+            }"/>
+        </button>
+    </t>
+
+    <!-- ──────────────────────────────────────────────────────────────────── -->
+    <!--  CompanyDependentDialog                                              -->
+    <!-- ──────────────────────────────────────────────────────────────────── -->
+    <t t-name="base_company_dependant.CompanyDependentDialog">
+        <Dialog t-props="{ title: title, size: 'lg' }">
+            <div class="o_cd_dialog">
+
+                <!-- Estado de carga -->
+                <t t-if="!state.rows.length">
+                    <div class="text-center text-muted py-4">
+                        <i class="fa fa-spinner fa-spin me-2"/>
+                        <t t-esc="loadingText"/>
+                    </div>
+                </t>
+
+                <!-- Tabla de valores -->
+                <t t-else="">
+                    <table class="table table-sm table-bordered align-middle">
+                        <thead>
+                            <tr>
+                                <th>Compañía</th>
+                                <th>Valor</th>
+                                <th class="text-center" style="width:130px">Estado</th>
+                                <th class="text-center" style="width:60px">Reset</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="state.rows" t-as="row" t-key="row.company_id">
+                                <tr>
+                                    <!-- Columna 1: nombre de la compañía -->
+                                    <td>
+                                        <t t-esc="row.company_name"/>
+                                    </td>
+
+                                    <!-- Columna 2: input de valor -->
+                                    <td>
+                                        <t t-if="state.fieldType === 'many2one'">
+                                            <AutoComplete
+                                                value="getDisplayValue(row)"
+                                                sources="getAutoCompleteSources(row)"
+                                                onChange="(info) => this.onAutoCompleteChange(row, info)"
+                                                placeholder="autoCompletePlaceholder"
+                                                class="'o_input w-100'"
+                                            />
+                                        </t>
+                                        <t t-elif="state.fieldType === 'float' || state.fieldType === 'integer'">
+                                            <input
+                                                type="number"
+                                                class="o_input w-100"
+                                                t-att-value="getDisplayValue(row)"
+                                                t-on-change="(ev) => this.onSelectValue(row, {
+                                                    value: state.fieldType === 'integer'
+                                                           ? parseInt(ev.target.value)
+                                                           : parseFloat(ev.target.value),
+                                                    label: ev.target.value
+                                                })"
+                                            />
+                                        </t>
+                                    </td>
+
+                                    <!-- Columna 3: badge de estado -->
+                                    <td class="text-center">
+                                        <t t-if="isSpecificRow(row)">
+                                            <span class="badge text-bg-primary">
+                                                <i class="fa fa-lock me-1"/><t t-esc="labelSpecific"/>
+                                            </span>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="badge text-bg-secondary">
+                                                <i class="fa fa-globe me-1"/><t t-esc="labelDefault"/>
+                                            </span>
+                                        </t>
+                                    </td>
+
+                                    <!-- Columna 4: botón Reset (elimina la clave del JSON) -->
+                                    <td class="text-center">
+                                        <button
+                                            type="button"
+                                            class="btn btn-sm btn-outline-danger"
+                                            t-att-disabled="!isSpecificRow(row)"
+                                            t-att-title="resetButtonTitle"
+                                            t-on-click="() => this.onResetRow(row)"
+                                        >
+                                            <i class="fa fa-undo"/>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <!-- Nota aclaratoria -->
+                    <div class="alert alert-info py-2 small mt-2">
+                        <i class="fa fa-info-circle me-1"/>
+                        <strong><t t-esc="footerNoteHtml.vaciar"/></strong>
+                        <t t-esc="footerNoteHtml.vaciarDesc"/>
+                        <strong><t t-esc="footerNoteHtml.reset"/></strong>
+                        <em><t t-esc="footerNoteHtml.resetDesc"/></em>
+                    </div>
+                </t>
+            </div>
+
+            <!-- Footer del diálogo -->
+            <t t-set-slot="footer">
+                <button class="btn btn-primary" t-on-click="onSave">
+                    <i class="fa fa-save me-1"/>Guardar
+                </button>
+                <button class="btn btn-secondary" t-on-click="props.close">
+                    Descartar
+                </button>
+            </t>
+        </Dialog>
+    </t>
+
+</templates>
