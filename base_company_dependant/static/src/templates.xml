@@ -83,18 +83,26 @@
                                     <!-- Columna 2: input de valor -->
                                     <td>
                                         <t t-if="state.fieldType === 'many2one'">
-                                            <AutoComplete
-                                                value="getDisplayValue(row)"
-                                                sources="getAutoCompleteSources(row)"
-                                                onChange="(info) => this.onAutoCompleteChange(row, info)"
-                                                placeholder="autoCompletePlaceholder"
-                                                class="'o_input w-100'"
-                                            />
+                                            <!--
+                                                Wrapper con clase o_cd_fallback cuando la fila no tiene valor
+                                                específico, de modo que el CSS existente pone el texto en gris.
+                                                Al seleccionar un valor la fila pasa a is_specific=true y el
+                                                gris desaparece de forma reactiva.
+                                            -->
+                                            <div t-att-class="{ 'o_cd_fallback': !isSpecificRow(row) }">
+                                                <AutoComplete
+                                                    value="getDisplayValue(row)"
+                                                    sources="getAutoCompleteSources(row)"
+                                                    onChange="(info) => this.onAutoCompleteChange(row, info)"
+                                                    placeholder="autoCompletePlaceholder"
+                                                    class="'o_input w-100'"
+                                                />
+                                            </div>
                                         </t>
                                         <t t-elif="state.fieldType === 'float' || state.fieldType === 'integer'">
                                             <input
                                                 type="number"
-                                                class="o_input w-100"
+                                                t-att-class="'o_input w-100' + (!isSpecificRow(row) ? ' text-muted' : '')"
                                                 t-att-value="getDisplayValue(row)"
                                                 t-on-change="(ev) => this.onSelectValue(row, {
                                                     value: state.fieldType === 'integer'

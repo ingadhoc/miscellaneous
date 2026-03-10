@@ -25,13 +25,11 @@
 .o_cd_fallback .o_external_button,
 .o_cd_fallback .o_m2o_input {
     color: var(--bs-secondary-color, #6c757d) !important;
-    font-style: italic;
 }
 
 /* En modo readonly, el texto se renderiza como un link */
 .o_cd_fallback .o_field_many2one_selection .o_form_uri {
     color: var(--bs-secondary-color, #6c757d) !important;
-    font-style: italic;
 }
 
 /* ── Botón del ícono fa-building-o ──────────────────────────────────────── */
