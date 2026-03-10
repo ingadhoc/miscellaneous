@@ -61,7 +61,11 @@ export class CompanyDependentDialog extends Component {
      * un valor por defecto visible, el placeholder queda vacío para no solaparse.
      */
     getRowPlaceholder(row) {
-        return this.getDisplayValue(row) ? "" : this.autoCompletePlaceholder;
+        const effective = this._getEffectiveRow(row);
+        if (effective.display_value) return "";
+        // Only show the "explicit clear" hint when the row is deliberately set
+        // to specific-but-empty. In fallback state show an empty placeholder.
+        return effective.is_specific ? this.autoCompletePlaceholder : "";
     }
 
     get resetButtonTitle() {
@@ -138,7 +142,12 @@ export class CompanyDependentDialog extends Component {
         const change = this.state.changes[row.company_id];
         if (!change) return row;
         if (change.is_reset) {
-            return { ...row, is_specific: false, value_id: null, display_value: null };
+            return {
+                ...row,
+                is_specific: false,
+                value_id: row.fallback_value_id ?? null,
+                display_value: row.fallback_display_value ?? null,
+            };
         }
         return {
             ...row,

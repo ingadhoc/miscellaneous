@@ -153,17 +153,34 @@ class BaseCompanyDependant(models.AbstractModel):
             company_key = str(company.id)
             is_specific = company_key in raw_json
 
-            # El fallback se resuelve por compañía para que cada fila muestre el
-            # default correcto según su propio contexto (plan contable, moneda, etc.)
-            # y no el de la compañía activa del usuario.
-            fallback_value = model_obj.with_company(company).default_get([field_name]).get(field_name)
+            # El fallback se resuelve usando el mismo mecanismo que el ORM en SQL:
+            # COALESCE(jsonb->company_id, to_jsonb(ir_default_fallback)).
+            # get_company_dependent_fallback lee ir.default con SUPERUSER, igual
+            # que hace el ORM al evaluar el campo, garantizando consistencia.
+            model_with_company = model_obj.with_company(company)
+            try:
+                fallback_rec = field.get_company_dependent_fallback(model_with_company)
+                fallback_value = field.convert_to_write(fallback_rec, model_with_company)
+            except Exception:
+                fallback_value = None
 
             raw_val = raw_json[company_key] if is_specific else fallback_value
 
             value_id = None
             display_value = None
+            fallback_value_id = None
+            fallback_display_value = None
 
             if field.type == "many2one":
+                # Siempre calculamos el fallback para poder mostrarlo al resetear.
+                if fallback_value:
+                    try:
+                        fb_id = fallback_value.id if hasattr(fallback_value, "id") else int(fallback_value)
+                        fallback_value_id = fb_id
+                        fallback_display_value = self._resolve_m2o_display(field.comodel_name, fb_id)
+                    except (TypeError, ValueError):
+                        pass
+
                 if is_specific:
                     # Valor almacenado explícitamente para esta compañía.
                     # raw_val == False significa «vacío explícito»; value_id permanece None.
@@ -172,18 +189,14 @@ class BaseCompanyDependant(models.AbstractModel):
                         display_value = self._resolve_m2o_display(field.comodel_name, value_id)
                 else:
                     # Valor heredado del fallback global (ir.default).
-                    # ir.default._get puede devolver un entero, un recordset o None/False.
-                    if fallback_value:
-                        try:
-                            fb_id = fallback_value.id if hasattr(fallback_value, "id") else int(fallback_value)
-                            value_id = fb_id
-                            display_value = self._resolve_m2o_display(field.comodel_name, fb_id)
-                        except (TypeError, ValueError):
-                            pass
+                    value_id = fallback_value_id
+                    display_value = fallback_display_value
             elif field.type in ("float", "integer"):
                 raw_val = raw_json[company_key] if is_specific else fallback_value
                 value_id = raw_val
                 display_value = str(raw_val) if raw_val is not None else None
+                fallback_value_id = fallback_value
+                fallback_display_value = str(fallback_value) if fallback_value is not None else None
 
             # Domain efectivo para el autocomplete de esta fila:
             # domain estático del campo + domain de compañía concreta.
@@ -202,6 +215,8 @@ class BaseCompanyDependant(models.AbstractModel):
                     "is_specific": is_specific,
                     "value_id": value_id,
                     "display_value": display_value,
+                    "fallback_value_id": fallback_value_id,
+                    "fallback_display_value": fallback_display_value,
                     "domain": row_domain,
                 }
             )
@@ -266,19 +281,37 @@ class BaseCompanyDependant(models.AbstractModel):
 
         for company_id_str, value in values_dict.items():
             company_id = int(company_id_str)
+            company = self.env["res.company"].browse(company_id)
+            record_with_company = record.with_company(company)
+
             if value == "RESET":
-                # RESET: el ORM no tiene un mecanismo nativo para eliminar la
-                # clave de un campo company_dependent del JSON, así que se opera
-                # directamente sobre la columna y se invalida la caché a mano.
-                raw_json = self._get_raw_json(model_obj._table, field_name, res_id)
-                raw_json.pop(str(company_id), None)
-                self._write_raw_json(model_obj._table, field_name, res_id, raw_json)
-                record.invalidate_recordset([field_name])
+                # RESET: escribimos el valor de fallback via ORM.
+                # La query UPDATE del ORM para company_dependent hace:
+                #   JOIN fallbacks ON d.key = f.key AND d.value != f.value
+                # Con lo cual descarta la clave cuando value == fallback, logrando
+                # exactamente el efecto de "eliminar la clave del JSON".
+                # A diferencia del raw SQL, este camino dispara recomputes y hooks.
+                fallback_rec = field.get_company_dependent_fallback(record_with_company)
+                write_val = field.convert_to_write(fallback_rec, record_with_company)
+                record_with_company.write({field_name: write_val})
             else:
                 # Valor explícito (ID o False): usamos el ORM con with_company
                 # para que check_company, ondelete y demás validaciones se apliquen.
-                company = self.env["res.company"].browse(company_id)
-                record.with_company(company).write({field_name: value})
+                record_with_company.write({field_name: value})
+                # El ORM descarta la clave del JSONB cuando value == fallback.
+                # En ese caso forzamos la clave via raw SQL para que la asignación
+                # explícita sobreviva a futuros cambios del valor por defecto.
+                fallback_rec = field.get_company_dependent_fallback(record_with_company)
+                fallback_column = field.convert_to_column(
+                    field.convert_to_write(fallback_rec, record_with_company),
+                    record_with_company,
+                )
+                write_column = field.convert_to_column(value, record_with_company)
+                if write_column == fallback_column:
+                    raw_json = self._get_raw_json(model_obj._table, field_name, res_id)
+                    raw_json[str(company_id)] = value  # False → null en JSON
+                    self._write_raw_json(model_obj._table, field_name, res_id, raw_json)
+                    record.invalidate_recordset([field_name])
 
         return True
 
