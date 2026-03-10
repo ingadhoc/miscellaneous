@@ -109,8 +109,9 @@ class BaseCompanyDependant(models.AbstractModel):
 
         raw_json = self._get_raw_json(model_obj._table, field_name, res_id)
 
-        # Fallback global: ir.default
-        fallback_value = self.env["ir.default"]._get(res_model, field_name)
+        # Fallback global: resolvemos mediante default_get para incluir también los
+        # defaults definidos en el código del modelo (default=...), no solo ir.default.
+        fallback_value = model_obj.default_get([field_name]).get(field_name)
 
         values = []
         for company in self.env.companies:

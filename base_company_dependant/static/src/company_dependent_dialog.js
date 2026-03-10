@@ -55,6 +55,15 @@ export class CompanyDependentDialog extends Component {
         return _t("Sin valor (vaciar explicitamente)");
     }
 
+    /**
+     * Placeholder por fila: muestra el texto de "vaciar explícitamente" únicamente
+     * cuando la fila no tiene ningún valor (ni específico ni fallback). Si tiene
+     * un valor por defecto visible, el placeholder queda vacío para no solaparse.
+     */
+    getRowPlaceholder(row) {
+        return this.getDisplayValue(row) ? "" : this.autoCompletePlaceholder;
+    }
+
     get resetButtonTitle() {
         return _t("Restaurar al valor por defecto (elimina la clave del JSON)");
     }
@@ -221,12 +230,22 @@ export class CompanyDependentDialog extends Component {
 
         // Construir el dict que espera set_company_dependent_values.
         // { str(company_id): value_id | false | "RESET" }
+        // Iteramos sobre las filas (no sobre los cambios directamente) para poder
+        // verificar el estado efectivo y evitar guardar accidentalmente el valor
+        // por defecto (fallback) como si fuera un valor específico.
         const valuesDict = {};
-        for (const [companyId, change] of Object.entries(this.state.changes)) {
+        for (const row of this.state.rows) {
+            const change = this.state.changes[row.company_id];
+            if (!change) continue; // fila sin tocar, no enviar
             if (change.is_reset) {
-                valuesDict[String(companyId)] = "RESET";
+                valuesDict[String(row.company_id)] = "RESET";
             } else {
-                valuesDict[String(companyId)] = change.value_id ?? false;
+                const effective = this._getEffectiveRow(row);
+                // Solo enviamos si la fila quedó como específica (el usuario eligió
+                // un valor o la vació explícitamente). Si de algún modo quedó en
+                // estado fallback, no la incluimos para no contaminar el JSON.
+                if (!effective.is_specific) continue;
+                valuesDict[String(row.company_id)] = effective.value_id ?? false;
             }
         }
 
