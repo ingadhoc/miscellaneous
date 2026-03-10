@@ -23,6 +23,8 @@ export class CompanyDependentButton extends Component {
     static template = "base_company_dependant.CompanyDependentButton";
     static props = {
         fieldName: { type: String },
+        fieldString: { type: String },
+        required: { type: Boolean },
         record: { type: Object },
         isSpecific: { validate: (v) => v === null || typeof v === "boolean" },
         onSaved: { type: Function, optional: true },
@@ -50,6 +52,8 @@ export class CompanyDependentButton extends Component {
         const { resModel, resId } = this.props.record;
         this.addDialog(CompanyDependentDialog, {
             fieldName: this.props.fieldName,
+            fieldString: this.props.fieldString,
+            required: this.props.required,
             resId,
             resModel,
             onSaved: async () => {
