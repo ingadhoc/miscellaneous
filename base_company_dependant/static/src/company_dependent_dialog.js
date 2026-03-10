@@ -22,6 +22,8 @@ export class CompanyDependentDialog extends Component {
     static components = { Dialog, AutoComplete };
     static props = {
         fieldName: { type: String },
+        fieldString: { type: String },
+        required: { type: Boolean },
         resId: { type: Number },
         resModel: { type: String },
         onSaved: { type: Function },
@@ -33,7 +35,7 @@ export class CompanyDependentDialog extends Component {
         this.cdService = useService("company_dependent");
         this.notification = useService("notification");
 
-        this.title = _t("Company Values: %s", this.props.fieldName);
+        this.title = _t("Company Values: %s", this.props.fieldString);
 
         this.state = useState({
             rows: [],           // [{company_id, company_name, is_specific, value_id, display_value}]
@@ -212,7 +214,9 @@ export class CompanyDependentDialog extends Component {
      */
     onAutoCompleteChange(row, info) {
         if (!info.inputValue && !info.isOptionSelected) {
-            this.onClearValue(row);
+            if (!this.props.required) {
+                this.onClearValue(row);
+            }
         }
     }
 

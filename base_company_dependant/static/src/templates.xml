@@ -20,6 +20,8 @@
             <CompanyDependentButton
                 t-if="isCompanyDependent"
                 fieldName="props.name"
+                fieldString="props.record.fields[props.name].string || props.name"
+                required="props.record._isRequired(props.name)"
                 record="props.record"
                 isSpecific="_cdState.isSpecific"
                 onSaved="() => this._loadCDMeta()"
