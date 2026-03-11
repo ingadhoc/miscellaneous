@@ -1,10 +1,10 @@
 /** @odoo-module **/
 
 import { Component, onWillStart, useState } from "@odoo/owl";
-import { Dialog } from "@web/core/dialog/dialog";
 import { AutoComplete } from "@web/core/autocomplete/autocomplete";
-import { useService } from "@web/core/utils/hooks";
+import { Dialog } from "@web/core/dialog/dialog";
 import { _t } from "@web/core/l10n/translation";
+import { useService } from "@web/core/utils/hooks";
 
 /**
  * Diálogo de gestión multicompañía para campos company_dependent.
@@ -18,7 +18,7 @@ import { _t } from "@web/core/l10n/translation";
  * Análogo a TranslationDialog del módulo ``web``.
  */
 export class CompanyDependentDialog extends Component {
-    static template = "base_company_dependant.CompanyDependentDialog";
+    static template = "base_company_dependent.CompanyDependentDialog";
     static components = { Dialog, AutoComplete };
     static props = {
         fieldName: { type: String },
@@ -38,11 +38,13 @@ export class CompanyDependentDialog extends Component {
         this.title = _t("Company Values: %s", this.props.fieldString);
 
         this.state = useState({
-            rows: [],           // [{company_id, company_name, is_specific, value_id, display_value}]
+            rows: [],
             fieldType: null,
             comodelName: null,
             /** Cambios pendientes: Map<company_id, {value_id, is_reset}> */
             changes: {},
+            /** Counter per row to force AutoComplete re-render on revert */
+            revertKeys: {},
         });
 
         onWillStart(() => this._loadValues());
@@ -54,7 +56,7 @@ export class CompanyDependentDialog extends Component {
     // ---------------------------------------------------------------
 
     get autoCompletePlaceholder() {
-        return _t("No value (explicitly clear)");
+        return _t("No value (explicitly False)");
     }
 
     /**
@@ -89,10 +91,8 @@ export class CompanyDependentDialog extends Component {
     get footerNoteHtml() {
         // Returns separate parts for the template (avoids raw innerHTML)
         return {
-            vaciar: _t("Clear"),
-            vaciarDesc: _t("saves an explicit empty value (Specific badge)."),
-            reset: _t("Reset"),
-            resetDesc: _t("removes the JSON key and restores the global default value."),
+            reset: _t("Reset "),
+            resetDesc: _t("removes the set value and restores to the global default value."),
         };
     }
 
@@ -123,7 +123,7 @@ export class CompanyDependentDialog extends Component {
     async _loadValues() {
         const { resModel, resId, fieldName } = this.props;
         const result = await this.orm.call(
-            "base.company.dependant",
+            "base.company.dependent",
             "get_company_dependent_values",
             [resModel, resId, fieldName],
         );
@@ -172,6 +172,16 @@ export class CompanyDependentDialog extends Component {
     // ---------------------------------------------------------------
 
     /**
+     * Returns a unique key for the AutoComplete component of a given row.
+     * Incrementing this key forces OWL to destroy and re-create the component,
+     * which is needed when reverting changes on required fields so the input
+     * text goes back to the effective display value.
+     */
+    getAutoCompleteKey(row) {
+        return `ac-${row.company_id}-${this.state.revertKeys[row.company_id] || 0}`;
+    }
+
+    /**
      * Genera las sources para el componente AutoComplete de una fila.
      *
      * El domain pasado a name_search combina:
@@ -216,6 +226,21 @@ export class CompanyDependentDialog extends Component {
         if (!info.inputValue && !info.isOptionSelected) {
             if (!this.props.required) {
                 this.onClearValue(row);
+            } else {
+                // Campo required: no se puede vaciar. Revertimos cualquier cambio
+                // pendiente para esta fila y notificamos al usuario.
+                delete this.state.changes[row.company_id];
+                // Bump the revert key to force AutoComplete to re-render with the
+                // original (or fallback) display value.
+                this.state.revertKeys[row.company_id] =
+                    (this.state.revertKeys[row.company_id] || 0) + 1;
+                this.notification.add(
+                    _t(
+                        "The field '%s' is required and cannot be empty. The previous value has been restored.",
+                        this.props.fieldString,
+                    ),
+                    { type: "warning" },
+                );
             }
         }
     }
@@ -283,7 +308,7 @@ export class CompanyDependentDialog extends Component {
         }
 
         await this.orm.call(
-            "base.company.dependant",
+            "base.company.dependent",
             "set_company_dependent_values",
             [this.props.resModel, this.props.resId, this.props.fieldName, valuesDict],
         );

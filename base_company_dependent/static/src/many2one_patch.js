@@ -69,4 +69,4 @@ Many2OneField.components = {
 };
 
 // Reemplazamos el template por el nuestro extendido.
-Many2OneField.template = "base_company_dependant.Many2OneField";
+Many2OneField.template = "base_company_dependent.Many2OneField";

@@ -90,7 +90,7 @@ Arquitectura técnica
 Backend
 -------
 
-``base.company.dependant`` (``models.AbstractModel``):
+``base.company.dependent`` (``models.AbstractModel``):
 
 * ``get_company_dependent_values(res_model, res_id, field_name)``
   → valores crudos por compañía (para el modal).
@@ -115,7 +115,7 @@ Instalación
 .. code-block:: bash
 
    # Instalar desde la interfaz de Odoo o con:
-   odoo-bin -d <db> -u base_company_dependant
+   odoo-bin -d <db> -u base_company_dependent
 
 Dependencias
 ============
