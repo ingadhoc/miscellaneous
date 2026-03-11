@@ -20,7 +20,7 @@ import { CompanyDependentDialog } from "./company_dependent_dialog";
  *                                 (el padre recarga el record y refresca cdState).
  */
 export class CompanyDependentButton extends Component {
-    static template = "base_company_dependant.CompanyDependentButton";
+    static template = "base_company_dependent.CompanyDependentButton";
     static props = {
         fieldName: { type: String },
         fieldString: { type: String },

@@ -33,7 +33,7 @@
     "depends": ["base", "web"],
     "assets": {
         "web.assets_backend": [
-            "base_company_dependant/static/src/**/*",
+            "base_company_dependent/static/src/**/*",
         ],
     },
     "data": [],

@@ -7,7 +7,7 @@
           - wrapper div con clase dinámica o_cd_fallback (activa el estilo muted).
           - CompanyDependentButton justo a la derecha del input.
     -->
-    <t t-name="base_company_dependant.Many2OneField">
+    <t t-name="base_company_dependent.Many2OneField">
         <!--
             Usamos un wrapper posicionado para poder colocar el botón inline.
             La clase o_cd_fallback activa el CSS que pone el texto en gris.
@@ -32,7 +32,7 @@
     <!-- ──────────────────────────────────────────────────────────────────── -->
     <!--  CompanyDependentButton                                              -->
     <!-- ──────────────────────────────────────────────────────────────────── -->
-    <t t-name="base_company_dependant.CompanyDependentButton">
+    <t t-name="base_company_dependent.CompanyDependentButton">
         <button
             class="o_cd_btn btn btn-link p-0 ms-1"
             type="button"
@@ -51,7 +51,7 @@
     <!-- ──────────────────────────────────────────────────────────────────── -->
     <!--  CompanyDependentDialog                                              -->
     <!-- ──────────────────────────────────────────────────────────────────── -->
-    <t t-name="base_company_dependant.CompanyDependentDialog">
+    <t t-name="base_company_dependent.CompanyDependentDialog">
         <Dialog t-props="{ title: title, size: 'lg' }">
             <div class="o_cd_dialog">
 
@@ -93,9 +93,10 @@
                                             -->
                                             <div t-att-class="{ 'o_cd_fallback': !isSpecificRow(row) }">
                                                 <AutoComplete
+                                                    t-key="getAutoCompleteKey(row)"
                                                     value="getDisplayValue(row)"
                                                     sources="getAutoCompleteSources(row)"
-                                                    onChange="(info) => this.onAutoCompleteChange(row, info)"
+                                                    onChange.bind="(info) => this.onAutoCompleteChange(row, info)"
                                                     placeholder="getRowPlaceholder(row)"
                                                     class="'o_input w-100'"
                                                 />
@@ -149,9 +150,7 @@
 
                     <!-- Nota aclaratoria -->
                     <div class="alert alert-info py-2 small mt-2">
-                        <i class="fa fa-info-circle me-1"/>
-                        <strong><t t-esc="footerNoteHtml.vaciar"/></strong>
-                        <t t-esc="footerNoteHtml.vaciarDesc"/>
+                    <i class="fa fa-undo"/>
                         <strong><t t-esc="footerNoteHtml.reset"/></strong>
                         <em><t t-esc="footerNoteHtml.resetDesc"/></em>
                     </div>

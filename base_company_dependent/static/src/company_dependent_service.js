@@ -7,7 +7,7 @@ import { registry } from "@web/core/registry";
  * de campos company_dependent.
  *
  * - Al realizar la primera petición para un registro, hace UNA sola llamada
- *   RPC a ``base.company.dependant.get_company_dependent_meta`` (que a su vez
+ *   RPC a ``base.company.dependent.get_company_dependent_meta`` (que a su vez
  *   ejecuta una única query SQL para todos los campos company_dependent
  *   del modelo).
  * - Las llamadas concurrentes al mismo registro comparten la misma Promise.
@@ -51,7 +51,7 @@ class CompanyDependentService {
             return this._cache.get(key);
         }
         const promise = this.orm
-            .call("base.company.dependant", "get_company_dependent_meta", [
+            .call("base.company.dependent", "get_company_dependent_meta", [
                 resModel,
                 resId,
             ])

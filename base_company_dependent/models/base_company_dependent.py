@@ -28,7 +28,7 @@ from psycopg2 import sql
 _logger = logging.getLogger(__name__)
 
 
-class BaseCompanyDependant(models.AbstractModel):
+class BaseCompanyDependent(models.AbstractModel):
     """Proporciona métodos de backend para leer y escribir campos
     company_dependent accediendo directamente a la columna JSONB,
     sin pasar por la resolución del ORM (que devuelve el valor ya
@@ -36,10 +36,10 @@ class BaseCompanyDependant(models.AbstractModel):
 
     Se expone como AbstractModel para poder extenderse en otros módulos,
     pero los métodos @api.model se pueden invocar directamente via RPC
-    desde el frontend usando ``env['base.company.dependant'].call(...)``.
+    desde el frontend usando ``env['base.company.dependent'].call(...)``.
     """
 
-    _name = "base.company.dependant"
+    _name = "base.company.dependent"
     _description = "Helpers para campos company_dependent"
 
     # ------------------------------------------------------------------
@@ -279,21 +279,41 @@ class BaseCompanyDependant(models.AbstractModel):
 
         record = model_obj.browse(res_id)
 
+        # Sanitize corrupted JSONB: replace boolean `false` with `null` so the
+        # ORM can read the field without a PostgreSQL cast error (Many2one
+        # columns expect integer or null, not boolean).
+        if field.type == "many2one":
+            raw_json = self._get_raw_json(model_obj._table, field_name, res_id)
+            sanitized = {k: (None if v is False else v) for k, v in raw_json.items()}
+            if sanitized != raw_json:
+                self._write_raw_json(model_obj._table, field_name, res_id, sanitized)
+                record.invalidate_recordset([field_name])
+
         for company_id_str, value in values_dict.items():
             company_id = int(company_id_str)
             company = self.env["res.company"].browse(company_id)
             record_with_company = record.with_company(company)
 
             if value == "RESET":
-                # RESET: escribimos el valor de fallback via ORM.
-                # La query UPDATE del ORM para company_dependent hace:
-                #   JOIN fallbacks ON d.key = f.key AND d.value != f.value
-                # Con lo cual descarta la clave cuando value == fallback, logrando
-                # exactamente el efecto de "eliminar la clave del JSON".
-                # A diferencia del raw SQL, este camino dispara recomputes y hooks.
+                # RESET: eliminar la clave de la compañía del JSONB para que
+                # el campo vuelva al fallback global (ir.default / COALESCE).
+                #
+                # Intentamos primero la vía ORM: escribir el valor de fallback
+                # hace que el UPDATE del ORM descarte la clave cuando
+                # value == fallback. Pero si el fallback es False y el valor
+                # almacenado también es False (o null), el ORM no ejecuta
+                # UPDATE porque no detecta cambios. En ese caso eliminamos
+                # la clave directamente del JSONB.
                 fallback_rec = field.get_company_dependent_fallback(record_with_company)
                 write_val = field.convert_to_write(fallback_rec, record_with_company)
                 record_with_company.write({field_name: write_val})
+
+                # Verificar si la clave sigue en el JSONB (el ORM no la eliminó).
+                raw_json = self._get_raw_json(model_obj._table, field_name, res_id)
+                if str(company_id) in raw_json:
+                    del raw_json[str(company_id)]
+                    self._write_raw_json(model_obj._table, field_name, res_id, raw_json)
+                    record.invalidate_recordset([field_name])
             else:
                 # Valor explícito (ID o False): usamos el ORM con with_company
                 # para que check_company, ondelete y demás validaciones se apliquen.
@@ -309,7 +329,7 @@ class BaseCompanyDependant(models.AbstractModel):
                 write_column = field.convert_to_column(value, record_with_company)
                 if write_column == fallback_column:
                     raw_json = self._get_raw_json(model_obj._table, field_name, res_id)
-                    raw_json[str(company_id)] = value  # False → null en JSON
+                    raw_json[str(company_id)] = write_column  # None → null en JSON
                     self._write_raw_json(model_obj._table, field_name, res_id, raw_json)
                     record.invalidate_recordset([field_name])
 

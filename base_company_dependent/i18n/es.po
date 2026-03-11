@@ -1,0 +1,145 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* base_company_dependent
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-11 00:00+0000\n"
+"PO-Revision-Date: 2026-03-11 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: Spanish\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
+"1 : 2;\n"
+
+#. module: base_company_dependent
+#: model:ir.model,name:base_company_dependent.model_base_company_dependent
+msgid "Helpers para campos company_dependent"
+msgstr "Helpers para campos company_dependent"
+
+#. module: base_company_dependent
+#: model:ir.model,name:base_company_dependent.model_base
+msgid "Base"
+msgstr "Base"
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "Company Values: %s"
+msgstr "Valores por compañía: %s"
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "No value (explicitly False)"
+msgstr "Sin valor (explícitamente Falso)"
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "Restore to default value (removes the JSON key)"
+msgstr "Restaurar al valor por defecto (elimina la clave del JSON)"
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "Specific"
+msgstr "Específico"
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "Default"
+msgstr "Por defecto"
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "Loading company values..."
+msgstr "Cargando valores por compañía..."
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "Reset "
+msgstr "Restablecer "
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "removes the set value and restores to the global default value."
+msgstr "elimina el valor configurado y restaura al valor por defecto global."
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "Company"
+msgstr "Compañía"
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "Value"
+msgstr "Valor"
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "Status"
+msgstr "Estado"
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "Save"
+msgstr "Guardar"
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "Discard"
+msgstr "Descartar"
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid ""
+"The field '%s' is required and cannot be empty. The previous value has been "
+"restored."
+msgstr ""
+"El campo '%s' es obligatorio y no puede estar vacío. Se restauró el valor "
+"anterior."
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "Values saved successfully."
+msgstr "Valores guardados correctamente."
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_button.js:0
+msgid "Loading company information…"
+msgstr "Cargando información de compañía…"
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_button.js:0
+msgid "Specific value for this company. Click to manage."
+msgstr "Valor específico para esta compañía. Haga clic para gestionar."
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_button.js:0
+msgid "Default value (fallback). Click to manage."
+msgstr "Valor por defecto (heredado). Haga clic para gestionar."
+
+#. module: base_company_dependent
+#: model_terms:ir.ui.view,arch_db:base_company_dependent.CompanyDependentDialog
+msgid "Reset"
+msgstr "Resetear"
