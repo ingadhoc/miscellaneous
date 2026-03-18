@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-29 14:02+0000\n"
+"POT-Creation-Date: 2026-03-18 13:30+0000\n"
 "PO-Revision-Date: 2025-12-22 14:00+0000\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -35,6 +35,12 @@ msgstr ""
 #. module: account_statement_import_sheet_file_bg
 #: model:ir.model,name:account_statement_import_sheet_file_bg.model_account_statement_import
 msgid "Import Bank Statement Files"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_bg
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_bg/models/account_statement_import.py:0
+msgid "No valid encoding was found for the attached file"
 msgstr ""
 
 #. module: account_statement_import_sheet_file_bg
