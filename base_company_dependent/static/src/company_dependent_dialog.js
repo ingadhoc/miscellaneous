@@ -10,8 +10,9 @@ import { useService } from "@web/core/utils/hooks";
  * Diálogo de gestión multicompañía para campos company_dependent.
  *
  * Carga los valores por compañía desde el backend y permite:
- *   - Ver si cada compañía tiene un valor «Específico» o «Por Defecto».
- *   - Editar el valor (Many2One con autocompletado).
+ *   - Ver una estructura jerárquica (hasta 3 niveles) de compañías/sucursales.
+ *   - Editar el valor por compañía (Many2One, Selection, Float, Boolean, Char, Date…).
+ *   - Copiar (propagar) el valor de una compañía padre hacia todas sus hijas.
  *   - Vaciar explícitamente el campo (guarda ``false`` en el JSON).
  *   - Resetear la clave del JSON (restaura al fallback global).
  *
@@ -41,10 +42,12 @@ export class CompanyDependentDialog extends Component {
             rows: [],
             fieldType: null,
             comodelName: null,
+            selectionOptions: [],
             /** Cambios pendientes: Map<company_id, {value_id, is_reset}> */
             changes: {},
             /** Counter per row to force AutoComplete re-render on revert */
             revertKeys: {},
+
         });
 
         onWillStart(() => this._loadValues());
@@ -67,13 +70,15 @@ export class CompanyDependentDialog extends Component {
     getRowPlaceholder(row) {
         const effective = this._getEffectiveRow(row);
         if (effective.display_value) return "";
-        // Only show the "explicit clear" hint when the row is deliberately set
-        // to specific-but-empty. In fallback state show an empty placeholder.
         return effective.is_specific ? this.autoCompletePlaceholder : "";
     }
 
     get resetButtonTitle() {
         return _t("Restore to default value (removes the JSON key)");
+    }
+
+    get copyButtonTitle() {
+        return _t("Copy this value to all child companies");
     }
 
     get labelSpecific() {
@@ -89,10 +94,11 @@ export class CompanyDependentDialog extends Component {
     }
 
     get footerNoteHtml() {
-        // Returns separate parts for the template (avoids raw innerHTML)
         return {
             reset: _t("Reset "),
             resetDesc: _t("removes the set value and restores to the global default value."),
+            copy: _t("Copy "),
+            copyDesc: _t("propagates the value of a parent company to all its child companies."),
         };
     }
 
@@ -110,6 +116,10 @@ export class CompanyDependentDialog extends Component {
 
     get labelSave() {
         return _t("Save");
+    }
+
+    get labelCopy() {
+        return _t("Copy");
     }
 
     get labelDiscard() {
@@ -130,6 +140,48 @@ export class CompanyDependentDialog extends Component {
         this.state.rows = result.values.map((row) => ({ ...row }));
         this.state.fieldType = result.field_type;
         this.state.comodelName = result.comodel_name;
+        this.state.selectionOptions = result.selection_options || [];
+    }
+
+    // ---------------------------------------------------------------
+    // Helpers de jerarquía
+    // ---------------------------------------------------------------
+
+    /**
+     * Construye el árbol ordenado para renderizar en el template.
+     * Devuelve una lista plana donde cada elemento tiene {row, depth, isFirst, isLast}
+     * pero ordenada de forma que padre precede a sus hijos.
+     */
+    get orderedRows() {
+        const rows = this.state.rows;
+        if (!rows.length) return [];
+
+        // Pre-build parent_id → children map for O(n) traversal
+        const childrenMap = {};
+        for (const row of rows) {
+            childrenMap[row.company_id] = [];
+        }
+        for (const row of rows) {
+            if (row.parent_id != null && childrenMap[row.parent_id]) {
+                childrenMap[row.parent_id].push(row);
+            }
+        }
+
+        const roots = rows.filter((r) => r.level === 1);
+        const result = [];
+
+        const addRow = (row, depth) => {
+            result.push({ row, depth });
+            for (const child of childrenMap[row.company_id]) {
+                addRow(child, depth + 1);
+            }
+        };
+
+        for (const root of roots) {
+            addRow(root, 0);
+        }
+
+        return result;
     }
 
     // ---------------------------------------------------------------
@@ -276,45 +328,144 @@ export class CompanyDependentDialog extends Component {
         this.state.changes[row.company_id] = { is_reset: true };
     }
 
+    /**
+     * Maneja cambios en campos de tipo selection.
+     */
+    onSelectionChange(row, ev) {
+        const rawValue = ev.target.value;
+        let value;
+        let option;
+
+        if (rawValue === "__false__" || rawValue === "") {
+            // Empty sentinel or explicit false — always boolean false
+            value = false;
+            option = this.state.selectionOptions.find(([k]) => k === false);
+        } else {
+            // DOM value is always a string; find the option whose key, cast to
+            // string, matches — then use the original typed key to preserve the type.
+            option = this.state.selectionOptions.find(([k]) => String(k) === rawValue);
+            value = option ? option[0] : rawValue;
+        }
+
+        const display_value = option ? String(option[1]) : (value ? String(value) : "");
+        this.state.changes[row.company_id] = {
+            value_id: value,
+            display_value,
+            is_reset: false,
+        };
+    }
+
+    /**
+     * Maneja cambios en campos de tipo boolean (checkbox / toggle).
+     */
+    onBooleanChange(row, ev) {
+        const value = ev.target.checked;
+        this.state.changes[row.company_id] = {
+            value_id: value,
+            display_value: String(value),
+            is_reset: false,
+        };
+    }
+
+    /**
+     * Maneja cambios en campos de tipo char / text / integer / float / date.
+     */
+    onScalarChange(row, ev) {
+        let value = ev.target.value;
+        if (this.state.fieldType === "integer") {
+            value = value !== "" ? parseInt(value, 10) : false;
+        } else if (this.state.fieldType === "float") {
+            value = value !== "" ? parseFloat(value) : false;
+        } else if (value === "") {
+            value = false;
+        }
+        this.state.changes[row.company_id] = {
+            value_id: value,
+            display_value: String(ev.target.value),
+            is_reset: false,
+        };
+    }
+
+    /**
+     * Propagates the current effective value of a parent row to all its
+     * descendants by writing into state.changes (pending, not yet saved).
+     * This ensures that clicking Discard rolls back the copy just like any
+     * other unsaved edit.
+     */
+    onCopyToChildren(row) {
+        const effective = this._getEffectiveRow(row);
+        this._applyToDescendants(row, effective.value_id, effective.display_value);
+    }
+
+    /**
+     * Recursively fills state.changes for all descendants of `row`.
+     */
+    _applyToDescendants(row, value_id, display_value) {
+        const children = this.state.rows.filter((r) => r.parent_id === row.company_id);
+        for (const child of children) {
+            this.state.changes[child.company_id] = { value_id, display_value, is_reset: false };
+            this._applyToDescendants(child, value_id, display_value);
+        }
+    }
+
     // ---------------------------------------------------------------
     // Guardar / Descartar
     // ---------------------------------------------------------------
 
-    async onSave() {
-        if (!Object.keys(this.state.changes).length) {
-            this.props.close();
-            return;
-        }
+    /**
+     * Lógica interna de guardado. Retorna true si tuvo éxito.
+     */
+    async _saveChanges() {
+        if (!Object.keys(this.state.changes).length) return { saved: [], skipped: [] };
 
-        // Construir el dict que espera set_company_dependent_values.
-        // { str(company_id): value_id | false | "RESET" }
-        // Iteramos sobre las filas (no sobre los cambios directamente) para poder
-        // verificar el estado efectivo y evitar guardar accidentalmente el valor
-        // por defecto (fallback) como si fuera un valor específico.
         const valuesDict = {};
         for (const row of this.state.rows) {
             const change = this.state.changes[row.company_id];
-            if (!change) continue; // fila sin tocar, no enviar
+            if (!change) continue;
             if (change.is_reset) {
                 valuesDict[String(row.company_id)] = "RESET";
             } else {
                 const effective = this._getEffectiveRow(row);
-                // Solo enviamos si la fila quedó como específica (el usuario eligió
-                // un valor o la vació explícitamente). Si de algún modo quedó en
-                // estado fallback, no la incluimos para no contaminar el JSON.
                 if (!effective.is_specific) continue;
                 valuesDict[String(row.company_id)] = effective.value_id ?? false;
             }
         }
 
-        await this.orm.call(
+        const result = await this.orm.call(
             "base.company.dependent",
             "set_company_dependent_values",
             [this.props.resModel, this.props.resId, this.props.fieldName, valuesDict],
         );
 
-        // Invalida la caché del servicio para que el formulario refresque isSpecific.
         this.cdService.invalidate(this.props.resModel, this.props.resId);
+        return result;
+    }
+
+    async onSave() {
+        const result = await this._saveChanges();
+        const skipped = result.skipped || [];
+
+        if (skipped.length) {
+            // Some companies could not be saved due to company crossover.
+            // Reload the dialog so it reflects what was actually persisted,
+            // and show a sticky warning listing the incompatible companies.
+            await this._loadValues();
+            this.state.changes = {};
+            this.state.revertKeys = {};
+
+            const skippedNames = skipped.map((s) => s.name).join(", ");
+            this.notification.add(
+                _t(
+                    "Saved %s company value(s). Could not save %s due to company inconsistencies: %s.",
+                    result.saved.length,
+                    skipped.length,
+                    skippedNames,
+                ),
+                { type: "warning", sticky: true },
+            );
+            // Keep the dialog open so the user can see what remains
+            return;
+        }
 
         this.notification.add(
             _t("Values saved successfully."),

@@ -1,6 +1,311 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
 
+    <!-- ──────────────────────────────────────────────────────────────────── -->
+    <!--  SelectionField (company_dependent extension)                        -->
+    <!-- ──────────────────────────────────────────────────────────────────── -->
+    <!--
+        When company_dependent: wraps content in a flex row and appends the
+        building-icon button.  Non-CD fields render identically to the original
+        web.SelectionField template (no extra DOM).
+    -->
+    <t t-name="base_company_dependent.SelectionField">
+        <t t-if="isCompanyDependent">
+            <div class="o_cd_wrapper d-inline-flex align-items-center gap-1 w-100"
+                 t-att-class="{ 'o_cd_fallback': _cdState.isSpecific === false }">
+                <t t-if="props.readonly">
+                    <span t-esc="string" t-att-raw-value="value" class="flex-grow-1"/>
+                </t>
+                <t t-else="">
+                    <SelectMenu autoSort="false" class="'border-0 flex-grow-1'"
+                        menuClass="'o_field_selection_menu w-auto'"
+                        value="value" choices="choices" onSelect.bind="onChange"
+                        placeholder="props.placeholder" id="props.id"
+                        searchable="!isBottomSheet"/>
+                </t>
+                <CompanyDependentButton
+                    fieldName="props.name"
+                    fieldString="props.record.fields[props.name].string || props.name"
+                    required="props.record._isRequired(props.name)"
+                    record="props.record"
+                    isSpecific="_cdState.isSpecific"
+                    onSaved="() => this._loadCDMeta()"
+                />
+            </div>
+        </t>
+        <t t-else="">
+            <t t-if="props.readonly">
+                <span t-esc="string" t-att-raw-value="value"/>
+            </t>
+            <t t-else="">
+                <SelectMenu autoSort="false" class="'border-0'"
+                    menuClass="'o_field_selection_menu w-auto'"
+                    value="value" choices="choices" onSelect.bind="onChange"
+                    placeholder="props.placeholder" id="props.id"
+                    searchable="!isBottomSheet"/>
+            </t>
+        </t>
+    </t>
+
+    <!-- ──────────────────────────────────────────────────────────────────── -->
+    <!--  CharField (company_dependent extension)                             -->
+    <!-- ──────────────────────────────────────────────────────────────────── -->
+    <t t-name="base_company_dependent.CharField">
+        <t t-if="isCompanyDependent">
+            <div class="o_cd_wrapper d-inline-flex align-items-center gap-1 w-100"
+                 t-att-class="{ 'o_cd_fallback': _cdState.isSpecific === false }">
+                <t t-if="props.readonly">
+                    <span class="flex-grow-1" t-esc="formattedValue"/>
+                </t>
+                <t t-else="">
+                    <input
+                        class="o_input flex-grow-1"
+                        t-att-class="{ 'o_field_translate': isTranslatable, 'o_field_placeholder': hasDynamicPlaceholder }"
+                        t-att-id="props.id"
+                        t-att-type="props.isPassword ? 'password' : 'text'"
+                        t-att-autocomplete="props.autocomplete or (props.isPassword ? 'new-password' : 'off')"
+                        t-att-maxlength="maxLength > 0 and maxLength"
+                        t-att-placeholder="props.placeholder"
+                        t-on-blur="onBlur"
+                        t-ref="input"
+                    />
+                    <div class="o_field_input_buttons">
+                        <t t-if="isTranslatable">
+                            <TranslationButton fieldName="props.name" record="props.record"/>
+                        </t>
+                        <button t-if="hasDynamicPlaceholder"
+                            class="btn m-0 py-0 px-2 fa fa-magic"
+                            title="Insert Field"
+                            t-on-click="onDynamicPlaceholderOpen"
+                        />
+                    </div>
+                </t>
+                <CompanyDependentButton
+                    fieldName="props.name"
+                    fieldString="props.record.fields[props.name].string || props.name"
+                    required="props.record._isRequired(props.name)"
+                    record="props.record"
+                    isSpecific="_cdState.isSpecific"
+                    onSaved="() => this._loadCDMeta()"
+                />
+            </div>
+        </t>
+        <t t-else="">
+            <t t-if="props.readonly">
+                <span t-esc="formattedValue"/>
+            </t>
+            <t t-else="">
+                <input
+                    class="o_input"
+                    t-att-class="{ 'o_field_translate': isTranslatable, 'o_field_placeholder': hasDynamicPlaceholder }"
+                    t-att-id="props.id"
+                    t-att-type="props.isPassword ? 'password' : 'text'"
+                    t-att-autocomplete="props.autocomplete or (props.isPassword ? 'new-password' : 'off')"
+                    t-att-maxlength="maxLength > 0 and maxLength"
+                    t-att-placeholder="props.placeholder"
+                    t-on-blur="onBlur"
+                    t-ref="input"
+                />
+                <div class="o_field_input_buttons">
+                    <t t-if="isTranslatable">
+                        <TranslationButton fieldName="props.name" record="props.record"/>
+                    </t>
+                    <button t-if="hasDynamicPlaceholder"
+                        class="btn m-0 py-0 px-2 fa fa-magic"
+                        title="Insert Field"
+                        t-on-click="onDynamicPlaceholderOpen"
+                    />
+                </div>
+            </t>
+        </t>
+    </t>
+
+    <!-- ──────────────────────────────────────────────────────────────────── -->
+    <!--  IntegerField (company_dependent extension)                          -->
+    <!-- ──────────────────────────────────────────────────────────────────── -->
+    <t t-name="base_company_dependent.IntegerField">
+        <t t-if="isCompanyDependent">
+            <div class="o_cd_wrapper d-inline-flex align-items-center gap-1 w-100"
+                 t-att-class="{ 'o_cd_fallback': _cdState.isSpecific === false }">
+                <span t-if="props.readonly" class="flex-grow-1" t-esc="formattedValue"/>
+                <input t-else=""
+                    t-ref="numpadDecimal"
+                    t-on-focusin="onFocusIn"
+                    t-on-focusout="onFocusOut"
+                    t-att-id="props.id"
+                    t-att-min="props.min"
+                    t-att-max="props.max"
+                    t-att-type="props.inputType"
+                    inputmode="numeric"
+                    class="o_input flex-grow-1"
+                    autocomplete="off"
+                    t-att-step="props.step"
+                />
+                <CompanyDependentButton
+                    fieldName="props.name"
+                    fieldString="props.record.fields[props.name].string || props.name"
+                    required="props.record._isRequired(props.name)"
+                    record="props.record"
+                    isSpecific="_cdState.isSpecific"
+                    onSaved="() => this._loadCDMeta()"
+                />
+            </div>
+        </t>
+        <t t-else="">
+            <span t-if="props.readonly" t-esc="formattedValue"/>
+            <input t-else=""
+                t-ref="numpadDecimal"
+                t-on-focusin="onFocusIn"
+                t-on-focusout="onFocusOut"
+                t-att-id="props.id"
+                t-att-min="props.min"
+                t-att-max="props.max"
+                t-att-type="props.inputType"
+                inputmode="numeric"
+                class="o_input"
+                autocomplete="off"
+                t-att-step="props.step"
+            />
+        </t>
+    </t>
+
+    <!-- ──────────────────────────────────────────────────────────────────── -->
+    <!--  FloatField (company_dependent extension)                            -->
+    <!-- ──────────────────────────────────────────────────────────────────── -->
+    <t t-name="base_company_dependent.FloatField">
+        <t t-if="isCompanyDependent">
+            <div class="o_cd_wrapper d-inline-flex align-items-center gap-1 w-100"
+                 t-att-class="{ 'o_cd_fallback': _cdState.isSpecific === false }">
+                <span t-if="props.readonly" class="flex-grow-1" t-esc="formattedValue"/>
+                <input t-else=""
+                    t-on-focusin="onFocusIn"
+                    t-on-focusout="onFocusOut"
+                    t-att-id="props.id"
+                    t-ref="numpadDecimal"
+                    t-att-type="props.inputType"
+                    inputmode="decimal"
+                    class="o_input flex-grow-1"
+                    autocomplete="off"
+                    t-att-step="props.step"
+                />
+                <CompanyDependentButton
+                    fieldName="props.name"
+                    fieldString="props.record.fields[props.name].string || props.name"
+                    required="props.record._isRequired(props.name)"
+                    record="props.record"
+                    isSpecific="_cdState.isSpecific"
+                    onSaved="() => this._loadCDMeta()"
+                />
+            </div>
+        </t>
+        <t t-else="">
+            <span t-if="props.readonly" t-esc="formattedValue"/>
+            <input t-else=""
+                t-on-focusin="onFocusIn"
+                t-on-focusout="onFocusOut"
+                t-att-id="props.id"
+                t-ref="numpadDecimal"
+                t-att-type="props.inputType"
+                inputmode="decimal"
+                class="o_input"
+                autocomplete="off"
+                t-att-step="props.step"
+            />
+        </t>
+    </t>
+
+    <!-- ──────────────────────────────────────────────────────────────────── -->
+    <!--  MonetaryField (company_dependent extension)                         -->
+    <!-- ──────────────────────────────────────────────────────────────────── -->
+    <t t-name="base_company_dependent.MonetaryField">
+        <t t-if="isCompanyDependent">
+            <div class="o_cd_wrapper d-inline-flex align-items-center gap-1 w-100"
+                 t-att-class="{ 'o_cd_fallback': _cdState.isSpecific === false }">
+                <span t-if="props.readonly" class="flex-grow-1" t-esc="formattedValue"/>
+                <div t-else="" class="text-nowrap d-inline-flex flex-grow-1 align-items-baseline position-relative">
+                    <span class="o_input position-absolute pe-none d-flex w-100">
+                        <span t-if="!props.hideSymbol and currency and currency.position === 'before'" t-out="currencySymbol + nbsp"/>
+                        <span class="opacity-0 d-inline-block overflow-hidden mw-100 o_monetary_ghost_value" t-out="state.value"/>
+                        <span t-if="!props.hideSymbol and currency and currency.position === 'after'" t-out="nbsp + currencySymbol"/>
+                    </span>
+                    <span class="opacity-0" t-if="!props.hideSymbol and currency and currency.position === 'before'" t-out="currencySymbol + nbsp"/>
+                    <input t-ref="numpadDecimal" t-on-input="onInput" t-att-id="props.id" t-att-type="props.inputType" class="o_input flex-grow-1 flex-shrink-1" autocomplete="off"/>
+                    <span class="opacity-0" t-if="!props.hideSymbol and currency and currency.position === 'after'" t-out="nbsp + currencySymbol"/>
+                </div>
+                <CompanyDependentButton
+                    fieldName="props.name"
+                    fieldString="props.record.fields[props.name].string || props.name"
+                    required="props.record._isRequired(props.name)"
+                    record="props.record"
+                    isSpecific="_cdState.isSpecific"
+                    onSaved="() => this._loadCDMeta()"
+                />
+            </div>
+        </t>
+        <t t-else="">
+            <span t-if="props.readonly" t-esc="formattedValue"/>
+            <div t-else="" class="text-nowrap d-inline-flex w-100 align-items-baseline position-relative">
+                <span class="o_input position-absolute pe-none d-flex w-100">
+                    <span t-if="!props.hideSymbol and currency and currency.position === 'before'" t-out="currencySymbol + nbsp"/>
+                    <span class="opacity-0 d-inline-block overflow-hidden mw-100 o_monetary_ghost_value" t-out="state.value"/>
+                    <span t-if="!props.hideSymbol and currency and currency.position === 'after'" t-out="nbsp + currencySymbol"/>
+                </span>
+                <span class="opacity-0" t-if="!props.hideSymbol and currency and currency.position === 'before'" t-out="currencySymbol + nbsp"/>
+                <input t-ref="numpadDecimal" t-on-input="onInput" t-att-id="props.id" t-att-type="props.inputType" class="o_input flex-grow-1 flex-shrink-1" autocomplete="off"/>
+                <span class="opacity-0" t-if="!props.hideSymbol and currency and currency.position === 'after'" t-out="nbsp + currencySymbol"/>
+            </div>
+        </t>
+    </t>
+
+    <!-- ──────────────────────────────────────────────────────────────────── -->
+    <!--  BooleanField (company_dependent extension)                          -->
+    <!-- ──────────────────────────────────────────────────────────────────── -->
+    <t t-name="base_company_dependent.BooleanField">
+        <t t-if="isCompanyDependent">
+            <div class="o_cd_wrapper d-inline-flex align-items-center gap-1"
+                 t-att-class="{ 'o_cd_fallback': _cdState.isSpecific === false }">
+                <CheckBox id="props.id" value="state.value" className="'d-inline-block'"
+                    disabled="props.readonly" onChange.bind="onChange"/>
+                <CompanyDependentButton
+                    fieldName="props.name"
+                    fieldString="props.record.fields[props.name].string || props.name"
+                    required="props.record._isRequired(props.name)"
+                    record="props.record"
+                    isSpecific="_cdState.isSpecific"
+                    onSaved="() => this._loadCDMeta()"
+                />
+            </div>
+        </t>
+        <t t-else="">
+            <CheckBox id="props.id" value="state.value" className="'d-inline-block'"
+                disabled="props.readonly" onChange.bind="onChange"/>
+        </t>
+    </t>
+
+    <!-- ──────────────────────────────────────────────────────────────────── -->
+    <!--  DateTimeField (company_dependent extension)                         -->
+    <!--  Uses t-inherit-mode="primary" to add the button inside the          -->
+    <!--  existing d-flex root container without duplicating the template.    -->
+    <!-- ──────────────────────────────────────────────────────────────────── -->
+    <t t-name="base_company_dependent.DateTimeField"
+       t-inherit="web.DateTimeField"
+       t-inherit-mode="primary">
+        <xpath expr="//div[@t-ref='root']" position="attributes">
+            <attribute name="t-att-class">isCompanyDependent and _cdState.isSpecific === false ? 'o_cd_fallback' : ''</attribute>
+        </xpath>
+        <xpath expr="//div[@t-ref='root']" position="inside">
+            <CompanyDependentButton
+                t-if="isCompanyDependent"
+                fieldName="props.name"
+                fieldString="props.record.fields[props.name].string || props.name"
+                required="props.record._isRequired(props.name)"
+                record="props.record"
+                isSpecific="_cdState.isSpecific"
+                onSaved="() => this._loadCDMeta()"
+            />
+        </xpath>
+    </t>
+
     <!--
         Template extendido de Many2OneField.
         Reemplaza al original ``web.Many2OneField`` añadiendo:
@@ -63,34 +368,40 @@
                     </div>
                 </t>
 
-                <!-- Tabla de valores -->
+                <!-- Tabla jerárquica de valores -->
                 <t t-else="">
-                    <table class="table table-sm table-bordered align-middle">
+                    <table class="table table-sm align-middle o_cd_table">
                         <thead>
                             <tr>
                                 <th><t t-esc="labelCompany"/></th>
                                 <th><t t-esc="labelValue"/></th>
-                                <th class="text-center" style="width:130px"><t t-esc="labelStatus"/></th>
-                                <th class="text-center" style="width:60px">Reset</th>
+                                <th class="text-center o_cd_col_status"><t t-esc="labelStatus"/></th>
+                                <th class="text-center o_cd_col_actions">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <t t-foreach="state.rows" t-as="row" t-key="row.company_id">
-                                <tr>
-                                    <!-- Columna 1: nombre de la compañía -->
-                                    <td>
-                                        <t t-esc="row.company_name"/>
+                            <t t-foreach="orderedRows" t-as="item" t-key="item.row.company_id">
+                                <t t-set="row" t-value="item.row"/>
+                                <t t-set="depth" t-value="item.depth"/>
+                                <tr t-att-class="'o_cd_row o_cd_depth_' + depth + (isSpecificRow(row) ? ' o_cd_row_specific' : ' o_cd_row_default')">
+
+                                    <!-- Columna 1: nombre de la compañía con indentación -->
+                                    <td class="o_cd_company_cell">
+                                        <div class="o_cd_company_name" t-att-style="'padding-left: ' + (depth * 20) + 'px'">
+                                            <!-- Indicador de nivel: guion/rama visual -->
+                                            <span t-if="depth > 0" class="o_cd_tree_indent">
+                                                <i class="fa fa-level-down o_cd_tree_icon"/>
+                                            </span>
+                                            <i class="fa fa-building-o o_cd_company_icon me-1"
+                                               t-att-class="{ 'text-primary': depth === 0, 'text-muted': depth > 0 }"/>
+                                            <span t-esc="row.company_name"/>
+                                        </div>
                                     </td>
 
-                                    <!-- Columna 2: input de valor -->
+                                    <!-- Columna 2: input de valor según tipo de campo -->
                                     <td>
+                                        <!-- Many2One -->
                                         <t t-if="state.fieldType === 'many2one'">
-                                            <!--
-                                                Wrapper con clase o_cd_fallback cuando la fila no tiene valor
-                                                específico, de modo que el CSS existente pone el texto en gris.
-                                                Al seleccionar un valor la fila pasa a is_specific=true y el
-                                                gris desaparece de forma reactiva.
-                                            -->
                                             <div t-att-class="{ 'o_cd_fallback': !isSpecificRow(row) }">
                                                 <AutoComplete
                                                     t-key="getAutoCompleteKey(row)"
@@ -102,46 +413,118 @@
                                                 />
                                             </div>
                                         </t>
-                                        <t t-elif="state.fieldType === 'float' || state.fieldType === 'integer'">
+
+                                        <!-- Selection -->
+                                        <t t-elif="state.fieldType === 'selection'">
+                                            <select
+                                                t-att-class="'o_input w-100' + (!isSpecificRow(row) ? ' text-muted' : '')"
+                                                t-on-change="(ev) => this.onSelectionChange(row, ev)"
+                                            >
+                                                <option value="" t-att-selected="_getEffectiveRow(row).value_id === null || _getEffectiveRow(row).value_id === undefined">—</option>
+                                                <t t-foreach="state.selectionOptions" t-as="opt" t-key="opt[0]">
+                                                    <option
+                                                        t-att-value="opt[0] === false ? '__false__' : opt[0]"
+                                                        t-att-selected="_getEffectiveRow(row).value_id === opt[0]"
+                                                    >
+                                                        <t t-esc="opt[1]"/>
+                                                    </option>
+                                                </t>
+                                            </select>
+                                        </t>
+
+                                        <!-- Float / Integer / Monetary -->
+                                        <t t-elif="state.fieldType === 'float' || state.fieldType === 'integer' || state.fieldType === 'monetary'">
                                             <input
                                                 type="number"
                                                 t-att-class="'o_input w-100' + (!isSpecificRow(row) ? ' text-muted' : '')"
                                                 t-att-value="getDisplayValue(row)"
-                                                t-on-change="(ev) => this.onSelectValue(row, {
-                                                    value: state.fieldType === 'integer'
-                                                           ? parseInt(ev.target.value)
-                                                           : parseFloat(ev.target.value),
-                                                    label: ev.target.value
-                                                })"
+                                                t-att-step="state.fieldType === 'integer' ? '1' : 'any'"
+                                                t-on-change="(ev) => this.onScalarChange(row, ev)"
+                                            />
+                                        </t>
+
+                                        <!-- Boolean -->
+                                        <t t-elif="state.fieldType === 'boolean'">
+                                            <div class="form-check form-switch d-flex justify-content-start ms-1">
+                                                <input
+                                                    class="form-check-input"
+                                                    type="checkbox"
+                                                    t-att-checked="_getEffectiveRow(row).value_id"
+                                                    t-on-change="(ev) => this.onBooleanChange(row, ev)"
+                                                />
+                                            </div>
+                                        </t>
+
+                                        <!-- Date -->
+                                        <t t-elif="state.fieldType === 'date'">
+                                            <input
+                                                type="date"
+                                                t-att-class="'o_input w-100' + (!isSpecificRow(row) ? ' text-muted' : '')"
+                                                t-att-value="getDisplayValue(row)"
+                                                t-on-change="(ev) => this.onScalarChange(row, ev)"
+                                            />
+                                        </t>
+
+                                        <!-- Datetime -->
+                                        <t t-elif="state.fieldType === 'datetime'">
+                                            <input
+                                                type="datetime-local"
+                                                t-att-class="'o_input w-100' + (!isSpecificRow(row) ? ' text-muted' : '')"
+                                                t-att-value="getDisplayValue(row)"
+                                                t-on-change="(ev) => this.onScalarChange(row, ev)"
+                                            />
+                                        </t>
+
+                                        <!-- Char / Text (fallback) -->
+                                        <t t-else="">
+                                            <input
+                                                type="text"
+                                                t-att-class="'o_input w-100' + (!isSpecificRow(row) ? ' text-muted' : '')"
+                                                t-att-value="getDisplayValue(row)"
+                                                t-on-change="(ev) => this.onScalarChange(row, ev)"
                                             />
                                         </t>
                                     </td>
 
                                     <!-- Columna 3: badge de estado -->
-                                    <td class="text-center">
+                                    <td class="text-center o_cd_col_status">
                                         <t t-if="isSpecificRow(row)">
-                                            <span class="badge text-bg-primary">
+                                            <span class="badge o_cd_badge_specific">
                                                 <i class="fa fa-lock me-1"/><t t-esc="labelSpecific"/>
                                             </span>
                                         </t>
                                         <t t-else="">
-                                            <span class="badge text-bg-secondary">
+                                            <span class="badge o_cd_badge_default">
                                                 <i class="fa fa-globe me-1"/><t t-esc="labelDefault"/>
                                             </span>
                                         </t>
                                     </td>
 
-                                    <!-- Columna 4: botón Reset (elimina la clave del JSON) -->
-                                    <td class="text-center">
-                                        <button
-                                            type="button"
-                                            class="btn btn-sm btn-outline-danger"
-                                            t-att-disabled="!isSpecificRow(row)"
-                                            t-att-title="resetButtonTitle"
-                                            t-on-click="() => this.onResetRow(row)"
-                                        >
-                                            <i class="fa fa-undo"/>
-                                        </button>
+                                    <!-- Columna 4: acciones (Copy + Reset) -->
+                                    <td class="text-center o_cd_col_actions">
+                                        <div class="d-flex gap-1 justify-content-center">
+                                            <!-- Copy button: only visible when the company has children -->
+                                            <button
+                                                t-if="row.has_children"
+                                                type="button"
+                                                class="btn btn-sm btn-outline-primary o_cd_copy_btn"
+                                                t-att-title="copyButtonTitle"
+                                                t-on-click="() => this.onCopyToChildren(row)"
+                                            >
+                                                <i class="fa fa-copy me-1"/><t t-esc="labelCopy"/>
+                                            </button>
+
+                                            <!-- Botón Reset -->
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm btn-outline-danger"
+                                                t-att-disabled="!isSpecificRow(row)"
+                                                t-att-title="resetButtonTitle"
+                                                t-on-click="() => this.onResetRow(row)"
+                                            >
+                                                <i class="fa fa-undo"/>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             </t>
@@ -150,9 +533,13 @@
 
                     <!-- Nota aclaratoria -->
                     <div class="alert alert-info py-2 small mt-2">
-                    <i class="fa fa-undo"/>
+                        <i class="fa fa-undo me-1"/>
                         <strong><t t-esc="footerNoteHtml.reset"/></strong>
                         <em><t t-esc="footerNoteHtml.resetDesc"/></em>
+                        <span class="mx-2 text-muted">·</span>
+                        <i class="fa fa-copy me-1"/>
+                        <strong><t t-esc="footerNoteHtml.copy"/></strong>
+                        <em><t t-esc="footerNoteHtml.copyDesc"/></em>
                     </div>
                 </t>
             </div>
