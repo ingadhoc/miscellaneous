@@ -1,8 +1,8 @@
 /** @odoo-module **/
 
 import { Component } from "@odoo/owl";
-import { useOwnedDialogs } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
+import { useOwnedDialogs } from "@web/core/utils/hooks";
 import { CompanyDependentDialog } from "./company_dependent_dialog";
 
 /**
@@ -44,6 +44,11 @@ export class CompanyDependentButton extends Component {
     }
 
     async onClick() {
+        // Cerrar cualquier AutoComplete/dropdown abierto en el formulario antes
+        // de guardar, para evitar que el dropdown del campo aparezca detrás del diálogo.
+        if (document.activeElement && document.activeElement !== document.body) {
+            document.activeElement.blur();
+        }
         // Guardar el registro antes de abrir el diálogo (igual que las traducciones).
         const saved = await this.props.record.save();
         if (!saved) {
