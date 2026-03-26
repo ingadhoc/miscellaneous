@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="website_livechat_external.SystrayItem">
+        <div t-if="livechat.available">
+            <button class="o_nav_entry" title="Soporte" aria-label="Soporte" t-on-click="onClick">
+                <i class="fa fa-lg fa-headphones" role="img"/>
+            </button>
+        </div>
+    </t>
+</templates>

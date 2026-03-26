@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Inyecta el iframe aislado con el livechat externo al final del <body>.
+
+        DISEÑO:
+        - El iframe cubre toda la ventana y es transparente.
+        - pointer-events:none por defecto → los clicks pasan al Odoo 18 subyacente.
+        - En cada mousemove del parent comprobamos si el cursor está sobre algún
+          elemento del widget de livechat (accesible por ser mismo origen).
+          Si lo está, ponemos pointer-events:auto en el iframe para que reciba
+          los eventos; en caso contrario lo dejamos en none.
+        - Esto garantiza que el livechat sea siempre interactivo sin importar
+          el estado (botón minimizado, chat abierto, formulario, etc.) y que
+          el resto de la página de Odoo 18 funcione con normalidad.
+    -->
+    <template
+        id="external_livechat_frame"
+        name="External LiveChat Frame"
+        inherit_id="website.layout"
+        active="False"
+    >
+        <xpath expr="//body" position="inside">
+            <t t-set="ext_livechat_enabled"
+               t-value="request.env['ir.config_parameter'].sudo().get_param('website_livechat_external.enabled')"/>
+            <t t-if="ext_livechat_enabled in ('True', '1', 'true')">
+
+                <!-- iframe aislado: mismo origen → DOM accesible desde el parent -->
+                <iframe
+                    id="external_livechat_frame"
+                    src="/website_livechat_external/frame"
+                    style="position:fixed;top:0;left:0;width:100%;height:100%;border:none;z-index:2147483646;pointer-events:none;background:transparent;"
+                    allowtransparency="true"
+                    allow="microphone; camera"
+                    title="LiveChat"
+                    aria-hidden="true"
+                />
+
+                <script type="text/javascript">
+                /* global document */
+                (function () {
+                    'use strict';
+
+                    var frame = document.getElementById('external_livechat_frame');
+                    if (!frame) { return; }
+
+                    var iframeDoc = null;
+
+                    /*
+                     * Detecta si las coordenadas del cursor caen sobre un elemento
+                     * del widget de livechat usando elementFromPoint() sobre el
+                     * documento del iframe.
+                     *
+                     * Ventaja sobre getBoundingClientRect(): funciona aunque el
+                     * contenedor raíz del widget tenga dimensiones 0×0 (caso común
+                     * cuando Odoo usa position:fixed en hijos, no en el padre).
+                     * elementFromPoint() consulta qué elemento está renderizado
+                     * visualmente en ese píxel, independientemente del tamaño del
+                     * contenedor o de los cambios de estado del chat.
+                     *
+                     * Como el iframe está fijo en top:0 left:0 cubriendo el 100%
+                     * de la ventana, las coordenadas viewport del parent coinciden
+                     * exactamente con las del iframe.
+                     */
+                    function isOverLivechat(cx, cy) {
+                        if (!iframeDoc) { return false; }
+                        try {
+                            var el = iframeDoc.elementFromPoint(cx, cy);
+                            /* Sin elemento o solo el fondo del iframe → no es el widget */
+                            if (!el
+                                || el === iframeDoc.documentElement
+                                || el === iframeDoc.body) {
+                                return false;
+                            }
+                            /*
+                             * Recorremos el árbol hacia arriba buscando cualquier
+                             * elemento cuya clase o id contenga "livechat".
+                             * Esto cubre: botón minimizado, panel abierto, overlays
+                             * internos y cualquier sub-componente del widget.
+                             */
+                            var node = el;
+                            while (node &amp;&amp; node.nodeType === 1 &amp;&amp; node !== iframeDoc.body) {
+                                var cls = typeof node.className === 'string' ? node.className : '';
+                                var id  = node.id || '';
+                                if (
+                                    cls.toLowerCase().indexOf('livechat') !== -1 ||
+                                    id.toLowerCase().indexOf('livechat')  !== -1
+                                ) {
+                                    return true;
+                                }
+                                node = node.parentElement;
+                            }
+                        } catch (e) { /* seguridad cross-origin inesperada → ignorar */ }
+                        return false;
+                    }
+
+                    /*
+                     * En cada movimiento del mouse en Odoo 18 toggleamos
+                     * pointer-events del iframe:
+                     *   - sobre el widget → auto  (eventos llegan al iframe/chat)
+                     *   - fuera del widget → none (eventos llegan a Odoo 18)
+                     *
+                     * Nota: los eventos dentro del iframe no burbujean al parent,
+                     * pero sí lo hace el mousemove sobre el elemento &lt;iframe&gt; en
+                     * sí, por lo que este handler se dispara en todos los casos.
+                     */
+                    document.addEventListener('mousemove', function (e) {
+                        if (!iframeDoc) { return; }
+                        frame.style.pointerEvents = isOverLivechat(e.clientX, e.clientY)
+                            ? 'auto'
+                            : 'none';
+                    });
+
+                    frame.addEventListener('load', function () {
+                        try {
+                            iframeDoc = (
+                                frame.contentDocument ||
+                                (frame.contentWindow &amp;&amp; frame.contentWindow.document)
+                            );
+                            if (iframeDoc) {
+                                // Escuchar mousemove dentro del iframe para liberar
+                                // pointer-events cuando el cursor ya no está sobre el
+                                // widget. Sin esto, una vez que pointer-events pasa a
+                                // "auto", el handler del parent deja de dispararse
+                                // y el iframe bloquea toda la página.
+                                iframeDoc.addEventListener('mousemove', function (e) {
+                                    if (!isOverLivechat(e.clientX, e.clientY)) {
+                                        frame.style.pointerEvents = 'none';
+                                    }
+                                });
+                            }
+                        } catch (e) {
+                            console.warn('[ExternalLivechat] No se pudo acceder al DOM del iframe:', e);
+                        }
+                    });
+                })();
+                </script>
+            </t>
+        </xpath>
+    </template>
+</odoo>

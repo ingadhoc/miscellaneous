@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_external_livechat" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.website_livechat_external</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="website.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <!--
+                Agrega una sección "LiveChat Externo" dentro de la pestaña
+                de configuración de Website, debajo de todas las secciones
+                existentes del módulo website.
+            -->
+            <xpath expr="//app[@name='website']" position="inside">
+                <block title="LiveChat Externo" name="external_livechat_block">
+                    <setting
+                        string="Habilitar LiveChat Externo"
+                        help="Incrusta el widget de livechat de una instancia Odoo externa (ej: Odoo 19) en este website, evitando conflictos de versión."
+                    >
+                        <field name="external_livechat_enabled"/>
+                    </setting>
+                    <setting
+                        string="URL del Proveedor"
+                        help="URL base de la instancia Odoo que provee el livechat. Sin barra final. Ej: https://train-adhoc-25-03-1.adhoc.inc"
+                        invisible="not external_livechat_enabled"
+                    >
+                        <field
+                            name="external_livechat_provider_url"
+                            placeholder="https://mi-odoo19.ejemplo.com"
+                            class="w-100"
+                        />
+                    </setting>
+                    <setting
+                        string="ID del Canal de LiveChat"
+                        help="Número de canal de livechat en la instancia proveedora (el número que aparece en la URL del script, ej: 16)."
+                        invisible="not external_livechat_enabled"
+                    >
+                        <field name="external_livechat_channel_id"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>
