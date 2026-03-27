@@ -43,16 +43,11 @@ class Base(models.AbstractModel):
 
         # Extract field names considering import_compat mode
         import_compat = params.get("import_compat", True)
-
-        # For field_names (data extraction), always use the technical field name
-        # Only use 'value' as fallback when import_compat=True (for import compatibility)
+        field_names = [f["name"] for f in params["fields"]]
         if import_compat:
-            field_names = [f.get("name") or f.get("value") or f.get("id") for f in params["fields"]]
-            field_labels = field_names  # Use field names as headers for import compatibility
+            field_labels = field_names
         else:
-            # When not import_compat, use only 'name' or 'id' for field_names, not 'value'
-            field_names = [f.get("name") or f.get("id") for f in params["fields"]]
-            field_labels = [f.get("label") or f.get("string") for f in params["fields"]]
+            field_labels = [((f.get("label") or "").strip()) for f in params["fields"]]
 
         export_data = self.export_data(field_names).get("datas", [])
 
@@ -97,20 +92,28 @@ class IrModel(models.Model):
         The last job combines all chunks into the final export file.
         """
         params = json.loads(data)
-        Model = self.env[params["model"]].with_context(**params.get("context", {}))
+        import_compat = params.get("import_compat", True)
+        Model = self.env[params["model"]].with_context(import_compat=import_compat, **params.get("context", {}))
         ids = params.get("ids")
         domain = params.get("domain", [])
         records = Model.browse(ids) if ids else Model.search(domain)
 
         export_id = str(uuid.uuid4())
 
-        return self.env["base.bg"].bg_enqueue_records(
-            records,
-            "_export_chunk_bg",
-            threshold=self.get_export_threshold(),
-            data=data,
-            export_id=export_id,
-            export_format=export_format,
+        # base.bg serializes its own env context into the job; propagate the
+        # exact model context used for export so nested relational fields are
+        # resolved exactly as in synchronous exports.
+        return (
+            self.env["base.bg"]
+            .with_context(**Model.env.context)
+            .bg_enqueue_records(
+                records,
+                "_export_chunk_bg",
+                threshold=self.get_export_threshold(),
+                data=data,
+                export_id=export_id,
+                export_format=export_format,
+            )
         )
 
     def _combine_chunks(self, export_id, export_format):
