@@ -95,7 +95,9 @@ class BaseCompanyDependent(models.AbstractModel):
           un ``return Domain.TRUE`` (los considera solo para el cliente), por lo
           que es imprescindible este paso adicional.
         """
-        raw = field.domain
+        raw = getattr(field, "domain", None)
+        if raw is None:
+            return Domain.TRUE
 
         # --- callable (puede devolver list, Domain o incluso str) ---
         if callable(raw):
@@ -305,7 +307,7 @@ class BaseCompanyDependent(models.AbstractModel):
         """
         self.env["ir.model.access"].check(res_model, "read")
         model_obj = self.env[res_model]
-        model_obj.browse(res_id).check_access_rule("read")
+        model_obj.browse(res_id).check_access("read")
         field = model_obj._fields.get(field_name)
 
         if not field or not field.company_dependent:
