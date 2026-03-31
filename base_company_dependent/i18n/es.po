@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-11 00:00+0000\n"
+"POT-Creation-Date: 2026-03-31 12:47+0000\n"
 "PO-Revision-Date: 2026-03-11 00:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
@@ -18,62 +18,15 @@ msgstr ""
 "1 : 2;\n"
 
 #. module: base_company_dependent
-#: model:ir.model,name:base_company_dependent.model_base_company_dependent
-msgid "Helpers para campos company_dependent"
-msgstr "Helpers para campos company_dependent"
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/templates.xml:0
+msgid "Actions"
+msgstr ""
 
 #. module: base_company_dependent
 #: model:ir.model,name:base_company_dependent.model_base
 msgid "Base"
 msgstr "Base"
-
-#. module: base_company_dependent
-#. odoo-javascript
-#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
-msgid "Company Values: %s"
-msgstr "Valores por compañía: %s"
-
-#. module: base_company_dependent
-#. odoo-javascript
-#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
-msgid "No value (explicitly False)"
-msgstr "Sin valor (explícitamente Falso)"
-
-#. module: base_company_dependent
-#. odoo-javascript
-#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
-msgid "Restore to default value (removes the JSON key)"
-msgstr "Restaurar al valor por defecto (elimina la clave del JSON)"
-
-#. module: base_company_dependent
-#. odoo-javascript
-#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
-msgid "Specific"
-msgstr "Específico"
-
-#. module: base_company_dependent
-#. odoo-javascript
-#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
-msgid "Default"
-msgstr "Por defecto"
-
-#. module: base_company_dependent
-#. odoo-javascript
-#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
-msgid "Loading company values..."
-msgstr "Cargando valores por compañía..."
-
-#. module: base_company_dependent
-#. odoo-javascript
-#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
-msgid "Reset "
-msgstr "Restablecer "
-
-#. module: base_company_dependent
-#. odoo-javascript
-#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
-msgid "removes the set value and restores to the global default value."
-msgstr "elimina el valor configurado y restaura al valor por defecto global."
 
 #. module: base_company_dependent
 #. odoo-javascript
@@ -84,14 +37,95 @@ msgstr "Compañía"
 #. module: base_company_dependent
 #. odoo-javascript
 #: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
-msgid "Value"
-msgstr "Valor"
+msgid "Company Values: %s"
+msgstr "Valores por compañía: %s"
 
 #. module: base_company_dependent
 #. odoo-javascript
 #: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
-msgid "Status"
-msgstr "Estado"
+msgid "Copy"
+msgstr ""
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "Copy "
+msgstr ""
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "Copy this value to all child companies"
+msgstr ""
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "Default"
+msgstr "Por defecto"
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_button.js:0
+msgid "Default value (fallback). Click to manage."
+msgstr "Valor por defecto (heredado). Haga clic para gestionar."
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "Discard"
+msgstr "Descartar"
+
+#. module: base_company_dependent
+#: model:ir.model.fields,field_description:base_company_dependent.field_base_company_dependent__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: base_company_dependent
+#: model:ir.model,name:base_company_dependent.model_base_company_dependent
+msgid "Helpers para campos company_dependent"
+msgstr "Helpers para campos company_dependent"
+
+#. module: base_company_dependent
+#: model:ir.model.fields,field_description:base_company_dependent.field_base_company_dependent__id
+msgid "ID"
+msgstr ""
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/templates.xml:0
+msgid "Insert Field"
+msgstr ""
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_button.js:0
+msgid "Loading company information…"
+msgstr "Cargando información de compañía…"
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "Loading company values..."
+msgstr "Cargando valores por compañía..."
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "No value (explicitly False)"
+msgstr "Sin valor (explícitamente Falso)"
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "Reset "
+msgstr "Restablecer "
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "Restore to default value (removes the JSON key)"
+msgstr "Restaurar al valor por defecto (elimina la clave del JSON)"
 
 #. module: base_company_dependent
 #. odoo-javascript
@@ -102,8 +136,28 @@ msgstr "Guardar"
 #. module: base_company_dependent
 #. odoo-javascript
 #: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
-msgid "Discard"
-msgstr "Descartar"
+msgid ""
+"Saved %s company value(s). Could not save %s due to company inconsistencies: "
+"%s."
+msgstr ""
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "Specific"
+msgstr "Específico"
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_button.js:0
+msgid "Specific value for this company. Click to manage."
+msgstr "Valor específico para esta compañía. Haga clic para gestionar."
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "Status"
+msgstr "Estado"
 
 #. module: base_company_dependent
 #. odoo-javascript
@@ -118,28 +172,26 @@ msgstr ""
 #. module: base_company_dependent
 #. odoo-javascript
 #: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "Value"
+msgstr "Valor"
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
 msgid "Values saved successfully."
 msgstr "Valores guardados correctamente."
 
 #. module: base_company_dependent
 #. odoo-javascript
-#: code:addons/base_company_dependent/static/src/company_dependent_button.js:0
-msgid "Loading company information…"
-msgstr "Cargando información de compañía…"
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "propagates the value of a parent company to all its child companies."
+msgstr ""
 
 #. module: base_company_dependent
 #. odoo-javascript
-#: code:addons/base_company_dependent/static/src/company_dependent_button.js:0
-msgid "Specific value for this company. Click to manage."
-msgstr "Valor específico para esta compañía. Haga clic para gestionar."
+#: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
+msgid "removes the set value and restores to the global default value."
+msgstr "elimina el valor configurado y restaura al valor por defecto global."
 
-#. module: base_company_dependent
-#. odoo-javascript
-#: code:addons/base_company_dependent/static/src/company_dependent_button.js:0
-msgid "Default value (fallback). Click to manage."
-msgstr "Valor por defecto (heredado). Haga clic para gestionar."
-
-#. module: base_company_dependent
-#: model_terms:ir.ui.view,arch_db:base_company_dependent.CompanyDependentDialog
-msgid "Reset"
-msgstr "Resetear"
+#~ msgid "Reset"
+#~ msgstr "Resetear"
