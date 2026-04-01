@@ -11,7 +11,9 @@ patch(ListController.prototype, {
         const recordCount = resIds ? resIds.length : (this.model.root.count || 0);
         const exportedFields = fields.map((field) => ({
             name: field.name || field.id,
+            value: field.name || field.id,
             label: field.label || field.string,
+            string: field.label || field.string,
             store: field.store,
             type: field.field_type || field.type,
         }));

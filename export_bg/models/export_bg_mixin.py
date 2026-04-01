@@ -43,11 +43,12 @@ class Base(models.AbstractModel):
 
         # Extract field names considering import_compat mode
         import_compat = params.get("import_compat", True)
-        field_names = [f["name"] for f in params["fields"]]
+        field_names = [f.get("name") or f.get("value") or f.get("id") for f in params["fields"]]
         if import_compat:
             field_labels = field_names
         else:
-            field_labels = [((f.get("label") or "").strip()) for f in params["fields"]]
+            field_names = [f.get("name") or f.get("id") for f in params["fields"]]
+            field_labels = [f.get("label") or f.get("string") for f in params["fields"]]
 
         export_data = self.export_data(field_names).get("datas", [])
 
