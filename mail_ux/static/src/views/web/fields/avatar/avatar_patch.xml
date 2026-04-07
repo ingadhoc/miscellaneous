@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="mail.Avatar" t-inherit="mail.Avatar" t-inherit-mode="primary">
+        <xpath expr="//img" position="attributes">
+            <attribute name="t-att-src">avatarSrc</attribute>
+            <attribute name="t-attf-src"/>
+        </xpath>
+    </t>
+
+</templates>
