@@ -1,6 +1,6 @@
 {
     "name": "Account statement import sheet file BG",
-    "version": "18.0.1.0.1",
+    "version": "18.0.1.0.2",
     "category": "Productivity/Documents",
     "summary": "Integration between Documents and Base BG modules",
     "depends": [
@@ -9,6 +9,7 @@
     ],
     "data": [
         "data/ir_config_parameter_data.xml",
+        "views/bg_job_views.xml",
     ],
     "demo": [],
     "installable": True,

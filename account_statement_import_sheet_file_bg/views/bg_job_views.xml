@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inherit List View to add retry button -->
+    <record id="view_bg_job_list_inherit" model="ir.ui.view">
+        <field name="name">bg.job.list.inherit</field>
+        <field name="model">bg.job</field>
+        <field name="inherit_id" ref="base_bg.view_bg_job_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="inside">
+                <header>
+                    <button name="action_retry_batch" string="Retry Selected" type="object" class="btn-primary"/>
+                </header>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Inherit Search View to add "Statement Import" filter -->
+    <record id="view_bg_job_search_inherit" model="ir.ui.view">
+        <field name="name">bg.job.search.inherit</field>
+        <field name="model">bg.job</field>
+        <field name="inherit_id" ref="base_bg.view_bg_job_search"/>
+        <field name="arch" type="xml">
+            <filter name="failed" position="after">
+                <separator/>
+                <filter string="Statement Import Jobs" name="statement_import"
+                        domain="[('model', '=', 'account.statement.import')]"/>
+                <filter string="Failed Statement Imports" name="failed_statement_import"
+                        domain="[('model', '=', 'account.statement.import'), ('state', '=', 'failed')]"/>
+            </filter>
+        </field>
+    </record>
+
+    <!-- Action for Failed Statement Import Jobs -->
+    <record id="action_failed_statement_import_jobs" model="ir.actions.act_window">
+        <field name="name">Failed Statement Import Jobs</field>
+        <field name="res_model">bg.job</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('model', '=', 'account.statement.import'), ('state', '=', 'failed')]</field>
+        <field name="context">{'search_default_failed_statement_import': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No failed statement import jobs!
+            </p>
+            <p>
+                When a bank statement import job fails during background processing,
+                it will appear here. You can select failed jobs and use the
+                "Retry Selected" button to requeue them for processing.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Item for Failed Statement Import Jobs -->
+    <menuitem id="menu_failed_statement_import_jobs"
+              name="Failed Statement Imports"
+              parent="base_bg.menu_bg_job_root"
+              action="action_failed_statement_import_jobs"
+              sequence="20"/>
+
+</odoo>
