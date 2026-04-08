@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_mail_server_test_wizard_form" model="ir.ui.view">
+        <field name="name">mail.server.test.wizard.form</field>
+        <field name="model">mail.server.test.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Enviar mail de prueba">
+                <group>
+                    <field name="mail_server_id" invisible="1" />
+                    <field
+                        name="email_to"
+                        placeholder="ej. usuario@empresa.com"
+                        autofocus="autofocus"
+                    />
+                </group>
+                <footer>
+                    <button
+                        string="Enviar prueba"
+                        type="object"
+                        name="action_send_test_mail"
+                        class="btn-primary"
+                        data-hotkey="v"
+                    />
+                    <button string="Cancelar" special="cancel" data-hotkey="z" />
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
