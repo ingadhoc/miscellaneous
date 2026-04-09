@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-18 13:30+0000\n"
+"POT-Creation-Date: 2026-04-09 17:32+0000\n"
 "PO-Revision-Date: 2025-12-22 14:00+0000\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,7 +17,13 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
 #. module: account_statement_import_sheet_file_bg
+#: model:ir.model,name:account_statement_import_sheet_file_bg.model_account_statement_import_sheet_parser
+msgid "Bank Statement Import Sheet Parser"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_bg
 #: model:ir.model.fields,field_description:account_statement_import_sheet_file_bg.field_account_statement_import__display_name
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_bg.field_account_statement_import_sheet_parser__display_name
 msgid "Display Name"
 msgstr ""
 
@@ -29,6 +35,7 @@ msgstr ""
 
 #. module: account_statement_import_sheet_file_bg
 #: model:ir.model.fields,field_description:account_statement_import_sheet_file_bg.field_account_statement_import__id
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_bg.field_account_statement_import_sheet_parser__id
 msgid "ID"
 msgstr ""
 
