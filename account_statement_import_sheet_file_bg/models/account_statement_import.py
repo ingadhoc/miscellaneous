@@ -32,24 +32,22 @@ class AccountStatementImport(models.TransientModel):
     def import_file_button(self, wizard_data=None):
         """Process the file chosen in the wizard, create a bank statement
         and return a link to its reconciliation page."""
-        if not self._context.get("bg_job"):
-            if self.sheet_mapping_id:
-                header_column = self.sheet_mapping_id.header_lines_skip_count
-                # Get row limit from system parameter
-                rows_limit = (
-                    self.env["ir.config_parameter"]
-                    .sudo()
-                    .get_param("account_statement_import_sheet_file_bg.rows_per_file_limit")
-                )
-                # Only split if parameter exists and has a valid value
-                files = []
-                if rows_limit:
-                    try:
-                        rows_limit = int(rows_limit)
-                        files = self.split_base64_excel(header_column, rows_limit)
-                    except (ValueError, TypeError):
-                        files = []
+        rows_limit = (
+            self.env["ir.config_parameter"]
+            .sudo()
+            .get_param("account_statement_import_sheet_file_bg.rows_per_file_limit")
+        )
+        if not self._context.get("bg_job") and rows_limit:
+            # Validate parameter is a valid integer
+            try:
+                rows_limit = int(rows_limit)
+            except (ValueError, TypeError):
+                # Parameter not valid, skip bg processing
+                rows_limit = None
 
+            if rows_limit and self.sheet_mapping_id:
+                header_column = self.sheet_mapping_id.header_lines_skip_count
+                files = self.split_base64_excel(header_column, rows_limit)
                 if files:
                     for idx, file in enumerate(files):
                         # Encode the file to string format, because background jobs cannot
@@ -173,7 +171,6 @@ class AccountStatementImport(models.TransientModel):
         mapping = self.sheet_mapping_id
         journal = self.env["account.journal"].browse(self.env.context.get("journal_id"))
         currency_code = (journal.currency_id or journal.company_id.currency_id).name
-
         try:
             file_bytes = base64.b64decode(self.statement_file)
             read_buffer = BytesIO(file_bytes)
@@ -181,7 +178,9 @@ class AccountStatementImport(models.TransientModel):
             # Try openpyxl (xlsx)
             input_workbook = load_workbook(read_buffer)
             input_worksheet = input_workbook.active
-            all_rows = list(input_worksheet.rows)
+            # Normalize rows to plain values to keep parser/output logic
+            # consistent with CSV/xls flows.
+            all_rows = [[cell.value for cell in row] for row in input_worksheet.rows]
             csv_or_xlsx = (input_workbook, input_worksheet)
 
         except Exception:
@@ -279,10 +278,14 @@ class AccountStatementImport(models.TransientModel):
 
         filtered_rows = []
         for row in data_rows:
+            date_value = None
+            if len(row) > date_column_index:
+                date_cell_or_value = row[date_column_index]
+                date_value = date_cell_or_value.value if hasattr(date_cell_or_value, "value") else date_cell_or_value
             # Check if the row has enough columns and the date column is not empty
-            if len(row) > date_column_index and row[date_column_index].value:
+            if len(row) > date_column_index and date_value:
                 filtered_rows.append(row)
-            elif len(row) > date_column_index and not row[date_column_index].value:
+            elif len(row) > date_column_index and not date_value:
                 # Stop processing when we find the first empty date
                 break
 
