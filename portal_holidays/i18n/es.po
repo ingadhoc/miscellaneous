@@ -1,15 +1,15 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
 # 	* portal_holidays
-# 
+#
 # Translators:
 # ADHOC - Bot <transbot@adhoc.com.ar>, 2025
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-17 17:56+0000\n"
+"POT-Creation-Date: 2026-04-14 19:21+0000\n"
 "PO-Revision-Date: 2025-12-11 18:10+0000\n"
 "Last-Translator: BAF <baf@adhoc.inc>\n"
 "Language-Team: Spanish <https://translation.dev-adhoc.com/projects/"
@@ -18,15 +18,15 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
-"Plural-Forms: nplurals=3; plural=(n == 1) ? 0 : ((n != 0 && n % 1000000 == 0)"
-" ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n == 1) ? 0 : ((n != 0 && n % 1000000 == "
+"0) ? 1 : 2);\n"
 "X-Generator: Weblate 5.10.4\n"
 
 #. module: portal_holidays
 #: model_terms:ir.actions.act_window,help:portal_holidays.hr_leave_action_my_portal_holidays
 msgid ""
-"A great way to keep track on your time off requests, sick days, and approval"
-" status."
+"A great way to keep track on your time off requests, sick days, and approval "
+"status."
 msgstr ""
 "Una excelente manera de hacer seguimiento de tus solicitudes de tiempo "
 "libre, días por enfermedad y el estado de aprobación."
@@ -51,11 +51,13 @@ msgid "Create a new time off allocation request"
 msgstr "Crear una nueva solicitud de asignación de tiempo libre"
 
 #. module: portal_holidays
+#: model:ir.model.fields,field_description:portal_holidays.field_hr_leave__display_name
 #: model:ir.model.fields,field_description:portal_holidays.field_hr_leave_allocation__display_name
 msgid "Display Name"
 msgstr "Nombre para Mostrar"
 
 #. module: portal_holidays
+#: model:ir.model.fields,field_description:portal_holidays.field_hr_leave__id
 #: model:ir.model.fields,field_description:portal_holidays.field_hr_leave_allocation__id
 msgid "ID"
 msgstr "ID"
@@ -83,6 +85,11 @@ msgid "Portal Backend: Holidays"
 msgstr "Portal de Vacaciones"
 
 #. module: portal_holidays
+#: model:ir.model,name:portal_holidays.model_hr_leave
+msgid "Time Off"
+msgstr ""
+
+#. module: portal_holidays
 #: model:ir.model,name:portal_holidays.model_hr_leave_allocation
 msgid "Time Off Allocation"
 msgstr "Asignación de ausencias"
@@ -90,8 +97,10 @@ msgstr "Asignación de ausencias"
 #. module: portal_holidays
 #: model_terms:ir.actions.act_window,help:portal_holidays.hr_leave_allocation_action_my_portal_holidays
 msgid ""
-"Time Off Officers allocate time off days to employees (e.g. paid time off).<br>\n"
-"                Employees request allocations to Time Off Officers (e.g. recuperation days)."
+"Time Off Officers allocate time off days to employees (e.g. paid time off)."
+"<br>\n"
+"                Employees request allocations to Time Off Officers (e.g. "
+"recuperation days)."
 msgstr ""
 "Los Responsables de Ausencias asignan días de ausencia a los empleados (por "
 "ejemplo, tiempo libre pago).\n"
@@ -109,3 +118,9 @@ msgstr "Total de horas extraordinarias"
 #: code:addons/portal_holidays/models/hr_leave_allocation.py:0
 msgid "You can only create allocations for yourself."
 msgstr "Solo podés crear asignaciones para vos mismo."
+
+#. module: portal_holidays
+#. odoo-python
+#: code:addons/portal_holidays/models/hr_leave.py:0
+msgid "You can only create time off requests for yourself."
+msgstr ""
