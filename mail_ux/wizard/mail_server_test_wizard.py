@@ -47,7 +47,7 @@ class MailServerTestWizard(models.TransientModel):
         mail_server = mail_server.sudo()
 
         email_from = mail_server._get_test_email_from()
-        message = IrMailServer.build_email(
+        message = IrMailServer._build_email__(
             email_from=email_from,
             email_to=[self.email_to],
             subject=_("Prueba de mail desde Odoo"),
@@ -59,7 +59,7 @@ class MailServerTestWizard(models.TransientModel):
         try:
             # allow_archived=True is critical for neutralized databases where
             # all real servers are deactivated by the neutralize process.
-            smtp = IrMailServer.connect(
+            smtp = IrMailServer._connect__(
                 mail_server_id=mail_server.id,
                 allow_archived=True,
             )
