@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="config_lines_threshold" model="ir.config_parameter">
+        <field name="key">account_reconcile_bg.lines_threshold</field>
+        <field name="value">100</field>
+    </record>
+
+</odoo>
