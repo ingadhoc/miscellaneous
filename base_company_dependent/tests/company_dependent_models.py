@@ -17,22 +17,17 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import api, models
+from odoo import fields, models
 
 
-class Base(models.AbstractModel):
-    """Expone el atributo ``company_dependent`` al cliente web.
+class CompanyDependentTester(models.Model):
+    """Transient model registered only during the tests (added to the registry
+    in setUpClass, rolled back by TransactionCase). Gives the suite a
+    company_dependent Many2one so the protection can be tested without account."""
 
-    ``_get_view_field_attributes`` controla qué metadatos de campo se incluyen
-    en la respuesta del ORM al cargar una vista.  ``company_dependent`` no está
-    en la lista base de Odoo 19, por lo que el frontend nunca lo recibe y no
-    puede activar el widget multicompañía.
-    """
+    _name = "company.dependent.tester"
+    _description = "Company Dependent Tester (tests only)"
 
-    _inherit = "base"
-
-    @api.model
-    def _get_view_field_attributes(self):
-        keys = super()._get_view_field_attributes()
-        keys.append("company_dependent")
-        return keys
+    name = fields.Char()
+    partner_id = fields.Many2one("res.partner", company_dependent=True)
+    partner_regular_id = fields.Many2one("res.partner")
