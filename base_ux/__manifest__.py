@@ -19,7 +19,7 @@
 ##############################################################################
 {
     "name": "Base UX",
-    "version": "19.0.1.5.0",
+    "version": "19.0.1.6.0",
     "category": "Base",
     "sequence": 14,
     "summary": "",
@@ -29,6 +29,7 @@
     "images": [],
     "depends": [
         "base",
+        "contacts",
         "mail",  # depends on mail for tracking on fields
     ],
     "data": [
@@ -37,6 +38,7 @@
         "views/res_company_view.xml",
         "views/base_partner_merge_view.xml",
         "views/mail_activity_schedule_view.xml",
+        "views/res_partner_views.xml",
     ],
     "demo": [],
     "test": [],

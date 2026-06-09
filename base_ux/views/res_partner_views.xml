@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="contacts.action_contacts" model="ir.actions.act_window">
+        <field name="context">{'default_is_company': True, 'contact_import': 1}</field>
+    </record>
+</odoo>
