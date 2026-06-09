@@ -171,18 +171,22 @@ class TestBgJob(TransactionCase):
             kwargs_json={"_record_ids": [target_job.id]},
         )
 
-        with patch.object(
-            type(target_job),
-            "dummy_success_method",
-            create=True,
-            return_value="Done",
-        ) as mock_method, patch.object(
-            type(runner_job),
-            "_notify_user",
-        ) as mock_notify, patch.object(
-            runner_job.env.cr,
-            "commit",
-            return_value=None,
+        with (
+            patch.object(
+                type(target_job),
+                "dummy_success_method",
+                create=True,
+                return_value="Done",
+            ) as mock_method,
+            patch.object(
+                type(runner_job),
+                "_notify_user",
+            ) as mock_notify,
+            patch.object(
+                runner_job.env.cr,
+                "commit",
+                return_value=None,
+            ),
         ):
             runner_job.run()
 
@@ -200,18 +204,22 @@ class TestBgJob(TransactionCase):
             kwargs_json={"_record_ids": [target_job.id]},
         )
 
-        with patch.object(
-            type(target_job),
-            "dummy_false_method",
-            create=True,
-            return_value=None,
-        ) as mock_method, patch.object(
-            type(runner_job),
-            "_notify_user",
-        ) as mock_notify, patch.object(
-            runner_job.env.cr,
-            "commit",
-            return_value=None,
+        with (
+            patch.object(
+                type(target_job),
+                "dummy_false_method",
+                create=True,
+                return_value=None,
+            ) as mock_method,
+            patch.object(
+                type(runner_job),
+                "_notify_user",
+            ) as mock_notify,
+            patch.object(
+                runner_job.env.cr,
+                "commit",
+                return_value=None,
+            ),
         ):
             runner_job.run()
 
@@ -334,9 +342,10 @@ class TestBgJob(TransactionCase):
     def test_bg_enqueue_helper_delegates_to_bg_enqueue_records(self):
         """bg_enqueue helper must delegate to bg_enqueue_records with self as records."""
         job_name = f"Helper Test Job {uuid4().hex}"
-        with patch.object(type(self.base_bg_model), "_trigger_crons"), patch.object(
-            type(self.base_bg_model), "bg_enqueue_records"
-        ) as mock_enqueue_records:
+        with (
+            patch.object(type(self.base_bg_model), "_trigger_crons"),
+            patch.object(type(self.base_bg_model), "bg_enqueue_records") as mock_enqueue_records,
+        ):
             self.env["base.bg"].bg_enqueue("dummy_method", threshold=5, name=job_name, priority=2)
 
         mock_enqueue_records.assert_called_once_with(self.env["base.bg"], "dummy_method", 5, name=job_name, priority=2)
@@ -429,6 +438,45 @@ class TestBgJob(TransactionCase):
         with patch.object(type(job), "run") as mock_run:
             self.BgJob._cron_run_enqueued_jobs()
             mock_run.assert_called_once()
+
+    def test_enqueue_registers_trigger_crons_as_postcommit(self):
+        """_trigger_crons must be registered as a postcommit callback, not called via an
+        eager cr.commit(), so that the caller's transaction remains atomic.
+
+        The postcommit hook fires after the caller's own commit, at which point both the
+        bg.job row and the caller's data are visible to the cron worker — no race condition
+        and no atomicity violation.
+        """
+        partners = self.env["res.partner"].create([{"name": "P1"}, {"name": "P2"}])
+        registered = []
+
+        original_add = self.env.cr.postcommit.add
+
+        def capture_add(func):
+            registered.append(func)
+            return original_add(func)
+
+        with (
+            patch.object(type(self.env.cr.postcommit), "add", side_effect=capture_add),
+            patch.object(BaseBg, "_trigger_crons"),
+        ):
+            self.env["base.bg"].bg_enqueue_records(partners, "dummy_ordering_method", threshold=1)
+
+        self.assertTrue(
+            registered,
+            "bg_enqueue_records must register _trigger_crons via cr.postcommit.add, not call it eagerly",
+        )
+
+    def test_enqueue_does_not_commit_eagerly(self):
+        """bg_enqueue_records must not call cr.commit() directly — the caller owns the
+        transaction boundary. An eager commit would persist caller's in-flight changes
+        even if the caller later raises, breaking atomicity."""
+        partners = self.env["res.partner"].create([{"name": f"P{i}"} for i in range(5)])
+
+        with patch.object(self.env.cr, "commit") as mock_commit, patch.object(BaseBg, "_trigger_crons"):
+            self.env["base.bg"].bg_enqueue_records(partners, "dummy_batch_commit_method", threshold=1)
+
+        mock_commit.assert_not_called()
 
     def test_cron_run_enqueued_jobs_triggers_cron_if_more_jobs(self):
         """_cron_run_enqueued_jobs should trigger crons if more jobs remain."""

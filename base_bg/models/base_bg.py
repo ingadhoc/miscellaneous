@@ -79,7 +79,7 @@ class BaseBg(models.AbstractModel):
                 prev_job.next_job_id = job.id
             prev_job = job
 
-        self.sudo()._trigger_crons()
+        self.env.cr.postcommit.add(self.sudo()._trigger_crons)
         title = _("Processes sent to background successfully")
         message = _("You will be notified when they are done.")
         return (
