@@ -89,7 +89,7 @@
 
 /* ── Diálogo general ─────────────────────────────────────────────────────── */
 .o_cd_dialog .table th {
-    background-color: var(--bs-light, #f8f9fa);
+    background-color: var(--bs-tertiary-bg, #f8f9fa);
     font-weight: 600;
     font-size: 0.85rem;
 }
@@ -162,12 +162,14 @@
 }
 
 /* Subtle background tinting by hierarchy depth.
- * !important needed to override Bootstrap's CSS-variable-based table bg. */
+ * Uses --bs-emphasis-color-rgb (dark-aware in Bootstrap 5.3+) so the tint
+ * is visible in both light and dark themes. !important needed to override
+ * Bootstrap's CSS-variable-based table bg. */
 .o_cd_depth_1 > td {
-    background-color: rgba(0, 0, 0, 0.013) !important;
+    background-color: rgba(var(--bs-emphasis-color-rgb), 0.025) !important;
 }
 .o_cd_depth_2 > td {
-    background-color: rgba(0, 0, 0, 0.025) !important;
+    background-color: rgba(var(--bs-emphasis-color-rgb), 0.05) !important;
 }
 /* Row hover has higher selector specificity (2 classes + pseudo) than depth
  * (1 class), so hover always wins on mouse-over — no extra rule needed. */
@@ -212,16 +214,16 @@
 }
 
 /* ── Estilo de filas por nivel ───────────────────────────────────────────── */
+/* Los backgrounds vienen del tinting `.o_cd_depth_N > td` arriba, basado en
+ * --bs-emphasis-color-rgb (dark-aware). Acá solo definimos tipografía. */
 
 /* Nivel 0 – Compañía raíz */
 .o_cd_depth_0 {
-    background-color: var(--bs-white, #fff);
     font-weight: 600;
 }
 
 /* Nivel 1 – Compañía hija */
 .o_cd_depth_1 {
-    background-color: var(--bs-gray-100, #f8f9fa);
     font-weight: 400;
 }
 
@@ -231,7 +233,6 @@
 
 /* Nivel 2 – Compañía nieta */
 .o_cd_depth_2 {
-    background-color: var(--bs-gray-200, #e9ecef);
     font-weight: 400;
     font-size: 0.9rem;
 }
@@ -253,9 +254,10 @@
 /* Hover sutil: intentionally uses background-color, NOT filter/opacity/transform.
  * Those CSS properties create a new stacking context which changes the
  * containing block for position:fixed children (the AutoComplete dropdown).
- * That would cause the dropdown to shift to wrong coordinates on hover. */
+ * That would cause the dropdown to shift to wrong coordinates on hover.
+ * Uses --bs-emphasis-color-rgb so contrast holds in both themes. */
 .o_cd_row:hover > td {
-    background-color: rgba(0, 0, 0, 0.035) !important;
+    background-color: rgba(var(--bs-emphasis-color-rgb), 0.06) !important;
 }
 
 /* ── Botón Copy ──────────────────────────────────────────────────────────── */
