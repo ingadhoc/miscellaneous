@@ -24,39 +24,39 @@ viendo:
 Esto genera confusión al editar: el usuario puede modificar accidentalmente el
 valor de *todas* las compañías (el default) pensando que solo toca la suya.
 
+Adicionalmente, hay dos casos especiales donde el almacenamiento no es JSONB
+directo:
+
+* **Campos ``related``** (típicos en ``res.config.settings`` con
+  ``related='company_id.xxx'``) → el valor real vive en ``res.company``.
+* **Campos ``computed``/``inverse``** (ej. ``standard_price`` en
+  ``product.template``, cuyo valor vive en ``product.product``).
+
+El widget soporta los tres casos detectando automáticamente la estrategia.
+
 Solución
 ========
-
-Se añade un **widget inteligente multicompañía** a todos los campos
-``Many2one`` marcados con ``company_dependent=True``:
 
 Indicador visual en el formulario
 ----------------------------------
 
-* **Ícono** ``fa-building-o`` a la derecha del campo.
-
-  * Color **primario** (azul) → valor específico para la compañía activa.
-  * Color **gris** → valor por defecto/fallback.
-
-* El texto del campo se renderiza en **gris/cursiva** cuando es el fallback.
+* **Ícono** ``fa-building-o`` a la derecha del campo, color **primario** (azul)
+  cuando hay valor específico para la compañía activa, **gris** cuando es
+  fallback.
+* El texto del campo se renderiza en **gris/muted** cuando es el fallback.
 
 Asistente multicompañía (Modal)
 ---------------------------------
 
-Al pulsar el ícono se abre un diálogo con una tabla de todas las compañías
-accesibles para el usuario (``env.companies``):
+Al pulsar el ícono se abre un diálogo con una tabla jerárquica (hasta 3
+niveles: padre → hija → nieta) de todas las compañías accesibles para el
+usuario (``env.companies``):
 
-+------------+----------------------------------+---------------+------------------+
-| Compañía   | Valor                            | Estado        | Acción           |
-+============+==================================+===============+==================+
-| Cía A      | Autocomplete Many2one            | Específico    | [\|Reset\|]      |
-+------------+----------------------------------+---------------+------------------+
-| Cía B      | (vacío)                          | Por Defecto   | [\|Reset\|] (×)  |
-+------------+----------------------------------+---------------+------------------+
-
-* **Vaciar** el Many2one guarda ``false`` en el JSON → campo vacío *explícito*
-  (badge «Específico»).
-* **Reset** *elimina* la clave del JSON → el campo vuelve al fallback global.
+* **Editar** valores por compañía sin cambiar de sesión.
+* **Reset** restaura el fallback global (elimina la clave del JSON).
+* **Copy to children** propaga el valor de una compañía padre a sus hijas
+  accesibles (salta las que no pasan validaciones de compañía).
+* Indicadores visuales por nivel y badge ``Specific``/``Default``.
 
 Diferencia clave Vaciar vs. Reset
 ''''''''''''''''''''''''''''''''''
@@ -69,45 +69,91 @@ Diferencia clave Vaciar vs. Reset
 | Reset  | ``{}`` (clave eliminada)           | Por Defecto      |
 +--------+------------------------------------+------------------+
 
-Fase MVP (implementada)
-========================
+**Reset en ORM-mode:** cuando el target real no es un campo JSONB nativo
+(p. ej. una columna propia de ``res.company`` expuesta como ``related`` desde
+``res.config.settings``) no hay clave que eliminar — cada compañía es su
+propio registro. En esos casos *Reset* equivale a vaciar al falsy del tipo
+(``False`` / ``0`` / ``""``); el badge "Por Defecto" sigue siendo informativo
+pero no implica que el valor venga de un fallback global.
 
-* Soporte para campos ``Many2one``.
-* Indicador visual gris/color-primario.
-* Modal funcional: listar, editar, resetear.
-* Caché por formulario: una sola query SQL para todos los campos
-  ``company_dependent`` del modelo.
+Tipos de campo soportados
+==========================
 
-Fase 2 (pendiente)
-==================
+El widget se inyecta automáticamente en los siguientes tipos de campo cuando
+``company_dependent=True``:
 
-* Soporte para campos ``Float`` e ``Integer``.
-* Botón «Copiar a todas las compañías hijas».
+* ``Many2one``
+* ``Char``
+* ``Integer``
+* ``Float``
+* ``Monetary``
+* ``Boolean``
+* ``Selection``
+* ``Date`` / ``DateTime``
+
+También aplica por *opt-in* explícito vía
+``options="{'company_dependent_mode': 'orm'}"`` para campos computed/related
+que exponen comportamiento company-dependent vía el ORM (sin columna JSONB).
+
+Integración con ``res.config.settings``
+========================================
+
+El ícono ``fa-building-o`` que Odoo renderiza automáticamente en
+``<setting company_dependent="1">`` se reemplaza por el botón interactivo del
+widget. Funciona tanto cuando el campo es el primer hijo del ``<setting>``
+(caso común) como cuando está envuelto en un ``<div>`` con ``<label>`` previo
+(detección por DOM del primer campo visible).
+
+Modo claro y oscuro
+====================
+
+Los estilos del diálogo usan variables CSS Bootstrap 5.3+ dark-aware
+(``--bs-tertiary-bg``, ``--bs-secondary-bg``, ``--bs-emphasis-color-rgb``),
+por lo que el contraste se mantiene correctamente en ambos temas.
 
 Arquitectura técnica
 ====================
 
-Backend
--------
+Backend (``base.company.dependent`` AbstractModel)
+---------------------------------------------------
 
-``base.company.dependent`` (``models.AbstractModel``):
-
-* ``get_company_dependent_values(res_model, res_id, field_name)``
-  → valores crudos por compañía (para el modal).
-* ``set_company_dependent_values(res_model, res_id, field_name, values_dict)``
-  → escribe el JSON crudo (soporta ``RESET``).
+* ``get_company_dependent_values(res_model, res_id, field_name, mode=None)``
+  → valores por compañía con jerarquía. ``mode`` auto-detecta ``'json'`` vs
+  ``'orm'``.
+* ``set_company_dependent_values(res_model, res_id, field_name, values_dict,
+  mode=None)`` → escribe valores; soporta ``"RESET"`` para eliminar la clave
+  del JSON.
 * ``get_company_dependent_meta(res_model, res_id)``
-  → ``{field_name: is_specific}`` en una sola query (para el indicador visual).
+  → ``{field_name: is_specific}`` en una sola query para todos los campos CD
+  del modelo (incluye campos computed con ``depends_context('company')``).
+* ``_detect_field_strategy(res_model, field_name)``
+  → decide ``'json'`` (CD nativo + store) vs ``'orm'`` (computed/related
+  vía ``with_company``).
+* ``_resolve_orm_target(res_model, res_id, field_name)``
+  → para campos no-JSON, resuelve al modelo/registro real donde escribir:
+
+  * ``res.config.settings`` con ``related='company_id.xxx'`` →
+    ``res.company`` directo.
+  * ``product.template.standard_price`` con variante única →
+    ``product.product``.
 
 Frontend (OWL)
---------------
+---------------
 
-* **Servicio** ``company_dependent``: caché por registro, batching de RPCs.
-* **Patch** ``Many2OneField``: carga meta en ``onWillStart``, inyecta el
-  sub-componente y el template extendido.
-* **``CompanyDependentButton``**: ícono con tooltip dinámico, abre el diálogo.
-* **``CompanyDependentDialog``**: tabla interactiva con ``AutoComplete`` para
-  Many2one y soporte de Reset.
+* **Servicio** ``company_dependent``: caché por registro, batching de RPCs
+  ``get_company_dependent_meta`` para todos los campos CD de un formulario.
+* **Patches** sobre ``Many2OneField``, ``CharField``, ``IntegerField``,
+  ``FloatField``, ``MonetaryField``, ``BooleanField``, ``SelectionField``,
+  ``DateTimeField`` (vía ``fields_patch.js``): inyectan
+  ``CompanyDependentButton`` y aplican la clase ``o_cd_fallback``.
+* **Patch** sobre ``Setting`` / ``SearchableSetting`` (``settings_patch.js``):
+  reemplaza el icono estático por el botón interactivo en
+  ``res.config.settings``.
+* **``CompanyDependentButton``**: botón con tooltip dinámico, abre el
+  diálogo.
+* **``CompanyDependentDialog``**: tabla jerárquica con AutoComplete /
+  SelectMenu / inputs según el tipo de campo, soporte de Copy-to-children
+  y Reset.
 
 Instalación
 ===========
@@ -115,13 +161,14 @@ Instalación
 .. code-block:: bash
 
    # Instalar desde la interfaz de Odoo o con:
-   odoo-bin -d <db> -u base_company_dependent
+   odoo-bin -d <db> -i base_company_dependent
 
 Dependencias
 ============
 
 * ``base``
 * ``web``
+* ``product``
 
 Licencia
 ========

@@ -19,7 +19,7 @@
 ##############################################################################
 {
     "name": "Base Company Dependent UX",
-    "version": "19.0.1.1.0",
+    "version": "19.0.1.2.0",
     "category": "Base",
     "sequence": 14,
     "summary": (
@@ -30,13 +30,15 @@
     "website": "www.adhoc.com.ar",
     "license": "AGPL-3",
     "images": [],
-    "depends": ["base", "web"],
+    "depends": ["base", "web", "product"],
     "assets": {
         "web.assets_backend": [
             "base_company_dependent/static/src/**/*",
         ],
     },
-    "data": [],
+    "data": [
+        "views/product_template_views.xml",
+    ],
     "installable": True,
     "auto_install": False,
     "application": False,

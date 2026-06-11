@@ -47,10 +47,25 @@ function makeCDPatch() {
         },
 
         /**
-         * True when the field is marked as company_dependent in the model.
+         * True when the field is marked as company_dependent in the model,
+         * OR when explicitly opted-in via field options.
          */
         get isCompanyDependent() {
-            return this.props.record?.fields?.[this.props.name]?.company_dependent === true;
+            const fieldDef = this.props.record?.fields?.[this.props.name];
+            if (fieldDef?.company_dependent === true) return true;
+            // Explicit opt-in via options="{'company_dependent_mode': 'orm'}"
+            const options = this.props.options || {};
+            return options.company_dependent_mode === "orm";
+        },
+
+        /**
+         * Returns the persistence mode for the company_dependent dialog.
+         * 'orm' for computed/related fields, 'json' for native JSONB fields.
+         */
+        get cdMode() {
+            const options = this.props.options || {};
+            if (options.company_dependent_mode === "orm") return "orm";
+            return null; // let backend auto-detect
         },
 
         /**
