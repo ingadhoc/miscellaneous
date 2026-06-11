@@ -21,8 +21,40 @@ from odoo.exceptions import ValidationError
 from odoo.tests import TransactionCase, tagged
 
 
+class TesterModelMixin:
+    """Registers ``company.dependent.tester`` for the test class."""
+
+    MODEL = "company.dependent.tester"
+
+    @classmethod
+    def _register_test_model(cls):
+        from odoo.orm.model_classes import add_to_registry
+
+        from . import company_dependent_models
+
+        add_to_registry(cls.registry, company_dependent_models.CompanyDependentTester)
+        cls.registry._setup_models__(cls.env.cr, [cls.MODEL])
+        cls.registry.init_models(cls.env.cr, [cls.MODEL], {"models_to_check": True})
+        cls.addClassCleanup(cls.registry.__delitem__, cls.MODEL)
+        # Cleanups run in reverse order: drop the tester fields from the field
+        # triggers before the model leaves the registry.
+        cls.addClassCleanup(cls.registry._discard_fields, list(cls.registry[cls.MODEL]._fields.values()))
+        # Group-less ACL so the non-superuser test actor can operate the model.
+        cls.env["ir.model"]._reflect_models([cls.MODEL])
+        cls.env["ir.model.access"].create(
+            {
+                "name": "company_dependent_tester_test",
+                "model_id": cls.env["ir.model"]._get(cls.MODEL).id,
+                "perm_read": True,
+                "perm_write": True,
+                "perm_create": True,
+                "perm_unlink": True,
+            }
+        )
+
+
 @tagged("-at_install", "post_install")
-class TestCompanyCrossCheck(TransactionCase):
+class TestCompanyCrossCheck(TesterModelMixin, TransactionCase):
     """End-to-end coverage for the cross-company protection on
     company_dependent Many2one fields, through load().
 
@@ -33,8 +65,6 @@ class TestCompanyCrossCheck(TransactionCase):
     this run, rolled back by TransactionCase) so the protection is exercised
     without depending on ``account``.
     """
-
-    MODEL = "company.dependent.tester"
 
     @classmethod
     def setUpClass(cls):
@@ -48,29 +78,6 @@ class TestCompanyCrossCheck(TransactionCase):
         cls.partner_a = cls.env["res.partner"].create({"name": "E2E Partner A", "company_id": cls.company_a.id})
         cls.partner_b = cls.env["res.partner"].create({"name": "E2E Partner B", "company_id": cls.company_b.id})
         cls.partner_shared = cls.env["res.partner"].create({"name": "E2E Shared Partner", "company_id": False})
-
-    @classmethod
-    def _register_test_model(cls):
-        from odoo.orm.model_classes import add_to_registry
-
-        from . import company_dependent_models
-
-        add_to_registry(cls.registry, company_dependent_models.CompanyDependentTester)
-        cls.registry._setup_models__(cls.env.cr, [cls.MODEL])
-        cls.registry.init_models(cls.env.cr, [cls.MODEL], {"models_to_check": True})
-        cls.addClassCleanup(cls.registry.__delitem__, cls.MODEL)
-        # Group-less ACL so the non-superuser test actor can operate the model.
-        cls.env["ir.model"]._reflect_models([cls.MODEL])
-        cls.env["ir.model.access"].create(
-            {
-                "name": "company_dependent_tester_test",
-                "model_id": cls.env["ir.model"]._get(cls.MODEL).id,
-                "perm_read": True,
-                "perm_write": True,
-                "perm_create": True,
-                "perm_unlink": True,
-            }
-        )
 
     def _env_a(self):
         ctx = dict(self.env.context, allowed_company_ids=[self.company_a.id])

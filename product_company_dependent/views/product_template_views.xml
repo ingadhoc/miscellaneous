@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="product_template_form_view_cd" model="ir.ui.view">
+        <field name="name">product.template.form.company.dependent</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <field name="standard_price" position="attributes">
+                <attribute name="options">
+                    {'currency_field': 'cost_currency_id', 'field_digits': True, 'company_dependent_mode': 'orm'}
+                </attribute>
+            </field>
+        </field>
+    </record>
+
+</odoo>

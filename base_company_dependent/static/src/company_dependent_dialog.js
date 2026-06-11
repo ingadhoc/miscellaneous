@@ -29,6 +29,7 @@ export class CompanyDependentDialog extends Component {
         resModel: { type: String },
         onSaved: { type: Function },
         close: { type: Function },
+        mode: { validate: (v) => v === null || v === "json" || v === "orm", optional: true },
     };
 
     setup() {
@@ -43,6 +44,7 @@ export class CompanyDependentDialog extends Component {
             fieldType: null,
             comodelName: null,
             selectionOptions: [],
+            canReset: true,
             /** Cambios pendientes: Map<company_id, {value_id, is_reset}> */
             changes: {},
             /** Counter per row to force AutoComplete re-render on revert */
@@ -131,16 +133,18 @@ export class CompanyDependentDialog extends Component {
     // ---------------------------------------------------------------
 
     async _loadValues() {
-        const { resModel, resId, fieldName } = this.props;
+        const { resModel, resId, fieldName, mode } = this.props;
         const result = await this.orm.call(
             "base.company.dependent",
             "get_company_dependent_values",
             [resModel, resId, fieldName],
+            { mode: mode || null },
         );
         this.state.rows = result.values.map((row) => ({ ...row }));
         this.state.fieldType = result.field_type;
         this.state.comodelName = result.comodel_name;
         this.state.selectionOptions = result.selection_options || [];
+        this.state.canReset = result.can_reset !== false;
     }
 
     // ---------------------------------------------------------------
@@ -435,6 +439,7 @@ export class CompanyDependentDialog extends Component {
             "base.company.dependent",
             "set_company_dependent_values",
             [this.props.resModel, this.props.resId, this.props.fieldName, valuesDict],
+            { mode: this.props.mode || null },
         );
 
         this.cdService.invalidate(this.props.resModel, this.props.resId);
