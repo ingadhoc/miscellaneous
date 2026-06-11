@@ -29,6 +29,7 @@
                     required="props.record._isRequired(props.name)"
                     record="props.record"
                     isSpecific="_cdState.isSpecific"
+                    mode="cdMode"
                     onSaved="() => this._loadCDMeta()"
                 />
             </div>
@@ -86,6 +87,7 @@
                     required="props.record._isRequired(props.name)"
                     record="props.record"
                     isSpecific="_cdState.isSpecific"
+                    mode="cdMode"
                     onSaved="() => this._loadCDMeta()"
                 />
             </div>
@@ -147,6 +149,7 @@
                     required="props.record._isRequired(props.name)"
                     record="props.record"
                     isSpecific="_cdState.isSpecific"
+                    mode="cdMode"
                     onSaved="() => this._loadCDMeta()"
                 />
             </div>
@@ -194,6 +197,7 @@
                     required="props.record._isRequired(props.name)"
                     record="props.record"
                     isSpecific="_cdState.isSpecific"
+                    mode="cdMode"
                     onSaved="() => this._loadCDMeta()"
                 />
             </div>
@@ -238,6 +242,7 @@
                     required="props.record._isRequired(props.name)"
                     record="props.record"
                     isSpecific="_cdState.isSpecific"
+                    mode="cdMode"
                     onSaved="() => this._loadCDMeta()"
                 />
             </div>
@@ -272,6 +277,7 @@
                     required="props.record._isRequired(props.name)"
                     record="props.record"
                     isSpecific="_cdState.isSpecific"
+                    mode="cdMode"
                     onSaved="() => this._loadCDMeta()"
                 />
             </div>
@@ -301,7 +307,8 @@
                 required="props.record._isRequired(props.name)"
                 record="props.record"
                 isSpecific="_cdState.isSpecific"
-                onSaved="() => this._loadCDMeta()"
+                mode="cdMode"
+                    onSaved="() => this._loadCDMeta()"
             />
         </xpath>
     </t>
@@ -329,7 +336,8 @@
                 required="props.record._isRequired(props.name)"
                 record="props.record"
                 isSpecific="_cdState.isSpecific"
-                onSaved="() => this._loadCDMeta()"
+                mode="cdMode"
+                    onSaved="() => this._loadCDMeta()"
             />
         </div>
     </t>

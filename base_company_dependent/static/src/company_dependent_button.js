@@ -2,7 +2,7 @@
 
 import { Component } from "@odoo/owl";
 import { _t } from "@web/core/l10n/translation";
-import { useOwnedDialogs } from "@web/core/utils/hooks";
+import { useOwnedDialogs, useService } from "@web/core/utils/hooks";
 import { CompanyDependentDialog } from "./company_dependent_dialog";
 
 /**
@@ -22,16 +22,18 @@ import { CompanyDependentDialog } from "./company_dependent_dialog";
 export class CompanyDependentButton extends Component {
     static template = "base_company_dependent.CompanyDependentButton";
     static props = {
-        fieldName: { type: String },
+        fieldName: { type: String, optional: true },
         fieldString: { type: String },
         required: { type: Boolean },
         record: { type: Object },
         isSpecific: { validate: (v) => v === null || typeof v === "boolean" },
         onSaved: { type: Function, optional: true },
+        mode: { validate: (v) => v == null || typeof v === "string", optional: true },
     };
 
     setup() {
         this.addDialog = useOwnedDialogs();
+        this.notification = useService("notification");
     }
 
     get title() {
@@ -44,6 +46,13 @@ export class CompanyDependentButton extends Component {
     }
 
     async onClick() {
+        if (!this.props.fieldName) {
+            this.notification.add(
+                _t("These values are company-specific. Switch company to see or edit values for other companies."),
+                { type: "info" },
+            );
+            return;
+        }
         // Cerrar cualquier AutoComplete/dropdown abierto en el formulario antes
         // de guardar, para evitar que el dropdown del campo aparezca detrás del diálogo.
         if (document.activeElement && document.activeElement !== document.body) {
@@ -61,6 +70,7 @@ export class CompanyDependentButton extends Component {
             required: this.props.required,
             resId,
             resModel,
+            mode: this.props.mode || null,
             onSaved: async () => {
                 await this.props.record.load();
                 if (this.props.onSaved) {
