@@ -19,7 +19,7 @@
 ##############################################################################
 {
     "name": "Portal Backend",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.2.0",
     "category": "Base",
     "sequence": 14,
     "summary": "",
@@ -33,10 +33,16 @@
         "security/res_groups.xml",
         "security/ir.model.access.csv",
         "views/portal_templates.xml",
+        "views/res_users_views.xml",
     ],
     "demo": [
         "demo/res_users_demo.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "portal_backend/static/src/portal_advanced_group_ids/portal_advanced_group_ids_field.js",
+        ],
+    },
     "installable": True,
     "auto_install": False,
     "application": False,
