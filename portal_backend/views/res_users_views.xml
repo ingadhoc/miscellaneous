@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_users_form_portal_backend" model="ir.ui.view">
+        <field name="name">res.users.form.portal_backend</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <!-- access_type is the single decision point for the user access type. It lives in its
+                 own "User Type" section before "Roles" so it stays visible even for external users
+                 (the native "Roles" group hides itself when share=True). -->
+            <!-- The visible "User Type" selector only shows in developer mode, like Odoo 18.
+                 access_type is still loaded everywhere because the modifiers below reference it. -->
+            <xpath expr="//field[@name='role'][@widget='radio']/.." position="before">
+                <group string="User Type" groups="base.group_no_one">
+                    <field name="access_type" widget="radio" options="{'horizontal': true}"
+                           nolabel="1" colspan="2"/>
+                </group>
+            </xpath>
+            <!-- The internal Role radio (User/Administrator) only applies to internal users. -->
+            <xpath expr="//field[@name='role'][@widget='radio']" position="attributes">
+                <attribute name="invisible">access_type != 'internal'</attribute>
+            </xpath>
+            <!-- The native groups widget shows every category (including "Advanced Portal") and is
+                 only meant for internal users. Restrict it to internal so it does not duplicate our
+                 dedicated Advanced Portal section for portal/portal_backend users. -->
+            <xpath expr="//field[@name='group_ids'][@widget='res_user_group_ids'][@groups='!base.group_no_one']" position="attributes">
+                <attribute name="invisible">access_type != 'internal'</attribute>
+            </xpath>
+            <!-- The base form has a SECOND res_user_group_ids node, shown only in developer mode
+                 (groups="base.group_no_one"). Hide it too for non-internal users, otherwise developers
+                 keep seeing the full groups widget (and the duplicate "Advanced Portal" category). -->
+            <xpath expr="//field[@name='group_ids'][@widget='res_user_group_ids'][@groups='base.group_no_one']" position="attributes">
+                <attribute name="invisible">access_type != 'internal'</attribute>
+            </xpath>
+            <!-- Advanced Portal accesses (timesheets, holidays, ...) for Portal Backend users.
+                 The native res_user_group_ids widget is invisible="share", so it never shows for an
+                 external user; this dedicated field (not a third group_ids node, which broke the
+                 widget) is filtered to the Advanced Portal category and gated by access_type. -->
+            <xpath expr="//page[@name='access_rights']" position="inside">
+                <group invisible="access_type != 'portal_backend'">
+                    <field name="portal_advanced_group_ids" widget="portal_advanced_group_ids"
+                           nolabel="1" colspan="2"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

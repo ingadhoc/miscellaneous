@@ -46,6 +46,21 @@ You can also create a set of groups that inherit (or not) from each other, but t
         <field name="implied_ids" eval="[Command.link(ref('group_portal_backend_app'))]"/>
     </record>
 
+Creating Portal / Portal Backend users
+======================================
+
+Portal and Portal Backend users can be created directly from *Settings → Users → New*
+(and via import), without having to grant portal access from a contact first. Enable
+developer mode to show the **User Type** selector (Internal / Portal / Portal Backend):
+choosing a type sets the proper groups and the ``share`` flag automatically, so the
+*"exclusive groups"* error never appears. The same result is obtained on import, either
+through the ``Access Type`` column or the ``Role / Portal Backend`` group.
+
+For Portal Backend users, the backend accesses defined under the *Advanced Portal*
+category (e.g. timesheets, holidays) can be granted from a dedicated section in the same
+form. If a contact with the same email already exists, it is reused instead of creating a
+duplicate.
+
 
 Installation
 ============
