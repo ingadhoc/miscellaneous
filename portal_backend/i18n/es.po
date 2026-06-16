@@ -1,15 +1,15 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
 # 	* portal_backend
-# 
+#
 # Translators:
 # ADHOC - Bot <transbot@adhoc.com.ar>, 2025
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-24 11:05+0000\n"
+"POT-Creation-Date: 2026-06-16 20:46+0000\n"
 "PO-Revision-Date: 2025-12-11 18:10+0000\n"
 "Last-Translator: BAF <baf@adhoc.inc>\n"
 "Language-Team: Spanish <https://translation.dev-adhoc.com/projects/"
@@ -18,9 +18,14 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
-"Plural-Forms: nplurals=3; plural=(n == 1) ? 0 : ((n != 0 && n % 1000000 == 0)"
-" ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n == 1) ? 0 : ((n != 0 && n % 1000000 == "
+"0) ? 1 : 2);\n"
 "X-Generator: Weblate 5.10.4\n"
+
+#. module: portal_backend
+#: model:ir.model.fields,field_description:portal_backend.field_res_users__access_type
+msgid "Access Type"
+msgstr ""
 
 #. module: portal_backend
 #: model:ir.model.fields,field_description:portal_backend.field_ir_actions_server__activity_ids
@@ -56,6 +61,11 @@ msgid "Advanced Portal"
 msgstr "Portal Avanzado"
 
 #. module: portal_backend
+#: model:ir.model.fields,field_description:portal_backend.field_res_users__portal_advanced_group_ids
+msgid "Advanced Portal Access"
+msgstr ""
+
+#. module: portal_backend
 #: model:ir.model,name:portal_backend.model_ir_attachment
 msgid "Attachment"
 msgstr "Archivo adjunto"
@@ -79,6 +89,14 @@ msgstr "Archivo adjunto"
 #: model:ir.model.fields,field_description:portal_backend.field_res_users__message_attachment_count
 msgid "Attachment Count"
 msgstr "Número de archivos adjuntos"
+
+#. module: portal_backend
+#: model:ir.model.fields,help:portal_backend.field_res_users__portal_advanced_group_ids
+msgid ""
+"Backend features a Portal Backend user can access (timesheets, "
+"holidays, ...). Provided by the portal_* modules under the Advanced Portal "
+"category."
+msgstr ""
 
 #. module: portal_backend
 #: model:ir.model.fields,field_description:portal_backend.field_ir_attachment__display_name
@@ -131,6 +149,11 @@ msgid "ID"
 msgstr "ID"
 
 #. module: portal_backend
+#: model:ir.model.fields.selection,name:portal_backend.selection__res_users__access_type__internal
+msgid "Internal User"
+msgstr ""
+
+#. module: portal_backend
 #: model:ir.model,name:portal_backend.model_ir_ui_menu
 msgid "Menu"
 msgstr "Menú"
@@ -170,10 +193,25 @@ msgid "Next Activity Type"
 msgstr "Tipo de la siguiente actividad"
 
 #. module: portal_backend
+#: model:ir.model.fields.selection,name:portal_backend.selection__res_users__access_type__portal
+msgid "Portal"
+msgstr ""
+
+#. module: portal_backend
+#: model:ir.model.fields,field_description:portal_backend.field_res_users__portal_advanced_view_group_hierarchy
+msgid "Portal Advanced View Group Hierarchy"
+msgstr ""
+
+#. module: portal_backend
+#: model:ir.model.fields.selection,name:portal_backend.selection__res_users__access_type__portal_backend
+msgid "Portal Backend"
+msgstr ""
+
+#. module: portal_backend
 #: model:res.groups,comment:portal_backend.group_portal_backend
 msgid ""
-"Portal backend users have specific access rights. They usually do not belong"
-" to the usual Odoo groups but are able to access certain applications."
+"Portal backend users have specific access rights. They usually do not belong "
+"to the usual Odoo groups but are able to access certain applications."
 msgstr ""
 "Los usuarios del portal con acceso al backend tienen derechos de acceso "
 "específicos. Por lo general, no pertenecen a los grupos habituales de Odoo, "
@@ -198,6 +236,15 @@ msgid "Role / Portal Backend"
 msgstr "Portal Backend"
 
 #. module: portal_backend
+#: model:ir.model.fields,help:portal_backend.field_res_users__access_type
+msgid ""
+"Single decision point for the user access type. Internal users get backend "
+"access (Role / User or Administrator); Portal and Portal Backend are "
+"external users (share=True). Portal Backend users can additionally be "
+"granted Advanced Portal accesses."
+msgstr ""
+
+#. module: portal_backend
 #: model:ir.model.fields,help:portal_backend.field_ir_actions_server__activity_state
 #: model:ir.model.fields,help:portal_backend.field_ir_cron__activity_state
 #: model:ir.model.fields,help:portal_backend.field_mail_activity_mixin__activity_state
@@ -215,6 +262,11 @@ msgstr ""
 "Planificada: actividades futuras."
 
 #. module: portal_backend
+#: model:ir.model.fields,field_description:portal_backend.field_res_users__view_group_hierarchy
+msgid "Technical field for user group setting"
+msgstr ""
+
+#. module: portal_backend
 #: model:ir.model.fields,field_description:portal_backend.field_ir_actions_server__activity_summary
 msgid "Title"
 msgstr "Título"
@@ -223,6 +275,11 @@ msgstr "Título"
 #: model:ir.model,name:portal_backend.model_res_users
 msgid "User"
 msgstr "Usuario"
+
+#. module: portal_backend
+#: model_terms:ir.ui.view,arch_db:portal_backend.view_users_form_portal_backend
+msgid "User Type"
+msgstr ""
 
 #. module: portal_backend
 #. odoo-python
