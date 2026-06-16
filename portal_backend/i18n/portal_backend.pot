@@ -6,14 +6,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-22 10:05+0000\n"
-"PO-Revision-Date: 2025-11-22 10:05+0000\n"
+"POT-Creation-Date: 2026-06-16 20:46+0000\n"
+"PO-Revision-Date: 2026-06-16 20:46+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: portal_backend
+#: model:ir.model.fields,field_description:portal_backend.field_res_users__access_type
+msgid "Access Type"
+msgstr ""
 
 #. module: portal_backend
 #: model:ir.model.fields,field_description:portal_backend.field_ir_actions_server__activity_ids
@@ -49,6 +54,11 @@ msgid "Advanced Portal"
 msgstr ""
 
 #. module: portal_backend
+#: model:ir.model.fields,field_description:portal_backend.field_res_users__portal_advanced_group_ids
+msgid "Advanced Portal Access"
+msgstr ""
+
+#. module: portal_backend
 #: model:ir.model,name:portal_backend.model_ir_attachment
 msgid "Attachment"
 msgstr ""
@@ -71,6 +81,13 @@ msgstr ""
 #: model:ir.model.fields,field_description:portal_backend.field_res_partner__message_attachment_count
 #: model:ir.model.fields,field_description:portal_backend.field_res_users__message_attachment_count
 msgid "Attachment Count"
+msgstr ""
+
+#. module: portal_backend
+#: model:ir.model.fields,help:portal_backend.field_res_users__portal_advanced_group_ids
+msgid ""
+"Backend features a Portal Backend user can access (timesheets, holidays, "
+"...). Provided by the portal_* modules under the Advanced Portal category."
 msgstr ""
 
 #. module: portal_backend
@@ -124,6 +141,11 @@ msgid "ID"
 msgstr ""
 
 #. module: portal_backend
+#: model:ir.model.fields.selection,name:portal_backend.selection__res_users__access_type__internal
+msgid "Internal User"
+msgstr ""
+
+#. module: portal_backend
 #: model:ir.model,name:portal_backend.model_ir_ui_menu
 msgid "Menu"
 msgstr ""
@@ -163,6 +185,21 @@ msgid "Next Activity Type"
 msgstr ""
 
 #. module: portal_backend
+#: model:ir.model.fields.selection,name:portal_backend.selection__res_users__access_type__portal
+msgid "Portal"
+msgstr ""
+
+#. module: portal_backend
+#: model:ir.model.fields,field_description:portal_backend.field_res_users__portal_advanced_view_group_hierarchy
+msgid "Portal Advanced View Group Hierarchy"
+msgstr ""
+
+#. module: portal_backend
+#: model:ir.model.fields.selection,name:portal_backend.selection__res_users__access_type__portal_backend
+msgid "Portal Backend"
+msgstr ""
+
+#. module: portal_backend
 #: model:res.groups,comment:portal_backend.group_portal_backend
 msgid ""
 "Portal backend users have specific access rights. They usually do not belong"
@@ -188,6 +225,15 @@ msgid "Role / Portal Backend"
 msgstr ""
 
 #. module: portal_backend
+#: model:ir.model.fields,help:portal_backend.field_res_users__access_type
+msgid ""
+"Single decision point for the user access type. Internal users get backend "
+"access (Role / User or Administrator); Portal and Portal Backend are "
+"external users (share=True). Portal Backend users can additionally be "
+"granted Advanced Portal accesses."
+msgstr ""
+
+#. module: portal_backend
 #: model:ir.model.fields,help:portal_backend.field_ir_actions_server__activity_state
 #: model:ir.model.fields,help:portal_backend.field_ir_cron__activity_state
 #: model:ir.model.fields,help:portal_backend.field_mail_activity_mixin__activity_state
@@ -201,6 +247,11 @@ msgid ""
 msgstr ""
 
 #. module: portal_backend
+#: model:ir.model.fields,field_description:portal_backend.field_res_users__view_group_hierarchy
+msgid "Technical field for user group setting"
+msgstr ""
+
+#. module: portal_backend
 #: model:ir.model.fields,field_description:portal_backend.field_ir_actions_server__activity_summary
 msgid "Title"
 msgstr ""
@@ -208,6 +259,11 @@ msgstr ""
 #. module: portal_backend
 #: model:ir.model,name:portal_backend.model_res_users
 msgid "User"
+msgstr ""
+
+#. module: portal_backend
+#: model_terms:ir.ui.view,arch_db:portal_backend.view_users_form_portal_backend
+msgid "User Type"
 msgstr ""
 
 #. module: portal_backend
