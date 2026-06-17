@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Client action: "First Steps" panel (initial imports guide) -->
+    <record id="action_first_steps_guide" model="ir.actions.client">
+        <field name="name">First Steps</field>
+        <field name="tag">first_steps_guide</field>
+        <field name="target">current</field>
+    </record>
+
+    <!--
+        Standard import actions (base_import). The params field is just a dict
+        (no FK to the model), so these records load even when the model's module
+        is not installed; the card is hidden via t-if.
+
+        The product action mirrors the context of the Inventory > Products action
+        (stock_ux' product_template_action_product): default_is_storable plus the
+        stock_product_template flag, which makes get_import_templates serve the
+        improved Adhoc product template (with stock columns) instead of the base
+        one. The flag is just a context key, so it is a no-op when stock_ux is not
+        installed (no dependency added).
+    -->
+    <record id="action_first_steps_import_product" model="ir.actions.client">
+        <field name="name">Import Products</field>
+        <field name="tag">import</field>
+        <field name="target">current</field>
+        <field name="params" eval="{'model': 'product.template', 'context': {'search_default_goods': 1, 'default_is_storable': True, 'stock_product_template': 1}}"/>
+    </record>
+
+    <!--
+        contact_import mirrors base_ux' Contacts action so get_import_templates
+        serves the improved Adhoc contacts template; default_is_company matches
+        the standard Contacts default. Both are plain context keys (no-op when
+        base_ux is absent).
+    -->
+    <record id="action_first_steps_import_partner" model="ir.actions.client">
+        <field name="name">Import Contacts</field>
+        <field name="tag">import</field>
+        <field name="target">current</field>
+        <field name="params" eval="{'model': 'res.partner', 'context': {'default_is_company': True, 'contact_import': 1}}"/>
+    </record>
+
+    <!--
+        Customers and Vendors are the same res.partner model. The
+        res_partner_search_mode flag makes sale_ux / purchase_ux'
+        get_import_templates serve their improved customer / vendor templates
+        (and triggers the right search mode), while default_*_rank classifies the
+        imported record so it shows up in the matching list. This mirrors the
+        native Customers / Vendors actions; all keys are no-ops when the related
+        module is not installed.
+    -->
+    <record id="action_first_steps_import_customer" model="ir.actions.client">
+        <field name="name">Import Customers</field>
+        <field name="tag">import</field>
+        <field name="target">current</field>
+        <field name="params" eval="{'model': 'res.partner', 'context': {'res_partner_search_mode': 'customer', 'default_is_company': True, 'default_customer_rank': 1}}"/>
+    </record>
+
+    <record id="action_first_steps_import_supplier" model="ir.actions.client">
+        <field name="name">Import Vendors</field>
+        <field name="tag">import</field>
+        <field name="target">current</field>
+        <field name="params" eval="{'model': 'res.partner', 'context': {'res_partner_search_mode': 'supplier', 'default_is_company': True, 'default_supplier_rank': 1}}"/>
+    </record>
+
+</odoo>

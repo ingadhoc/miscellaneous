@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="base_import_ux.FirstStepsGuide">
+        <ControlPanel/>
+        <div class="container text-justify overflow-auto h-100">
+            <div class="d-flex flex-column my-5 pt-4">
+                <!-- Data quality recommendation (functional requirement) -->
+                <div class="alert alert-info" role="alert">
+                    <strong>Recommendation:</strong> always use a
+                    <strong>fresh, clean template</strong> downloaded from the
+                    system itself. Reusing old spreadsheets often carries internal
+                    errors that block the import.
+                </div>
+
+                <div class="excel-import pt-4">
+                    <h2 class="text-primary">Initial imports</h2>
+                    <ol class="row list-unstyled" name="first_steps_cards">
+
+                        <!-- Products (requires the product module) -->
+                        <li class="col-lg-6 pt-4" t-if="state.hasProduct">
+                            <div class="row">
+                                <div class="col-lg-10">
+                                    <h3>Import Products</h3>
+                                    <p>
+                                        Import your product catalog.
+                                        <t t-if="state.hasStock">
+                                            The initial physical stock is loaded
+                                            within the same product spreadsheet.
+                                        </t>
+                                    </p>
+                                    <button type="button" class="btn btn-primary"
+                                        t-on-click="() => this.openAction('base_import_ux.action_first_steps_import_product')">
+                                        Import Products
+                                    </button>
+                                </div>
+                                <div class="col-lg-2 border-start"/>
+                            </div>
+                        </li>
+
+                        <!--
+                            With accounting: Customers and Vendors as separate
+                            cards (they get classified). Without accounting: a
+                            single Contacts card. In every case it is res.partner
+                            with the same template.
+                        -->
+                        <t t-if="state.hasAccountImport">
+                            <!-- Customers -->
+                            <li class="col-lg-6 pt-4">
+                                <div class="row">
+                                    <div class="col-lg-10">
+                                        <h3>Import Customers</h3>
+                                        <p>
+                                            Import your customers. They get
+                                            classified and show up in the Customers
+                                            list.
+                                        </p>
+                                        <button type="button" class="btn btn-primary"
+                                            t-on-click="() => this.openAction('base_import_ux.action_first_steps_import_customer')">
+                                            Import Customers
+                                        </button>
+                                    </div>
+                                    <div class="col-lg-2 border-start"/>
+                                </div>
+                            </li>
+
+                            <!-- Vendors -->
+                            <li class="col-lg-6 pt-4">
+                                <div class="row">
+                                    <div class="col-lg-10">
+                                        <h3>Import Vendors</h3>
+                                        <p>
+                                            Import your vendors. They get classified
+                                            and show up in the Vendors list.
+                                        </p>
+                                        <button type="button" class="btn btn-primary"
+                                            t-on-click="() => this.openAction('base_import_ux.action_first_steps_import_supplier')">
+                                            Import Vendors
+                                        </button>
+                                    </div>
+                                    <div class="col-lg-2 border-start"/>
+                                </div>
+                            </li>
+                        </t>
+                        <li class="col-lg-6 pt-4" t-else="">
+                            <div class="row">
+                                <div class="col-lg-10">
+                                    <h3>Import Contacts</h3>
+                                    <p>
+                                        Import customers and vendors along with their
+                                        contacts.
+                                    </p>
+                                    <button type="button" class="btn btn-primary"
+                                        t-on-click="() => this.openAction('base_import_ux.action_first_steps_import_partner')">
+                                        Import Contacts
+                                    </button>
+                                </div>
+                                <div class="col-lg-2 border-start"/>
+                            </div>
+                        </li>
+
+                        <!-- Accounting (requires account_balance_import; xmlid as string) -->
+                        <li class="col-lg-6 pt-4" t-if="state.hasAccountImport">
+                            <div class="row">
+                                <div class="col-lg-10">
+                                    <h3>Accounting setup</h3>
+                                    <p>
+                                        Set up your initial accounting: chart of
+                                        accounts, periods, partner balances and
+                                        document import.
+                                    </p>
+                                    <button type="button" class="btn btn-primary"
+                                        t-on-click="() => this.openAction('account_base_import.action_open_import_guide')">
+                                        Open accounting guide
+                                    </button>
+                                </div>
+                                <div class="col-lg-2 border-start"/>
+                            </div>
+                        </li>
+
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>
