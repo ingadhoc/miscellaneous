@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+
+    <t t-inherit="web._ModelFieldSelector" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('o_model_field_selector_value')]" position="inside">
+            <span t-if="!props.readonly and !state.displayNames.length" class="o_model_field_selector_placeholder text-muted px-1">Select a field...</span>
+        </xpath>
+    </t>
+
+</templates>
