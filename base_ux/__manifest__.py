@@ -19,7 +19,7 @@
 ##############################################################################
 {
     "name": "Base UX",
-    "version": "19.0.1.6.0",
+    "version": "19.0.1.7.0",
     "category": "Base",
     "sequence": 14,
     "summary": "",
@@ -40,6 +40,11 @@
         "views/mail_activity_schedule_view.xml",
         "views/res_partner_views.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "base_ux/static/src/model_field_selector/model_field_selector.xml",
+        ],
+    },
     "demo": [],
     "test": [],
     "installable": True,
