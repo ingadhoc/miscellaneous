@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="whatsapp_template_view_form" model="ir.ui.view">
+        <field name="name">whatsapp.template.view.form.inherit.whatsapp_ux</field>
+        <field name="model">whatsapp.template</field>
+        <field name="inherit_id" ref="whatsapp.whatsapp_template_view_form"/>
+        <field name="arch" type="xml">
+            <field name="model_id" position="after">
+                <field name="bulk_send_action"
+                    groups="whatsapp.group_whatsapp_admin"/>
+            </field>
+        </field>
+    </record>
+</odoo>
