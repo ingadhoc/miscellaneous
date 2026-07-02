@@ -1,0 +1,14 @@
+<odoo>
+    <record id="wizard_view" model="ir.ui.view">
+        <field name="name">portal.wizard.form (in portal_ux)</field>
+        <field name="model">portal.wizard</field>
+        <field name="inherit_id" ref="portal.wizard_view"/>
+        <field name="arch" type="xml">
+            <field name="welcome_message" position="after">
+                <button string="Grant Access to All" name="action_grant_access_all"
+                        type="object" class="btn-secondary"
+                        help="This button will grant access to all contacts with a valid email address."/>
+            </field>
+        </field>
+    </record>
+</odoo>
