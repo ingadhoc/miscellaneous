@@ -13,6 +13,12 @@ from odoo.fields import Domain
 
 _logger = logging.getLogger(__name__)
 
+# Number of times a worker retries acquiring the next job when it loses the race
+# against a concurrent worker (SerializationFailure). Retrying in-process absorbs the
+# transient contention instead of surrendering and rescheduling every cron at once
+# (trigger storm). Mirrors saas_provider.saas_database._acquire_next_task.
+MAX_ACQUIRE_RETRIES = 5
+
 
 class BgJob(models.Model):
     _name = "bg.job"
@@ -326,6 +332,14 @@ class BgJob(models.Model):
         Uses SELECT FOR UPDATE SKIP LOCKED to avoid conflicts with other cron jobs.
         Not only grabs the next job, but also marks it as running.
 
+        Under Odoo's default REPEATABLE READ isolation, SKIP LOCKED does not fully
+        prevent conflicts: if a concurrent worker already grabbed and committed the
+        head-of-queue row, this transaction (older snapshot) still selects it, the row
+        is no longer locked so it is not skipped, and the UPDATE raises a
+        SerializationFailure. This is expected under contention and handled by the
+        caller (_cron_run_enqueued_jobs) with a bounded retry, so it must not be logged
+        as a "bad query" ERROR — hence log_exceptions=False.
+
         :return: The next BgJob record to process, or an empty recordset if none available
         """
         self.env.cr.execute(
@@ -344,7 +358,8 @@ class BgJob(models.Model):
             FROM candidate
             WHERE j.id = candidate.id
             RETURNING j.id;
-            """
+            """,
+            log_exceptions=False,
         )
         row = self.env.cr.fetchone()
         return self.browse(row[0]) if row else self.env["bg.job"]
@@ -357,13 +372,32 @@ class BgJob(models.Model):
         Uses SELECT FOR UPDATE SKIP LOCKED to allow multiple crons to safely
         pick up jobs without conflicts. Each cron processes one available job
         that isn't locked by other crons, naturally balancing the load.
+
+        Retry on SerializationFailure (concurrent workers racing on the same row).
+        Since no writes have been done yet at this point, rolling back and retrying
+        in-process is safe and avoids the trigger storm caused by all workers
+        surrendering at once and rescheduling each other.
         """
-        try:
-            job = self._get_next_job()
-        except psycopg2.errors.SerializationFailure:
-            self.env.cr.rollback()
-            self.env["base.bg"].sudo()._trigger_crons()
-            return
+        job = None
+        for attempt in range(MAX_ACQUIRE_RETRIES):
+            try:
+                job = self._get_next_job()
+                break
+            except psycopg2.errors.SerializationFailure:
+                self.env.cr.rollback()
+                if attempt == MAX_ACQUIRE_RETRIES - 1:
+                    _logger.warning(
+                        "Failed to acquire next background job after %d attempts due to "
+                        "concurrent workers; rescheduling.",
+                        MAX_ACQUIRE_RETRIES,
+                    )
+                    self.env["base.bg"].sudo()._trigger_crons()
+                    return
+            except Exception:
+                # Any other (unexpected) error leaves the transaction aborted; roll it
+                # back so the cursor is clean before propagating, and do not retry.
+                self.env.cr.rollback()
+                raise
 
         if not job:
             return
