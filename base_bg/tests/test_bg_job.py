@@ -6,8 +6,10 @@ from datetime import timedelta
 from unittest.mock import patch
 from uuid import uuid4
 
+import psycopg2
 from odoo import fields, tools
 from odoo.addons.base_bg.models.base_bg import BaseBg
+from odoo.addons.base_bg.models.bg_job import MAX_ACQUIRE_RETRIES
 from odoo.exceptions import UserError
 from odoo.tests.common import TransactionCase
 
@@ -498,3 +500,71 @@ class TestBgJob(TransactionCase):
         with patch.object(type(job1), "run"), patch.object(type(self.env["base.bg"]), "_trigger_crons") as mock_trigger:
             self.BgJob._cron_run_enqueued_jobs()
             mock_trigger.assert_called_once()
+
+    def test_cron_run_retries_on_serialization_failure(self):
+        """A SerializationFailure while acquiring a job must be retried in-process,
+        not surrendered on the first conflict (which caused the trigger storm)."""
+        partner = self.env["res.partner"].create({"name": "Retry Partner"})
+        job = self._create_job(
+            name="Retry Race Job",
+            model="res.partner",
+            method="exists",
+            kwargs_json={"_record_ids": [partner.id]},
+            state="enqueued",
+        )
+        # First acquire loses the race; the retry succeeds and returns the job.
+        outcomes = [psycopg2.errors.SerializationFailure(), job]
+
+        def fake_get_next_job():
+            outcome = outcomes.pop(0)
+            if isinstance(outcome, Exception):
+                raise outcome
+            return outcome
+
+        with (
+            patch.object(type(self.BgJob), "_get_next_job", side_effect=fake_get_next_job) as mock_get,
+            patch.object(self.env.cr, "rollback"),
+            patch.object(type(job), "run") as mock_run,
+        ):
+            self.BgJob._cron_run_enqueued_jobs()
+
+        self.assertEqual(mock_get.call_count, 2, "must retry once after the SerializationFailure")
+        mock_run.assert_called_once()
+
+    def test_cron_run_surrenders_after_max_retries(self):
+        """After MAX_ACQUIRE_RETRIES consecutive SerializationFailures, the cron
+        reschedules and returns without running a job."""
+        with (
+            patch.object(
+                type(self.BgJob),
+                "_get_next_job",
+                side_effect=psycopg2.errors.SerializationFailure(),
+            ) as mock_get,
+            patch.object(self.env.cr, "rollback"),
+            patch.object(type(self.env["base.bg"]), "_trigger_crons") as mock_trigger,
+            patch("odoo.addons.base_bg.models.bg_job._logger.warning") as mock_warning,
+        ):
+            result = self.BgJob._cron_run_enqueued_jobs()
+
+        self.assertIsNone(result)
+        self.assertEqual(mock_get.call_count, MAX_ACQUIRE_RETRIES)
+        mock_trigger.assert_called_once()
+        mock_warning.assert_called_once()
+
+    def test_cron_run_reraises_unexpected_error(self):
+        """An error other than SerializationFailure must not be retried: the cron
+        rolls back the aborted transaction and propagates it (no silent swallow)."""
+        with (
+            patch.object(
+                type(self.BgJob),
+                "_get_next_job",
+                side_effect=ValueError("boom"),
+            ) as mock_get,
+            patch.object(self.env.cr, "rollback") as mock_rollback,
+        ):
+            with self.assertRaises(ValueError):
+                self.BgJob._cron_run_enqueued_jobs()
+
+        # Not retried, and the transaction is rolled back before propagating.
+        self.assertEqual(mock_get.call_count, 1)
+        mock_rollback.assert_called_once()
