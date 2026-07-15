@@ -85,21 +85,27 @@ class ResUsers(models.Model):
                 user.group_ids = self._groups_for_access_type(user.group_ids, user.access_type)
 
     def _view_group_hierarchy_without_advanced(self):
-        """Full group hierarchy minus the Advanced Portal category (for the native widget)."""
+        """Full group hierarchy minus the Advanced Portal category and its subcategories (for the native widget)."""
         hierarchy = copy.deepcopy(self.env["res.groups"]._get_view_group_hierarchy())
         category = self._portal_advanced_category()
         if category:
-            hierarchy["categories"] = [c for c in hierarchy["categories"] if c["id"] != category.id]
+            category_ids = self.env["ir.module.category"].search([("id", "child_of", category.id)]).ids
+            hierarchy["categories"] = [c for c in hierarchy["categories"] if c["id"] not in category_ids]
         return hierarchy
 
     def _portal_advanced_view_group_hierarchy(self):
-        """Only the Advanced Portal category (for the portal_advanced_group_ids widget)."""
+        """The Advanced Portal category and its subcategories (for the portal_advanced_group_ids widget).
+
+        Modules like academic nest their own category under Advanced Portal (parent_id) to keep
+        their subtitle in the widget; child_of pulls those in too, not just the exact category.
+        """
         empty = {"groups": {}, "privileges": {}, "categories": []}
         category = self._portal_advanced_category()
         if not category:
             return empty
+        category_ids = self.env["ir.module.category"].search([("id", "child_of", category.id)]).ids
         full = copy.deepcopy(self.env["res.groups"]._get_view_group_hierarchy())
-        categories = [c for c in full["categories"] if c["id"] == category.id]
+        categories = [c for c in full["categories"] if c["id"] in category_ids]
         if not categories:
             return empty
         privilege_ids = {pid for c in categories for pid in c["privilege_ids"]}
@@ -231,8 +237,8 @@ class ResUsers(models.Model):
         return self.env.ref("portal_backend.category_portal_advanced", raise_if_not_found=False)
 
     def _portal_advanced_groups(self):
-        """Groups belonging to the Advanced Portal category (timesheets, holidays, etc.)."""
+        """Groups belonging to the Advanced Portal category or one of its subcategories (timesheets, holidays, etc.)."""
         category = self._portal_advanced_category()
         if not category:
             return self.env["res.groups"]
-        return self.env["res.groups"].sudo().search([("privilege_id.category_id", "=", category.id)])
+        return self.env["res.groups"].sudo().search([("privilege_id.category_id", "child_of", category.id)])

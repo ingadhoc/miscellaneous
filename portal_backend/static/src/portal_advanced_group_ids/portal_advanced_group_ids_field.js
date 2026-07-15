@@ -16,16 +16,22 @@ const nativeDef = fieldsRegistry.get("res_user_group_ids");
 class PortalAdvancedGroupIdsField extends nativeDef.component {
     setup() {
         const record = this.props.record;
-        const dataProxy = new Proxy(record.data, {
-            get: (data, key) =>
-                key === "view_group_hierarchy"
-                    ? data.portal_advanced_view_group_hierarchy
-                    : data[key],
-        });
         const recordProxy = new Proxy(record, {
             get: (target, key) => {
                 if (key === "data") {
-                    return dataProxy;
+                    // Wrap `target.data` fresh on every access instead of caching a single Proxy
+                    // bound to the `record.data` reference seen at setup() time: on a cold load,
+                    // the record can still be hydrating when setup() runs, and Odoo later swaps in
+                    // the fully-loaded `data` object rather than mutating the placeholder in place.
+                    // A one-time-captured proxy keeps pointing at that stale placeholder forever,
+                    // so the widget renders the group selected before the real data arrived (fixed
+                    // only by a second reload, once the swap already happened on the previous load).
+                    return new Proxy(target.data, {
+                        get: (data, dataKey) =>
+                            dataKey === "view_group_hierarchy"
+                                ? data.portal_advanced_view_group_hierarchy
+                                : data[dataKey],
+                    });
                 }
                 const value = target[key];
                 return typeof value === "function" ? value.bind(target) : value;
