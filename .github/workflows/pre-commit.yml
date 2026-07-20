@@ -55,7 +55,9 @@ jobs:
       -
         id: precommit
         name: Pre-commit
-        uses: pre-commit/action@v3.0.1
+        run: |
+          pip install pre-commit
+          pre-commit run --all-files --show-diff-on-failure --color=always
       -
         name: Create commit status
         if: github.event_name == 'pull_request_target'
