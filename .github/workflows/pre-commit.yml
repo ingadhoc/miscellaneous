@@ -18,6 +18,21 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     steps:
+      - 
+        name: Block sensitive file changes from fork PRs
+        if: >-
+          github.event_name == 'pull_request_target' &&
+          github.event.pull_request.head.repo.full_name != github.repository
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          changed=$(gh api --paginate \
+            "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" \
+            --jq '.[].filename')
+          if echo "$changed" | grep -qE '^(\.github/workflows/|\.pre-commit-config\.yaml$)'; then
+            echo "::error::Fork PRs may not modify workflows or the pre-commit config. Blocked for security."
+            exit 1
+          fi
       -
         name: Checkout
         uses: actions/checkout@v7
