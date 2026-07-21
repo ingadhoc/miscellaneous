@@ -1,0 +1,157 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* base_import_ux
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-13 15:09+0000\n"
+"PO-Revision-Date: 2026-07-13 15:09+0000\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#. module: base_import_ux
+#. odoo-javascript
+#: code:addons/base_import_ux/static/src/xml/first_steps_guide.xml:0
+msgid "Accounting setup"
+msgstr ""
+
+#. module: base_import_ux
+#. odoo-javascript
+#: code:addons/base_import_ux/static/src/js/first_steps_guide.js:0
+#: model:ir.actions.client,name:base_import_ux.action_first_steps_guide
+#: model_terms:ir.ui.view,arch_db:base_import_ux.res_config_settings_view_form
+msgid "First Steps"
+msgstr ""
+
+#. module: base_import_ux
+#. odoo-javascript
+#: code:addons/base_import_ux/static/src/xml/first_steps_guide.xml:0
+#: model:ir.actions.client,name:base_import_ux.action_first_steps_import_partner
+msgid "Import Contacts"
+msgstr ""
+
+#. module: base_import_ux
+#. odoo-javascript
+#: code:addons/base_import_ux/static/src/xml/first_steps_guide.xml:0
+#: model:ir.actions.client,name:base_import_ux.action_first_steps_import_customer
+msgid "Import Customers"
+msgstr ""
+
+#. module: base_import_ux
+#. odoo-javascript
+#: code:addons/base_import_ux/static/src/xml/first_steps_guide.xml:0
+#: model:ir.actions.client,name:base_import_ux.action_first_steps_import_product
+msgid "Import Products"
+msgstr ""
+
+#. module: base_import_ux
+#. odoo-javascript
+#: code:addons/base_import_ux/static/src/xml/first_steps_guide.xml:0
+#: model:ir.actions.client,name:base_import_ux.action_first_steps_import_supplier
+msgid "Import Vendors"
+msgstr ""
+
+#. module: base_import_ux
+#. odoo-javascript
+#: code:addons/base_import_ux/static/src/xml/first_steps_guide.xml:0
+msgid ""
+"Import customers and vendors along with their\n"
+"                                        contacts."
+msgstr ""
+
+#. module: base_import_ux
+#. odoo-javascript
+#: code:addons/base_import_ux/static/src/xml/first_steps_guide.xml:0
+msgid ""
+"Import your customers. They get\n"
+"                                            classified and show up in the Customers\n"
+"                                            list."
+msgstr ""
+
+#. module: base_import_ux
+#. odoo-javascript
+#: code:addons/base_import_ux/static/src/xml/first_steps_guide.xml:0
+msgid "Import your product catalog."
+msgstr ""
+
+#. module: base_import_ux
+#. odoo-javascript
+#: code:addons/base_import_ux/static/src/xml/first_steps_guide.xml:0
+msgid ""
+"Import your vendors. They get classified\n"
+"                                            and show up in the Vendors list."
+msgstr ""
+
+#. module: base_import_ux
+#. odoo-javascript
+#: code:addons/base_import_ux/static/src/xml/first_steps_guide.xml:0
+#: model_terms:ir.ui.view,arch_db:base_import_ux.res_config_settings_view_form
+msgid "Initial imports"
+msgstr ""
+
+#. module: base_import_ux
+#: model_terms:ir.ui.view,arch_db:base_import_ux.res_config_settings_view_form
+msgid "Open First Steps"
+msgstr ""
+
+#. module: base_import_ux
+#. odoo-javascript
+#: code:addons/base_import_ux/static/src/xml/first_steps_guide.xml:0
+msgid "Open accounting guide"
+msgstr ""
+
+#. module: base_import_ux
+#. odoo-javascript
+#: code:addons/base_import_ux/static/src/xml/first_steps_guide.xml:0
+msgid "Recommendation:"
+msgstr ""
+
+#. module: base_import_ux
+#: model_terms:ir.ui.view,arch_db:base_import_ux.res_config_settings_view_form
+msgid "Run here the imports you need to get your system up and running."
+msgstr ""
+
+#. module: base_import_ux
+#. odoo-javascript
+#: code:addons/base_import_ux/static/src/xml/first_steps_guide.xml:0
+msgid ""
+"Set up your initial accounting: chart of\n"
+"                                        accounts, periods, partner balances and\n"
+"                                        document import."
+msgstr ""
+
+#. module: base_import_ux
+#. odoo-javascript
+#: code:addons/base_import_ux/static/src/xml/first_steps_guide.xml:0
+msgid ""
+"The initial physical stock is loaded\n"
+"                                            within the same product spreadsheet."
+msgstr ""
+
+#. module: base_import_ux
+#. odoo-javascript
+#: code:addons/base_import_ux/static/src/xml/first_steps_guide.xml:0
+msgid "always use a"
+msgstr ""
+
+#. module: base_import_ux
+#. odoo-javascript
+#: code:addons/base_import_ux/static/src/xml/first_steps_guide.xml:0
+msgid ""
+"downloaded from the\n"
+"                    system itself. Reusing old spreadsheets often carries internal\n"
+"                    errors that block the import."
+msgstr ""
+
+#. module: base_import_ux
+#. odoo-javascript
+#: code:addons/base_import_ux/static/src/xml/first_steps_guide.xml:0
+msgid "fresh, clean template"
+msgstr ""
