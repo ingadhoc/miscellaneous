@@ -6,6 +6,7 @@
     "depends": [
         "base_bg",
         "account_statement_import_sheet_file",
+        "account_statement_import_sheet_file_xlsx",
     ],
     "data": [
         "data/ir_config_parameter_data.xml",
