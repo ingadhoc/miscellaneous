@@ -1,0 +1,42 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* portal_ux
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-22 13:48+0000\n"
+"PO-Revision-Date: 2026-07-22 13:48+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: portal_ux
+#: model:ir.model.fields,field_description:portal_ux.field_portal_wizard__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: portal_ux
+#: model_terms:ir.ui.view,arch_db:portal_ux.wizard_view
+msgid "Grant Access to All"
+msgstr ""
+
+#. module: portal_ux
+#: model:ir.model,name:portal_ux.model_portal_wizard
+msgid "Grant Portal Access"
+msgstr ""
+
+#. module: portal_ux
+#: model:ir.model.fields,field_description:portal_ux.field_portal_wizard__id
+msgid "ID"
+msgstr ""
+
+#. module: portal_ux
+#: model_terms:ir.ui.view,arch_db:portal_ux.wizard_view
+msgid ""
+"This button will grant access to all contacts with a valid email address."
+msgstr ""
