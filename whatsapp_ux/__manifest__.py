@@ -11,7 +11,7 @@
 ##############################################################################
 {
     "name": "WhatsApp UX",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.1.0",
     "category": "WhatsApp",
     "sequence": 14,
     "summary": "One-click bulk send server action for every approved WhatsApp template",
