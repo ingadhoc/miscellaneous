@@ -1,0 +1,51 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* whatsapp_ux
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-23 15:36+0000\n"
+"PO-Revision-Date: 2026-07-23 15:36+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: whatsapp_ux
+#: model:ir.model.fields,help:whatsapp_ux.field_whatsapp_template__bulk_send_action
+msgid ""
+"Automatically create a one-click bulk send server action on the list view of"
+" this template's model once the template is approved. The action reuses the "
+"native WhatsApp batch queue, so it sends the template to every selected "
+"record at once."
+msgstr ""
+
+#. module: whatsapp_ux
+#: model:ir.model.fields,field_description:whatsapp_ux.field_whatsapp_template__bulk_send_action
+msgid "Bulk Send Action"
+msgstr ""
+
+#. module: whatsapp_ux
+#: model:ir.model.fields,field_description:whatsapp_ux.field_whatsapp_template__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: whatsapp_ux
+#: model:ir.model.fields,field_description:whatsapp_ux.field_whatsapp_template__id
+msgid "ID"
+msgstr ""
+
+#. module: whatsapp_ux
+#. odoo-python
+#: code:addons/whatsapp_ux/models/whatsapp_template.py:0
+msgid "Send by WhatsApp: %s"
+msgstr ""
+
+#. module: whatsapp_ux
+#: model:ir.model,name:whatsapp_ux.model_whatsapp_template
+msgid "WhatsApp Template"
+msgstr ""
