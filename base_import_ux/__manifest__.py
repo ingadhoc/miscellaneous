@@ -19,7 +19,7 @@
 ##############################################################################
 {
     "name": "First Steps",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.1.0",
     "category": "Tools",
     "sequence": 14,
     "summary": "Centralizes the onboarding initial imports in a single panel "
