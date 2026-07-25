@@ -17,9 +17,6 @@ class MailActivitySchedule(models.TransientModel):
     @api.depends_context("uid")
     def _compute_quick_activity_ids(self):
         """Obtiene las primeras N actividades ordenadas por sequence."""
-        # Obtener el límite desde parámetros del sistema (por defecto 5)
-        limit_param = self.env["ir.config_parameter"].sudo().get_param("base_ux.activity_quick_badges", "5")
-        limit = int(limit_param)
-        quick_types = self.env["mail.activity.type"].search([], order="sequence, id", limit=limit)
+        quick_types = self.env["mail.activity.type"]._get_quick_activity_types()
         for record in self:
             record.quick_activity_ids = quick_types
