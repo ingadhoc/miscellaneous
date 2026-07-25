@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Mismo tratamiento que views/mail_activity_schedule_view.xml, pero del lado de
+        mail.activity: al EDITAR una actividad existente el botón "Editar" abre un
+        act_window sobre mail.activity (vista mail_activity_view_form_popup), no el
+        wizard mail.activity.schedule. Sin esta herencia esa vista mostraba los badges
+        de todos los tipos de actividad del sistema.
+
+        Configuración: mismo parámetro base_ux.activity_quick_badges (default: 5)
+    -->
+    <record id="mail_activity_view_form_popup_inherit" model="ir.ui.view">
+        <field name="name">mail.activity.view.form.popup.inherit</field>
+        <field name="model">mail.activity</field>
+        <field name="inherit_id" ref="mail.mail_activity_view_form_popup"/>
+        <field name="arch" type="xml">
+            <!-- Campo invisible para almacenar los IDs de actividades frecuentes -->
+            <xpath expr="//field[@name='activity_type_id'][@widget='selection_badge_icons']" position="before">
+                <field name="quick_activity_ids" invisible="1"/>
+            </xpath>
+
+            <!-- Modificar el campo original para limitar las opciones mostradas como badges -->
+            <xpath expr="//field[@name='activity_type_id'][@widget='selection_badge_icons']" position="attributes">
+                <attribute name="domain">[('id', 'in', quick_activity_ids)]</attribute>
+            </xpath>
+
+            <!-- Agregar selector completo debajo para búsqueda adicional -->
+            <xpath expr="//field[@name='activity_type_id'][@widget='selection_badge_icons']" position="after">
+                <div class="o_row mt-2" style="max-width: 400px;">
+                    <small class="text-muted">¿No encontrás el tipo que buscas?</small>
+                    <field name="activity_type_id"
+                           widget="many2one"
+                           placeholder="Buscar otro tipo de actividad..."
+                           options="{'no_create': True, 'no_open': True}"
+                           nolabel="1"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

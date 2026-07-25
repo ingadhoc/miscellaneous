@@ -21,7 +21,7 @@ Several Improvements:
     * Make parent field on res.company invisible as it is useless now
     * Keep the activity's description when changing the activity type, regardless of the activity type's description, and change the activity user only if the activity type has a default user.
     * Make company_registry field on res.company invisible as it is useless now
-    * Show or hide the activity badge widget depending on the number of activity types defined in the system (configurable threshold, default to 5).
+    * On the "Schedule Activity" dialog, show only the first N activity types (ordered by sequence) as quick badges, plus a dropdown to search among all the remaining ones. It applies both when scheduling a new activity and when editing an existing one; on an existing activity its current type is always kept among the badges. N is set through the system parameter base_ux.activity_quick_badges (default to 5).
 
 
 Installation

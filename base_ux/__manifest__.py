@@ -38,6 +38,7 @@
         "views/res_company_view.xml",
         "views/base_partner_merge_view.xml",
         "views/mail_activity_schedule_view.xml",
+        "views/mail_activity_view.xml",
         "views/res_partner_views.xml",
     ],
     "assets": {
