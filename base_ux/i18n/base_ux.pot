@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-29 18:29+0000\n"
-"PO-Revision-Date: 2026-06-29 18:29+0000\n"
+"POT-Creation-Date: 2026-07-31 18:53+0000\n"
+"PO-Revision-Date: 2026-07-31 18:53+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,6 +17,7 @@ msgstr ""
 
 #. module: base_ux
 #: model_terms:ir.ui.view,arch_db:base_ux.mail_activity_schedule_view_form_inherit
+#: model_terms:ir.ui.view,arch_db:base_ux.mail_activity_view_form_popup_inherit
 msgid "<small class=\"text-muted\">¿No encontrás el tipo que buscas?</small>"
 msgstr ""
 
@@ -40,6 +41,11 @@ msgid "Activity"
 msgstr ""
 
 #. module: base_ux
+#: model:ir.model,name:base_ux.model_mail_activity_type
+msgid "Activity Type"
+msgstr ""
+
+#. module: base_ux
 #: model:ir.model,name:base_ux.model_mail_activity_schedule
 msgid "Activity schedule plan Wizard"
 msgstr ""
@@ -57,6 +63,7 @@ msgstr ""
 
 #. module: base_ux
 #: model_terms:ir.ui.view,arch_db:base_ux.mail_activity_schedule_view_form_inherit
+#: model_terms:ir.ui.view,arch_db:base_ux.mail_activity_view_form_popup_inherit
 msgid "Buscar otro tipo de actividad..."
 msgstr ""
 
@@ -81,6 +88,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_ux.field_ir_actions_server__display_name
 #: model:ir.model.fields,field_description:base_ux.field_mail_activity__display_name
 #: model:ir.model.fields,field_description:base_ux.field_mail_activity_schedule__display_name
+#: model:ir.model.fields,field_description:base_ux.field_mail_activity_type__display_name
 #: model:ir.model.fields,field_description:base_ux.field_mail_template__display_name
 #: model:ir.model.fields,field_description:base_ux.field_res_company__display_name
 #: model:ir.model.fields,field_description:base_ux.field_res_country_state__display_name
@@ -104,6 +112,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_ux.field_ir_actions_server__id
 #: model:ir.model.fields,field_description:base_ux.field_mail_activity__id
 #: model:ir.model.fields,field_description:base_ux.field_mail_activity_schedule__id
+#: model:ir.model.fields,field_description:base_ux.field_mail_activity_type__id
 #: model:ir.model.fields,field_description:base_ux.field_mail_template__id
 #: model:ir.model.fields,field_description:base_ux.field_res_company__id
 #: model:ir.model.fields,field_description:base_ux.field_res_country_state__id
@@ -112,6 +121,7 @@ msgid "ID"
 msgstr ""
 
 #. module: base_ux
+#: model:ir.model.fields,help:base_ux.field_mail_activity__quick_activity_ids
 #: model:ir.model.fields,help:base_ux.field_mail_activity_schedule__quick_activity_ids
 msgid "IDs de los tipos de actividad más frecuentes para mostrar como badges."
 msgstr ""
@@ -128,6 +138,7 @@ msgid "Merge Partner Wizard"
 msgstr ""
 
 #. module: base_ux
+#: model:ir.model.fields,field_description:base_ux.field_mail_activity__quick_activity_ids
 #: model:ir.model.fields,field_description:base_ux.field_mail_activity_schedule__quick_activity_ids
 msgid "Quick Activity"
 msgstr ""
