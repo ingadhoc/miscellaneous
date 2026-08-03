@@ -19,7 +19,7 @@
 ##############################################################################
 {
     "name": "Base Background Jobs",
-    "version": "19.0.1.0.1",
+    "version": "19.0.1.1.0",
     "category": "Technical",
     "author": "ADHOC SA",
     "website": "https://www.adhoc.com.ar",

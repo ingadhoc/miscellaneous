@@ -568,3 +568,100 @@ class TestBgJob(TransactionCase):
         # Not retried, and the transaction is rolled back before propagating.
         self.assertEqual(mock_get.call_count, 1)
         mock_rollback.assert_called_once()
+
+    # --- Serialization backoff, eligibility and concurrency cap -------------
+
+    def test_is_transient_error_detects_serialization(self):
+        """Serialization failures (SQLSTATE 40001) must be classified as transient."""
+        job = self._create_job()
+
+        class _FakeSerializationError(psycopg2.Error):
+            pgcode = "40001"
+
+        # By message (fallback path) and by pgcode on a psycopg2 error
+        self.assertTrue(job._is_transient_error("could not serialize access due to concurrent update"))
+        self.assertTrue(job._is_transient_error(_FakeSerializationError()))
+        # Unrelated errors are not transient
+        self.assertFalse(job._is_transient_error("Some other failure"))
+        self.assertFalse(job._is_transient_error(ValueError("boom")))
+
+    def test_transient_error_backs_off_and_reenqueues(self):
+        """A serialization failure re-enqueues with a future backoff gate instead of failing."""
+        job = self._create_job(name="Transient Job", state="running", max_retries=3)
+        with patch("odoo.addons.base_bg.models.bg_job._logger.warning"):
+            job._handle_job_error("could not serialize access due to concurrent update")
+
+        job.invalidate_recordset()
+        self.assertEqual(job.state, "enqueued")
+        self.assertEqual(job.retry_count, 1)
+        self.assertTrue(job.next_retry_at, "A backoff gate must be set for transient errors")
+        self.assertGreater(job.next_retry_at, fields.Datetime.now())
+
+    def test_transient_error_does_not_consume_normal_retry_budget(self):
+        """Serialization retries use the larger serialization budget, not max_retries."""
+        # max_retries is 3, but a transient error past it must still keep retrying.
+        job = self._create_job(name="Persistent Transient", state="running", max_retries=3, retry_count=5)
+        with patch("odoo.addons.base_bg.models.bg_job._logger.warning"):
+            job._handle_job_error("could not serialize access due to concurrent update")
+
+        job.invalidate_recordset()
+        self.assertEqual(job.state, "enqueued")  # not failed despite retry_count > max_retries
+        self.assertEqual(job.retry_count, 6)
+
+    def test_transient_error_fails_after_serialization_cap(self):
+        """Once the serialization retry cap is reached, the job fails permanently."""
+        self.env["ir.config_parameter"].sudo().set_param("base_bg.serialization_max_retries", "3")
+        job = self._create_job(name="Exhausted Transient", state="running", retry_count=2)
+        with patch("odoo.addons.base_bg.models.bg_job._logger.error"):
+            job._handle_job_error("could not serialize access due to concurrent update")
+
+        job.invalidate_recordset()
+        self.assertEqual(job.state, "failed")
+
+    def test_non_transient_error_keeps_immediate_retry(self):
+        """Non-serialization errors keep the original retry-then-fail behavior, no backoff gate."""
+        job = self._create_job(name="Real Error Job", state="running", max_retries=2)
+        with patch("odoo.addons.base_bg.models.bg_job._logger.warning"):
+            job._handle_job_error("Some real failure")
+
+        job.invalidate_recordset()
+        self.assertEqual(job.state, "enqueued")
+        self.assertEqual(job.retry_count, 1)
+        self.assertFalse(job.next_retry_at, "Non-transient retries must not set a backoff gate")
+
+    def test_get_next_job_skips_jobs_in_backoff(self):
+        """Jobs whose backoff window is still in the future are not picked up."""
+        self.BgJob.search([("state", "=", "enqueued")]).write({"state": "canceled"})
+        future = fields.Datetime.now() + timedelta(minutes=10)
+        self._create_job(name="Backing Off", state="enqueued", next_retry_at=future)
+        self.assertEqual(self.BgJob._get_next_job(), self.env["bg.job"])
+
+        eligible = self._create_job(name="Ready", state="enqueued")
+        self.assertEqual(self.BgJob._get_next_job(), eligible)
+
+    def test_get_next_job_respects_concurrency_cap(self):
+        """With the cap set and already reached, no new job is picked."""
+        self.BgJob.search([("state", "in", ["enqueued", "running"])]).write({"state": "canceled"})
+        self.env["ir.config_parameter"].sudo().set_param("base_bg.max_concurrent_jobs", "1")
+        self._create_job(name="Already Running", state="running", start_time=fields.Datetime.now())
+        self._create_job(name="Waiting For Slot", state="enqueued")
+
+        self.assertEqual(self.BgJob._get_next_job(), self.env["bg.job"])
+
+    def test_concurrency_cap_disabled_by_default(self):
+        """With the default parameter (0) the cap is off and jobs run normally."""
+        self.BgJob.search([("state", "in", ["enqueued", "running"])]).write({"state": "canceled"})
+        self._create_job(name="Running A", state="running", start_time=fields.Datetime.now())
+        job = self._create_job(name="Should Still Run", state="enqueued")
+
+        self.assertEqual(self.BgJob._get_next_job(), job)
+
+    def test_finish_does_not_trigger_cron(self):
+        """finish() must not hammer the cron on every completed job."""
+        job = self._create_job(name="Finish No Trigger", state="running")
+        with patch.object(type(self.env["base.bg"]), "_trigger_crons") as mock_trigger:
+            job.finish()
+
+        job.invalidate_recordset()
+        self.assertEqual(job.state, "done")
+        mock_trigger.assert_not_called()

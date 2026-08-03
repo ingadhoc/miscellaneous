@@ -3,13 +3,13 @@
 # directory
 ##############################################################################
 import logging
+import random
 from datetime import timedelta
 
 import psycopg2
 from markupsafe import Markup
 from odoo import _, api, fields, models, tools
 from odoo.exceptions import UserError
-from odoo.fields import Domain
 
 _logger = logging.getLogger(__name__)
 
@@ -112,6 +112,10 @@ class BgJob(models.Model):
         readonly=True,
         help="Next job in the batch sequence",
     )
+    next_retry_at = fields.Datetime(
+        readonly=True,
+        help="Earliest moment this job may be picked up again after a transient (e.g. serialization) failure.",
+    )
 
     @api.depends("start_time", "end_time")
     def _compute_duration(self):
@@ -202,9 +206,10 @@ class BgJob(models.Model):
             self.env.cr.commit()  # pylint: disable=invalid-commit
 
     def enqueue(self, retry: bool = False):
-        """Mark the job as enqueued."""
+        """Mark the job as enqueued, clearing any pending backoff gate."""
         data: dict[str, str | int | bool] = {
             "state": "enqueued",
+            "next_retry_at": False,
         }
         if retry:
             data.update(
@@ -219,6 +224,11 @@ class BgJob(models.Model):
         """
         Mark the job as done and set the end time.
         Also enqueue the next job in the batch if it exists.
+
+        The cron is intentionally NOT triggered here: ``_cron_run_enqueued_jobs``
+        already re-triggers itself while eligible jobs remain, so triggering on
+        every single ``finish`` only piles redundant writes on ``ir_cron`` and
+        fuels serialization contention on the scheduler under load.
         """
         self.write(
             {
@@ -227,7 +237,6 @@ class BgJob(models.Model):
             }
         )
         self.filtered("next_job_id").mapped("next_job_id").enqueue()
-        self.env["base.bg"].sudo()._trigger_crons()
 
     def wait(self):
         """Mark the job as waiting for the previous job to complete."""
@@ -276,12 +285,51 @@ class BgJob(models.Model):
 
     def _handle_job_error(self, error: Exception | str):
         """
-        Handle job execution error
+        Handle job execution error.
 
-        :param error: The exception raised during job execution
+        Transient PostgreSQL contention (serialization failures, SQLSTATE 40001)
+        raised while *running* the job is expected under concurrency and clears on
+        its own once the contending transactions drain. Such errors are retried
+        with exponential backoff + jitter and use a separate, larger retry budget
+        so a temporary contention spike never turns healthy jobs into permanent
+        failures. Every other error keeps the original immediate-retry-then-fail
+        behavior.
+
+        (Serialization failures while *acquiring* the job are handled earlier, in
+        ``_cron_run_enqueued_jobs``, before any work is done.)
+
+        :param error: The exception raised during job execution, or a message.
         """
         error_msg = str(error)
         self.retry_count += 1
+        if self._is_transient_error(error):
+            if self.retry_count < self._get_serialization_max_retries():
+                delay = self._compute_backoff_delay(self.retry_count)
+                self.write(
+                    {
+                        "state": "enqueued",
+                        "next_retry_at": fields.Datetime.now() + timedelta(seconds=delay),
+                        "error_message": error_msg,
+                    }
+                )
+                _logger.warning(
+                    "Job %s hit transient contention, backing off %.1fs before retry #%d: %s",
+                    self.name,
+                    delay,
+                    self.retry_count,
+                    error_msg,
+                )
+                return
+            self.fail(error_msg)
+            self._get_next_jobs().cancel(message=_("Previous job in batch failed"))
+            _logger.error(
+                "Job %s failed permanently after %d transient retries: %s",
+                self.name,
+                self.retry_count,
+                error_msg,
+            )
+            return
+
         if self.retry_count < self.max_retries:
             self.enqueue()
             _logger.warning("Job %s failed, scheduling retry #%d: %s", self.name, self.retry_count, error_msg)
@@ -290,6 +338,57 @@ class BgJob(models.Model):
             self.fail(error_msg)
             self._get_next_jobs().cancel(message=_("Previous job in batch failed"))
             _logger.error("Job %s failed permanently: %s", self.name, error_msg)
+
+    @api.model
+    def _is_transient_error(self, error: Exception | str) -> bool:
+        """
+        Whether ``error`` is a transient PostgreSQL serialization failure
+        (SQLSTATE 40001), safe to retry once the contention clears.
+        """
+        for candidate in (error, getattr(error, "__cause__", None)):
+            if isinstance(candidate, psycopg2.Error) and getattr(candidate, "pgcode", None) == "40001":
+                return True
+        return "could not serialize access" in str(error)
+
+    @api.model
+    def _compute_backoff_delay(self, attempt: int) -> float:
+        """
+        Exponential backoff (seconds) with jitter for transient-error retries,
+        capped so a stuck job never waits absurdly long.
+        """
+        base, ceiling = 5, 300
+        delay = min(ceiling, base * (2 ** max(0, attempt - 1)))
+        return delay + random.uniform(0, delay * 0.25)
+
+    @api.model
+    def _get_serialization_max_retries(self) -> int:
+        """Retry budget for transient serialization failures (separate from ``max_retries``)."""
+        return max(1, int(self.env["ir.config_parameter"].sudo().get_param("base_bg.serialization_max_retries", 10)))
+
+    @api.model
+    def _get_max_concurrent_jobs(self) -> int:
+        """
+        Global ceiling of jobs allowed in ``running`` at once. ``0`` (default)
+        disables the cap entirely, leaving concurrency untouched. Meant as an
+        emergency brake: raise it via the ``base_bg.max_concurrent_jobs`` system
+        parameter to throttle a contention storm without a deploy.
+        """
+        return max(0, int(self.env["ir.config_parameter"].sudo().get_param("base_bg.max_concurrent_jobs", 0)))
+
+    @api.model
+    def _has_eligible_jobs(self) -> bool:
+        """Whether at least one enqueued job is past its backoff window."""
+        return bool(
+            self.search_count(
+                [
+                    ("state", "=", "enqueued"),
+                    "|",
+                    ("next_retry_at", "=", False),
+                    ("next_retry_at", "<=", fields.Datetime.now()),
+                ],
+                limit=1,
+            )
+        )
 
     def _notify_user(self, result: str):
         """
@@ -340,14 +439,26 @@ class BgJob(models.Model):
         caller (_cron_run_enqueued_jobs) with a bounded retry, so it must not be logged
         as a "bad query" ERROR — hence log_exceptions=False.
 
+        Jobs still inside their ``next_retry_at`` backoff window are skipped.
+        When ``base_bg.max_concurrent_jobs`` is set (> 0), jobs are only picked
+        while fewer than that many are already ``running``.
+
         :return: The next BgJob record to process, or an empty recordset if none available
         """
+        cap = self._get_max_concurrent_jobs()
+        cap_clause = ""
+        params: dict = {}
+        if cap:
+            cap_clause = "AND (SELECT count(*) FROM bg_job WHERE state = 'running') < %(cap)s"
+            params["cap"] = cap
         self.env.cr.execute(
-            """
+            f"""
             WITH candidate AS (
                 SELECT id
                 FROM bg_job
                 WHERE state = 'enqueued'
+                  AND (next_retry_at IS NULL OR next_retry_at <= NOW())
+                  {cap_clause}
                 ORDER BY priority, create_date, id
                 FOR UPDATE SKIP LOCKED
                 LIMIT 1
@@ -359,6 +470,7 @@ class BgJob(models.Model):
             WHERE j.id = candidate.id
             RETURNING j.id;
             """,
+            params,
             log_exceptions=False,
         )
         row = self.env.cr.fetchone()
@@ -403,8 +515,11 @@ class BgJob(models.Model):
             return
 
         job.run()
-        # Trigger cron again if there are more jobs to process
-        if self.search_count(Domain("state", "=", "enqueued")):
+        # Trigger cron again only if there are more *eligible* jobs to process.
+        # Jobs waiting out their backoff window (next_retry_at in the future) must
+        # NOT keep the cron re-triggering, or a backing-off job would spin the
+        # scheduler in a tight loop and defeat the backoff.
+        if self._has_eligible_jobs():
             self.env["base.bg"].sudo()._trigger_crons()
 
     @api.model
