@@ -630,7 +630,7 @@ class TestBgJob(TransactionCase):
         self.assertTrue(requeued)
         job.invalidate_recordset()
         self.assertEqual(job.state, "enqueued")
-        self.assertEqual(job.serialization_retry_count, 1)
+        self.assertEqual(job.transient_retry_count, 1)
         self.assertEqual(job.retry_count, 1)
         self.assertTrue(job.next_retry_at, "A backoff gate must be set for transient errors")
         self.assertGreater(job.next_retry_at, fields.Datetime.now())
@@ -641,7 +641,7 @@ class TestBgJob(TransactionCase):
     def test_transient_error_does_not_consume_normal_retry_budget(self):
         """Serialization retries use their own budget (default 10), not max_retries (3)."""
         job = self._create_job(
-            name="Persistent Transient", state="running", max_retries=3, retry_count=5, serialization_retry_count=5
+            name="Persistent Transient", state="running", max_retries=3, retry_count=5, transient_retry_count=5
         )
         with patch("odoo.addons.base_bg.models.bg_job._logger.warning"), patch.object(
             type(self.env["base.bg"]), "_trigger_crons"
@@ -651,12 +651,12 @@ class TestBgJob(TransactionCase):
         self.assertTrue(requeued)
         job.invalidate_recordset()
         self.assertEqual(job.state, "enqueued")  # not failed despite retry_count > max_retries
-        self.assertEqual(job.serialization_retry_count, 6)
+        self.assertEqual(job.transient_retry_count, 6)
 
     def test_transient_error_fails_after_serialization_cap(self):
         """Once the serialization retry budget is exhausted, the job fails permanently."""
-        self._set_param("base_bg.serialization_max_retries", "3")
-        job = self._create_job(name="Exhausted Transient", state="running", retry_count=2, serialization_retry_count=2)
+        self._set_param("base_bg.transient_max_retries", "3")
+        job = self._create_job(name="Exhausted Transient", state="running", retry_count=2, transient_retry_count=2)
         with patch("odoo.addons.base_bg.models.bg_job._logger.error"):
             requeued = job._handle_job_error(self._serialization_error())
 
@@ -674,12 +674,12 @@ class TestBgJob(TransactionCase):
         job.invalidate_recordset()
         self.assertEqual(job.state, "enqueued")
         self.assertEqual(job.retry_count, 1)
-        self.assertEqual(job.serialization_retry_count, 0)
+        self.assertEqual(job.transient_retry_count, 0)
         self.assertFalse(job.next_retry_at, "Non-transient retries must not set a backoff gate")
 
     def test_transient_retries_do_not_starve_real_error_budget(self):
         """A job that burned transient retries still gets its full non-transient budget."""
-        job = self._create_job(name="Mixed", state="running", max_retries=3, retry_count=4, serialization_retry_count=4)
+        job = self._create_job(name="Mixed", state="running", max_retries=3, retry_count=4, transient_retry_count=4)
         with patch("odoo.addons.base_bg.models.bg_job._logger.warning"):
             requeued = job._handle_job_error("A genuine business error")
 
@@ -691,12 +691,12 @@ class TestBgJob(TransactionCase):
     def test_malformed_int_params_fall_back_to_default(self):
         """A non-integer system parameter must not crash the runner; it falls back to the default."""
         self._set_param("base_bg.max_concurrent_jobs", "not-a-number")
-        self._set_param("base_bg.serialization_max_retries", "")
+        self._set_param("base_bg.transient_max_retries", "")
         with patch("odoo.addons.base_bg.models.bg_job._logger.warning"):
             self.assertEqual(self.BgJob._get_max_concurrent_jobs(), 0)
-            self.assertEqual(self.BgJob._get_serialization_max_retries(), 10)
-            # The picker must not raise with a malformed cap param.
-            self.BgJob._get_next_job()
+            self.assertEqual(self.BgJob._get_transient_max_retries(), 10)
+            # Admission control must not raise with a malformed cap param.
+            self.assertTrue(self.BgJob._can_acquire_job())
 
     def test_fail_and_cancel_clear_backoff_gate(self):
         """fail() and cancel() clear next_retry_at so no stale gate lingers on the row."""
@@ -721,34 +721,31 @@ class TestBgJob(TransactionCase):
         eligible = self._create_job(name="Ready", state="enqueued")
         self.assertEqual(self.BgJob._get_next_job(), eligible)
 
-    def test_get_next_job_respects_concurrency_cap(self):
-        """With the cap set and already reached by a fresh running job, no new job is picked."""
+    def test_admission_blocks_when_cap_reached(self):
+        """With the cap set and already reached by a fresh running job, admission is denied."""
         self.BgJob.search([("state", "in", ["enqueued", "running"])]).write({"state": "canceled"})
         self._set_param("base_bg.max_concurrent_jobs", "1")
         self._set_cron_timeout(5)
         self._create_job(name="Already Running", state="running", start_time=fields.Datetime.now())
-        self._create_job(name="Waiting For Slot", state="enqueued")
 
-        self.assertEqual(self.BgJob._get_next_job(), self.env["bg.job"])
+        self.assertFalse(self.BgJob._can_acquire_job())
 
-    def test_concurrency_cap_ignores_orphaned_running_jobs(self):
+    def test_admission_ignores_orphaned_running_jobs(self):
         """A job stuck in 'running' past the cron timeout must not consume the cap."""
         self.BgJob.search([("state", "in", ["enqueued", "running"])]).write({"state": "canceled"})
         self._set_param("base_bg.max_concurrent_jobs", "1")
         self._set_cron_timeout(5)  # limit_time_real_cron = 300s
         stale = fields.Datetime.now() - timedelta(hours=1)
         self._create_job(name="Orphan", state="running", start_time=stale)
-        job = self._create_job(name="Fresh", state="enqueued")
 
-        self.assertEqual(self.BgJob._get_next_job(), job)
+        self.assertTrue(self.BgJob._can_acquire_job(), "an orphan past the timeout must not saturate the cap")
 
-    def test_concurrency_cap_disabled_by_default(self):
-        """With the default parameter (0) the cap is off and jobs run normally."""
+    def test_admission_open_when_cap_disabled(self):
+        """With the default parameter (0) the cap is off and admission is always granted."""
         self.BgJob.search([("state", "in", ["enqueued", "running"])]).write({"state": "canceled"})
         self._create_job(name="Running A", state="running", start_time=fields.Datetime.now())
-        job = self._create_job(name="Should Still Run", state="enqueued")
 
-        self.assertEqual(self.BgJob._get_next_job(), job)
+        self.assertTrue(self.BgJob._can_acquire_job())
 
     def test_finish_does_not_trigger_cron(self):
         """finish() must not hammer the cron on every completed job."""
