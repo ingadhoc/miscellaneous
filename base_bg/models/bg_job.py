@@ -401,38 +401,6 @@ class BgJob(models.Model):
         return max(1, self._get_int_param("base_bg.transient_max_retries", 10))
 
     @api.model
-    def _get_max_concurrent_jobs(self) -> int:
-        """
-        Best-effort cap on how many jobs may be ``running`` at once; ``0`` (default)
-        disables it. A live emergency valve set via ``base_bg.max_concurrent_jobs``.
-        NOT a hard ceiling — concurrent acquirers can overshoot by up to the number
-        of runner workers.
-        """
-        return max(0, self._get_int_param("base_bg.max_concurrent_jobs", 0))
-
-    @api.model
-    def _get_cron_timeout(self) -> int:
-        """Cron real-time limit in seconds (0 if unset), past which a running job is a dead-worker orphan."""
-        return tools.config.get("limit_time_real_cron") or 0
-
-    @api.model
-    def _can_acquire_job(self) -> bool:
-        """
-        Best-effort admission control under ``base_bg.max_concurrent_jobs``
-        (``0`` = disabled). Orphans stuck ``running`` past the cron timeout (reaped
-        by the monitor cron) do not count, so they cannot saturate the cap and
-        starve the queue.
-        """
-        cap = self._get_max_concurrent_jobs()
-        if not cap:
-            return True
-        domain = [("state", "=", "running")]
-        timeout = self._get_cron_timeout()
-        if timeout:
-            domain.append(("start_time", ">", fields.Datetime.now() - timedelta(seconds=timeout)))
-        return self.search_count(domain, limit=cap) < cap
-
-    @api.model
     def _has_eligible_jobs(self) -> bool:
         """Whether at least one enqueued job is past its backoff window."""
         return bool(
@@ -498,7 +466,6 @@ class BgJob(models.Model):
 
         Backed-off jobs (``next_retry_at`` in the future) are skipped, using a Python
         UTC timestamp rather than SQL ``NOW()`` (which is session-tz dependent).
-        Throttling is handled separately by ``_can_acquire_job``.
 
         :return: The next BgJob record to process, or an empty recordset if none available
         """
@@ -540,8 +507,6 @@ class BgJob(models.Model):
         in-process is safe and avoids the trigger storm caused by all workers
         surrendering at once and rescheduling each other.
         """
-        if not self._can_acquire_job():
-            return
         job = None
         for attempt in range(MAX_ACQUIRE_RETRIES):
             try:
@@ -575,7 +540,8 @@ class BgJob(models.Model):
     @api.model
     def _cron_check_running_jobs(self):
         """Check running background jobs honoring the cron timeout (seconds)."""
-        cutoff_date = fields.Datetime.now() - timedelta(seconds=self._get_cron_timeout())
+        timeout_seconds = tools.config.get("limit_time_real_cron") or 0
+        cutoff_date = fields.Datetime.now() - timedelta(seconds=timeout_seconds)
         jobs = self.search(
             [
                 ("start_time", "<", cutoff_date),

@@ -688,15 +688,11 @@ class TestBgJob(TransactionCase):
         self.assertEqual(job.state, "enqueued")
         self.assertEqual(job.retry_count, 5)  # non-transient attempts = 5 - 4 = 1 < max_retries(3)
 
-    def test_malformed_int_params_fall_back_to_default(self):
+    def test_malformed_int_param_falls_back_to_default(self):
         """A non-integer system parameter must not crash the runner; it falls back to the default."""
-        self._set_param("base_bg.max_concurrent_jobs", "not-a-number")
-        self._set_param("base_bg.transient_max_retries", "")
+        self._set_param("base_bg.transient_max_retries", "not-a-number")
         with patch("odoo.addons.base_bg.models.bg_job._logger.warning"):
-            self.assertEqual(self.BgJob._get_max_concurrent_jobs(), 0)
             self.assertEqual(self.BgJob._get_transient_max_retries(), 10)
-            # Admission control must not raise with a malformed cap param.
-            self.assertTrue(self.BgJob._can_acquire_job())
 
     def test_fail_and_cancel_clear_backoff_gate(self):
         """fail() and cancel() clear next_retry_at so no stale gate lingers on the row."""
@@ -720,32 +716,6 @@ class TestBgJob(TransactionCase):
 
         eligible = self._create_job(name="Ready", state="enqueued")
         self.assertEqual(self.BgJob._get_next_job(), eligible)
-
-    def test_admission_blocks_when_cap_reached(self):
-        """With the cap set and already reached by a fresh running job, admission is denied."""
-        self.BgJob.search([("state", "in", ["enqueued", "running"])]).write({"state": "canceled"})
-        self._set_param("base_bg.max_concurrent_jobs", "1")
-        self._set_cron_timeout(5)
-        self._create_job(name="Already Running", state="running", start_time=fields.Datetime.now())
-
-        self.assertFalse(self.BgJob._can_acquire_job())
-
-    def test_admission_ignores_orphaned_running_jobs(self):
-        """A job stuck in 'running' past the cron timeout must not consume the cap."""
-        self.BgJob.search([("state", "in", ["enqueued", "running"])]).write({"state": "canceled"})
-        self._set_param("base_bg.max_concurrent_jobs", "1")
-        self._set_cron_timeout(5)  # limit_time_real_cron = 300s
-        stale = fields.Datetime.now() - timedelta(hours=1)
-        self._create_job(name="Orphan", state="running", start_time=stale)
-
-        self.assertTrue(self.BgJob._can_acquire_job(), "an orphan past the timeout must not saturate the cap")
-
-    def test_admission_open_when_cap_disabled(self):
-        """With the default parameter (0) the cap is off and admission is always granted."""
-        self.BgJob.search([("state", "in", ["enqueued", "running"])]).write({"state": "canceled"})
-        self._create_job(name="Running A", state="running", start_time=fields.Datetime.now())
-
-        self.assertTrue(self.BgJob._can_acquire_job())
 
     def test_finish_does_not_trigger_cron(self):
         """finish() must not hammer the cron on every completed job."""
