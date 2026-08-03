@@ -109,14 +109,19 @@ class BaseBg(models.AbstractModel):
         """
         return self.bg_enqueue_records(self, method, threshold, *args, **kwargs)
 
-    def _trigger_crons(self):
+    def _trigger_crons(self, at=None):
         """
-        Trigger cron jobs to process enqueued background jobs
+        Trigger cron jobs to process enqueued background jobs.
+
+        :param at: optional datetime (or list of datetimes) at which the runner
+            should fire. Defaults to now; pass a future time to schedule a wake-up
+            when a backing-off job becomes eligible (creates an ir.cron.trigger row,
+            an INSERT that does not contend on the ir_cron row itself).
         """
         code = "_cron_run_enqueued_jobs("
         crons = self.env["ir.cron"].search([("code", "ilike", code)])
         for cron in crons:
-            cron._trigger()
+            cron._trigger(at=at)
 
     @api.model
     def is_serializable(self, value: Any) -> bool:
