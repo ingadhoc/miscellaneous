@@ -84,9 +84,7 @@ class BgJob(models.Model):
     transient_retry_count = fields.Integer(
         default=0,
         readonly=True,
-        help="Number of attempts lost to transient PostgreSQL contention (serialization / "
-        "deadlock / lock timeout); kept separate so a contention spike does not consume the "
-        "normal retry budget.",
+        help="Attempts lost to transient DB contention, counted separately from the normal retry budget.",
     )
     start_time = fields.Datetime(
         readonly=True,
@@ -122,7 +120,7 @@ class BgJob(models.Model):
     )
     next_retry_at = fields.Datetime(
         readonly=True,
-        help="Earliest moment this job may be picked up again after a transient (e.g. serialization) failure.",
+        help="Earliest time this job may be retried after a transient failure.",
     )
 
     @api.depends("start_time", "end_time")
@@ -186,10 +184,8 @@ class BgJob(models.Model):
         """
         Executes the job.
 
-        The method runs inside this transaction and is retried on transient
-        failures (see ``_handle_job_error``), so it may execute more than once
-        (at-least-once semantics). Job methods with non-transactional side effects
-        (emails, external API calls) should be idempotent or guard against repeats.
+        Retried on transient failures, so the method may run more than once
+        (at-least-once); side-effecting methods should be idempotent.
         """
         self.ensure_one()
         if self.state != "running":
@@ -236,13 +232,11 @@ class BgJob(models.Model):
 
     def finish(self):
         """
-        Mark the job as done and set the end time.
-        Also enqueue the next job in the batch if it exists.
+        Mark the job as done and enqueue the next job in the batch.
 
-        The cron is intentionally NOT triggered here: ``_cron_run_enqueued_jobs``
-        already re-triggers itself while eligible jobs remain, so triggering on
-        every single ``finish`` only piles redundant writes on ``ir_cron`` and
-        fuels serialization contention on the scheduler under load.
+        The cron is NOT triggered here: ``_cron_run_enqueued_jobs`` re-triggers
+        itself while eligible jobs remain, so triggering per finish only churns
+        ``ir_cron`` under load.
         """
         self.write(
             {
@@ -303,25 +297,15 @@ class BgJob(models.Model):
         """
         Handle a job execution error and decide whether to retry.
 
-        Transient PostgreSQL contention (serialization failure, deadlock, lock
-        timeout) raised while *running* the job is expected under concurrency and
-        clears on its own once the contending transactions drain. Such errors are
-        retried with exponential backoff + jitter using their OWN budget
-        (``transient_retry_count`` vs ``base_bg.transient_max_retries``), kept
-        separate from the normal ``retry_count`` / ``max_retries`` budget so a
-        contention spike never eats the retries meant for real errors. Every other
-        error keeps the original immediate-retry-then-fail behavior.
+        Transient DB contention (serialization / deadlock / lock timeout) is retried
+        with exponential backoff on its own budget (``transient_retry_count`` vs
+        ``base_bg.transient_max_retries``), separate from ``max_retries`` so a
+        contention spike does not consume the retries meant for real errors. Other
+        errors keep the immediate-retry-then-fail behavior. ``retry_count`` tracks
+        every attempt (for display); the non-transient budget is measured on
+        non-transient attempts.
 
-        ``retry_count`` counts every attempt (transient + non-transient) so callers
-        that display an attempt number stay accurate; the non-transient budget is
-        measured on non-transient attempts only.
-
-        (Concurrency failures while *acquiring* the job are handled earlier, in
-        ``_cron_run_enqueued_jobs``, before any work is done.)
-
-        :param error: The exception raised during job execution, or a message.
-        :return: True if the job was re-enqueued for another attempt, False if it
-            was failed permanently. Overrides rely on this to report retries.
+        :return: True if re-enqueued, False if failed permanently (overrides use this).
         """
         error_msg = str(error)
         self.retry_count += 1
@@ -337,9 +321,8 @@ class BgJob(models.Model):
                         "error_message": error_msg,
                     }
                 )
-                # Wake a runner exactly when the backoff elapses: a backing-off job
-                # is excluded from the self-retrigger, so without this it would idle
-                # until the next periodic cron tick.
+                # Wake a runner when the backoff elapses (a backing-off job is
+                # skipped by the self-retrigger, so nothing else would).
                 self.env["base.bg"].sudo()._trigger_crons(at=next_retry_at)
                 _logger.warning(
                     "Job %s hit transient contention, backing off %.1fs before retry #%d: %s",
@@ -375,14 +358,10 @@ class BgJob(models.Model):
     @api.model
     def _is_transient_error(self, error: Exception | str) -> bool:
         """
-        Whether ``error`` is a transient PostgreSQL concurrency failure
-        (serialization failure, deadlock or lock-not-available), safe to retry once
-        the contention clears. Reuses Odoo's canonical
-        ``PG_CONCURRENCY_EXCEPTIONS_TO_RETRY`` set.
-
-        Walks the exception chain (``__cause__`` and the implicit ``__context__``)
-        so a failure re-raised/wrapped one or more levels deep is still recognized.
-        A plain string (e.g. the "Job timed out" reaper message) is never transient.
+        Whether ``error`` is a transient PG concurrency failure, safe to retry.
+        Reuses Odoo's ``PG_CONCURRENCY_EXCEPTIONS_TO_RETRY`` and walks the
+        ``__cause__`` / ``__context__`` chain so a wrapped failure is still caught.
+        A plain string (the reaper's "Job timed out") is never transient.
         """
         seen: set[int] = set()
         exc = error if isinstance(error, BaseException) else None
@@ -406,9 +385,8 @@ class BgJob(models.Model):
     @api.model
     def _get_int_param(self, key: str, default: int) -> int:
         """
-        Read an integer system parameter, falling back to ``default`` (with a
-        warning) when the stored value is missing or not a valid integer, so a
-        fat-fingered parameter cannot crash the runner cron on every tick.
+        Read an int system parameter, falling back to ``default`` (with a warning)
+        on a missing or non-integer value, so a bad param cannot crash the runner.
         """
         value = self.env["ir.config_parameter"].sudo().get_param(key, default)
         try:
@@ -425,33 +403,25 @@ class BgJob(models.Model):
     @api.model
     def _get_max_concurrent_jobs(self) -> int:
         """
-        Best-effort throttle on how many jobs may be ``running`` at once. ``0``
-        (default) disables it, leaving concurrency untouched. Meant as a live
-        emergency valve: raise ``base_bg.max_concurrent_jobs`` to dampen a
-        contention storm without a deploy. It is best-effort, NOT a hard ceiling —
-        concurrent acquirers reading the same snapshot can overshoot it by up to the
-        number of runner workers.
+        Best-effort cap on how many jobs may be ``running`` at once; ``0`` (default)
+        disables it. A live emergency valve set via ``base_bg.max_concurrent_jobs``.
+        NOT a hard ceiling — concurrent acquirers can overshoot by up to the number
+        of runner workers.
         """
         return max(0, self._get_int_param("base_bg.max_concurrent_jobs", 0))
 
     @api.model
     def _get_cron_timeout(self) -> int:
-        """
-        The cron real-time limit in seconds (0 if unset), past which a still-
-        ``running`` job is treated as a dead-worker orphan.
-        """
+        """Cron real-time limit in seconds (0 if unset), past which a running job is a dead-worker orphan."""
         return tools.config.get("limit_time_real_cron") or 0
 
     @api.model
     def _can_acquire_job(self) -> bool:
         """
-        Best-effort admission control: whether a new job may start under the
-        ``base_bg.max_concurrent_jobs`` throttle (``0`` = disabled, the default).
-
-        Jobs stuck ``running`` past the cron timeout (dead-worker orphans, which the
-        monitor cron reaps) do not count toward the limit, so a couple of orphans
-        cannot saturate the cap and starve the queue. Best-effort, not a hard
-        ceiling: concurrent acquirers can overshoot by up to the number of workers.
+        Best-effort admission control under ``base_bg.max_concurrent_jobs``
+        (``0`` = disabled). Orphans stuck ``running`` past the cron timeout (reaped
+        by the monitor cron) do not count, so they cannot saturate the cap and
+        starve the queue.
         """
         cap = self._get_max_concurrent_jobs()
         if not cap:
@@ -526,11 +496,9 @@ class BgJob(models.Model):
         caller (_cron_run_enqueued_jobs) with a bounded retry, so it must not be logged
         as a "bad query" ERROR — hence log_exceptions=False.
 
-        Jobs still inside their ``next_retry_at`` backoff window are skipped. The
-        gate uses a Python-computed UTC timestamp (matching Odoo's naive-UTC storage
-        and ``fields.Datetime.now()``) rather than SQL ``NOW()``, whose result
-        depends on the session time zone. Concurrency throttling is a separate
-        concern handled by ``_can_acquire_job`` before this is called.
+        Backed-off jobs (``next_retry_at`` in the future) are skipped, using a Python
+        UTC timestamp rather than SQL ``NOW()`` (which is session-tz dependent).
+        Throttling is handled separately by ``_can_acquire_job``.
 
         :return: The next BgJob record to process, or an empty recordset if none available
         """
@@ -599,10 +567,8 @@ class BgJob(models.Model):
             return
 
         job.run()
-        # Trigger cron again only if there are more *eligible* jobs to process.
-        # Jobs waiting out their backoff window (next_retry_at in the future) must
-        # NOT keep the cron re-triggering, or a backing-off job would spin the
-        # scheduler in a tight loop and defeat the backoff.
+        # Re-trigger only if more *eligible* jobs remain: a backing-off job
+        # (next_retry_at in the future) must not spin the scheduler.
         if self._has_eligible_jobs():
             self.env["base.bg"].sudo()._trigger_crons()
 
