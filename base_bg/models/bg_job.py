@@ -186,6 +186,10 @@ class BgJob(models.Model):
 
         Retried on transient failures, so the method may run more than once
         (at-least-once); side-effecting methods should be idempotent.
+
+        The ORM cache is dropped after each job (``invalidate_all``): the runner
+        loops many jobs inside one long-lived cron process, so releasing each job's
+        cache flattens the runner's memory curve between jobs.
         """
         self.ensure_one()
         if self.state != "running":
@@ -209,8 +213,10 @@ class BgJob(models.Model):
                 self._notify_user(result)
 
             self.env.cr.commit()  # pylint: disable=invalid-commit
+            self.env.invalidate_all()
         except Exception as e:
             self.env.cr.rollback()  # pylint: disable=invalid-commit
+            self.env.invalidate_all()
             self._handle_job_error(e)
             self.env.cr.commit()  # pylint: disable=invalid-commit
 
