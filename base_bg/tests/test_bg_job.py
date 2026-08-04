@@ -569,7 +569,7 @@ class TestBgJob(TransactionCase):
         self.assertEqual(mock_get.call_count, 1)
         mock_rollback.assert_called_once()
 
-    # --- Serialization backoff, eligibility and concurrency cap -------------
+    # --- Serialization backoff, eligibility and runner memory cleanup -------
 
     def _serialization_error(self):
         """Build a real psycopg2 serialization failure (SQLSTATE 40001)."""
@@ -738,3 +738,37 @@ class TestBgJob(TransactionCase):
         job2.invalidate_recordset()
         self.assertEqual(job2.state, "enqueued")
         self.assertTrue(self.BgJob._has_eligible_jobs(), "the freshly-enqueued next job must be pickable")
+
+    def test_run_releases_orm_cache(self):
+        """run() drops the ORM cache after each job (success and error) to flatten the
+        long-lived runner's memory between jobs."""
+        # Success path
+        partner = self.env["res.partner"].create({"name": "Mem partner"})
+        ok_job = self._create_job(
+            name="Mem OK",
+            state="running",
+            model="res.partner",
+            method="exists",
+            kwargs_json={"_record_ids": [partner.id]},
+        )
+        with patch.object(self.env.cr, "commit"), patch.object(type(ok_job), "_notify_user"), patch.object(
+            type(self.env), "invalidate_all"
+        ) as mock_inv:
+            ok_job.run()
+        mock_inv.assert_called()
+
+        # Error path
+        err_job = self._create_job(
+            name="Mem ERR",
+            state="running",
+            model="bg.job",
+            method="dummy_boom",
+            kwargs_json={"_record_ids": [ok_job.id]},
+        )
+        with patch.object(type(err_job), "dummy_boom", create=True, side_effect=ValueError("boom")), patch.object(
+            self.env.cr, "commit"
+        ), patch.object(self.env.cr, "rollback"), patch(
+            "odoo.addons.base_bg.models.bg_job._logger.warning"
+        ), patch.object(type(self.env), "invalidate_all") as mock_inv_err:
+            err_job.run()
+        mock_inv_err.assert_called()
