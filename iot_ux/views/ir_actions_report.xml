@@ -1,0 +1,23 @@
+<odoo>
+
+    <record id="act_report_xml_view" model="ir.ui.view">
+        <field name="name">report xml rules</field>
+        <field name="model">ir.actions.report</field>
+        <field name="inherit_id" ref="base.act_report_xml_view"/>
+        <field name="arch" type="xml">
+            <page name="security" position="after">
+                <page name="iot_printers" string="Iot Printers">
+                    <field name="iot_rule_ids">
+                        <list editable="bottom">
+                            <field name="user_id"/>
+                            <field name="device_id"/>
+                            <field name="skip_dialog"/>
+                        </list>
+                    </field>
+                </page>
+            </page>
+
+        </field>
+    </record>
+
+</odoo>
