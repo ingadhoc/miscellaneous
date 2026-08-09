@@ -4,25 +4,23 @@
 
 import base64
 import logging
+from csv import reader
 from io import BytesIO, StringIO
+from zipfile import BadZipFile
 
 from markupsafe import Markup
 from odoo import _, models
 from odoo.exceptions import UserError
 from openpyxl import Workbook, load_workbook
+from openpyxl.utils.exceptions import InvalidFileException
 
 _logger = logging.getLogger(__name__)
-try:
-    from csv import reader
-
-    import xlrd
-except (OSError, ImportError) as err:  # pragma: no cover
-    _logger.error(err)
 
 try:
     import chardet
 except ImportError:
     _logger.warning("chardet library not found, please install it from http://pypi.python.org/pypi/chardet")
+    chardet = None
 
 
 class AccountStatementImport(models.TransientModel):
@@ -163,130 +161,125 @@ class AccountStatementImport(models.TransientModel):
             return result
 
     def split_base64_excel(self, header_rows_count, rows_per_file_limit):
-        """Split Excel/CSV file into multiple parts."""
+        """Split the uploaded sheet (XLSX/CSV) into XLSX parts.
+
+        Each part keeps the header rows and holds at most
+        ``rows_per_file_limit`` data rows, so it can be processed by a
+        background job. The output is always XLSX regardless of the input
+        format, which is why this module depends on
+        ``account_statement_import_sheet_file_xlsx``.
+        """
         if not self.statement_file:
             return []
 
-        output_base64_list = []
         mapping = self.sheet_mapping_id
-        journal = self.env["account.journal"].browse(self.env.context.get("journal_id"))
-        currency_code = (journal.currency_id or journal.company_id.currency_id).name
-        try:
-            file_bytes = base64.b64decode(self.statement_file)
-            read_buffer = BytesIO(file_bytes)
-
-            # Try openpyxl (xlsx)
-            input_workbook = load_workbook(read_buffer)
-            input_worksheet = input_workbook.active
-            # Normalize rows to plain values to keep parser/output logic
-            # consistent with CSV/xls flows.
-            all_rows = [[cell.value for cell in row] for row in input_worksheet.rows]
-            csv_or_xlsx = (input_workbook, input_worksheet)
-
-        except Exception:
-            try:
-                # Try xlrd (xls)
-                workbook = xlrd.open_workbook(
-                    file_contents=file_bytes,
-                    encoding_override=(mapping.file_encoding if mapping.file_encoding else None),
-                )
-                sheet = workbook.sheet_by_index(0)
-                csv_or_xlsx = (workbook, sheet)
-
-            except Exception:
-                # Try CSV
-                csv_options = {}
-                csv_delimiter = mapping._get_column_delimiter_character()
-                if csv_delimiter:
-                    csv_options["delimiter"] = csv_delimiter
-                if mapping.quotechar:
-                    csv_options["quotechar"] = mapping.quotechar
-
-                try:
-                    decoded = file_bytes.decode(mapping.file_encoding or "utf-8")
-                except UnicodeDecodeError:
-                    detected_encoding = chardet.detect(file_bytes).get("encoding", False)
-                    if not detected_encoding:
-                        raise UserError(self.env._("No valid encoding was found for the attached file")) from None
-                    decoded = file_bytes.decode(detected_encoding)
-
-                csv_reader = reader(StringIO(decoded), **csv_options)
-                csv_or_xlsx = csv_reader
-                all_rows = [row for row in list(csv_or_xlsx) if any(cell for cell in row)]
-        parser = self.env["account.statement.import.sheet.parser"]
-
-        # Only parse header and rows for Excel files (when all_rows is not yet populated)
-        if not all_rows:
-            header = parser.parse_header(csv_or_xlsx, mapping)
-            columns = dict()
-            for column_name in parser._get_column_names():
-                columns[column_name] = parser._get_column_indexes(header, column_name, mapping)
-            data = csv_or_xlsx, self.statement_file
-            all_rows = parser._parse_rows(mapping, currency_code, data, columns)
-        else:
-            # For CSV files, we already have all_rows, convert list to iterator for parse_header
-            header = parser.parse_header(iter(all_rows), mapping)
-
+        all_rows = self._bg_read_all_rows(mapping)
         if not all_rows:
             return []
 
+        footer_count = mapping.footer_lines_skip_count
         header_rows = all_rows[:header_rows_count]
-        data_rows = all_rows[header_rows_count:]
+        # Strip the real footer rows (trailing totals/summary) so they are not
+        # re-imported as transactions.
+        if footer_count:
+            data_rows = all_rows[header_rows_count : len(all_rows) - footer_count]
+        else:
+            data_rows = all_rows[header_rows_count:]
 
+        # Detect the date column to drop rows without a date (trailing/empty
+        # rows). Indexes are computed against the full row, so the header is
+        # read without applying ``offset_column`` here.
+        parser = self.env["account.statement.import.sheet.parser"]
+        header = self._bg_get_header_row(all_rows, mapping)
         try:
             date_column_indexes = parser._get_column_indexes(header, "timestamp_column", mapping)
-            date_column_index = date_column_indexes[0] if date_column_indexes else None
         except Exception as e:
             raise UserError(_("Error importing bank statement: %s") % str(e))
-
-        # Filter rows with empty date
+        date_column_index = date_column_indexes[0] if date_column_indexes else None
         if date_column_index is not None:
+            # Without a header the mapping index is relative to the offset-stripped
+            # row, so shift it back to index into the full row kept here.
+            if mapping.no_header and mapping.offset_column:
+                date_column_index += mapping.offset_column
             data_rows = [r for r in data_rows if len(r) > date_column_index and r[date_column_index]]
 
-        start_row_index = 0
-        total_data_rows = len(data_rows)
-
-        while start_row_index < total_data_rows:
-            end_row_index = min(start_row_index + rows_per_file_limit, total_data_rows)
-            rows_for_current_part = data_rows[start_row_index:end_row_index]
+        output_base64_list = []
+        for start_row_index in range(0, len(data_rows), rows_per_file_limit):
+            rows_for_current_part = data_rows[start_row_index : start_row_index + rows_per_file_limit]
 
             output_workbook = Workbook()
             output_worksheet = output_workbook.active
-
             for header_row in header_rows:
                 output_worksheet.append(header_row)
-
             for data_row in rows_for_current_part:
                 output_worksheet.append(data_row)
+            # Pad with the footer rows the base parser skips on reprocessing, so it
+            # drops these placeholders instead of the last real transactions.
+            for _i in range(footer_count):
+                output_worksheet.append(["."])
 
             write_buffer = BytesIO()
             output_workbook.save(write_buffer)
-            output_bytes = write_buffer.getvalue()
-
-            base64_content = base64.b64encode(output_bytes).decode("utf-8")
-            output_base64_list.append(base64_content)
-
-            start_row_index = end_row_index
+            output_base64_list.append(base64.b64encode(write_buffer.getvalue()).decode("utf-8"))
 
         return output_base64_list
 
-    def _filter_rows_with_date(self, data_rows, date_column_index):
-        """Filter data rows to only include rows where the date column is not empty.
-        If date_column_index is None, return all rows."""
-        if date_column_index is None:
-            return data_rows
+    def _bg_read_all_rows(self, mapping):
+        """Read the uploaded file into a list of row value lists.
 
-        filtered_rows = []
-        for row in data_rows:
-            date_value = None
-            if len(row) > date_column_index:
-                date_cell_or_value = row[date_column_index]
-                date_value = date_cell_or_value.value if hasattr(date_cell_or_value, "value") else date_cell_or_value
-            # Check if the row has enough columns and the date column is not empty
-            if len(row) > date_column_index and date_value:
-                filtered_rows.append(row)
-            elif len(row) > date_column_index and not date_value:
-                # Stop processing when we find the first empty date
-                break
+        Supports XLSX (openpyxl, same load options as the base parser) and CSV.
+        Legacy .xls is not handled here.
+        """
+        file_bytes = base64.b64decode(self.statement_file)
 
-        return filtered_rows
+        # Try XLSX (data_only + full load, matching _parse_lines_xlsx so the
+        # split reads exactly what the base parser will later reprocess).
+        try:
+            workbook = load_workbook(BytesIO(file_bytes), data_only=True)
+        except (InvalidFileException, BadZipFile):
+            workbook = None
+        if workbook is not None:
+            rows = ([cell.value for cell in row] for row in workbook.active.rows)
+            return [row for row in rows if any(cell not in (None, "") for cell in row)]
+
+        # Legacy binary .xls is not supported by the background splitter.
+        if (self.statement_filename or "").lower().endswith(".xls"):
+            raise UserError(
+                self.env._(
+                    "Legacy .xls files are not supported by the background import. "
+                    "Please convert the file to XLSX or CSV."
+                )
+            )
+
+        # Fallback to CSV
+        csv_options = {}
+        csv_delimiter = mapping._get_column_delimiter_character()
+        if csv_delimiter:
+            csv_options["delimiter"] = csv_delimiter
+        if mapping.quotechar:
+            csv_options["quotechar"] = mapping.quotechar
+
+        try:
+            decoded = file_bytes.decode(mapping.file_encoding or "utf-8")
+        except UnicodeDecodeError:
+            detected_encoding = chardet.detect(file_bytes).get("encoding", False) if chardet else False
+            if not detected_encoding:
+                raise UserError(self.env._("No valid encoding was found for the attached file")) from None
+            try:
+                decoded = file_bytes.decode(detected_encoding)
+            except (UnicodeDecodeError, LookupError):
+                raise UserError(self.env._("No valid encoding was found for the attached file")) from None
+
+        return [row for row in reader(StringIO(decoded), **csv_options) if any(cell for cell in row)]
+
+    def _bg_get_header_row(self, all_rows, mapping):
+        """Return the header row (list of stripped strings) used to locate columns."""
+        if mapping.no_header:
+            return []
+        header_line = mapping.header_lines_skip_count
+        # Prevent negative indexes.
+        if header_line > 0:
+            header_line -= 1
+        if header_line >= len(all_rows):
+            return []
+        return [str(value).strip() if value is not None else "" for value in all_rows[header_line]]
