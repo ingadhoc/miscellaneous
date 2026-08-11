@@ -31,3 +31,4 @@ class CompanyDependentTester(models.Model):
     name = fields.Char()
     partner_id = fields.Many2one("res.partner", company_dependent=True)
     partner_regular_id = fields.Many2one("res.partner")
+    currency_id = fields.Many2one("res.currency", company_dependent=True)
