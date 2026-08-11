@@ -107,6 +107,14 @@ class TestCompanyCrossCheck(TransactionCase):
         )
         self.assertTrue(result.get("ids"))
 
+    def test_load_comodel_without_company_field(self):
+        """load() skips a company_dependent Many2one to a comodel without company."""
+        result = self._env_a()[self.MODEL].load(
+            ["name", "currency_id/.id"],
+            [["Tester", str(self.env.ref("base.USD").id)]],
+        )
+        self.assertTrue(result.get("ids"))
+
     def test_sibling_branch_domain_behavior_documented(self):
         """Lock the sibling-branch behavior, whatever _check_company_domain does.
 

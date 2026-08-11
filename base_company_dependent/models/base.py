@@ -49,6 +49,9 @@ class Base(models.AbstractModel):
         cd_fields = [f for f in self._fields.values() if f.type == "many2one" and f.company_dependent]
         for field in cd_fields:
             comodel = self.env[field.comodel_name]
+            if "company_id" not in comodel and "company_ids" not in comodel:
+                # comodel shared by every company: nothing to cross-check
+                continue
             company_domain = comodel._check_company_domain(company)
             if not company_domain:
                 continue
