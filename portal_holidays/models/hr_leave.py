@@ -1,11 +1,19 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import _, api, models
+from odoo import _, api, fields, models
 from odoo.exceptions import AccessError
 
 
 class HolidaysRequest(models.Model):
     _inherit = "hr.leave"
+
+    # Same extension the module already applies to hr.leave.allocation: the
+    # core field (hr_holidays_attendance) is restricted to base.group_user,
+    # but this module exposes the leave form to its portal backend group, so
+    # the view element that depends on employee_overtime would be visible to
+    # a group that cannot read the field (Odoo 19 flags it as an access
+    # rights inconsistency on every view validation).
+    employee_overtime = fields.Float(groups="base.group_user,portal_holidays.group_portal_backend_holiday")
 
     @api.model_create_multi
     def create(self, vals_list):
