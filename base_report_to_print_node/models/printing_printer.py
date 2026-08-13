@@ -25,6 +25,10 @@ class PrintingPrinter(models.Model):
     print_node_printer = fields.Boolean(string="Print Node Printer?")
     server_id = fields.Many2one(required=False)
 
+    @api.constrains("server_id", "backend")
+    def _check_server_id(self):
+        return super(PrintingPrinter, self.filtered(lambda p: not p.print_node_printer))._check_server_id()
+
     @api.model
     def _get_print_node_printer(self, print_nodeId):
         return self.env["printing.printer"].search(
