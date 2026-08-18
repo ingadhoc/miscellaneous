@@ -1,22 +1,22 @@
-from odoo import Command, models, tools
+from odoo import Command, models
 
 
 class IrUiMenu(models.Model):
     _inherit = "ir.ui.menu"
 
-    @tools.ormcache_context("self._uid", "debug", keys=("lang",))
-    def load_menus(self, debug):
-        """Assert all parent menus has internal group."""
-        # NOTE:
-        # It is important to do it here to capture the case when portal_backend is already installed and the user
-        # installs another module with a parent menu without internal group.
+    def _register_hook(self):
+        """Assert all parent menus have internal group.
+
+        NOTE:
+        It is done on registry load to capture the case when portal_backend is already installed and the user
+        installs another module with a parent menu without internal group.
+        It can not be done while loading the menus: that route is readonly, so writing there breaks its cursor
+        with "cannot execute INSERT in a read-only transaction" (the request is retried with a read/write one,
+        but the failed query is already logged as an error).
+        """
+        super()._register_hook()
         parent_menus_wo_group = self.sudo().search([("parent_id", "=", False), ("groups_id", "=", False)])
-        # Evitamos el write (y su clear_cache global) cuando no hay nada que corregir.
-        # ir.ui.menu.write invalida el registry de forma incondicional; como load_menus
-        # está cacheado, un write en cada llamada invalida su propio cache y genera una
-        # tormenta de invalidaciones cross-worker en cada carga de menús.
         if parent_menus_wo_group:
             parent_menus_wo_group.with_context(from_config=True).write(
                 {"groups_id": [Command.link(self.env.ref("base.group_user").id)]}
             )
-        return super().load_menus(debug=debug)
