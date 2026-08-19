@@ -272,9 +272,12 @@ class BgJob(models.Model):
         )
         if notify:
             message = _("Job %s failed: %s") % (self.name, error_message)
-            records = self._get_records().mapped(lambda r: r and r._get_html_link())
+            # exists(): a job can outlive its records, and browsing a dropped id is truthy —
+            # _get_html_link() reads display_name on it and would raise MissingError.
+            records = self._get_records().exists()
             if records:
-                message += "<br/>" + _("Related records: %s") % (", ".join(records))
+                links = [record._get_html_link() for record in records]
+                message += "<br/>" + _("Related records: %s") % (", ".join(links))
             self._notify_user(message)
 
     def cancel(self, message: str | None = None):
@@ -554,8 +557,33 @@ class BgJob(models.Model):
                 ("state", "=", "running"),
             ]
         )
+        timeout_msg = _("Job timed out")
         for job in jobs:
-            job._handle_job_error(_("Job timed out"))
-            if job.state == "failed":
-                message = _("Job %s timed out") % job._get_html_link(title=job.name)
-                job._notify_user(message)
+            job_name = job.name
+            try:
+                # Per-job savepoint: a job that raises would otherwise abort the whole reaper
+                # and leave every other timed-out job running forever.
+                with self.env.cr.savepoint():
+                    job._handle_job_error(timeout_msg)
+                    if job.state == "failed":
+                        job._notify_user(_("Job %s timed out") % job._get_html_link(title=job_name))
+            except Exception as error:
+                # No invalidation needed: the savepoint rollback already cleared the cache
+                # and the pending updates (_FlushingSavepoint.rollback -> cr.clear()).
+                if self._is_transient_error(error):
+                    _logger.warning("Job %s not timed out yet, transient error: %s", job_name, error)
+                    continue
+                _logger.exception("Could not time out job %s, giving up on it", job_name)
+                try:
+                    # Own savepoint: the recovery path writes through the registry too, so a
+                    # model override raising here would abort the whole reaper as well.
+                    with self.env.cr.savepoint():
+                        # Base implementations on purpose: the rollback restored the job to
+                        # running and whatever the model added on top is what just raised.
+                        BgJob.fail(job, timeout_msg, notify=False)
+                        job._get_next_jobs().cancel(message=_("Previous job in batch failed"))
+                except Exception as fallback_error:
+                    if self._is_transient_error(fallback_error):
+                        _logger.warning("Job %s not failed yet, transient error: %s", job_name, fallback_error)
+                    else:
+                        _logger.exception("Could not fail job %s either, leaving it for the next run", job_name)

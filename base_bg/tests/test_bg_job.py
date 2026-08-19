@@ -110,6 +110,58 @@ class TestBgJob(TransactionCase):
         job = self.BgJob.browse(job.id)
         self.assertEqual(job.state, "failed")
 
+    def test_fail_notifies_when_records_were_deleted(self):
+        """fail() must not raise when the job outlived the records it points to."""
+        partner = self.env["res.partner"].create({"name": "Gone"})
+        job = self._create_job(name="Orphan Job", state="running", kwargs_json={"_record_ids": [partner.id]})
+        partner.unlink()  # linking it in the notification would read display_name and raise
+
+        job.fail("boom")
+
+        self.assertEqual(job.state, "failed")
+        self.assertEqual(job.error_message, "boom")
+
+    def _create_timed_out_job(self, name, **vals):
+        """Build a running job whose start_time is already past any cron timeout."""
+        old_time = fields.Datetime.now() - timedelta(hours=6)
+        return self._create_job(name=name, state="running", start_time=old_time, max_retries=1, **vals)
+
+    def test_cron_check_running_jobs_skips_poisoned_job(self):
+        """A job that raises while being timed out must not abort the reaper for the rest."""
+        poisoned = self._create_timed_out_job("Poisoned Job")
+        chained = self._create_job(name="Chained Job", batch_key=poisoned.batch_key, state="waiting")
+        poisoned.next_job_id = chained.id
+        healthy = self._create_timed_out_job("Healthy Job")
+        base_fail = type(self.BgJob).fail
+
+        def poisoned_fail(job_self, error_message, notify=True):
+            """Stand in for a model override of fail() that raises (the real-world poison)."""
+            if job_self.name == "Poisoned Job":
+                raise ValueError("boom while failing the job")
+            return base_fail(job_self, error_message, notify=notify)
+
+        self._set_cron_timeout(300)
+        with patch.object(type(self.BgJob), "fail", poisoned_fail), tools.mute_logger(
+            "odoo.addons.base_bg.models.bg_job"
+        ):
+            self.BgJob._cron_check_running_jobs()
+
+        self.assertEqual(poisoned.state, "failed", "the poisoned job is bare-failed instead of poisoning every run")
+        self.assertEqual(chained.state, "canceled", "its batch is cancelled, as on any other permanent failure")
+        self.assertEqual(healthy.state, "failed", "the remaining jobs are still timed out")
+
+    def test_cron_check_running_jobs_defers_transient_error(self):
+        """A transient PG error is not a poisoned job: the job is left for the next run."""
+        job = self._create_timed_out_job("Contended Job")
+
+        self._set_cron_timeout(300)
+        with patch.object(
+            type(self.BgJob), "_handle_job_error", side_effect=self._serialization_error()
+        ), tools.mute_logger("odoo.addons.base_bg.models.bg_job"):
+            self.BgJob._cron_check_running_jobs()
+
+        self.assertEqual(job.state, "running")
+
     def test_cron_check_running_jobs_recent(self):
         """Test that recent running jobs are not marked as timed out."""
         # Create a job that started recently
