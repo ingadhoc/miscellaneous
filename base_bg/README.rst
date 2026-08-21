@@ -35,7 +35,7 @@ Job States
 * **Running**: Job is currently being executed
 * **Done**: Job completed successfully
 * **Failed**: Job failed after all retry attempts
-* **Canceled**: Job was manually canceled
+* **Canceled**: Job was manually canceled, or every record it pointed to was deleted before it could run (orphan job)
 
 Usage
 =====
@@ -239,6 +239,7 @@ A separate scheduled action monitors running jobs:
 
 * Detects jobs running longer than 5 hours (configurable)
 * Automatically marks them as failed with timeout error
+* Cancels (instead of failing) jobs whose records no longer exist
 * Prevents stuck jobs from blocking the queue
 
 Security and Permissions
