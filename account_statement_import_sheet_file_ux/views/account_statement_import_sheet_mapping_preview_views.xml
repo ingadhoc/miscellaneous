@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template id="mapping_preview">
+        <div t-if="warnings" class="alert alert-warning" role="alert">
+            <ul class="mb-0 ps-3">
+                <li t-foreach="warnings" t-as="warning" t-out="warning" />
+            </ul>
+        </div>
+        <t t-if="not letters">
+            <p
+                class="text-muted"
+            >There is no column to preview yet: fill in the Columns section of the mapping and open this preview again.</p>
+        </t>
+        <t t-else="">
+        <p class="text-muted">This is how your file should look like:</p>
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered mb-0 w-auto">
+                <thead>
+                    <tr>
+                        <th class="table-light" />
+                        <th
+                            t-foreach="letters"
+                            t-as="letter"
+                            class="table-light text-center"
+                            t-out="letter"
+                        />
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="rows" t-as="row">
+                        <th class="table-light text-center" t-out="row['number']" />
+                        <t t-foreach="row['cells']" t-as="cell">
+                            <th
+                                t-if="row['kind'] == 'header'"
+                                class="text-nowrap"
+                                t-out="cell"
+                            />
+                            <td
+                                t-else=""
+                                t-attf-class="text-nowrap#{' text-muted fst-italic' if row['kind'] == 'ignored' else ''}"
+                                t-out="cell"
+                            />
+                        </t>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <ul class="mt-3 mb-0 ps-3 text-muted">
+            <li t-foreach="notes" t-as="note" t-out="note" />
+        </ul>
+        <div t-if="dates['format']" class="mt-3">
+            <p class="mb-1" t-out="dates['sentence']" />
+            <div class="table-responsive">
+                <table class="table table-sm table-borderless mb-0 w-auto">
+                    <tbody>
+                        <tr t-foreach="dates['codes']" t-as="code">
+                            <td
+                                t-attf-class="text-nowrap py-0 #{'fw-bold' if code['used'] else 'text-muted'}"
+                                t-out="code['code']"
+                            />
+                            <td
+                                t-attf-class="text-nowrap py-0 #{'' if code['used'] else 'text-muted'}"
+                                t-out="code['label']"
+                            />
+                            <td class="text-nowrap py-0 text-muted" t-out="code['example']" />
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p t-if="dates['month_in_letters']" class="mt-1 mb-0 text-muted">A month in letters is read both in English and in Spanish, so either spelling works in the file.</p>
+        </div>
+        </t>
+    </template>
+    <record
+        id="account_statement_import_sheet_mapping_preview_form"
+        model="ir.ui.view"
+    >
+        <field name="name">account.statement.import.sheet.mapping.preview.form</field>
+        <field name="model">account.statement.import.sheet.mapping.preview</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="mapping_id" invisible="1" />
+                <field name="preview_html" nolabel="1" readonly="1" />
+                <footer>
+                    <button
+                        name="action_download_xlsx"
+                        type="object"
+                        string="Download Sample File"
+                        class="btn-primary"
+                    />
+                    <button string="Close" class="btn-secondary" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
