@@ -195,6 +195,9 @@ class BgJob(models.Model):
         if self.state != "running":
             raise UserError(_("Only running jobs can be executed"))
 
+        if self._cancel_if_orphaned():
+            return
+
         self.env.cr.commit()  # pylint: disable=invalid-commit
         try:
             context = dict(self.context_json or {})
@@ -301,6 +304,26 @@ class BgJob(models.Model):
         record_ids = kwargs.get("_record_ids", [])
         records = self.env[self.model].browse(record_ids)
         return records
+
+    def _cancel_if_orphaned(self) -> bool:
+        """
+        Cancel this job (and the rest of its batch) when every record it points to is gone.
+
+        A job can outlive its records (a GC or an FK cascade wins the race). Such a job did
+        not fail — there is nothing left to run it on — so it is canceled instead of failed,
+        keeping failure metrics and notifications meaningful. Jobs that point to no records
+        at all (model-level methods) are not orphans.
+
+        :return: True if the job was canceled as an orphan
+        """
+        self.ensure_one()
+        records = self._get_records()
+        if not records or records.exists():
+            return False
+        _logger.info("Job %s canceled: the records it points to no longer exist", self.name)
+        self.cancel(message=_("The records of this job no longer exist"))
+        self._get_next_jobs().cancel(message=_("Previous job in batch was canceled"))
+        return True
 
     def _handle_job_error(self, error: Exception | str) -> bool:
         """
@@ -564,6 +587,8 @@ class BgJob(models.Model):
                 # Per-job savepoint: a job that raises would otherwise abort the whole reaper
                 # and leave every other timed-out job running forever.
                 with self.env.cr.savepoint():
+                    if job._cancel_if_orphaned():
+                        continue
                     job._handle_job_error(timeout_msg)
                     if job.state == "failed":
                         job._notify_user(_("Job %s timed out") % job._get_html_link(title=job_name))

@@ -162,6 +162,56 @@ class TestBgJob(TransactionCase):
 
         self.assertEqual(job.state, "running")
 
+    def test_run_cancels_orphaned_job(self):
+        """run() cancels a job whose records were all deleted, along with the rest of its batch."""
+        partner = self.env["res.partner"].create({"name": "Gone"})
+        job = self._create_job(name="Orphan Run Job", state="running", kwargs_json={"_record_ids": [partner.id]})
+        chained = self._create_job(name="Chained After Orphan", batch_key=job.batch_key, state="waiting")
+        job.next_job_id = chained.id
+        partner.unlink()
+
+        with patch.object(type(self.BgJob), "_notify_user") as mock_notify:
+            job.run()
+
+        self.assertEqual(job.state, "canceled", "an orphan job is canceled, not failed")
+        self.assertEqual(chained.state, "canceled")
+        mock_notify.assert_not_called()
+
+    def test_run_with_partially_deleted_records_is_not_orphaned(self):
+        """One surviving record is enough: the job is not an orphan and runs normally."""
+        keep = self.env["res.partner"].create({"name": "Keep"})
+        gone = self.env["res.partner"].create({"name": "Gone"})
+        job = self._create_job(state="running", kwargs_json={"_record_ids": [keep.id, gone.id]})
+        gone.unlink()
+
+        with patch.object(self.env.cr, "commit"), patch.object(type(self.BgJob), "_notify_user"):
+            job.run()
+
+        self.assertEqual(job.state, "done")
+
+    def test_run_with_no_records_is_not_orphaned(self):
+        """A job that points to no records at all (model-level method) runs normally."""
+        job = self._create_job(state="running", kwargs_json={"_record_ids": []})
+
+        with patch.object(self.env.cr, "commit"):
+            job.run()
+
+        self.assertEqual(job.state, "done")
+
+    def test_cron_check_running_jobs_cancels_orphaned_job(self):
+        """The reaper cancels a timed-out job whose records are gone, and still times out the rest."""
+        partner = self.env["res.partner"].create({"name": "Gone"})
+        orphan = self._create_timed_out_job("Orphan Timed Out", kwargs_json={"_record_ids": [partner.id]})
+        healthy = self._create_timed_out_job("Healthy Timed Out")
+        partner.unlink()
+
+        self._set_cron_timeout(300)
+        with patch.object(type(self.BgJob), "_notify_user"), tools.mute_logger("odoo.addons.base_bg.models.bg_job"):
+            self.BgJob._cron_check_running_jobs()
+
+        self.assertEqual(orphan.state, "canceled", "an orphan job is canceled, not failed")
+        self.assertEqual(healthy.state, "failed")
+
     def test_cron_check_running_jobs_recent(self):
         """Test that recent running jobs are not marked as timed out."""
         # Create a job that started recently
