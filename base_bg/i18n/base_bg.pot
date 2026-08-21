@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-04 14:08+0000\n"
-"PO-Revision-Date: 2026-08-04 14:08+0000\n"
+"POT-Creation-Date: 2026-08-21 20:53+0000\n"
+"PO-Revision-Date: 2026-08-21 20:53+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -336,6 +336,12 @@ msgid "Previous job in batch failed"
 msgstr ""
 
 #. module: base_bg
+#. odoo-python
+#: code:addons/base_bg/models/bg_job.py:0
+msgid "Previous job in batch was canceled"
+msgstr ""
+
+#. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__priority
 msgid "Priority"
 msgstr ""
@@ -398,6 +404,12 @@ msgstr ""
 #. module: base_bg
 #: model:ir.model.fields,help:base_bg.field_bg_job__model
 msgid "The model name on which the job method will be executed"
+msgstr ""
+
+#. module: base_bg
+#. odoo-python
+#: code:addons/base_bg/models/bg_job.py:0
+msgid "The records of this job no longer exist"
 msgstr ""
 
 #. module: base_bg
