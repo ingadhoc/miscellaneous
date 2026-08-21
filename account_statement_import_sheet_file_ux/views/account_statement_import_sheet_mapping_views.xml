@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!--
+        Opens the preview of a mapping from the error of a failed import. It has
+        to be a server action: the failed import rolled its transaction back, so
+        a preview record created on that path would no longer exist by the time
+        the user clicks.
+    -->
+    <record id="action_preview_mapping_from_error" model="ir.actions.server">
+        <field name="name">See the preview</field>
+        <field
+            name="model_id"
+            ref="account_statement_import_sheet_file.model_account_statement_import_sheet_mapping"
+        />
+        <field name="state">code</field>
+        <field name="code">
+mapping = model.browse(env.context.get("preview_mapping_id") or [])
+action = mapping.action_preview_mapping() if mapping else {
+    "type": "ir.actions.act_window",
+    "res_model": "account.statement.import.sheet.mapping",
+    "view_mode": "list,form",
+}
+        </field>
+    </record>
+    <record id="account_statement_import_sheet_mapping_form" model="ir.ui.view">
+        <field name="name">account.statement.import.sheet.mapping.form.ux</field>
+        <field name="model">account.statement.import.sheet.mapping</field>
+        <!-- the base module has the ids of the form and the list swapped -->
+        <field
+            name="inherit_id"
+            ref="account_statement_import_sheet_file.account_statement_import_sheet_mapping_tree"
+        />
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button
+                        name="action_preview_mapping"
+                        type="object"
+                        string="Preview Mapping"
+                        class="btn-primary"
+                        help="Show how the file is expected to look with this configuration"
+                    />
+                    <button
+                        name="action_test_import_file"
+                        type="object"
+                        string="Test Import"
+                        class="btn-secondary"
+                        help="Read a real file with this mapping and report what would be imported, without saving anything"
+                    />
+                </header>
+            </xpath>
+        </field>
+    </record>
+</odoo>
