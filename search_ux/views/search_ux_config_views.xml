@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="search_ux_config_view_form" model="ir.ui.view">
+        <field name="name">search.ux.config.form</field>
+        <field name="model">search.ux.config</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <widget
+                        name="web_ribbon"
+                        title="Archived"
+                        bg_color="text-bg-danger"
+                        invisible="active"
+                    />
+                    <div class="oe_title">
+                        <h1><field name="model_id" options="{'no_create': True}" placeholder="Model"/></h1>
+                    </div>
+                    <field name="available_models" invisible="1"/>
+                    <field name="active" invisible="1"/>
+                    <p class="alert alert-info" role="alert">
+                        These fields are searched <b>only when the native search did not
+                        fill the suggestion list</b>, in a single query. HTML fields,
+                        attachments and non stored fields are not allowed: those are the
+                        ones that make the search slow.
+                    </p>
+                    <group>
+                        <group string="Execution">
+                            <field name="min_chars"/>
+                        </group>
+                        <group string="Related Sources" invisible="model not in ['product.product', 'product.template']">
+                            <field name="search_lot" widget="boolean_toggle"/>
+                            <field name="search_supplier_code" widget="boolean_toggle"/>
+                            <field name="search_packaging_barcode" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Fields to Include" name="fields">
+                            <field name="field_ids">
+                                <list editable="bottom">
+                                    <field name="model" column_invisible="1"/>
+                                    <field
+                                        name="path"
+                                        placeholder="Pick a field"
+                                        widget="field_selector"
+                                        options="{'model': 'model', 'follow_relations': True, 'only_searchable': True}"
+                                    />
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="search_ux_config_view_list" model="ir.ui.view">
+        <field name="name">search.ux.config.list</field>
+        <field name="model">search.ux.config</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="model_id"/>
+                <field name="field_ids" widget="many2many_tags"/>
+                <field name="min_chars"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="search_ux_config_action" model="ir.actions.act_window">
+        <field name="name">Extended Search</field>
+        <field name="res_model">search.ux.config</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Configure the extended search of a model</p>
+            <p>
+                Without configuration, the search behaves exactly like Odoo's, plus the
+                "Search Keywords" field of products and contacts.
+            </p>
+        </field>
+    </record>
+
+    <menuitem
+        id="search_ux_config_menu"
+        name="Extended Search"
+        parent="base.menu_administration"
+        groups="base.group_system"
+        action="search_ux_config_action"
+        sequence="6"
+    />
+</odoo>
