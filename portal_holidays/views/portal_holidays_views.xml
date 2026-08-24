@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- The overtime hint depends on employee_overtime, restricted to
+    base.group_user by hr_holidays_attendance. Granting the field to
+    group_portal_backend_holiday in Python is not enough: during -u all the
+    views of hr_holidays_attendance are validated before this module's
+    override is loaded in the registry, so the element must not be shown to
+    the portal group at the view level (DB) or every full upgrade logs an
+    Access Rights Inconsistency warning. -->
+    <record id="hr_leave_allocation_view_form_inherit_portal_holidays" model="ir.ui.view">
+        <field name="name">hr.leave.allocation.view.form.inherit.portal.holidays</field>
+        <field name="model">hr.leave.allocation</field>
+        <field name="inherit_id" ref="hr_holidays.hr_leave_allocation_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[field[@name='employee_overtime']]" position="attributes">
+                <attribute name="groups">base.group_user</attribute>
+            </xpath>
+        </field>
+    </record>
+
     <!-- Add My Time Off Action for portal holidays users -->
     <record id="hr_leave_action_my_portal_holidays" model="ir.actions.act_window">
         <field name="name">My Time Off</field>
