@@ -124,6 +124,370 @@ class BaseCompanyDependent(models.AbstractModel):
         return Domain.TRUE
 
     # ------------------------------------------------------------------
+    # Detección de estrategia (JSON directo vs ORM puro)
+    # ------------------------------------------------------------------
+
+    def _detect_field_strategy(self, res_model, field_name):
+        """Determina si un campo debe usar lectura JSONB directa o ORM puro.
+
+        :returns: ``'json'`` si el campo es un company_dependent nativo con
+                  columna JSONB, ``'orm'`` si es computed/related/inverse que
+                  expone datos company_dependent a través de la API ORM.
+        """
+        field = self.env[res_model]._fields.get(field_name)
+        if not field:
+            raise ValueError(f"El campo '{field_name}' no existe en '{res_model}'.")
+
+        # Caso nativo: company_dependent + stored → JSONB directo
+        if field.company_dependent and field.store:
+            return "json"
+
+        # Caso ORM: computed con depends_context('company')
+        if "company" in (getattr(field, "depends_context", None) or ()):
+            return "orm"
+
+        # Caso related: seguir la cadena hasta el campo real
+        if field.related:
+            return self._detect_related_strategy(res_model, field)
+
+        raise ValueError(
+            f"El campo '{field_name}' en '{res_model}' no es company_dependent " f"ni depende del contexto de compañía."
+        )
+
+    def _detect_related_strategy(self, res_model, field):
+        """Sigue la cadena ``related`` para detectar si el campo destino es CD."""
+        related_parts = field.related.split(".")
+        current_model = res_model
+        for part in related_parts[:-1]:
+            rel_field = self.env[current_model]._fields.get(part)
+            if not rel_field:
+                break
+            if rel_field.type in ("many2one", "many2many", "one2many"):
+                current_model = rel_field.comodel_name
+            else:
+                break
+        final_field = self.env[current_model]._fields.get(related_parts[-1])
+        if final_field and (
+            final_field.company_dependent or "company" in (getattr(final_field, "depends_context", None) or ())
+        ):
+            return "orm"
+        raise ValueError(f"El campo '{field.name}' en '{res_model}' no traza a un campo company_dependent.")
+
+    def _resolve_orm_target(self, res_model, res_id, field_name):
+        """Para campos computed/related, resuelve el modelo, campo y registro
+        reales sobre los que operar con la estrategia ORM.
+
+        Para ``res.config.settings`` con ``related='company_id.xxx'``, opera
+        directamente sobre ``res.company``.
+
+        Para ``product.template`` con ``standard_price`` (computed/inverse
+        delegado a la variante), opera sobre ``product.product``.
+
+        :returns: tupla ``(target_model, target_field_name, target_id)``
+        """
+        field = self.env[res_model]._fields.get(field_name)
+
+        # Estrategia B: auto-detección para res.config.settings related fields
+        if field.related:
+            related_parts = field.related.split(".")
+            if len(related_parts) == 2 and related_parts[0] == "company_id":
+                # related='company_id.xxx' → operar sobre res.company
+                real_field_name = related_parts[1]
+                real_model = "res.company"
+                real_id = self.env.company.id
+                return real_model, real_field_name, real_id
+
+            # Related genérico: seguir la cadena, pero solo a través de many2one.
+            # Atravesar one2many/many2many devolvería un recordset multi y current.id
+            # tomaría un registro arbitrario, lo que llevaría a leer/escribir el target
+            # equivocado. Si la cadena no es traversable, caemos al fallback.
+            record = self.env[res_model].browse(res_id)
+            current = record
+            traversable = True
+            for part in related_parts[:-1]:
+                rel_field = current._fields.get(part)
+                if not rel_field or rel_field.type != "many2one":
+                    traversable = False
+                    break
+                current = current[part]
+            if traversable and current and len(current) == 1:
+                return current._name, related_parts[-1], current.id
+
+        # Computed/inverse: buscar si el campo existe como CD en un modelo
+        # relacionado. Caso emblemático: product.template → product.product.
+        # Verificamos que el res_id sea válido en el modelo destino antes de
+        # recurrir — los IDs no son intercambiables entre modelos, así que solo
+        # tiene sentido si el target apunta a un registro existente con ese id.
+        if hasattr(field, "related_field") and field.related_field:
+            target_model_name = field.related_field.model_name
+            if self.env[target_model_name].browse(res_id).exists():
+                return self._resolve_orm_target(
+                    target_model_name,
+                    res_id,
+                    field.related_field.name,
+                )
+
+        # product.template.standard_price → product.product.standard_price
+        # Con variante única delegamos a la variante para acceder al JSONB real de
+        # product.product (is_specific exacto, valores precisos).
+        # Con múltiples variantes el fallback mantiene el target en product.template:
+        # la lectura devuelve el promedio vía computed y la escritura propaga a todas
+        # las variantes vía _inverse — idéntico al comportamiento nativo de Odoo.
+        if res_model == "product.template":
+            template = self.env["product.template"].browse(res_id)
+            variants = template.product_variant_ids
+            if len(variants) == 1:
+                variant_field = self.env["product.product"]._fields.get(field_name)
+                if variant_field and variant_field.company_dependent:
+                    return "product.product", field_name, variants.id
+
+        # Fallback: usar el modelo/registro original con ORM puro
+        return res_model, field_name, res_id
+
+    # ------------------------------------------------------------------
+    # Lectura ORM (sin JSONB)
+    # ------------------------------------------------------------------
+
+    def _build_row_data_orm(self, field, record, company):  # noqa: C901
+        """Construye el dict de una fila usando lectura ORM pura (with_company).
+
+        No accede a columnas JSONB; lee el valor a través del ORM estándar
+        iterando por compañías con ``record.with_company(company)``.
+        """
+        rec = record.with_company(company)
+        try:
+            raw_val = rec[field.name]
+        except Exception:
+            raw_val = None
+
+        # Obtener el valor de la compañía base (sin context) para comparar
+        base_company = record.company_id if hasattr(record, "company_id") and record.company_id else self.env.company
+        try:
+            base_val = record.with_company(base_company)[field.name]
+        except Exception:
+            base_val = None
+
+        value_id = None
+        display_value = None
+        fallback_value_id = None
+        fallback_display_value = None
+        selection_options = None
+
+        if field.type == "many2one":
+            value_id = raw_val.id if raw_val else None
+            display_value = raw_val.display_name if raw_val else None
+            fallback_value_id = base_val.id if base_val else None
+            fallback_display_value = base_val.display_name if base_val else None
+
+        elif field.type == "selection":
+            selection_options = (
+                list(field.selection)
+                if isinstance(field.selection, list)
+                else [(k, str(v)) for k, v in field._description_selection(rec.env)]
+            )
+            value_id = raw_val
+            for key, label in selection_options:
+                if key == raw_val:
+                    display_value = str(label)
+                    break
+            if display_value is None and raw_val is not None:
+                display_value = str(raw_val)
+            fallback_value_id = base_val
+            for key, label in selection_options:
+                if key == base_val:
+                    fallback_display_value = str(label)
+                    break
+
+        elif field.type in ("float", "integer", "monetary"):
+            val = raw_val if raw_val is not False else None
+            value_id = val
+            display_value = str(val) if val is not None else ""
+            fb = base_val if base_val is not False else None
+            fallback_value_id = fb
+            fallback_display_value = str(fb) if fb is not None else ""
+
+        elif field.type == "boolean":
+            value_id = bool(raw_val) if raw_val is not None else False
+            display_value = str(value_id)
+            fallback_value_id = bool(base_val) if base_val is not None else False
+            fallback_display_value = str(fallback_value_id)
+
+        elif field.type in ("char", "text"):
+            value_id = raw_val
+            display_value = raw_val or ""
+            fallback_value_id = base_val
+            fallback_display_value = base_val or ""
+
+        elif field.type == "date":
+            if hasattr(raw_val, "isoformat"):
+                raw_val = raw_val.isoformat()
+            value_id = raw_val
+            display_value = raw_val
+            fb = base_val
+            if hasattr(fb, "isoformat"):
+                fb = fb.isoformat()
+            fallback_value_id = fb
+            fallback_display_value = fb
+
+        # Para ORM mode, usamos heurística para is_specific: comparamos con
+        # la compañía base. Si difiere, lo consideramos específico.
+        # Para el campo real subyacente, intentamos leer el JSONB si es posible.
+        is_specific = self._check_orm_is_specific(record, field, company)
+
+        row_domain = []
+        if field.type == "many2one":
+            comodel = self.env[field.comodel_name]
+            static_domain = self._get_field_static_domain(field, rec)
+            # Solo aplicar _check_company_domain cuando el comodelo tiene company_id
+            # como campo propio. Si tiene company_ids (One2many) pero no company_id,
+            # el default del ORM produce un dominio con company_id inválido.
+            if "company_id" in comodel._fields:
+                company_domain = Domain(comodel._check_company_domain(company))
+                row_domain = list(static_domain & company_domain)
+            else:
+                row_domain = list(static_domain)
+
+        row = {
+            "company_id": company.id,
+            "company_name": company.name,
+            "is_specific": is_specific,
+            "value_id": value_id,
+            "display_value": display_value,
+            "fallback_value_id": fallback_value_id,
+            "fallback_display_value": fallback_display_value,
+            "domain": row_domain,
+        }
+        if selection_options is not None:
+            row["selection_options"] = selection_options
+        return row
+
+    def _check_orm_is_specific(self, record, field, company):
+        """Determina si el valor del campo es específico para ``company``.
+
+        Intenta resolver al campo CD subyacente para consultar el JSONB real.
+        Si el subyacente no tiene columna JSONB (computed puro sin almacenamiento
+        propio), devuelve ``False`` — el badge Specific/Default no es fiable en
+        ese caso y un falso positivo es más dañino que un falso negativo.
+        """
+        try:
+            target_model, target_field, target_id = self._resolve_orm_target(record._name, record.id, field.name)
+            target_field_obj = self.env[target_model]._fields.get(target_field)
+            if target_field_obj and target_field_obj.company_dependent and target_field_obj.store:
+                raw_json = self._get_raw_json(self.env[target_model]._table, target_field, target_id)
+                return str(company.id) in raw_json
+        except (ValueError, Exception):
+            pass
+
+        # Computed puro sin JSONB: no se puede determinar is_specific sin ambigüedad.
+        return False
+
+    # ------------------------------------------------------------------
+    # Escritura ORM (sin JSONB)
+    # ------------------------------------------------------------------
+
+    def _set_values_orm(self, res_model, res_id, field_name, values_dict):
+        """Escribe valores por compañía usando ORM con with_company.
+
+        Resuelve el target real (ej. res.company para settings, product.product
+        para product.template) y escribe mediante el ORM estándar.
+
+        ``RESET`` se traduce a ``write({field: False})`` — para targets ORM puros
+        (ej. ``res.company`` columnas no-CD) no existe el concepto "remover
+        override" del JSON path, por lo que reset == vaciar al falsy del tipo.
+        Si el target resuelto sí es un campo CD nativo, este método delega al
+        writer JSON donde RESET sí elimina la clave del JSONB.
+
+        Access control: el método público que orquesta este path
+        (``set_company_dependent_values``) chequea ``write`` sobre el
+        ``res_model`` original; acá además chequeamos ``write`` sobre el
+        ``target_model`` resuelto. Las cías del payload se filtran a
+        ``self.env.companies`` para evitar escrituras cross-company por RPC.
+        """
+        target_model, target_field, target_id = self._resolve_orm_target(res_model, res_id, field_name)
+        # Access control sobre el target resuelto (el público ya validó el res_model
+        # original; acá cerramos el segundo modelo cuando el resolver salta de
+        # res.config.settings a res.company / product.product / etc.).
+        self.env["ir.model.access"].check(target_model, "write")
+        _logger.debug(
+            "[CD ORM SET] res_model=%s res_id=%s field=%s → target=(%s, %s, %s) values=%s",
+            res_model,
+            res_id,
+            field_name,
+            target_model,
+            target_field,
+            target_id,
+            values_dict,
+        )
+
+        target_field_obj = self.env[target_model]._fields.get(target_field)
+        record = self.env[target_model].browse(target_id)
+
+        # Si el target resuelto es un campo CD nativo, delegamos al writer
+        # JSON original que tiene mejor manejo de fallbacks y sanitización.
+        if target_field_obj and target_field_obj.company_dependent and target_field_obj.store:
+            _logger.debug("[CD ORM SET] delegating to JSON writer (target field is CD native)")
+            return self.set_company_dependent_values(target_model, target_id, target_field, values_dict)
+
+        # Filtrar a las cías accesibles para el usuario: un RPC malicioso podría
+        # incluir IDs fuera de env.companies; los descartamos antes de escribir.
+        accessible_ids = set(self.env.companies.ids)
+
+        # Escritura ORM pura
+        saved = []
+        skipped = []
+
+        for company_id_str, value in values_dict.items():
+            company_id = int(company_id_str)
+            company = self.env["res.company"].browse(company_id)
+            if company_id not in accessible_ids:
+                # Defensive skip: a malicious RPC payload listed a company the
+                # caller cannot access. Info-level — the structured `skipped`
+                # list below is what callers should consume; a WARNING here
+                # breaks runbot's strict-warning policy on the Adhoc CI.
+                _logger.info(
+                    "_set_values_orm: skip company id=%s — not in env.companies",
+                    company_id,
+                )
+                skipped.append({"id": company_id, "name": company.name or "", "reason": "no access to company"})
+                continue
+
+            try:
+                with self.env.cr.savepoint():
+                    # Para res.company cada compañía ES un registro distinto;
+                    # with_company no cambia el record.id, solo el contexto.
+                    if target_model == "res.company":
+                        rec = self.env["res.company"].browse(company_id)
+                    else:
+                        rec = record.with_company(company)
+                    write_value = False if value == "RESET" else value
+                    before = rec[target_field]
+                    rec.write({target_field: write_value})
+                    after = rec[target_field]
+                    _logger.debug(
+                        "[CD ORM SET] wrote company=%s rec=%s.%s=%s (before=%r after=%r)",
+                        company.name,
+                        rec._name,
+                        rec.id,
+                        write_value,
+                        before,
+                        after,
+                    )
+                saved.append(company_id)
+            except (ValidationError, UserError) as exc:
+                reason = exc.args[0] if exc.args else str(exc)
+                if hasattr(reason, "__html__"):
+                    reason = str(reason)
+                _logger.warning(
+                    "set_values_orm: skip company %s (id=%s) — %s",
+                    company.name,
+                    company_id,
+                    reason,
+                )
+                skipped.append({"id": company_id, "name": company.name, "reason": str(reason)})
+
+        return {"saved": saved, "skipped": skipped}
+
+    # ------------------------------------------------------------------
     # API pública (llamada desde el frontend via RPC)
     # ------------------------------------------------------------------
 
@@ -272,8 +636,11 @@ class BaseCompanyDependent(models.AbstractModel):
         if field.type == "many2one":
             comodel = self.env[field.comodel_name]
             static_domain = self._get_field_static_domain(field, model_obj)
-            company_domain = Domain(comodel._check_company_domain(company))
-            row_domain = list(static_domain & company_domain)
+            if "company_id" in comodel._fields:
+                company_domain = Domain(comodel._check_company_domain(company))
+                row_domain = list(static_domain & company_domain)
+            else:
+                row_domain = list(static_domain)
 
         row = {
             "company_id": company.id,
@@ -290,7 +657,7 @@ class BaseCompanyDependent(models.AbstractModel):
         return row
 
     @api.model
-    def get_company_dependent_values(self, res_model, res_id, field_name):
+    def get_company_dependent_values(self, res_model, res_id, field_name, mode=None):
         """Retorna los valores por compañía para un campo company_dependent.
 
         Solo se incluyen las compañías a las que el usuario tiene acceso
@@ -299,12 +666,23 @@ class BaseCompanyDependent(models.AbstractModel):
         :param res_model: Nombre técnico del modelo (ej. 'product.category').
         :param res_id: ID del registro.
         :param field_name: Nombre técnico del campo.
+        :param mode: ``'json'``, ``'orm'`` o ``None`` (auto-detectar).
         :returns: dict con claves:
             - ``values``: lista de dicts por compañía con datos de jerarquía.
             - ``field_type``: 'many2one', 'selection', 'float', 'integer', etc.
             - ``comodel_name``: modelo del Many2one (solo si aplica).
             - ``selection_options``: lista [(key, label)] (solo si selection).
         """
+        if mode is None:
+            mode = self._detect_field_strategy(res_model, field_name)
+
+        if mode == "orm":
+            return self._get_values_orm(res_model, res_id, field_name)
+
+        return self._get_values_json(res_model, res_id, field_name)
+
+    def _get_values_json(self, res_model, res_id, field_name):
+        """Implementación JSONB directa del getter de valores por compañía."""
         self.env["ir.model.access"].check(res_model, "read")
         model_obj = self.env[res_model]
         model_obj.browse(res_id).check_access("read")
@@ -353,120 +731,85 @@ class BaseCompanyDependent(models.AbstractModel):
             "selection_options": selection_options,
         }
 
-    @api.model
-    def copy_value_to_children(self, res_model, res_id, field_name, source_company_id):
-        """Propaga el valor del campo en ``source_company_id`` a todos sus hijos
-        accesibles (recursivo hasta 3 niveles).
+    def _get_values_orm(self, res_model, res_id, field_name):
+        """Implementación ORM pura del getter de valores por compañía.
 
-        Verifica que el usuario tenga acceso de escritura al modelo y que las
-        compañías destino estén en ``self.env.companies``.
-
-        :param source_company_id: ID de la compañía cuyo valor se va a propagar.
-        :returns: dict con dos claves: ``updated`` (lista de company_ids actualizados)
-                  y ``skipped`` (lista de company_ids omitidos).
+        Resuelve el target real (ej. ``res.company`` para settings,
+        ``product.product`` para template) y lee valores con ``with_company``.
         """
-        self.env["ir.model.access"].check(res_model, "write")
+        self.env["ir.model.access"].check(res_model, "read")
         model_obj = self.env[res_model]
+        model_obj.browse(res_id).check_access("read")
         field = model_obj._fields.get(field_name)
+        if not field:
+            raise ValueError(f"El campo '{field_name}' no existe en '{res_model}'.")
 
-        if not field or not field.company_dependent:
-            raise ValueError(f"El campo '{field_name}' en '{res_model}' no es company_dependent.")
+        # Resolver target real para lectura
+        target_model, target_field, target_id = self._resolve_orm_target(res_model, res_id, field_name)
+        _logger.debug(
+            "[CD ORM GET] res_model=%s res_id=%s field=%s → target=(%s, %s, %s)",
+            res_model,
+            res_id,
+            field_name,
+            target_model,
+            target_field,
+            target_id,
+        )
+        target_field_obj = self.env[target_model]._fields.get(target_field)
+        target_record = self.env[target_model].browse(target_id)
 
-        accessible_ids = set(self.env.companies.ids)
-        if source_company_id not in accessible_ids:
-            raise ValueError("No tiene acceso a la compañía origen.")
+        # Si el target tiene JSONB nativo, delegamos la lectura al path JSON
+        if target_field_obj and target_field_obj.company_dependent and target_field_obj.store:
+            return self._get_values_json(target_model, target_id, target_field)
 
-        raw_json = self._get_raw_json(model_obj._table, field_name, res_id)
-        source_key = str(source_company_id)
-        source_value = raw_json.get(source_key)  # puede ser None (no especificado)
+        # Lectura ORM pura
+        hierarchy = {h["id"]: h for h in self._get_accessible_companies_hierarchy()}
 
-        # Obtenemos el valor real que se va a propagar: si hay clave → ese valor;
-        # si no hay clave → el fallback resuelto para esa compañía.
-        if source_key in raw_json:
-            value_to_copy = source_value
-        else:
-            source_company = self.env["res.company"].browse(source_company_id)
-            model_with_company = model_obj.with_company(source_company)
-            try:
-                fallback_rec = field.get_company_dependent_fallback(model_with_company)
-                fv = field.convert_to_write(fallback_rec, model_with_company)
-                # Convertir a formato de columna para escribir en el JSON
-                value_to_copy = field.convert_to_column(fv, model_with_company)
-            except Exception:
-                value_to_copy = None
-
-        # Recorrer hijos recursivamente (máx 3 niveles desde el padre original)
-        def _get_all_descendants(company, depth=0):
-            if depth >= 2:  # profundidad máxima desde el primer hijo (0-indexed)
-                return []
-            descendants = []
-            for child in company.child_ids:
-                if child.id in accessible_ids:
-                    descendants.append(child)
-                    descendants.extend(_get_all_descendants(child, depth + 1))
-            return descendants
-
-        source_company_rec = self.env["res.company"].browse(source_company_id)
-        targets = _get_all_descendants(source_company_rec)
-
-        if not targets:
-            return {"updated": [], "skipped": []}
-
-        record = model_obj.browse(res_id)
-
-        # Sanitize para many2one
-        if field.type == "many2one":
-            current_json = self._get_raw_json(model_obj._table, field_name, res_id)
-            sanitized = {k: (None if v is False else v) for k, v in current_json.items()}
-            if sanitized != current_json:
-                self._write_raw_json(model_obj._table, field_name, res_id, sanitized)
-                record.invalidate_recordset([field_name])
-
-        updated = []
-        skipped = []
-        for target in targets:
-            write_value = value_to_copy
-            # Para Many2one, el value_to_copy almacenado en JSONB es el ID (int/None)
-            # Necesitamos pasarlo al ORM en el formato correcto para write().
-            if field.type == "many2one":
-                write_val_orm = int(value_to_copy) if value_to_copy else False
+        values = []
+        for company in self.env.companies:
+            # Para res.company cada compañía es su propio registro; no se puede
+            # usar with_company sobre un registro fijo porque los campos normales
+            # (no company_dependent) no varían por contexto sino por record.id.
+            if target_model == "res.company":
+                record_for_company = self.env["res.company"].browse(company.id)
             else:
-                write_val_orm = value_to_copy
+                record_for_company = target_record
+            _logger.debug(
+                "[CD ORM GET] reading for company=%s record=%s.%s → %r",
+                company.name,
+                record_for_company._name,
+                record_for_company.id,
+                record_for_company.with_company(company)[target_field],
+            )
+            row = self._build_row_data_orm(target_field_obj, record_for_company, company)
+            hier = hierarchy.get(company.id, {})
+            row["parent_id"] = hier.get("parent_id")
+            row["level"] = hier.get("level", 1)
+            row["has_children"] = hier.get("has_children", False)
+            row["child_ids"] = hier.get("child_ids", [])
+            values.append(row)
 
-            # Usamos un savepoint por compañía destino para que un error de
-            # company_crossover en una hija no aborte el resto del lote.
-            try:
-                with self.env.cr.savepoint():
-                    record_with_company = record.with_company(target)
-                    record_with_company.write({field_name: write_val_orm})
+        values.sort(key=lambda r: (r["level"], r.get("parent_id") or 0, r["company_id"]))
 
-                    # Forzar la clave en el JSON si el valor coincide con el fallback
-                    # (el ORM lo descartaría en ese caso)
-                    current_json = self._get_raw_json(model_obj._table, field_name, res_id)
-                    target_key = str(target.id)
-                    if target_key not in current_json:
-                        current_json[target_key] = write_value
-                        self._write_raw_json(model_obj._table, field_name, res_id, current_json)
-                        record.invalidate_recordset([field_name])
+        comodel_name = target_field_obj.comodel_name if target_field_obj.type == "many2one" else None
 
-                updated.append(target.id)
-            except (ValidationError, UserError) as exc:
-                # Registrar la falla sin interrumpir el resto del lote.
-                reason = exc.args[0] if exc.args else str(exc)
-                # Limpiar etiquetas HTML básicas para el mensaje
-                if hasattr(reason, "__html__"):
-                    reason = str(reason)
-                _logger.warning(
-                    "copy_value_to_children: skip %s (id=%s) — %s",
-                    target.name,
-                    target.id,
-                    reason,
-                )
-                skipped.append({"id": target.id, "name": target.name, "reason": str(reason)})
+        selection_options = None
+        if target_field_obj.type == "selection":
+            selection_options = (
+                list(target_field_obj.selection)
+                if isinstance(target_field_obj.selection, list)
+                else [(k, str(v)) for k, v in target_field_obj._description_selection(model_obj.env)]
+            )
+            for r in values:
+                r.pop("selection_options", None)
 
-        return {"updated": updated, "skipped": skipped}
+        return {
+            "values": values,
+            "field_type": target_field_obj.type,
+            "comodel_name": comodel_name,
+            "selection_options": selection_options,
+        }
 
-    @api.model
     def _get_field_domain_for_company(self, res_model, field_name, company_id):
         """Devuelve el domain efectivo para un campo Many2one company_dependent,
         combinando el domain estático del campo con el domain de compañía.
@@ -488,13 +831,15 @@ class BaseCompanyDependent(models.AbstractModel):
 
         # _get_field_static_domain maneja dominios string, list y callable
         static_domain = self._get_field_static_domain(field, model_obj)
-        company_domain = Domain(comodel._check_company_domain(company))
-
-        effective = static_domain & company_domain
+        if "company_id" in comodel._fields:
+            company_domain = Domain(comodel._check_company_domain(company))
+            effective = static_domain & company_domain
+        else:
+            effective = static_domain
         return list(effective)
 
     @api.model
-    def set_company_dependent_values(self, res_model, res_id, field_name, values_dict):
+    def set_company_dependent_values(self, res_model, res_id, field_name, values_dict, mode=None):
         """Guarda valores por compañía para un campo company_dependent.
 
         Para valores explícitos (IDs o False) se usa el ORM con ``with_company``
@@ -509,10 +854,24 @@ class BaseCompanyDependent(models.AbstractModel):
             - Un ID de registro (Many2one).
             - ``False``: guarda la clave como ``false`` en el JSON (vacío explícito).
             - ``"RESET"``: **elimina** la clave del JSON (restaura al fallback).
+        :param mode: ``'json'``, ``'orm'`` o ``None`` (auto-detectar).
         :returns: dict con dos claves: ``saved`` (lista de company_ids guardados)
                   y ``skipped`` (lista de dicts {id, name, reason} que fallaron).
         """
+        if mode is None:
+            try:
+                mode = self._detect_field_strategy(res_model, field_name)
+            except ValueError:
+                mode = "json"
+
+        # Access control aplicado a ambos paths (json y orm).  El path orm,
+        # además, valida write sobre el target_model resuelto dentro de
+        # _set_values_orm — la cadena res.config.settings → res.company
+        # cruza el chequeo dos veces.
         self.env["ir.model.access"].check(res_model, "write")
+
+        if mode == "orm":
+            return self._set_values_orm(res_model, res_id, field_name, values_dict)
         model_obj = self.env[res_model]
         field = model_obj._fields.get(field_name)
 
@@ -590,25 +949,39 @@ class BaseCompanyDependent(models.AbstractModel):
         valor explícito en el JSON.
 
         Usa una sola query SQL para no generar N+1 consultas.
+        También detecta campos ORM-mode (computed con depends_context('company'))
+        y los incluye usando heurística.
         """
         self.env["ir.model.access"].check(res_model, "read")
         model_obj = self.env[res_model]
         company_key = str(self.env.company.id)
+        result = {}
 
+        # Campos CD nativos (JSONB)
         cd_fields = [name for name, f in model_obj._fields.items() if f.company_dependent and f.store]
-        if not cd_fields:
-            return {}
+        if cd_fields:
+            self.env.cr.execute(
+                sql.SQL("SELECT {cols} FROM {table} WHERE id = %s").format(
+                    cols=sql.SQL(", ").join(sql.Identifier(f) for f in cd_fields),
+                    table=sql.Identifier(model_obj._table),
+                ),
+                (res_id,),
+            )
+            row = self.env.cr.fetchone()
+            if row:
+                result.update({field_name: (company_key in (row[i] or {})) for i, field_name in enumerate(cd_fields)})
 
-        # Una sola SELECT para todos los campos company_dependent
-        self.env.cr.execute(
-            sql.SQL("SELECT {cols} FROM {table} WHERE id = %s").format(
-                cols=sql.SQL(", ").join(sql.Identifier(f) for f in cd_fields),
-                table=sql.Identifier(model_obj._table),
-            ),
-            (res_id,),
-        )
-        row = self.env.cr.fetchone()
-        if not row:
-            return {}
+        # Campos ORM-mode: computed con depends_context('company')
+        for name, f in model_obj._fields.items():
+            if name in result:
+                continue
+            depends_ctx = getattr(f, "depends_context", None) or ()
+            if "company" not in depends_ctx:
+                continue
+            try:
+                record = model_obj.browse(res_id)
+                result[name] = self._check_orm_is_specific(record, f, self.env.company)
+            except Exception:
+                pass
 
-        return {field_name: (company_key in (row[i] or {})) for i, field_name in enumerate(cd_fields)}
+        return result
