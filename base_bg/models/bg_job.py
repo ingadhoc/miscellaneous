@@ -274,7 +274,9 @@ class BgJob(models.Model):
             }
         )
         if notify:
-            message = _("Job %s failed: %s") % (self.name, error_message)
+            # Link the job itself: the failure DM is the only notification (the reaper
+            # does not re-notify) and the user needs a way to reach the failed job.
+            message = _("Job %s failed: %s") % (self._get_html_link(title=self.name), error_message)
             # exists(): a job can outlive its records, and browsing a dropped id is truthy —
             # _get_html_link() reads display_name on it and would raise MissingError.
             records = self._get_records().exists()
@@ -613,9 +615,9 @@ class BgJob(models.Model):
                         continue
                     if not overdue:
                         continue
+                    # No extra notification here: when the job fails permanently,
+                    # _handle_job_error -> _give_up -> fail() already notifies the user once.
                     job._handle_job_error(timeout_msg)
-                    if job.state == "failed":
-                        job._notify_user(_("Job %s timed out") % job._get_html_link(title=job_name))
             except Exception as error:
                 # No invalidation needed: the savepoint rollback already cleared the cache
                 # and the pending updates (_FlushingSavepoint.rollback -> cr.clear()).

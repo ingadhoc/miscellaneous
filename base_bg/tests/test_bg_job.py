@@ -130,6 +130,23 @@ class TestBgJob(TransactionCase):
         old_time = fields.Datetime.now() - timedelta(hours=6)
         return self._create_job(name=name, state="running", start_time=old_time, max_retries=1, **vals)
 
+    def test_cron_check_running_jobs_notifies_once_on_permanent_timeout(self):
+        """A permanently timed-out job must DM its creator once, not twice."""
+        job = self._create_timed_out_job("Timed Out Once")
+
+        self._set_cron_timeout(300)
+        with patch.object(type(self.BgJob), "_notify_user") as mock_notify, tools.mute_logger(
+            "odoo.addons.base_bg.models.bg_job"
+        ):
+            self.BgJob._cron_check_running_jobs()
+
+        self.assertEqual(job.state, "failed")
+        mock_notify.assert_called_once()
+        # the single message keeps a clickable reference to the job
+        message = mock_notify.call_args[0][0]
+        self.assertIn("Timed Out Once", message)
+        self.assertIn("data-oe-id", message)
+
     def test_cron_check_running_jobs_skips_poisoned_job(self):
         """A job that raises while being timed out must not abort the reaper for the rest."""
         poisoned = self._create_timed_out_job("Poisoned Job")
