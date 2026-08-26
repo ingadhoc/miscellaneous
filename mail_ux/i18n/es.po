@@ -157,6 +157,16 @@ msgid "Scheduled Message"
 msgstr ""
 
 #. module: mail_ux
+#: model:ir.model.fields,help:mail_ux.field_res_users__send_message_delay
+msgid ""
+"Seconds Odoo waits before sending your chatter messages. During that window "
+"the message is queued and you can cancel it; set 0 to send it immediately."
+msgstr ""
+"Segundos que Odoo espera antes de enviar tus mensajes del chatter. Durante ese "
+"lapso el envío queda pendiente y podés cancelarlo; en 0 el mensaje se envía en "
+"el momento."
+
+#. module: mail_ux
 #: model:ir.model.fields,field_description:mail_ux.field_res_users__send_message_delay
 msgid "Send Message Delay"
 msgstr ""
