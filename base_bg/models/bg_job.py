@@ -7,7 +7,7 @@ import random
 from datetime import timedelta
 
 import psycopg2
-from markupsafe import Markup
+from markupsafe import Markup, escape
 from odoo import _, api, fields, models, tools
 from odoo.exceptions import UserError
 from odoo.service.model import PG_CONCURRENCY_EXCEPTIONS_TO_RETRY
@@ -276,13 +276,15 @@ class BgJob(models.Model):
         if notify:
             # Link the job itself: the failure DM is the only notification (the reaper
             # does not re-notify) and the user needs a way to reach the failed job.
-            message = _("Job %s failed: %s") % (self._get_html_link(title=self.name), error_message)
+            # escape() promotes the template to Markup, escaping the interpolations:
+            # error_message (often a traceback repr with angle brackets) is not HTML.
+            message = escape(_("Job %s failed: %s")) % (self._get_html_link(title=self.name), error_message)
             # exists(): a job can outlive its records, and browsing a dropped id is truthy —
             # _get_html_link() reads display_name on it and would raise MissingError.
             records = self._get_records().exists()
             if records:
                 links = [record._get_html_link() for record in records]
-                message += "<br/>" + _("Related records: %s") % (", ".join(links))
+                message += Markup("<br/>") + escape(_("Related records: %s")) % Markup(", ").join(links)
             self._notify_user(message)
 
     def cancel(self, message: str | None = None):
@@ -453,7 +455,8 @@ class BgJob(models.Model):
         """
         Notify user about job status
 
-        :param result: The result of the job execution
+        :param result: message to post. A plain string is escaped; pass a ``Markup``
+            (with any user-provided value already escaped) to render HTML.
         """
         channel = (
             self.env["discuss.channel"]
@@ -463,7 +466,7 @@ class BgJob(models.Model):
         )
         partner_root_id = self.env.ref("base.partner_root").id
         channel.message_post(
-            body=Markup(result),
+            body=escape(result),
             author_id=partner_root_id,
             message_type="comment",
             subtype_xmlid="mail.mt_comment",

@@ -7,6 +7,7 @@ from unittest.mock import patch
 from uuid import uuid4
 
 import psycopg2
+from markupsafe import Markup
 from odoo import fields, tools
 from odoo.addons.base_bg.models.base_bg import BaseBg
 from odoo.addons.base_bg.models.bg_job import MAX_ACQUIRE_RETRIES
@@ -124,6 +125,39 @@ class TestBgJob(TransactionCase):
 
         self.assertEqual(job.state, "failed")
         self.assertEqual(job.error_message, "boom")
+
+    def test_fail_notification_escapes_user_data(self):
+        """HTML in the job name or error message must reach the DM inert, not injected."""
+        job = self._create_job(name="<img src=x onerror=alert(1)>", state="running")
+
+        with patch.object(type(self.BgJob), "_notify_user") as mock_notify:
+            job.fail("boom <MissingRecord res.partner>")
+
+        message = mock_notify.call_args[0][0]
+        self.assertIsInstance(message, Markup)
+        self.assertNotIn("<img", str(message))
+        self.assertIn("&lt;MissingRecord res.partner&gt;", str(message))
+        # the job link itself stays clickable
+        self.assertIn("data-oe-id", str(message))
+
+    def test_notify_user_escapes_plain_strings(self):
+        """A plain-string result is escaped; a Markup result keeps its HTML."""
+        job = self._create_job()
+        channel = (
+            self.env["discuss.channel"]
+            .with_user(job.create_uid)
+            .sudo()
+            ._get_or_create_chat([job.create_uid.partner_id.id])
+        )
+
+        job._notify_user("plain <b>bold</b>")
+        plain_body = str(channel.message_ids[0].body)
+        self.assertNotIn("<b>", plain_body)
+        self.assertIn("&lt;b&gt;", plain_body)
+
+        job._notify_user(Markup("<b>bold</b>"))
+        markup_body = str(channel.message_ids[0].body)
+        self.assertIn("<b>bold</b>", markup_body)
 
     def _create_timed_out_job(self, name, **vals):
         """Build a running job whose start_time is already past any cron timeout."""

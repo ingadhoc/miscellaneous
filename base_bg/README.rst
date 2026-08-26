@@ -92,6 +92,11 @@ The ``bg_enqueue()`` method is the primary way to create background jobs:
 
 The method returns a notification action that informs the user the job has been queued.
 
+When the job finishes, the executed method's return value (if any) is sent to the user
+as a direct message. A plain string is escaped before rendering: if your method returns
+HTML, return a ``markupsafe.Markup`` — with any user-provided value already escaped,
+e.g. interpolated through the ``%`` operator of a ``Markup`` template.
+
 Real-world Examples
 ===================
 
