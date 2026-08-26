@@ -21,10 +21,14 @@ class TestBgJob(TransactionCase):
         self.BgJob = self.env["bg.job"]
         self.base_bg_model = self.env["base.bg"]
         self._limit_time_real_cron = tools.config.get("limit_time_real_cron", 120)
+        self._limit_time_real = tools.config.get("limit_time_real")
+        self._workers = tools.config.get("workers")
 
     def tearDown(self):
-        """Restore original cron timeout and teardown TransactionCase."""
+        """Restore original time limits / server mode and teardown TransactionCase."""
         tools.config["limit_time_real_cron"] = self._limit_time_real_cron
+        tools.config["limit_time_real"] = self._limit_time_real
+        tools.config["workers"] = self._workers
         super().tearDown()
 
     def _set_cron_timeout(self, minutes: int):
@@ -225,6 +229,60 @@ class TestBgJob(TransactionCase):
         # Refresh the job from database
         job = self.BgJob.browse(job.id)
         self.assertEqual(job.state, "running")  # Should still be running
+
+    def test_cron_check_running_jobs_default_config_falls_back_to_limit_time_real(self):
+        """-1 (the core default) must inherit --limit-time-real, not reap every running job."""
+        recent = self._create_job(
+            name="Recent Under Fallback",
+            state="running",
+            start_time=fields.Datetime.now() - timedelta(minutes=30),
+        )
+        stale = self._create_timed_out_job("Stale Under Fallback")
+        tools.config["limit_time_real_cron"] = -1
+        tools.config["limit_time_real"] = 3600
+        with patch.object(type(self.BgJob), "_notify_user"), tools.mute_logger("odoo.addons.base_bg.models.bg_job"):
+            self.BgJob._cron_check_running_jobs()
+        self.assertEqual(recent.state, "running")
+        self.assertEqual(stale.state, "failed")
+
+    def test_cron_check_running_jobs_without_time_limit_reaps_nothing(self):
+        """In prefork, 0 disables the cron time limit: the reaper must leave running jobs alone."""
+        stale = self._create_timed_out_job("Stale Without Limit")
+        tools.config["workers"] = 4
+        tools.config["limit_time_real_cron"] = 0
+        self.BgJob._cron_check_running_jobs()
+        self.assertEqual(stale.state, "running")
+
+        # -1 falling back to a limit_time_real of 0 disables it just the same
+        tools.config["limit_time_real_cron"] = -1
+        tools.config["limit_time_real"] = 0
+        self.BgJob._cron_check_running_jobs()
+        self.assertEqual(stale.state, "running")
+
+    def test_cron_check_running_jobs_threaded_zero_falls_back_to_limit_time_real(self):
+        """In threaded mode 0 is not "no limit": the core falls back to --limit-time-real."""
+        stale = self._create_timed_out_job("Stale Threaded Zero")
+        tools.config["workers"] = 0
+        tools.config["limit_time_real_cron"] = 0
+        tools.config["limit_time_real"] = 3600
+        with patch.object(type(self.BgJob), "_notify_user"), tools.mute_logger("odoo.addons.base_bg.models.bg_job"):
+            self.BgJob._cron_check_running_jobs()
+        self.assertEqual(stale.state, "failed")
+
+    def test_cron_check_running_jobs_without_time_limit_still_cancels_orphans(self):
+        """No time limit must not turn off the orphan sweep: stuck orphans block their batch."""
+        partner = self.env["res.partner"].create({"name": "Gone"})
+        orphan = self._create_timed_out_job("Orphan Without Limit", kwargs_json={"_record_ids": [partner.id]})
+        chained = self._create_job(name="Chained After Orphan", batch_key=orphan.batch_key, state="waiting")
+        orphan.next_job_id = chained.id
+        partner.unlink()
+        tools.config["workers"] = 4
+        tools.config["limit_time_real_cron"] = 0
+
+        self.BgJob._cron_check_running_jobs()
+
+        self.assertEqual(orphan.state, "canceled", "an orphan job is canceled even with no time limit")
+        self.assertEqual(chained.state, "canceled")
 
     def test_jobs_are_sorted_by_priority(self):
         """Jobs with lower priority value should be returned first."""

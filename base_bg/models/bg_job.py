@@ -570,24 +570,48 @@ class BgJob(models.Model):
             self.env["base.bg"].sudo()._trigger_crons()
 
     @api.model
+    def _get_reaper_timeout(self) -> int:
+        """
+        Effective real-time limit (seconds) for cron-run jobs, mirroring how the
+        server resolves ``limit_time_real_cron`` in each mode:
+
+        - prefork (``workers`` > 0): ``0``/unset means no limit, ``-1`` delegates
+          to ``--limit-time-real`` (``PreforkServer.__init__``).
+        - threaded (``workers`` == 0): the value only applies when > 0, anything
+          else falls back to ``--limit-time-real`` (``ThreadedServer.process_limit``).
+
+        :return: the limit, or 0 when there is none.
+        """
+        timeout = tools.config.get("limit_time_real_cron") or 0
+        if timeout > 0:
+            return timeout
+        if timeout == -1 or not tools.config.get("workers"):
+            return tools.config.get("limit_time_real") or 0
+        return 0
+
+    @api.model
     def _cron_check_running_jobs(self):
-        """Check running background jobs honoring the cron timeout (seconds)."""
-        timeout_seconds = tools.config.get("limit_time_real_cron") or 0
-        cutoff_date = fields.Datetime.now() - timedelta(seconds=timeout_seconds)
-        jobs = self.search(
-            [
-                ("start_time", "<", cutoff_date),
-                ("state", "=", "running"),
-            ]
-        )
+        """
+        Time out running jobs past the cron real-time limit, and cancel orphaned ones.
+
+        The orphan sweep is independent of the time limit: a running job whose
+        records are gone can never finish on its own, so it is swept even when no
+        limit is configured and nothing can ever time out.
+        """
+        timeout_seconds = self._get_reaper_timeout()
+        cutoff_date = fields.Datetime.now() - timedelta(seconds=timeout_seconds) if timeout_seconds > 0 else None
+        jobs = self.search([("state", "=", "running")])
         timeout_msg = _("Job timed out")
         for job in jobs:
             job_name = job.name
+            overdue = bool(cutoff_date and job.start_time and job.start_time < cutoff_date)
             try:
                 # Per-job savepoint: a job that raises would otherwise abort the whole reaper
                 # and leave every other timed-out job running forever.
                 with self.env.cr.savepoint():
                     if job._cancel_if_orphaned():
+                        continue
+                    if not overdue:
                         continue
                     job._handle_job_error(timeout_msg)
                     if job.state == "failed":
@@ -597,6 +621,11 @@ class BgJob(models.Model):
                 # and the pending updates (_FlushingSavepoint.rollback -> cr.clear()).
                 if self._is_transient_error(error):
                     _logger.warning("Job %s not timed out yet, transient error: %s", job_name, error)
+                    continue
+                if not overdue:
+                    # The bare-fail recovery below is for jobs already past their limit;
+                    # a job that merely failed its orphan check keeps running.
+                    _logger.exception("Could not check job %s, leaving it for the next run", job_name)
                     continue
                 _logger.exception("Could not time out job %s, giving up on it", job_name)
                 try:
