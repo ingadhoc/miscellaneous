@@ -13,8 +13,8 @@ class BgJob(models.Model):
         self._clear_reconciliation_bg_flag()
         return res
 
-    def fail(self, error_message: str):
-        res = super().fail(error_message)
+    def fail(self, error_message: str, notify: bool = True):
+        res = super().fail(error_message, notify=notify)
         self._clear_reconciliation_bg_flag()
         return res
 

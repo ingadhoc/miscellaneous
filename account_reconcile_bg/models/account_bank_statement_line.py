@@ -70,14 +70,16 @@ class AccountBankStatementLine(models.Model):
 
         try:
             self.with_context(account_reconcile_bg_skip=True).set_batch_payment_bank_statement_line(batch_payment_id)
-            return Markup(
-                _("Bank reconciliation completed successfully:<br><a href='%s' target='_blank'>%s</a>")
-                % (st_line_url, st_line_name)
+            # % on the Markup template escapes the interpolations (the line name is user data)
+            return Markup(_("Bank reconciliation completed successfully:<br><a href='%s' target='_blank'>%s</a>")) % (
+                st_line_url,
+                st_line_name,
             )
         except Exception as e:
-            return Markup(
-                _("Bank reconciliation failed:<br><a href='%s' target='_blank'>%s</a><br><br>Error: %s")
-                % (st_line_url, st_line_name, str(e))
+            return Markup(_("Bank reconciliation failed:<br><a href='%s' target='_blank'>%s</a><br><br>Error: %s")) % (
+                st_line_url,
+                st_line_name,
+                str(e),
             )
         finally:
             self.write({"reconciliation_in_background": False})
