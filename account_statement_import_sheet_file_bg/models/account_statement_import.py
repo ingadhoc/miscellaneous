@@ -152,12 +152,11 @@ class AccountStatementImport(models.TransientModel):
                     url = f"{base_url}/odoo/account.bank.statement/{statement_id}"
                     name = statement.name or f"Statement {statement_id}"
 
-                    res_html = (
-                        "The following bank statement has been created:<br>"
-                        f'<a href="{url}" target="_blank">{name}</a><br>'
-                    )
-
-                    return Markup(res_html)
+                    # % on the Markup template escapes the interpolations
+                    # (the statement name is user data)
+                    return Markup(
+                        _('The following bank statement has been created:<br><a href="%s" target="_blank">%s</a><br>')
+                    ) % (url, name)
             except Exception as e:
                 return _("Error importing bank statement: %s") % str(e)
             return result
