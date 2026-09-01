@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-21 20:53+0000\n"
+"POT-Creation-Date: 2026-09-01 11:58+0000\n"
 "PO-Revision-Date: 2025-12-11 18:10+0000\n"
 "Last-Translator: BAF <baf@adhoc.inc>\n"
 "Language-Team: Spanish <https://translation.dev-adhoc.com/projects/"
@@ -218,12 +218,6 @@ msgstr ""
 #: code:addons/base_bg/models/bg_job.py:0
 msgid "Job %s failed: %s"
 msgstr ""
-
-#. module: base_bg
-#. odoo-python
-#: code:addons/base_bg/models/bg_job.py:0
-msgid "Job %s timed out"
-msgstr "El trabajo %s agotó el tiempo de espera"
 
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__name
@@ -485,6 +479,9 @@ msgstr ""
 #: code:addons/base_bg/models/base_bg.py:0
 msgid "You will be notified when they are done."
 msgstr ""
+
+#~ msgid "Job %s timed out"
+#~ msgstr "El trabajo %s agotó el tiempo de espera"
 
 #~ msgid "Current number of retry attempts"
 #~ msgstr "Número actual de intentos de reintento"
