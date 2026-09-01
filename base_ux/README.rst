@@ -21,6 +21,7 @@ Several Improvements:
     * Make parent field on res.company invisible as it is useless now
     * Keep the activity's description when changing the activity type, regardless of the activity type's description, and change the activity user only if the activity type has a default user.
     * Make company_registry field on res.company invisible as it is useless now
+    * Make the PDF reports self-contained so wkhtmltopdf does not need to call the instance back over HTTP while rendering: the report asset bundles are inlined as a ``<style>`` tag, the ``@font-face`` rules pointing at the instance are dropped (wkhtmltopdf resolves those families from the system fonts of the image that runs it) and the ``/report/barcode/`` images are embedded as data URIs. Each one of those sub-requests needed a free HTTP worker while the worker doing the render was blocked, so on instances with few workers concurrent renders could deadlock each other until limit_time_real. It can be turned off with the system parameter base_ux.report_self_contained (default to 1).
     * On the "Schedule Activity" dialog, show only the first N activity types (ordered by sequence) as quick badges, plus a dropdown to search among all the remaining ones. It applies both when scheduling a new activity and when editing an existing one; on an existing activity its current type is always kept among the badges. N is set through the system parameter base_ux.activity_quick_badges (default to 5).
 
 
