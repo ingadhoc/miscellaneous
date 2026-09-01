@@ -10,7 +10,7 @@ import psycopg2
 from markupsafe import Markup
 from odoo import fields, tools
 from odoo.addons.base_bg.models.base_bg import BaseBg
-from odoo.addons.base_bg.models.bg_job import MAX_ACQUIRE_RETRIES
+from odoo.addons.base_bg.models.bg_job import MAX_ACQUIRE_RETRIES, ORPHAN_SWEEP_GRACE
 from odoo.exceptions import UserError
 from odoo.tests.common import TransactionCase
 
@@ -333,6 +333,38 @@ class TestBgJob(TransactionCase):
         self.BgJob._cron_check_running_jobs()
 
         self.assertEqual(orphan.state, "canceled", "an orphan job is canceled even with no time limit")
+        self.assertEqual(chained.state, "canceled")
+
+    def test_cron_check_running_jobs_spares_freshly_started_orphan(self):
+        """A job whose records just vanished may still be running: the sweep waits for its floor."""
+        partner = self.env["res.partner"].create({"name": "Gone Mid Run"})
+        job = self._create_job(
+            name="Orphan In Flight",
+            state="running",
+            start_time=fields.Datetime.now(),
+            kwargs_json={"_record_ids": [partner.id]},
+        )
+        chained = self._create_job(name="Chained After In Flight", batch_key=job.batch_key, state="waiting")
+        job.next_job_id = chained.id
+        partner.unlink()
+
+        # with a limit configured the sweep uses it as its floor
+        self._set_cron_timeout(60)
+        self.BgJob._cron_check_running_jobs()
+        self.assertEqual(job.state, "running", "an orphan still within the limit is not canceled in flight")
+        self.assertEqual(chained.state, "waiting")
+
+        # and with no limit at all it falls back to ORPHAN_SWEEP_GRACE
+        tools.config["workers"] = 4
+        tools.config["limit_time_real_cron"] = 0
+        self.BgJob._cron_check_running_jobs()
+        self.assertEqual(job.state, "running")
+        self.assertEqual(chained.state, "waiting")
+
+        # past the grace it is swept as before
+        job.start_time = fields.Datetime.now() - timedelta(seconds=ORPHAN_SWEEP_GRACE + 1)
+        self.BgJob._cron_check_running_jobs()
+        self.assertEqual(job.state, "canceled")
         self.assertEqual(chained.state, "canceled")
 
     def test_jobs_are_sorted_by_priority(self):

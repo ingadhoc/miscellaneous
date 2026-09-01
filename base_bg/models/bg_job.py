@@ -20,6 +20,13 @@ _logger = logging.getLogger(__name__)
 # (trigger storm). Mirrors saas_provider.saas_database._acquire_next_task.
 MAX_ACQUIRE_RETRIES = 5
 
+# Fallback grace period (seconds) for the orphan sweep when no real-time limit is
+# configured at all. A job whose records vanished a moment ago may still be running
+# in another worker: cancelling it in flight lets its own finish() clobber the cancel
+# and resurrect the batch. With a limit configured the sweep uses that instead — past
+# it the worker would have been killed anyway, so the job is genuinely presumed dead.
+ORPHAN_SWEEP_GRACE = 3600
+
 
 class BgJob(models.Model):
     _name = "bg.job"
@@ -601,20 +608,26 @@ class BgJob(models.Model):
 
         The orphan sweep is independent of the time limit: a running job whose
         records are gone can never finish on its own, so it is swept even when no
-        limit is configured and nothing can ever time out.
+        limit is configured and nothing can ever time out. It keeps a floor of its
+        own (the limit, or ORPHAN_SWEEP_GRACE when there is none) so that a job that
+        just started is never cancelled while another worker is still running it.
         """
+        now = fields.Datetime.now()
         timeout_seconds = self._get_reaper_timeout()
-        cutoff_date = fields.Datetime.now() - timedelta(seconds=timeout_seconds) if timeout_seconds > 0 else None
+        cutoff_date = now - timedelta(seconds=timeout_seconds) if timeout_seconds > 0 else None
+        orphan_cutoff = cutoff_date or now - timedelta(seconds=ORPHAN_SWEEP_GRACE)
         jobs = self.search([("state", "=", "running")])
         timeout_msg = _("Job timed out")
         for job in jobs:
             job_name = job.name
             overdue = bool(cutoff_date and job.start_time and job.start_time < cutoff_date)
+            # A running job with no start_time cannot be dated: it is stuck by definition.
+            sweepable = not job.start_time or job.start_time < orphan_cutoff
             try:
                 # Per-job savepoint: a job that raises would otherwise abort the whole reaper
                 # and leave every other timed-out job running forever.
                 with self.env.cr.savepoint():
-                    if job._cancel_if_orphaned():
+                    if sweepable and job._cancel_if_orphaned():
                         continue
                     if not overdue:
                         continue
