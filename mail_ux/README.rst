@@ -15,6 +15,7 @@ Mail UX
 =======
 
  * Always send email with delay
+ * Do not render the report of a mail template more than once while the mail composer is open. ``attachment_ids`` is a stored compute, so the web client recomputes it on every round trip and each recompute used to render the same PDF again (2 to 6 times per composer opening, leaving the orphan attachments behind). The already generated attachment is reused while the report, the record and the record's write_date are the same. The reuse window in seconds is set through the system parameter mail_ux.report_attachment_cache_ttl (default to 600; 0 disables the reuse).
 
 
 Installation
