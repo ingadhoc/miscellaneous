@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_search_ux_config_user,search.ux.config user,model_search_ux_config,base.group_user,1,0,0,0
+access_search_ux_config_system,search.ux.config system,model_search_ux_config,base.group_system,1,1,1,1
+access_search_ux_field_user,search.ux.field user,model_search_ux_field,base.group_user,1,0,0,0
+access_search_ux_field_system,search.ux.field system,model_search_ux_field,base.group_system,1,1,1,1
