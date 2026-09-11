@@ -1,0 +1,579 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* account_statement_import_sheet_file_ux
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-04 16:25+0000\n"
+"PO-Revision-Date: 2026-09-04 16:25+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: account_statement_import_sheet_file_ux
+#: model_terms:ir.ui.view,arch_db:account_statement_import_sheet_file_ux.mapping_preview
+msgid ""
+"A month in letters is read both in English and in Spanish, so either "
+"spelling works in the file."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping__amount_type
+msgid "Amount type"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid ""
+"Amounts carry no separator at all: the last %s digits are read as the "
+"decimals."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid ""
+"Amounts use '%(thousands)s' as thousands separator and '%(decimal)s' as "
+"decimal separator."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "Amounts use '%s' as decimal separator and no thousands separator."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model,name:account_statement_import_sheet_file_ux.model_account_statement_import_sheet_mapping
+msgid "Bank Statement Import Sheet Mapping"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model,name:account_statement_import_sheet_file_ux.model_account_statement_import_sheet_mapping_preview
+msgid "Bank Statement Import Sheet Mapping Preview"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model,name:account_statement_import_sheet_file_ux.model_account_statement_import_sheet_mapping_test
+msgid "Bank Statement Import Sheet Mapping Test"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model,name:account_statement_import_sheet_file_ux.model_account_statement_import_sheet_parser
+msgid "Bank Statement Import Sheet Parser"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "Bank fee"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/wizard/account_statement_import_sheet_parser.py:0
+msgid ""
+"Cannot read the amount %(value)s: it uses %(candidate)s as the decimal mark,"
+" but the statement mapping declares %(decimal)s. Importing it would change "
+"the amount. Fix the decimal separator of the mapping and import the file "
+"again."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model_terms:ir.ui.view,arch_db:account_statement_import_sheet_file_ux.account_statement_import_sheet_mapping_preview_form
+#: model_terms:ir.ui.view,arch_db:account_statement_import_sheet_file_ux.account_statement_import_sheet_mapping_test_form
+msgid "Close"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "Columns ignored at the beginning of each row: %s."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_preview__create_uid
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_test__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_preview__create_date
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_test__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "Customer A"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import__display_name
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping__display_name
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_preview__display_name
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_test__display_name
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_parser__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model_terms:ir.ui.view,arch_db:account_statement_import_sheet_file_ux.account_statement_import_sheet_mapping_preview_form
+msgid "Download Sample File"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_test__statement_file
+msgid "File"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_test__statement_filename
+msgid "File Name"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping__header_lines_skip_count
+msgid "Header row number"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,help:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping__timestamp_format
+msgid ""
+"How the dates are written in the file: %d day, %m month as a number, %b "
+"month in three letters, %B full month name, %Y year in four digits, %y year "
+"in two digits. For example 25/12/2026 is %d/%m/%Y. Use the 'Preview Mapping'"
+" button to see it decoded."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import__id
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping__id
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_preview__id
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_test__id
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_parser__id
+msgid "ID"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "Ignored row"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model,name:account_statement_import_sheet_file_ux.model_account_statement_import
+msgid "Import Bank Statement Files"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "Incoming transfer"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_test__journal_id
+msgid "Journal"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_preview__write_uid
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_test__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_preview__write_date
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_test__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_preview__mapping_id
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_test__mapping_id
+msgid "Mapping"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "Mapping preview"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/wizard/account_statement_import.py:0
+msgid "Missing currency code in the bank statement file."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_preview__preview_html
+msgid "Preview"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model_terms:ir.ui.view,arch_db:account_statement_import_sheet_file_ux.account_statement_import_sheet_mapping_form
+msgid "Preview Mapping"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model_terms:ir.ui.view,arch_db:account_statement_import_sheet_file_ux.account_statement_import_sheet_mapping_form
+msgid ""
+"Read a real file with this mapping and report what would be imported, "
+"without saving anything"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model_terms:ir.ui.view,arch_db:account_statement_import_sheet_file_ux.account_statement_import_form
+msgid "Report what would be imported, without saving anything"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,help:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping__header_lines_skip_count
+msgid ""
+"Row number where the column headers are located, the first row being 1. Use "
+"the 'Preview Mapping' button to check how the file is expected to look with "
+"the current configuration."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "Rows ignored at the end of the file: %s."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "Sample Bank"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_preview__file_data
+msgid "Sample File"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "Sample line"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/wizard/account_statement_import.py:0
+#: model:ir.actions.server,name:account_statement_import_sheet_file_ux.action_preview_mapping_from_error
+msgid "See the preview"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model_terms:ir.ui.view,arch_db:account_statement_import_sheet_file_ux.account_statement_import_sheet_mapping_form
+msgid "Show how the file is expected to look with this configuration"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,help:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping__amount_type
+msgid ""
+"Simple value: use the signed amount in the amount column\n"
+"Absolute value: use a same column for debit and credit (absolute value + indicate sign)\n"
+"Distinct Credit/debit Column: use a distinct column for debit and credit"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/wizard/account_statement_import_sheet_mapping_preview.py:0
+msgid "Statement"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "Supplier B"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "Supplier payment"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/wizard/account_statement_import.py:0
+msgid "Technical detail: %s"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model_terms:ir.ui.view,arch_db:account_statement_import_sheet_file_ux.account_statement_import_form
+#: model_terms:ir.ui.view,arch_db:account_statement_import_sheet_file_ux.account_statement_import_sheet_mapping_form
+#: model_terms:ir.ui.view,arch_db:account_statement_import_sheet_file_ux.account_statement_import_sheet_mapping_test_form
+msgid "Test Import"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "Test import"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/wizard/account_statement_import.py:0
+msgid "The Bank Accounting Account is not set on the journal '%s'."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid ""
+"The amount type does not read these columns, but the mapping still demands "
+"that the file contain them, and an empty one corrupts the amount: %s. Clear "
+"them, or change the amount type."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "The dates are read with %(format)s, that is %(decoded)s."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/wizard/account_statement_import.py:0
+msgid ""
+"The encoding of the file could not be detected, so none of it can be read. "
+"Ask for the file to be exported again from the bank, or saved as CSV UTF-8."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/wizard/account_statement_import.py:0
+msgid ""
+"The file could not be read with the mapping '%s'. Use the 'Preview Mapping' "
+"button on the mapping to see the file it is expecting and compare it with "
+"yours."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid ""
+"The file has no header line, so every column has to be a number (the first "
+"column is 0). These fields hold a name instead and are not shown below: %s"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid ""
+"The file has no header line, so its first rows are transactions -- and this "
+"configuration skips %s of them. Set the header row number to 0 when there is"
+" no header."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,help:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_test__journal_id
+msgid ""
+"The file is read as if it were being imported in this journal, which is what"
+" decides the currency of the transactions."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model_terms:ir.ui.view,arch_db:account_statement_import_sheet_file_ux.account_statement_import_sheet_mapping_test_form
+msgid ""
+"The file is read with this mapping and the result is reported without saving"
+" anything: no statement and no transaction is created."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid ""
+"The file must have no header row: the mapping points at column positions, so"
+" the order shown here is the one your file needs."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/wizard/account_statement_import.py:0
+msgid ""
+"The file was read with the mapping without any error, but it has no "
+"transaction in it. Check the rows ignored at the beginning and at the end of"
+" the file."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/wizard/account_statement_import.py:0
+msgid ""
+"The format of this file is not one of the formats that can be read with a "
+"mapping: csv, txt, xls and xlsx."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid ""
+"The header row number is 0. When importing a spreadsheet the header row is "
+"then read as a transaction too and the import fails. Set it to 1 if the "
+"headers are in the first row of the file."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/wizard/account_statement_import.py:0
+msgid ""
+"The mapping '%(mapping)s' expects a column named '%(column)s' and the file "
+"does not have it. Banks rename their columns from one export to the next: "
+"check the Columns section of the mapping and use the 'Preview Mapping' "
+"button to see the file the mapping is expecting."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/wizard/account_statement_import.py:0
+msgid ""
+"The mapping '%(mapping)s' reads the dates with the format '%(format)s' and "
+"the file writes them differently. Check the 'Timestamp format' field of the "
+"mapping and use the 'Preview Mapping' button to see the file the mapping is "
+"expecting."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid ""
+"The order of the columns in your file does not matter and extra columns are "
+"ignored: only the header names have to match the ones shown here."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/wizard/account_statement_import.py:0
+msgid "The parsing of the statement file returned an invalid result."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid ""
+"The sample file can be imported as is: use it to check the mapping before "
+"fighting with the real statement."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model_terms:ir.ui.view,arch_db:account_statement_import_sheet_file_ux.mapping_preview
+msgid ""
+"There is no column to preview yet: fill in the Columns section of the "
+"mapping and open this preview again."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/wizard/account_statement_import.py:0
+msgid "There is nothing to import in this file"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/wizard/account_statement_import.py:0
+msgid "This file is ready to be processed"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model_terms:ir.ui.view,arch_db:account_statement_import_sheet_file_ux.mapping_preview
+msgid "This is how your file should look like:"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping__timestamp_format
+msgid "Timestamp Format"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/wizard/account_statement_import.py:0
+msgid ""
+"Transactions found: %(count)s, from %(first)s to %(last)s. Nothing was "
+"saved: run the import itself to create the statement."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "day"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "day of the month"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "full month name"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "hour"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "minute"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "month"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "month as a number"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "month in three letters"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "second"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "year"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "year in four digits"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#. odoo-python
+#: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
+msgid "year in two digits"
+msgstr ""
