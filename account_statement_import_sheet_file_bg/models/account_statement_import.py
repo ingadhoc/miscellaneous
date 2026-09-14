@@ -168,8 +168,7 @@ class AccountStatementImport(models.TransientModel):
 
         output_base64_list = []
         mapping = self.sheet_mapping_id
-        journal = self.env["account.journal"].browse(self.env.context.get("journal_id"))
-        currency_code = (journal.currency_id or journal.company_id.currency_id).name
+        all_rows = []
         try:
             file_bytes = base64.b64decode(self.statement_file)
             read_buffer = BytesIO(file_bytes)
@@ -191,6 +190,9 @@ class AccountStatementImport(models.TransientModel):
                 )
                 sheet = workbook.sheet_by_index(0)
                 csv_or_xlsx = (workbook, sheet)
+                # same as the openpyxl branch: plain values, every row and
+                # every column, which is what the split below writes out
+                all_rows = [sheet.row_values(row) for row in range(sheet.nrows)]
 
             except Exception:
                 # Try CSV
@@ -211,23 +213,19 @@ class AccountStatementImport(models.TransientModel):
 
                 csv_reader = reader(StringIO(decoded), **csv_options)
                 csv_or_xlsx = csv_reader
-                all_rows = [row for row in list(csv_or_xlsx) if any(cell for cell in row)]
+                # same as the two spreadsheet branches: every row, empty ones
+                # included, so that the header row number the user configured
+                # counts the lines the file actually has. Dropping the empty
+                # rows here shifted that count and made the header land on a
+                # transaction. Empty rows are skipped later by the parser,
+                # which is what skip_empty_lines is for.
+                all_rows = list(csv_or_xlsx)
         parser = self.env["account.statement.import.sheet.parser"]
-
-        # Only parse header and rows for Excel files (when all_rows is not yet populated)
-        if not all_rows:
-            header = parser.parse_header(csv_or_xlsx, mapping)
-            columns = dict()
-            for column_name in parser._get_column_names():
-                columns[column_name] = parser._get_column_indexes(header, column_name, mapping)
-            data = csv_or_xlsx, self.statement_file
-            all_rows = parser._parse_rows(mapping, currency_code, data, columns)
-        else:
-            # For CSV files, we already have all_rows, convert list to iterator for parse_header
-            header = parser.parse_header(iter(all_rows), mapping)
 
         if not all_rows:
             return []
+
+        header = parser.parse_header(iter(all_rows), mapping)
 
         header_rows = all_rows[:header_rows_count]
         data_rows = all_rows[header_rows_count:]
