@@ -17,9 +17,6 @@ class AccountStatementImportSheetParser(models.TransientModel):
         if header_line > 0:
             header_line -= 1
 
-        if isinstance(csv_or_xlsx, tuple):
-            return super().parse_header(csv_or_xlsx, mapping)
-
         [next(csv_or_xlsx) for _i in range(header_line)]
         header = []
         for value in next(csv_or_xlsx):
