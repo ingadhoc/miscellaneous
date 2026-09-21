@@ -12,6 +12,12 @@
             name="model_id"
             ref="account_statement_import_sheet_file.model_account_statement_import_sheet_mapping"
         />
+        <!--
+            Without groups, a server action demands write access on its model,
+            and only an accounting manager has it on the mappings. The action
+            only reads one, so an accountant is allowed to run it.
+        -->
+        <field name="group_ids" eval="[(4, ref('account.group_account_user'))]" />
         <field name="state">code</field>
         <field name="code">
 mapping = model.browse(env.context.get("preview_mapping_id") or [])
