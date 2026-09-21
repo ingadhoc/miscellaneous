@@ -1,0 +1,35 @@
+Contexto del Problema:
+Actualmente tenemos un widget funcional para gestionar campos company_dependent. Este widget trabaja directamente sobre la estructura de datos (JSON) cuando el campo existe físicamente en el modelo. Sin embargo, basándonos en una nueva necesidad técnica, debemos dar soporte a:
+
+Campos Computed/Inverse: (Ej: standard_price en el template, cuyo valor real reside en las variantes).
+
+Campos Related: (Ej: Los campos en res.config.settings que apuntan a configuraciones de la compañía).
+
+En estos casos, no hay una columna JSON para manipular. Debemos usar obligatoriamente los Getters y Setters del ORM de Odoo mediante el contexto with_company.
+
+Tu Tarea: Fase de Análisis (CRÍTICO):
+Antes de generar código, analiza la estructura del widget actual que tienes en contexto y decide cuál de estos dos caminos es más limpio, mantenible y eficiente en Odoo:
+
+Opción A (Adaptación/Polimorfismo): Modificar el widget actual para que detecte si el campo es un company_dependent nativo (JSON) o un campo "virtual" (Related/Computed). Debería abstraer la capa de persistencia para llamar a diferentes métodos RPC según el caso.
+
+Opción B (Nuevo Widget Especializado): Crear un segundo widget (ej. company_dependent_orm) que reutilice la UI del primero pero que implemente una lógica de comunicación con el servidor totalmente distinta, basada en with_company e iteración de IDs de compañía.
+
+Requerimientos para la implementación (según el camino elegido):
+
+Capa de Datos (Python): Independiente del camino, necesitamos métodos en el backend que permitan al widget obtener y setear valores iterando por compañías (for company in companies: val = record.with_company(company).field_name).
+
+Capa de UI (OWL):
+
+El widget debe funcionar en formularios estándar y ser compatible con la vista de res.config.settings.
+
+En el video de referencia se menciona que en res.config.settings el icono del edificio se renderiza de forma especial. Debes proponer cómo integrar nuestro disparador (el botón que abre el popup) en esos nodos, considerando que suelen ser campos related.
+
+Lógica de Negocio: El widget debe ser capaz de manejar el "getter" y el "setter" de forma transparente para el usuario, aunque por detrás esté disparando métodos _inverse o escribiendo en tablas relacionadas.
+
+Resultado Esperado:
+
+Diagnóstico: Dime qué opción eliges (A o B) y por qué, basándote en la complejidad del código actual.
+
+Código: Entrégame la solución completa (Python, JS, XML) para que el widget sea funcional en el campo standard_price de productos y en los settings de Odoo.
+
+Estrategia de Vistas: Explica cómo debemos heredar o modificar las vistas para que el widget aparezca en los related de los settings donde Odoo ya pone el icono del edificio por defecto.

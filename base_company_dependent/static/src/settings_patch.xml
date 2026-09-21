@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Replace the static building icon with an interactive CompanyDependentButton.
+         Target SearchableSetting (the primary copy used in res.config.settings views)
+         because extensions on web.Setting don't propagate to primary copies from
+         earlier-loaded modules due to OWL's block-ordering filter. -->
+    <t t-inherit="web.SearchableSetting" t-inherit-mode="extension">
+        <xpath expr="//t[@t-if='displayCompanyDependentIcon']" position="replace">
+            <t t-if="displayCompanyDependentButton">
+                <CompanyDependentButton
+                    fieldName="cdFieldName"
+                    fieldString="cdFieldString"
+                    required="cdFieldRequired"
+                    record="props.record"
+                    isSpecific="_cdState.isSpecific"
+                    mode="'orm'"
+                    onSaved="() => this._onCDSaved()"
+                />
+            </t>
+            <t t-elif="displayCompanyDependentIcon">
+                <span class="fa fa-lg fa-building-o" title="Values set here are company-specific."/>
+            </t>
+        </xpath>
+    </t>
+
+</templates>
