@@ -313,3 +313,20 @@ class TestMappingPreview(SheetMappingCase):
             self.env.ref("account_statement_import_sheet_file" ".account_statement_import_sheet_mapping_tree").type,
             "form",
         )
+
+    def test_the_sample_uses_the_decimals_of_the_currency(self):
+        """A currency with no decimals writes none in the sample.
+
+        The sample is downloadable and meant to be imported as is, so an amount
+        it writes has to be an amount that currency can hold -- and a Chilean
+        statement, one of the formats this is for, has no decimals.
+        """
+        currency = self.env["res.currency"].create({"name": "TST", "symbol": "T", "rounding": 1.0})
+        journal = self.env["account.journal"].create(
+            {"name": "Bank round", "type": "bank", "code": "BNKRD", "currency_id": currency.id}
+        )
+        grid = self.mapping.with_context(journal_id=journal.id)._preview_grid()
+        amounts = [row["cells"][2] for row in grid["rows"] if row["kind"] == "data"]
+        self.assertEqual(amounts[0], "1.500")
+        for amount in amounts:
+            self.assertNotIn(",", amount, "the sample writes decimals the currency cannot hold")

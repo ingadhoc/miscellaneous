@@ -113,6 +113,22 @@ class AccountStatementImportSheetMapping(models.Model):
         self.ensure_one()
         return [key.strip() for key in (self[field_name] or "").split(",") if key.strip()]
 
+    def _names_a_column(self, value):
+        """Whether a value read from a file is one of the configured column names.
+
+        The parser matches the headers of the file without minding case or
+        surrounding spaces, so this asks the question the same way.
+        """
+        self.ensure_one()
+        wanted = (value or "").strip().lower()
+        if not wanted:
+            return False
+        return any(
+            key.lower() == wanted
+            for field_name in self._preview_column_field_names()
+            for key in self._preview_column_keys(field_name)
+        )
+
     @api.model
     def _preview_column_index(self, key):
         """The column index a mapping key holds, or None when it is a name."""
@@ -137,7 +153,8 @@ class AccountStatementImportSheetMapping(models.Model):
             return str(round(amount * 10 ** self._preview_decimal_places()))
         # One pass, so that both separators can be configured to the same
         # character without the swap clashing with itself
-        return f"{amount:,.2f}".translate(str.maketrans({",": thousands, ".": decimal}))
+        places = self._preview_decimal_places()
+        return f"{amount:,.{places}f}".translate(str.maketrans({",": thousands, ".": decimal}))
 
     def _preview_currency(self):
         """The currency the parser will compare the sample against.
@@ -451,19 +468,26 @@ class AccountStatementImportSheetMapping(models.Model):
             return {"amount_column", "debit_credit_column"}
         return {"amount_column"}
 
+    def _reads_its_own_header(self):
+        """Whether the mapping is set to read the header row as a transaction."""
+        self.ensure_one()
+        return not self.no_header and not self.header_lines_skip_count
+
+    def _header_row_zero_warning(self):
+        """Also raised as the explanation of the import that this breaks."""
+        return self.env._(
+            "The header row number is 0. When importing a spreadsheet "
+            "the header row is then read as a transaction too and the "
+            "import fails. Set it to 1 if the headers are in the first "
+            "row of the file."
+        )
+
     def _preview_warnings(self):
         """Configuration that is going to break the import, spelled out."""
         self.ensure_one()
         warnings = []
-        if not self.no_header and not self.header_lines_skip_count:
-            warnings.append(
-                self.env._(
-                    "The header row number is 0. When importing a spreadsheet "
-                    "the header row is then read as a transaction too and the "
-                    "import fails. Set it to 1 if the headers are in the first "
-                    "row of the file."
-                )
-            )
+        if self._reads_its_own_header():
+            warnings.append(self._header_row_zero_warning())
         unused = [
             field_name
             for field_name in (

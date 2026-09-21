@@ -45,7 +45,12 @@ class AccountStatementImport(models.TransientModel):
             return super()._parse_file(data_file)
         except UserError as error:
             mapping = self.sheet_mapping_id
-            if not mapping:
+            # The sheet module flattens whatever went wrong into the text of a
+            # UserError and keeps the original under __cause__. An error raised
+            # straight by another override of this method has no cause, and
+            # calling it a mapping problem would send the user to fix the wrong
+            # thing.
+            if not mapping or error.__cause__ is None:
                 raise
             raise SheetMappingError(
                 self._sheet_mapping_error_message(mapping, str(error), cause=error.__cause__)
@@ -71,8 +76,8 @@ class AccountStatementImport(models.TransientModel):
             message = str(error)
             if not isinstance(error, SheetMappingError):
                 # the failure came from somewhere that does not know about the
-                # mapping, so it is only worth explaining if it reads like one
-                if not any(signal in message for signal in MAPPING_FAILURE_SIGNALS):
+                # mapping, so it is only worth explaining if it was one
+                if not self._reads_like_a_mapping_failure(error, message):
                     raise
                 message = self._sheet_mapping_error_message(mapping, message)
             raise RedirectWarning(
@@ -82,12 +87,42 @@ class AccountStatementImport(models.TransientModel):
                 {"preview_mapping_id": mapping.id},
             ) from error
 
+    def _reads_like_a_mapping_failure(self, error, message):
+        """Whether a failure that arrives as somebody else's was ours to begin with.
+
+        Two ways of asking, because the answer lives in two kinds of message.
+        What python raises is always in English, so its wording is a reliable
+        signal in any database. What a module raises arrives translated, so it
+        is recognised by the type it was raised with -- along the chain of
+        exceptions, since the module that re-raised it kept the original as the
+        cause or the context of its own.
+        """
+        if any(signal in message for signal in MAPPING_FAILURE_SIGNALS):
+            return True
+        seen = error
+        # a bounded walk: an exception chain is not meant to be a cycle, but it
+        # can be made into one, and this runs on the way to an error screen
+        for _step in range(10):
+            if isinstance(seen, SheetMappingError):
+                return True
+            seen = seen.__cause__ or seen.__context__
+            if seen is None:
+                break
+        return False
+
     def import_file_button(self, *args, **kwargs):
         """Wrap the button without narrowing its signature.
 
         `account_statement_import_sheet_file_bg` re-enters this same method from
         its background job with `wizard_data=...`, and this override sits in
         front of it, so anything it is called with has to travel through.
+
+        That this module loads after that one is not luck, and not alphabetical
+        order either: Odoo sorts by the depth of the dependency graph, and this
+        module hangs off the xls and xlsx readers, which already hang off the
+        sheet module that `_bg` depends on directly. One level deeper means
+        loaded later, which means on top. ``test_this_module_loads_above_bg``
+        fails if that ever inverts.
         """
         with self._offer_the_preview():
             return super().import_file_button(*args, **kwargs)
@@ -133,6 +168,11 @@ class AccountStatementImport(models.TransientModel):
                 mapping=mapping.name,
                 column=missing_column.group(1),
             )
+        misread_date = re.search(r"time data '(.+?)' does not match format", message)
+        if misread_date and mapping._reads_its_own_header() and mapping._names_a_column(misread_date.group(1)):
+            # the date that cannot be read is the header of its own column, so
+            # the mapping is reading the header row as if it were a transaction
+            return mapping._header_row_zero_warning()
         if "does not match format" in message:
             return self.env._(
                 "The mapping '%(mapping)s' reads the dates with the format "

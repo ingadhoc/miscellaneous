@@ -3,7 +3,8 @@ from datetime import datetime
 from decimal import Decimal
 
 from odoo import api, models
-from odoo.exceptions import UserError
+
+from .account_statement_import import SheetMappingError
 
 # Spanish month names, as the banks of the region write them, mapped to the
 # English ones `datetime.strptime` understands for %b and %B. strptime reads
@@ -152,7 +153,9 @@ class AccountStatementImportSheetParser(models.TransientModel):
             if candidate in (thousands, decimal):
                 continue
             if pattern.search(cleaned):
-                raise UserError(
+                # the type is what survives the translation of the text, and
+                # what the import reads to offer the preview of the mapping
+                raise SheetMappingError(
                     self.env._(
                         "Cannot read the amount %(value)s: it uses %(candidate)s as "
                         "the decimal mark, but the statement mapping declares "

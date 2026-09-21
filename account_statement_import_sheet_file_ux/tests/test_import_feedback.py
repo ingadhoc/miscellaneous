@@ -1,4 +1,12 @@
-from odoo.exceptions import RedirectWarning
+from unittest.mock import patch
+
+from odoo.addons.account_statement_import_sheet_file.wizard.account_statement_import import (
+    AccountStatementImport as SheetImport,
+)
+from odoo.addons.account_statement_import_sheet_file_ux.wizard.account_statement_import import (
+    SheetMappingError,
+)
+from odoo.exceptions import RedirectWarning, UserError
 
 from .common import SheetMappingCase
 
@@ -151,3 +159,126 @@ class TestImportFeedback(SheetMappingCase):
         with self.assertRaises(RedirectWarning) as catcher:
             wizard.action_test_import()
         self.assertIn("expects a column named 'NoExiste'", catcher.exception.args[0])
+
+    # What the test import promises
+
+    def test_a_test_import_reports_what_the_import_creates(self):
+        """The report and the import have to find the same thing in a file.
+
+        ``_test_import_file`` mirrors ``import_single_statement`` by hand, for
+        want of a hook between its analysis and its writes. This is what fails
+        the day the two drift apart, instead of a user being told a file is
+        ready and the import then refusing it.
+        """
+        data_file = self.sheet(
+            [
+                ("21/08/2026", "Pago", "1.500,00", "1.500,00"),
+                ("22/08/2026", "Cobro", "-250,50", "1.249,50"),
+                ("23/08/2026", "Comision", "-35,75", "1.213,75"),
+            ]
+        )
+        reported = self.import_wizard(data_file)._test_import_file(data_file)
+        # the context the background job runs its own import with: without it,
+        # `_bg` enqueues the file instead of importing it and nothing is created
+        self.import_wizard(data_file).with_context(bg_job=True).import_file_button()
+        created = self.env["account.bank.statement.line"].search([("journal_id", "=", self.journal.id)])
+        self.assertEqual(len(reported), len(created), "the report and the import disagree on how many lines")
+        self.assertEqual(
+            sorted(round(float(transaction["amount"]), 2) for transaction in reported),
+            sorted(round(amount, 2) for amount in created.mapped("amount")),
+        )
+
+    # Which mistake the message names
+
+    def test_a_header_read_as_a_transaction_is_named_as_such(self):
+        """The header row number, not the date format.
+
+        With the header row number at 0 the mapping reads its own headers as a
+        transaction, and the first thing that breaks is the date -- so the
+        parser complains about the format of a date that was never one, and
+        sends the user to fix a field that is right.
+        """
+        mapping = self.new_mapping(header_lines_skip_count=0)
+        wizard = self.import_wizard(self.sheet([("21/08/2026", "Pago", "1.500,00", "1.500,00")]), mapping)
+        with self.assertRaises(RedirectWarning) as catcher:
+            wizard.action_test_import()
+        message = catcher.exception.args[0]
+        self.assertIn("The header row number is 0", message)
+        self.assertNotIn("Timestamp format", message)
+
+    def test_a_date_the_file_really_writes_differently_still_blames_the_format(self):
+        """The control case: the header is skipped, so the date is the problem."""
+        wizard = self.import_wizard(self.sheet([("2026-08-21", "Pago", "1.500,00", "1.500,00")]))
+        with self.assertRaises(RedirectWarning) as catcher:
+            wizard.action_test_import()
+        message = catcher.exception.args[0]
+        self.assertIn("Timestamp format", message)
+        self.assertNotIn("The header row number is 0", message)
+
+    def test_the_preview_of_a_mapping_opens_for_an_accountant(self):
+        """The button of the error message is useless to whoever imports.
+
+        A server action with no groups demands write access on its model, and
+        only an accounting manager has it on the mappings -- so an accountant
+        was told they are not allowed to look at a preview.
+        """
+        action = self.env.ref("account_statement_import_sheet_file_ux.action_preview_mapping_from_error")
+        self.assertIn(self.env.ref("account.group_account_user"), action.group_ids)
+
+    # Whose failure is it
+
+    def test_an_error_from_another_module_is_not_blamed_on_the_mapping(self):
+        """Only what the sheet parser wrapped gets explained as a mapping problem.
+
+        Another override of ``_parse_file`` raising an error of its own has no
+        cause underneath, and its message has to reach the user untouched --
+        being sent to fix the mapping would be a wrong turn.
+        """
+        wizard = self.import_wizard(self.sheet([("21/08/2026", "Pago", "1.500,00", "1.500,00")]))
+        message = "This file belongs to another journal"
+
+        def raise_its_own(_self, _data_file):
+            raise UserError(message)
+
+        with patch.object(SheetImport, "_parse_file", raise_its_own):
+            with self.assertRaises(UserError) as catcher:
+                wizard._parse_file(b"whatever")
+        self.assertEqual(str(catcher.exception), message)
+
+    def test_a_translated_message_still_offers_the_preview(self):
+        """The offer cannot hang on English words only.
+
+        ``_bg`` re-raises a failure as a plain UserError carrying the text of
+        the original, and on a database in Spanish that text arrives already
+        translated -- so no English signal matches it. The type of the
+        exception it kept as its context is what still says whose failure it
+        was.
+        """
+        wizard = self.import_wizard(self.sheet([("21/08/2026", "Pago", "1.500,00", "1.500,00")]))
+        translated = "No se puede leer el importe 1500.50: usa . como marca decimal"
+
+        def like_the_background_job():
+            try:
+                raise SheetMappingError(translated)
+            except SheetMappingError as error:
+                raise UserError(f"Error importing bank statement: {error}") from None
+
+        with self.assertRaises(RedirectWarning) as catcher:
+            with wizard._offer_the_preview():
+                like_the_background_job()
+        self.assertIn(translated, catcher.exception.args[0])
+
+    def test_this_module_loads_above_bg(self):
+        """The wrapper of the button only works from above ``_bg``.
+
+        Odoo sorts the load by the depth of the dependency graph, and this
+        module sits one level deeper. If that ever inverts, the background job
+        is enqueued before the wrapper sees anything and a failed import stops
+        offering the preview.
+        """
+        loaded = [klass.__module__ for klass in type(self.env["account.statement.import"]).mro()]
+        background = "odoo.addons.account_statement_import_sheet_file_bg.models.account_statement_import"
+        this = "odoo.addons.account_statement_import_sheet_file_ux.wizard.account_statement_import"
+        if background not in loaded:
+            self.skipTest("account_statement_import_sheet_file_bg is not installed")
+        self.assertLess(loaded.index(this), loaded.index(background), "this module no longer wraps the background one")
