@@ -2,6 +2,11 @@
 <odoo>
     <record id="rows_per_file_limit" model="ir.config_parameter">
         <field name="key">account_statement_import_sheet_file_bg.rows_per_file_limit</field>
-        <field name="value">3000</field>
+        <!--
+            A part of 3000 rows does not finish inside the CPU time a worker is
+            given, and the job stays running until it is killed. 1000 is the
+            size that is known to go through.
+        -->
+        <field name="value">1000</field>
     </record>
 </odoo>

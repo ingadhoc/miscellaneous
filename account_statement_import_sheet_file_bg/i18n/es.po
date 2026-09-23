@@ -19,48 +19,48 @@ msgstr ""
 #. module: account_statement_import_sheet_file_bg
 #: model:ir.model,name:account_statement_import_sheet_file_bg.model_account_statement_import_sheet_parser
 msgid "Bank Statement Import Sheet Parser"
-msgstr ""
+msgstr "Analizador de planillas de importación de extractos bancarios"
 
 #. module: account_statement_import_sheet_file_bg
 #: model:ir.model.fields,field_description:account_statement_import_sheet_file_bg.field_account_statement_import__display_name
 #: model:ir.model.fields,field_description:account_statement_import_sheet_file_bg.field_account_statement_import_sheet_parser__display_name
 msgid "Display Name"
-msgstr ""
+msgstr "Nombre mostrado"
 
 #. module: account_statement_import_sheet_file_bg
 #. odoo-python
 #: code:addons/account_statement_import_sheet_file_bg/models/account_statement_import.py:0
 msgid "Error importing bank statement: %s"
-msgstr ""
+msgstr "Error al importar el extracto bancario: %s"
 
 #. module: account_statement_import_sheet_file_bg
 #: model:ir.model.fields,field_description:account_statement_import_sheet_file_bg.field_account_statement_import__id
 #: model:ir.model.fields,field_description:account_statement_import_sheet_file_bg.field_account_statement_import_sheet_parser__id
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #. module: account_statement_import_sheet_file_bg
 #: model:ir.model,name:account_statement_import_sheet_file_bg.model_account_statement_import
 msgid "Import Bank Statement Files"
-msgstr ""
+msgstr "Importar archivos de extractos bancarios"
 
 #. module: account_statement_import_sheet_file_bg
 #. odoo-python
 #: code:addons/account_statement_import_sheet_file_bg/models/account_statement_import.py:0
 msgid "No valid encoding was found for the attached file"
-msgstr ""
+msgstr "No se encontró una codificación válida para el archivo adjunto"
 
 #. module: account_statement_import_sheet_file_bg
 #. odoo-python
 #: code:addons/account_statement_import_sheet_file_bg/models/account_statement_import.py:0
 msgid "Process sent to background successfully"
-msgstr ""
+msgstr "El proceso se envió a segundo plano"
 
 #. module: account_statement_import_sheet_file_bg
 #. odoo-python
 #: code:addons/account_statement_import_sheet_file_bg/models/account_statement_import.py:0
 msgid "Processing %s files. You will be notified when each is done."
-msgstr ""
+msgstr "Se están procesando %s archivos. Se le avisará a medida que cada uno termine."
 
 #. module: account_statement_import_sheet_file_bg
 #. odoo-python
@@ -69,3 +69,5 @@ msgid ""
 "The following bank statement has been created:<br><a href=\"%s\" "
 "target=\"_blank\">%s</a><br>"
 msgstr ""
+"Se creó el siguiente extracto bancario:<br><a href=\"%s\" "
+"target=\"_blank\">%s</a><br>"
