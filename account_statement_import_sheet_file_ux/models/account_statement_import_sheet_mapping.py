@@ -31,6 +31,20 @@ class AccountStatementImportSheetMapping(models.Model):
         "(absolute value + indicate sign)\n"
         "Distinct Credit/debit Column: use a distinct column for debit and credit",
     )
+    # redefined so that their label and help are exported by this module and
+    # reach the user translated: a term is only translated by the module that
+    # declares it, and the base module is not ours to fill in
+    skip_empty_lines = fields.Boolean(
+        help="Allows to skip empty lines",
+    )
+    offset_column = fields.Integer(
+        help="Columns to ignore before starting to parse",
+    )
+    float_decimal_sep = fields.Selection(
+        help="When the separator is 'none', the value will be shifted according "
+        "to the currency decimals. For example, 12345 will be converted to "
+        "123.45",
+    )
 
     @api.onchange("amount_type")
     def _ux_clear_amount_columns(self):

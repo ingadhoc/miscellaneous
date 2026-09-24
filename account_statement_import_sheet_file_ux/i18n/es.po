@@ -24,6 +24,11 @@ msgid ""
 msgstr "Un mes en letras se lee tanto en inglés como en español, así que cualquiera de las dos formas funciona en el archivo."
 
 #. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,help:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping__skip_empty_lines
+msgid "Allows to skip empty lines"
+msgstr "Permite saltear líneas vacías"
+
+#. module: account_statement_import_sheet_file_ux
 #: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping__amount_type
 msgid "Amount type"
 msgstr "Tipo de importe"
@@ -96,6 +101,11 @@ msgstr "Cerrar"
 #: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
 msgid "Columns ignored at the beginning of each row: %s."
 msgstr "Columnas ignoradas al comienzo de cada fila: %s."
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,help:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping__offset_column
+msgid "Columns to ignore before starting to parse"
+msgstr "Columnas que se deben ignorar antes de comenzar el análisis."
 
 #. module: account_statement_import_sheet_file_ux
 #: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_preview__create_uid
@@ -208,6 +218,11 @@ msgid "Missing currency code in the bank statement file."
 msgstr "Falta el código de moneda en el archivo del extracto bancario."
 
 #. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping__offset_column
+msgid "Offset Column"
+msgstr "Columna desplazada"
+
+#. module: account_statement_import_sheet_file_ux
 #: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_preview__preview_html
 msgid "Preview"
 msgstr "Previsualización"
@@ -279,6 +294,11 @@ msgid ""
 "Absolute value: use a same column for debit and credit (absolute value + indicate sign)\n"
 "Distinct Credit/debit Column: use a distinct column for debit and credit"
 msgstr "Valor simple: se utiliza para el caso en que en una sola columna haya valores que suman y restan.\nValor absoluto: se utilizará para el caso en que exista una sola columna a la que queramos quitarle el signo.\nDistinta columna de crédito/débito: este es el caso en donde existe una columna para los valores que suman y otra para los valores que restan."
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping__skip_empty_lines
+msgid "Skip Empty Lines"
+msgstr "Saltear líneas vacías"
 
 #. module: account_statement_import_sheet_file_ux
 #. odoo-python
@@ -498,6 +518,13 @@ msgid ""
 "Transactions found: %(count)s, from %(first)s to %(last)s. Nothing was "
 "saved: run the import itself to create the statement."
 msgstr "Transacciones encontradas: %(count)s, del %(first)s al %(last)s. No se guardó nada: ejecute la importación real para crear el extracto."
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,help:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping__float_decimal_sep
+msgid ""
+"When the separator is 'none', the value will be shifted according to the "
+"currency decimals. For example, 12345 will be converted to 123.45"
+msgstr "Cuando el separador es «ninguno», el valor se desplaza según los decimales de la moneda. Por ejemplo, 12345 se convierte en 123,45"
 
 #. module: account_statement_import_sheet_file_ux
 #. odoo-python
