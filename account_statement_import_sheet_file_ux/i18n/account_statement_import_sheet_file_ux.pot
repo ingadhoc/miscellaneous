@@ -23,6 +23,11 @@ msgid ""
 msgstr ""
 
 #. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,help:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping__skip_empty_lines
+msgid "Allows to skip empty lines"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
 #: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping__amount_type
 msgid "Amount type"
 msgstr ""
@@ -95,6 +100,11 @@ msgstr ""
 #. odoo-python
 #: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
 msgid "Columns ignored at the beginning of each row: %s."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,help:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping__offset_column
+msgid "Columns to ignore before starting to parse"
 msgstr ""
 
 #. module: account_statement_import_sheet_file_ux
@@ -215,6 +225,11 @@ msgid "Missing currency code in the bank statement file."
 msgstr ""
 
 #. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping__offset_column
+msgid "Offset Column"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
 #: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_preview__preview_html
 msgid "Preview"
 msgstr ""
@@ -285,6 +300,11 @@ msgid ""
 "Simple value: use the signed amount in the amount column\n"
 "Absolute value: use a same column for debit and credit (absolute value + indicate sign)\n"
 "Distinct Credit/debit Column: use a distinct column for debit and credit"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping__skip_empty_lines
+msgid "Skip Empty Lines"
 msgstr ""
 
 #. module: account_statement_import_sheet_file_ux
@@ -504,6 +524,13 @@ msgstr ""
 msgid ""
 "Transactions found: %(count)s, from %(first)s to %(last)s. Nothing was "
 "saved: run the import itself to create the statement."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,help:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping__float_decimal_sep
+msgid ""
+"When the separator is 'none', the value will be shifted according to the "
+"currency decimals. For example, 12345 will be converted to 123.45"
 msgstr ""
 
 #. module: account_statement_import_sheet_file_ux
