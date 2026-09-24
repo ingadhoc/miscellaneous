@@ -1,10 +1,55 @@
 from datetime import datetime, timedelta
 
-from odoo import models
+from odoo import api, fields, models
 
 
 class MailComposeMessage(models.TransientModel):
     _inherit = "mail.compose.message"
+
+    # Technical fields: remember what the attachments were generated from, so a
+    # round trip that does not change those values reuses them.
+    attachments_source_key = fields.Char(copy=False)
+    attachments_source_ids = fields.Many2many(
+        "ir.attachment",
+        "mail_compose_message_source_attachment_rel",
+        "wizard_id",
+        "attachment_id",
+        copy=False,
+    )
+
+    def _get_attachments_source_key(self):
+        """Signature of the values _compute_attachment_ids generates from."""
+        self.ensure_one()
+        return repr(
+            (
+                self.composition_mode,
+                self.model,
+                self.res_domain,
+                self.res_ids,
+                self.template_id.id,
+            )
+        )
+
+    @api.depends("composition_mode", "model", "res_domain", "res_ids", "template_id")
+    def _compute_attachment_ids(self):
+        """Do not render the template reports again when nothing changed.
+
+        The field is a stored compute, so the web client invalidates it on every
+        onchange round trip that sends back one of its dependencies, even when
+        the value is the same. Each pass called _render_qweb_pdf again: opening
+        the wizard once could run wkhtmltopdf several times, and each run needs
+        a free worker to serve itself the report assets.
+        """
+        todo = self.browse()
+        for composer in self:
+            if composer.attachments_source_key == composer._get_attachments_source_key():
+                composer.attachment_ids = composer.attachments_source_ids
+            else:
+                todo |= composer
+        super(MailComposeMessage, todo)._compute_attachment_ids()
+        for composer in todo:
+            composer.attachments_source_key = composer._get_attachments_source_key()
+            composer.attachments_source_ids = composer.attachment_ids
 
     def _manage_mail_values(self, mail_values_all):
         """
