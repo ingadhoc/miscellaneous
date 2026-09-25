@@ -1,6 +1,6 @@
 {
     "name": "Account statement import sheet file BG",
-    "version": "19.0.1.1.0",
+    "version": "19.0.1.2.0",
     "category": "Productivity/Documents",
     "summary": "Integration between Documents and Base BG modules",
     "depends": [
