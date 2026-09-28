@@ -70,6 +70,11 @@ mapping is wrong.
    three digits at the end of a value can only be a decimal mark; when it is
    neither of the configured separators the import now stops with an explanation
    instead of importing a wrong amount.
+ * Reads the **xls that bank systems generate**. Odoo recognises an xls only by
+   the text "Microsoft Excel" inside it, and a file written by a bank system
+   often does not carry it, so the import failed with ``Unsupported sheet type:
+   None``. When the guess misses, an old Office file that xlrd can open is now
+   read as an xls.
  * Matches the configured column names **ignoring case and padding**, so a bank
    that exports ``DATE`` one month and ``Date`` the next one does not break the
    import.

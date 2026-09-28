@@ -2,9 +2,13 @@ import re
 from datetime import datetime
 from decimal import Decimal
 
+import xlrd
 from odoo import api, models
 
 from .account_statement_import import SheetMappingError
+
+# The first bytes of an OLE compound file, the container of an xls
+OLECF_SIGNATURE = b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1"
 
 # Spanish month names, as the banks of the region write them, mapped to the
 # English ones `datetime.strptime` understands for %b and %B. strptime reads
@@ -54,6 +58,29 @@ DECIMAL_MARK_RE = {
 
 class AccountStatementImportSheetParser(models.TransientModel):
     _inherit = "account.statement.import.sheet.parser"
+
+    def _get_sheet_type(self, data_file):
+        """Read as xls a workbook that the mimetype guess does not recognise.
+
+        An xls is an OLE compound file, the container of every Office file
+        before 2007, and Odoo tells a workbook apart from the rest only by the
+        text "Microsoft Excel" inside it. The xls that bank systems generate
+        often do not carry it, so the guess stays on the generic container and
+        the import fails with ``Unsupported sheet type``. Whether xlrd can open
+        the file is what decides then, not the name of the file.
+        """
+        sheet_type = super()._get_sheet_type(data_file)
+        if sheet_type is None and data_file.startswith(OLECF_SIGNATURE) and self._is_xls_workbook(data_file):
+            return "xls"
+        return sheet_type
+
+    def _is_xls_workbook(self, data_file):
+        try:
+            # on_demand only reads the list of sheets, not their cells
+            xlrd.open_workbook(file_contents=data_file, on_demand=True).release_resources()
+        except Exception:  # noqa: BLE001
+            return False
+        return True
 
     def _get_column_indexes(self, header, column_name, mapping):
         """Match the configured column names ignoring case and padding.
