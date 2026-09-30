@@ -1,6 +1,6 @@
 {
     "name": "Base Exception Compat",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.1.0",
     "category": "Tools",
     "author": "ADHOC SA",
     "website": "www.adhoc.com.ar",
