@@ -42,7 +42,7 @@
             "base_import_ux/static/src/**/*",
         ],
     },
-    "installable": True,
+    "installable": False,
     "auto_install": True,
     "application": False,
 }

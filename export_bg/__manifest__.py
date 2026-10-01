@@ -35,7 +35,7 @@
             "export_bg/static/src/views/list_controller.js",
         ],
     },
-    "installable": True,
+    "installable": False,
     "auto_install": False,
     "application": False,
 }

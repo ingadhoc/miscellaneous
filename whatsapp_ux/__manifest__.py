@@ -29,7 +29,7 @@
     "demo": [
         "demo/whatsapp_ux_demo.xml",
     ],
-    "installable": True,
+    "installable": False,
     "auto_install": False,
     "application": False,
 }

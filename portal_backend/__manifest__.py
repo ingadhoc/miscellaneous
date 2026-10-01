@@ -43,7 +43,7 @@
             "portal_backend/static/src/portal_advanced_group_ids/portal_advanced_group_ids_field.js",
         ],
     },
-    "installable": True,
+    "installable": False,
     "auto_install": False,
     "application": False,
 }

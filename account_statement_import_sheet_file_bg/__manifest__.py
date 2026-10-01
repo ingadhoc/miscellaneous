@@ -11,7 +11,7 @@
         "data/ir_config_parameter_data.xml",
     ],
     "demo": [],
-    "installable": True,
+    "installable": False,
     "auto_install": False,
     "application": False,
     "author": "ADHOC SA",

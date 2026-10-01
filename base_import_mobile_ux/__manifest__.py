@@ -34,7 +34,7 @@
             "base_import_mobile_ux/static/src/import_records.js",
         ],
     },
-    "installable": True,
+    "installable": False,
     "auto_install": False,
     "application": False,
 }

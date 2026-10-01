@@ -32,6 +32,6 @@
     "data": [
         "data/ir_config_parameter_data.xml",
     ],
-    "installable": True,
+    "installable": False,
     "auto_install": False,
 }

@@ -29,5 +29,5 @@
         "views/iot_views.xml",
         "wizard/add_iot_printnode_views.xml",
     ],
-    "installable": True,
+    "installable": False,
 }

@@ -7,6 +7,6 @@
     "license": "AGPL-3",
     "depends": ["base"],
     "data": [],
-    "installable": True,
+    "installable": False,
     "post_init_hook": "post_init_hook",
 }

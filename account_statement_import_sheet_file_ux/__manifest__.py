@@ -40,7 +40,7 @@
         "views/account_statement_import_sheet_mapping_views.xml",
         "views/account_statement_import_views.xml",
     ],
-    "installable": True,
+    "installable": False,
     "auto_install": ["account_statement_import_sheet_file"],
     "application": False,
 }
