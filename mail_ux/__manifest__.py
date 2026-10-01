@@ -30,6 +30,7 @@
     "assets": {
         "web.assets_backend": [
             "mail_ux/static/src/core/common/**/*",
+            "mail_ux/static/src/views/composer_onchange.js",
         ],
     },
     "depends": [
