@@ -3,3 +3,4 @@
 # directory
 ##############################################################################
 from . import test_whatsapp_bulk_action
+from . import test_whatsapp_leave

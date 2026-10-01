@@ -11,7 +11,7 @@
 ##############################################################################
 {
     "name": "WhatsApp UX",
-    "version": "19.0.1.1.0",
+    "version": "19.0.1.2.0",
     "category": "WhatsApp",
     "sequence": 14,
     "summary": "One-click bulk send server action for every approved WhatsApp template",
@@ -25,6 +25,14 @@
     "data": [
         "views/whatsapp_template_views.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "whatsapp_ux/static/src/**/*",
+        ],
+        "web.assets_unit_tests": [
+            "whatsapp_ux/static/tests/**/*",
+        ],
+    },
     "post_init_hook": "post_init_hook",
     "demo": [
         "demo/whatsapp_ux_demo.xml",
