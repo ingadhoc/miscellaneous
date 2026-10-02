@@ -35,9 +35,13 @@ Configuration
 Set environment variables for GitHub integration::
 
     export GITHUB_TOKEN="your_github_token"
-    export GITHUB_REPO_OWNER="your_organization"
-    export GITHUB_REPO_NAME="your_repository"
     export GITHUB_BRANCH="your_branch"
+    export MODULE_INFO='{("your_organization", "your_repository"): ["module_a", "module_b"]}'
+
+``MODULE_INFO`` maps each ``(owner, repository)`` pair to the modules to export.
+POT files are generated when this module is installed and pushed to
+``<module>/i18n/<module>.pot`` in that repository. If ``MODULE_INFO`` is empty,
+nothing is generated.
 
 .. image:: https://odoo-community.org/website/image/ir.attachment/5784_f2813bd/datas
    :alt: Try me on Runbot
