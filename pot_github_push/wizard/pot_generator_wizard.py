@@ -2,6 +2,7 @@ import base64
 import contextlib
 import io
 import logging
+import time
 
 import requests
 from odoo import api, models
@@ -112,17 +113,25 @@ class PotGenerator(models.AbstractModel):
             if sha:
                 commit_data["sha"] = sha
 
-            # Push to GitHub
-            response = requests.put(url, json=commit_data, headers=headers, timeout=30)
+            # Push to GitHub. A 409 means GitHub still sees the branch as it was
+            # before a push made a moment ago, so wait and try again.
+            for attempt in range(3):
+                if attempt:
+                    time.sleep(2)
+                response = requests.put(url, json=commit_data, headers=headers, timeout=30)
+                if response.status_code != 409:
+                    break
             if response.status_code in [200, 201]:
                 _logger.info("GitHub push completed for %s", module_name)
                 return True
             else:
-                _logger.error("GitHub push failed for %s: %s", module_name, response.text)
+                _logger.error(
+                    "GitHub push failed for %s (HTTP %s): %s", module_name, response.status_code, response.text
+                )
                 return False
 
         except Exception as e:
-            _logger.error("GitHub push failed for %s: %s", module_name, str(e))
+            _logger.error("GitHub push failed for %s: %r", module_name, e)
             return False
         finally:
             # Clear headers to avoid keeping sensitive token data in memory
