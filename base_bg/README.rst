@@ -1,6 +1,6 @@
 Base Background Jobs
 ====================
-
+This module provides a background job processing system for Odoo that allows executing long-running operations asynchronously, without blocking the user interface.
 This module provides a background job processing system for Odoo that allows executing long-running operations asynchronously without blocking the user interface.
 
 **Table of contents**
