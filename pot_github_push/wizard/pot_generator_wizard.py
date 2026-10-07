@@ -31,7 +31,16 @@ class PotGenerator(models.AbstractModel):
                     _logger.error("Invalid repo key type: %s", type(repo_key))
                     continue
 
+                installed = (
+                    self.env["ir.module.module"]
+                    .search([("name", "in", module_names), ("state", "=", "installed")])
+                    .mapped("name")
+                )
                 for module_name in module_names:
+                    # A module that is not installed exports only its manifest terms
+                    if module_name not in installed:
+                        _logger.info("Module %s is not installed, skipping POT generation", module_name)
+                        continue
                     content = self._generate_pot(module_name)
                     if content:
                         self._github_push(module_name, content, repo_owner, repo_name, github_token, github_branch)
