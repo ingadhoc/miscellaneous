@@ -19,7 +19,7 @@
 ##############################################################################
 {
     "name": "Base Company Dependent UX",
-    "version": "19.0.1.1.0",
+    "version": "20.0.1.0.0",
     "category": "Base",
     "sequence": 14,
     "summary": (
@@ -35,9 +35,12 @@
         "web.assets_backend": [
             "base_company_dependent/static/src/**/*",
         ],
+        "web.assets_unit_tests": [
+            "base_company_dependent/static/tests/**/*",
+        ],
     },
     "data": [],
-    "installable": False,
+    "installable": True,
     "auto_install": False,
     "application": False,
 }

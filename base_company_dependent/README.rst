@@ -2,8 +2,8 @@
 Base Company Dependent UX
 ==========================
 
-Mejora la UX de los campos ``company_dependent`` en Odoo 19, replicando el
-paradigma del *Asistente de Traducciones* (``fa-globe``), pero para valores
+Mejora la UX de los campos ``company_dependent``, replicando el
+paradigma del *Asistente de Traducciones*, pero para valores
 multicompañía.
 
 .. contents::
@@ -12,7 +12,7 @@ multicompañía.
 Problema que resuelve
 =====================
 
-En Odoo 18/19 los campos ``company_dependent`` ya no usan ``ir.property``; los
+Desde Odoo 18 los campos ``company_dependent`` ya no usan ``ir.property``; los
 valores se almacenan como una columna JSONB dentro de la misma tabla del modelo
 (ej. ``{"1": 45, "2": false}``). El ORM resuelve y devuelve el valor ya
 computado para la compañía activa, por lo que el usuario desconoce si está
@@ -33,7 +33,7 @@ Se añade un **widget inteligente multicompañía** a todos los campos
 Indicador visual en el formulario
 ----------------------------------
 
-* **Ícono** ``fa-building-o`` a la derecha del campo.
+* **Ícono** de compañía (``business``) a la derecha del campo.
 
   * Color **primario** (azul) → valor específico para la compañía activa.
   * Color **gris** → valor por defecto/fallback.
