@@ -1,12 +1,12 @@
 /** @odoo-module **/
 
-import { Component } from "@odoo/owl";
+import { Component, types, useProps } from "@odoo/owl";
 import { _t } from "@web/core/l10n/translation";
 import { useOwnedDialogs } from "@web/core/utils/hooks";
 import { CompanyDependentDialog } from "./company_dependent_dialog";
 
 /**
- * Botón de ícono fa-building-o que se muestra junto a campos Many2one
+ * Botón de ícono business que se muestra junto a campos Many2one
  * que tienen company_dependent === true.
  *
  * El estado ``isSpecific`` lo gestiona el Many2OneField padre a través del
@@ -21,14 +21,14 @@ import { CompanyDependentDialog } from "./company_dependent_dialog";
  */
 export class CompanyDependentButton extends Component {
     static template = "base_company_dependent.CompanyDependentButton";
-    static props = {
-        fieldName: { type: String },
-        fieldString: { type: String },
-        required: { type: Boolean },
-        record: { type: Object },
-        isSpecific: { validate: (v) => v === null || typeof v === "boolean" },
-        onSaved: { type: Function, optional: true },
-    };
+    props = useProps({
+        fieldName: types.string(),
+        fieldString: types.string(),
+        required: types.boolean(),
+        record: types.object(),
+        isSpecific: types.or([types.literal(null), types.boolean()]),
+        onSaved: types.function().optional(),
+    });
 
     setup() {
         this.addDialog = useOwnedDialogs();

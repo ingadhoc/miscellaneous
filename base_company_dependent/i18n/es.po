@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 19.0+e\n"
+"Project-Id-Version: Odoo Server 20.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-12 19:04+0000\n"
-"PO-Revision-Date: 2026-03-11 00:00+0000\n"
+"POT-Creation-Date: 2026-10-08 19:21+0000\n"
+"PO-Revision-Date: 2026-10-08 19:21+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es\n"
@@ -24,17 +24,158 @@ msgid ""
 "%(field)s '%(value)s' belongs to a different company and cannot be used with "
 "company '%(company)s'."
 msgstr ""
+"%(field)s '%(value)s' pertenece a otra compañía y no se puede usar con la "
+"compañía '%(company)s'."
+
+#. module: base_company_dependent
+#: model:ir.module.module,description:base.module_base_company_dependent
+msgid ""
+"==========================\n"
+"Base Company Dependent UX\n"
+"==========================\n"
+"\n"
+"Mejora la UX de los campos ``company_dependent``, replicando el\n"
+"paradigma del *Asistente de Traducciones*, pero para valores\n"
+"multicompañía.\n"
+"\n"
+".. contents::\n"
+"   :local:\n"
+"\n"
+"Problema que resuelve\n"
+"=====================\n"
+"\n"
+"Desde Odoo 18 los campos ``company_dependent`` ya no usan ``ir.property``; los\n"
+"valores se almacenan como una columna JSONB dentro de la misma tabla del modelo\n"
+"(ej. ``{\"1\": 45, \"2\": false}``). El ORM resuelve y devuelve el valor ya\n"
+"computado para la compañía activa, por lo que el usuario desconoce si está\n"
+"viendo:\n"
+"\n"
+"* **Un valor específico** → clave ``company_id`` presente en el JSON.\n"
+"* **El fallback global** → sin clave para esa compañía; se usa ``ir.default``.\n"
+"\n"
+"Esto genera confusión al editar: el usuario puede modificar accidentalmente el\n"
+"valor de *todas* las compañías (el default) pensando que solo toca la suya.\n"
+"\n"
+"Solución\n"
+"========\n"
+"\n"
+"Se añade un **widget inteligente multicompañía** a todos los campos\n"
+"``Many2one`` marcados con ``company_dependent=True``:\n"
+"\n"
+"Indicador visual en el formulario\n"
+"----------------------------------\n"
+"\n"
+"* **Ícono** de compañía (``business``) a la derecha del campo.\n"
+"\n"
+"  * Color **primario** (azul) → valor específico para la compañía activa.\n"
+"  * Color **gris** → valor por defecto/fallback.\n"
+"\n"
+"* El texto del campo se renderiza en **gris/cursiva** cuando es el fallback.\n"
+"\n"
+"Asistente multicompañía (Modal)\n"
+"---------------------------------\n"
+"\n"
+"Al pulsar el ícono se abre un diálogo con una tabla de todas las compañías\n"
+"accesibles para el usuario (``env.companies``):\n"
+"\n"
+"+------------+----------------------------------+---------------+------------------+\n"
+"| Compañía   | Valor                            | Estado        | Acción           |\n"
+"+============+==================================+===============+==================+\n"
+"| Cía A      | Autocomplete Many2one            | Específico    | [\\|Reset\\|]      |\n"
+"+------------+----------------------------------+---------------+------------------+\n"
+"| Cía B      | (vacío)                          | Por Defecto   | [\\|Reset\\|] (×)  |\n"
+"+------------+----------------------------------+---------------+------------------+\n"
+"\n"
+"* **Vaciar** el Many2one guarda ``false`` en el JSON → campo vacío *explícito*\n"
+"  (badge «Específico»).\n"
+"* **Reset** *elimina* la clave del JSON → el campo vuelve al fallback global.\n"
+"\n"
+"Diferencia clave Vaciar vs. Reset\n"
+"''''''''''''''''''''''''''''''''''\n"
+"\n"
+"+--------+------------------------------------+------------------+\n"
+"| Acción | JSON resultante                    | Badge de estado  |\n"
+"+========+====================================+==================+\n"
+"| Vaciar | ``{\"2\": false}``                   | Específico       |\n"
+"+--------+------------------------------------+------------------+\n"
+"| Reset  | ``{}`` (clave eliminada)           | Por Defecto      |\n"
+"+--------+------------------------------------+------------------+\n"
+"\n"
+"Fase MVP (implementada)\n"
+"========================\n"
+"\n"
+"* Soporte para campos ``Many2one``.\n"
+"* Indicador visual gris/color-primario.\n"
+"* Modal funcional: listar, editar, resetear.\n"
+"* Caché por formulario: una sola query SQL para todos los campos\n"
+"  ``company_dependent`` del modelo.\n"
+"\n"
+"Fase 2 (pendiente)\n"
+"==================\n"
+"\n"
+"* Soporte para campos ``Float`` e ``Integer``.\n"
+"* Botón «Copiar a todas las compañías hijas».\n"
+"\n"
+"Arquitectura técnica\n"
+"====================\n"
+"\n"
+"Backend\n"
+"-------\n"
+"\n"
+"``base.company.dependent`` (``models.AbstractModel``):\n"
+"\n"
+"* ``get_company_dependent_values(res_model, res_id, field_name)``\n"
+"  → valores crudos por compañía (para el modal).\n"
+"* ``set_company_dependent_values(res_model, res_id, field_name, values_dict)``\n"
+"  → escribe el JSON crudo (soporta ``RESET``).\n"
+"* ``get_company_dependent_meta(res_model, res_id)``\n"
+"  → ``{field_name: is_specific}`` en una sola query (para el indicador visual).\n"
+"\n"
+"Frontend (OWL)\n"
+"--------------\n"
+"\n"
+"* **Servicio** ``company_dependent``: caché por registro, batching de RPCs.\n"
+"* **Patch** ``Many2OneField``: carga meta en ``onWillStart``, inyecta el\n"
+"  sub-componente y el template extendido.\n"
+"* **``CompanyDependentButton``**: ícono con tooltip dinámico, abre el diálogo.\n"
+"* **``CompanyDependentDialog``**: tabla interactiva con ``AutoComplete`` para\n"
+"  Many2one y soporte de Reset.\n"
+"\n"
+"Instalación\n"
+"===========\n"
+"\n"
+".. code-block:: bash\n"
+"\n"
+"   # Instalar desde la interfaz de Odoo o con:\n"
+"   odoo-bin -d <db> -u base_company_dependent\n"
+"\n"
+"Dependencias\n"
+"============\n"
+"\n"
+"* ``base``\n"
+"* ``web``\n"
+"\n"
+"Licencia\n"
+"========\n"
+"\n"
+"AGPL-3. Ver ``LICENSE`` para más detalles.\n"
+msgstr ""
 
 #. module: base_company_dependent
 #. odoo-javascript
 #: code:addons/base_company_dependent/static/src/templates.xml:0
 msgid "Actions"
-msgstr ""
+msgstr "Acciones"
 
 #. module: base_company_dependent
 #: model:ir.model,name:base_company_dependent.model_base
 msgid "Base"
 msgstr "Base"
+
+#. module: base_company_dependent
+#: model:ir.module.module,shortdesc:base.module_base_company_dependent
+msgid "Base Company Dependent UX"
+msgstr "Base - UX de campos dependientes de la compañía"
 
 #. module: base_company_dependent
 #. odoo-javascript
@@ -52,19 +193,19 @@ msgstr "Valores por compañía: %s"
 #. odoo-javascript
 #: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
 msgid "Copy"
-msgstr ""
+msgstr "Copiar"
 
 #. module: base_company_dependent
 #. odoo-javascript
 #: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
 msgid "Copy "
-msgstr ""
+msgstr "Copiar "
 
 #. module: base_company_dependent
 #. odoo-javascript
 #: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
 msgid "Copy this value to all child companies"
-msgstr ""
+msgstr "Copiar este valor a todas las compañías hijas"
 
 #. module: base_company_dependent
 #. odoo-javascript
@@ -87,23 +228,23 @@ msgstr "Descartar"
 #. module: base_company_dependent
 #: model:ir.model.fields,field_description:base_company_dependent.field_base_company_dependent__display_name
 msgid "Display Name"
-msgstr ""
+msgstr "Nombre para mostrar"
 
 #. module: base_company_dependent
 #: model:ir.model,name:base_company_dependent.model_base_company_dependent
 msgid "Helpers para campos company_dependent"
-msgstr "Helpers para campos company_dependent"
+msgstr ""
 
 #. module: base_company_dependent
 #: model:ir.model.fields,field_description:base_company_dependent.field_base_company_dependent__id
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #. module: base_company_dependent
 #. odoo-javascript
 #: code:addons/base_company_dependent/static/src/templates.xml:0
 msgid "Insert Field"
-msgstr ""
+msgstr "Insertar campo"
 
 #. module: base_company_dependent
 #. odoo-javascript
@@ -116,6 +257,13 @@ msgstr "Cargando información de compañía…"
 #: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
 msgid "Loading company values..."
 msgstr "Cargando valores por compañía..."
+
+#. module: base_company_dependent
+#: model:ir.module.module,summary:base.module_base_company_dependent
+msgid ""
+"Mejora UX de campos company_dependent: indicador visual y asistente "
+"multicompañía para gestionar valores por compañía sin cambiar de sesión."
+msgstr ""
 
 #. module: base_company_dependent
 #. odoo-javascript
@@ -148,6 +296,8 @@ msgid ""
 "Saved %s company value(s). Could not save %s due to company inconsistencies: "
 "%s."
 msgstr ""
+"Se guardaron %s valor(es) por compañía. No se pudieron guardar %s por "
+"inconsistencias de compañía: %s."
 
 #. module: base_company_dependent
 #. odoo-javascript
@@ -193,13 +343,10 @@ msgstr "Valores guardados correctamente."
 #. odoo-javascript
 #: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
 msgid "propagates the value of a parent company to all its child companies."
-msgstr ""
+msgstr "propaga el valor de una compañía padre a todas sus compañías hijas."
 
 #. module: base_company_dependent
 #. odoo-javascript
 #: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
 msgid "removes the set value and restores to the global default value."
 msgstr "elimina el valor configurado y restaura al valor por defecto global."
-
-#~ msgid "Reset"
-#~ msgstr "Resetear"
