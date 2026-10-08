@@ -4,7 +4,7 @@
  * and fallback CSS class.
  *
  * When a field has `company_dependent: true` in the model definition:
- *   1. Injects a CompanyDependentButton (fa-building-o) next to the input.
+ *   1. Injects a CompanyDependentButton (business icon) next to the input.
  *   2. Applies the CSS class `o_cd_fallback` when the value comes from the
  *      global fallback (no specific key set for the current company in the JSON).
  *
@@ -12,7 +12,8 @@
  * field type, keeping the logic in one place.
  */
 
-import { onWillStart, useState } from "@odoo/owl";
+import { onWillStart, proxy } from "@odoo/owl";
+import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { patch } from "@web/core/utils/patch";
 import { BooleanField } from "@web/views/fields/boolean/boolean_field";
@@ -31,7 +32,7 @@ import { CompanyDependentButton } from "./company_dependent_button";
 
 /**
  * Returns the patch object to apply to a field prototype.
- * Hooks (useService / useState) are always called unconditionally to comply
+ * Hooks (useService / proxy) are always called unconditionally to comply
  * with OWL's hook ordering rules.
  */
 
@@ -40,7 +41,7 @@ function makeCDPatch() {
         setup() {
             super.setup();
             this._cdService = useService("company_dependent");
-            this._cdState = useState({ isSpecific: null });
+            this._cdState = proxy({ isSpecific: null });
             if (this.isCompanyDependent) {
                 onWillStart(() => this._loadCDMeta());
             }
@@ -86,6 +87,24 @@ for (const Field of FIELDS) {
     patch(Field.prototype, makeCDPatch());
     Field.components = { ...Field.components, CompanyDependentButton };
 }
+
+/**
+ * Subclasses loaded before this file (e.g. ``Many2OneBankField``) copied their
+ * parent's ``components`` without the button but still inherit the patched
+ * template, so a company_dependent field using them would fail to render.
+ */
+export function addButtonToFieldSubclasses() {
+    for (const { component } of registry.category("fields").getAll()) {
+        if (
+            FIELDS.some((Field) => component?.prototype instanceof Field) &&
+            !component.components?.CompanyDependentButton
+        ) {
+            component.components = { ...component.components, CompanyDependentButton };
+        }
+    }
+}
+
+addButtonToFieldSubclasses();
 
 // Each class points to its own extended template defined in templates.xml.
 Many2OneField.template = "base_company_dependent.Many2OneField";
