@@ -19,7 +19,7 @@
 ##############################################################################
 {
     "name": "Base UX",
-    "version": "19.0.1.8.0",
+    "version": "20.0.1.0.0",
     "category": "Base",
     "sequence": 14,
     "summary": "",
@@ -37,8 +37,6 @@
         "views/mail_template_view.xml",
         "views/res_company_view.xml",
         "views/base_partner_merge_view.xml",
-        "views/mail_activity_schedule_view.xml",
-        "views/mail_activity_view.xml",
         "views/res_partner_views.xml",
     ],
     "assets": {
@@ -48,7 +46,7 @@
     },
     "demo": [],
     "test": [],
-    "installable": False,
+    "installable": True,
     "auto_install": False,
     "application": False,
 }
