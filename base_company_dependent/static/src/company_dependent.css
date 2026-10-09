@@ -3,7 +3,7 @@
  *
  * .o_cd_m2o_wrapper   : wrapper del campo Many2One extendido.
  * .o_cd_fallback      : activa el estilo «muted» cuando el valor es el fallback global.
- * .o_cd_btn           : botón fa-building-o inline.
+ * .o_cd_btn           : botón de ícono business inline.
  * .o_cd_dialog        : contenedor principal del diálogo.
  * .o_cd_table         : tabla jerarquizada de valores por compañía.
  * .o_cd_depth_N       : filas de nivel N (0 = padre, 1 = hijo, 2 = nieto).
@@ -69,7 +69,7 @@
     color: var(--bs-secondary-color, #6c757d) !important;
 }
 
-/* ── Botón del ícono fa-building-o ──────────────────────────────────────── */
+/* ── Botón del ícono business ──────────────────────────────────────── */
 .o_cd_btn {
     flex-shrink: 0;
     line-height: 1;
@@ -83,7 +83,7 @@
     opacity: 1;
 }
 
-.o_cd_btn .fa {
+.o_cd_btn .oi {
     font-size: 0.9rem;
 }
 

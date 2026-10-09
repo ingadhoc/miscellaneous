@@ -59,16 +59,14 @@ class TestCompanyCrossCheck(TransactionCase):
         cls.registry._setup_models__(cls.env.cr, [cls.MODEL])
         cls.registry.init_models(cls.env.cr, [cls.MODEL], {"models_to_check": True})
         cls.addClassCleanup(cls.registry.__delitem__, cls.MODEL)
-        # Group-less ACL so the non-superuser test actor can operate the model.
-        cls.env["ir.model"]._reflect_models([cls.MODEL])
-        cls.env["ir.model.access"].create(
+        # Internal-user permission so the non-superuser test actor can operate the model
+        # (a group-less ir.access is a restriction, not a permission).
+        cls.env["ir.access"].create(
             {
                 "name": "company_dependent_tester_test",
                 "model_id": cls.env["ir.model"]._get(cls.MODEL).id,
-                "perm_read": True,
-                "perm_write": True,
-                "perm_create": True,
-                "perm_unlink": True,
+                "group_id": cls.env.ref("base.group_user").id,
+                "operation": "crud",
             }
         )
 
