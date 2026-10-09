@@ -26,8 +26,14 @@ class MailComposeMessage(models.TransientModel):
         if not self.env.user.send_message_delay:
             return super()._action_send_mail(auto_commit=auto_commit)
 
-        # Limpiamos __action_done porque odoo guarda una base automation ahi
-        # Al querer crear el mensaje programado falla por mala definicion de contexto (es un objeto y no un str, int, etc.)
-        # No es replicable en odoo porque no tienen base automation para schedulear un mensaje
-        self.with_context(__action_done={})._action_schedule_message()
+        self._action_schedule_message()
         return self.env["mail.mail"].sudo(), self.env["mail.message"]
+
+    def _prepare_schedule_message_post_values(self, post_values):
+        """send_context es un campo Json y base_automation deja en el contexto
+        claves privadas con recordsets (__action_done): no son serializables."""
+        values = super()._prepare_schedule_message_post_values(post_values)
+        values["send_context"] = {
+            key: value for key, value in (values.get("send_context") or {}).items() if not key.startswith("__")
+        }
+        return values
