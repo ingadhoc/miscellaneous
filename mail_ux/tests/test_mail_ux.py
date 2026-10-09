@@ -37,6 +37,29 @@ class TestMailUx(TransactionCase):
         self.assertTrue(scheduled.scheduled_date)
         self.assertEqual(self.partner.message_ids, messages_before)
 
+    def test_scheduled_message_drops_private_context_keys(self):
+        """send_context is a Json field: a private key holding recordsets
+        (base_automation's __action_done) makes the insert fail."""
+        self.user.send_message_delay = 60
+        composer = (
+            self.env["mail.compose.message"]
+            .with_user(self.user)
+            .with_context(
+                default_model="res.partner",
+                default_res_ids=self.partner.ids,
+                lang="en_US",
+                **{"__action_done": {self.env.user: self.partner}},
+            )
+            .create({"body": "<p>Delayed</p>", "composition_mode": "comment"})
+        )
+        composer._action_send_mail()
+        scheduled = self.env["mail.scheduled.message"].search(
+            [("model", "=", "res.partner"), ("res_id", "=", self.partner.id)]
+        )
+        self.assertEqual(len(scheduled), 1)
+        self.assertEqual(scheduled.send_context.get("lang"), "en_US")
+        self.assertFalse([key for key in scheduled.send_context if key.startswith("__")])
+
     def test_composer_sends_immediately_without_delay(self):
         composer = (
             self.env["mail.compose.message"]
