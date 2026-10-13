@@ -21,7 +21,7 @@
                 <field name="create_date"/>
                 <field name="duration"/>
                 <field string="Retries" name="retry_count" optional="hide"/>
-                <button name="action_open_records" string="Open Records" type="object" icon="fa-bars"/>
+                <button name="action_open_records" string="Open Records" type="object" icon="menu"/>
             </list>
         </field>
     </record>
@@ -41,8 +41,8 @@
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button class="oe_stat_button" name="action_open_batch_jobs" string="Batch Jobs" type="object" icon="fa-tasks"/>
-                        <button class="oe_stat_button" name="action_open_records" string="Open Records" type="object" icon="fa-bars"/>
+                        <button class="oe_stat_button" name="action_open_batch_jobs" string="Batch Jobs" type="object" icon="checklist"/>
+                        <button class="oe_stat_button" name="action_open_records" string="Open Records" type="object" icon="menu"/>
                     </div>
                     <div class="oe_title">
                         <h1>
