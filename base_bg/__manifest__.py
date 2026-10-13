@@ -30,9 +30,9 @@
         "mail",
     ],
     "data": [
-        "security/ir.model.access.csv",
         "views/bg_job_views.xml",
         "data/ir_cron_data.xml",
+        "security/ir.access.csv",
     ],
     "demo": [
         "demo/bg_job_demo.xml",
