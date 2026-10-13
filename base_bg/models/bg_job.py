@@ -426,22 +426,9 @@ class BgJob(models.Model):
         return delay + random.uniform(0, delay * 0.25)
 
     @api.model
-    def _get_int_param(self, key: str, default: int) -> int:
-        """
-        Read an int system parameter, falling back to ``default`` (with a warning)
-        on a missing or non-integer value, so a bad param cannot crash the runner.
-        """
-        value = self.env["ir.config_parameter"].sudo().get_str(key) or default
-        try:
-            return int(value)
-        except (TypeError, ValueError):
-            _logger.warning("Invalid value %r for system parameter %s; using default %s.", value, key, default)
-            return default
-
-    @api.model
     def _get_transient_max_retries(self) -> int:
         """Retry budget for transient concurrency failures (separate from ``max_retries``)."""
-        return max(1, self._get_int_param("base_bg.transient_max_retries", 10))
+        return max(1, self.env["ir.config_parameter"].sudo().get_int("base_bg.transient_max_retries", 10))
 
     @api.model
     def _has_eligible_jobs(self) -> bool:
