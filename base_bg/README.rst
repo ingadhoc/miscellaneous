@@ -66,7 +66,8 @@ To add background job capabilities to your model, inherit from the ``base.bg`` m
 
         def action_start_background_process(self):
             """Button action to start background processing"""
-            return self.bg_enqueue('my_long_process', 'test_param', param2='value')
+            action, _jobs = self.bg_enqueue('my_long_process', None, 'test_param', param2='value')
+            return action
 
 Using bg_enqueue()
 ------------------
@@ -76,21 +77,23 @@ The ``bg_enqueue()`` method is the primary way to create background jobs:
 .. code-block:: python
 
     # Basic usage - enqueue a method call
-    result = record.bg_enqueue('method_name')
+    action, jobs = record.bg_enqueue('method_name')
 
     # With arguments
-    result = record.bg_enqueue('method_name', arg1, arg2, kwarg1='value')
+    action, jobs = record.bg_enqueue('method_name', None, arg1, arg2, kwarg1='value')
 
     # With custom job name and retry configuration
-    result = record.bg_enqueue(
+    action, jobs = record.bg_enqueue(
         'method_name',
+        None,
         arg1,
         arg2,
         name='Custom Job Name',
         max_retries=5
     )
 
-The method returns a notification action that informs the user the job has been queued.
+The method returns a notification action that informs the user the job has been queued, and the created jobs.
+The second argument is ``threshold`` (records per job): pass ``None`` before any positional argument.
 
 When the job finishes, the executed method's return value (if any) is sent to the user
 as a direct message. A plain string is escaped before rendering: if your method returns
@@ -110,11 +113,12 @@ Example 1: Background Data Export
 
         def action_export_to_csv_background(self):
             """Export selected orders to CSV in background"""
-            return self.bg_enqueue(
+            action, _jobs = self.bg_enqueue(
                 '_export_orders_to_csv',
                 name=f'Export {len(self)} Sale Orders',
                 max_retries=2
             )
+            return action
 
         def _export_orders_to_csv(self):
             """Private method that performs the actual export"""
@@ -159,6 +163,7 @@ The ``bg_enqueue()`` method automatically handles:
     # The method will receive the same recordset and arguments
     records.with_context(special_mode=True).bg_enqueue(
         'process_records',
+        None,
         'param1',
         special_option=True
     )
@@ -272,7 +277,6 @@ User Access Control
 * Regular users can create, read, and write their own jobs
 * System administrators have full access including delete permissions
 * Users can only see and manage their own background jobs
-* Managers can see jobs from their team members (if configured)
 
 Technical Details
 =================
