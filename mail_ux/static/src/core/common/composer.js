@@ -3,14 +3,15 @@ import { patch } from "@web/core/utils/patch";
 import { useService } from "@web/core/utils/hooks";
 import { user } from "@web/core/user";
 import { session } from "@web/session";
-import { toRaw } from "@odoo/owl";
+import { toRaw, usePlugin } from "@odoo/owl";
 import { isEventHandled } from "@web/core/utils/misc";
+import { ActionManagerPlugin } from "@web/webclient/actions/action_plugin";
 
 patch(Composer.prototype, {
 
     setup() {
         super.setup();
-        this.actionService = useService("action");
+        this.actionService = usePlugin(ActionManagerPlugin);
         this.orm = useService("orm");
     },
     async sendScheduleMessage() {
