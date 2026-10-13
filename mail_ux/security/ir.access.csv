@@ -1,0 +1,2 @@
+id,name,model_id,group_id/id,operation,domain
+access_mail_server_test_wizard_user,mail.server.test.wizard user,mail.server.test.wizard,base.group_system,cru,
