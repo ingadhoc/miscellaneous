@@ -11,7 +11,7 @@ from markupsafe import Markup
 from odoo import fields, tools
 from odoo.addons.base_bg.models.base_bg import BaseBg
 from odoo.addons.base_bg.models.bg_job import MAX_ACQUIRE_RETRIES, ORPHAN_SWEEP_GRACE
-from odoo.exceptions import UserError
+from odoo.exceptions import AccessError, UserError
 from odoo.tests.common import TransactionCase
 
 
@@ -1001,3 +1001,24 @@ class TestBgJob(TransactionCase):
         ), patch.object(type(self.env), "invalidate_all") as mock_inv_err:
             err_job.run()
         mock_inv_err.assert_called()
+
+    def test_internal_user_only_reaches_own_jobs(self):
+        """An internal user creates, reads and writes their own jobs, but not someone else's."""
+        user = self.env["res.users"].create(
+            {
+                "name": "BG Internal User",
+                "login": "bg_internal_user",
+                "group_ids": [(6, 0, [self.env.ref("base.group_user").id])],
+            }
+        )
+        others = self._create_job(name="Admin Job")
+        own_by_user = self.BgJob.with_user(user).create(
+            {"name": "Own Job", "model": "res.partner", "method": "exists", "batch_key": str(uuid4())}
+        )
+
+        self.assertEqual(own_by_user.name, "Own Job")
+        self.assertNotIn(others, self.BgJob.with_user(user).search([]))
+        with self.assertRaises(AccessError):
+            others.with_user(user).write({"method": "unlink"})
+        own_by_user.write({"priority": 1})
+        self.assertEqual(own_by_user.priority, 1)
