@@ -1,4 +1,4 @@
-import { ORM } from "@web/core/orm_service";
+import { ORM } from "@web/core/orm_plugin";
 import { patch } from "@web/core/utils/patch";
 
 // The composer dialog is rebuilt when an overlay (e.g. a tooltip) changes while it loads,

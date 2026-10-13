@@ -5,13 +5,13 @@ import { user } from "@web/core/user";
 import { session } from "@web/session";
 import { toRaw, usePlugin } from "@odoo/owl";
 import { isEventHandled } from "@web/core/utils/misc";
-import { ActionManagerPlugin } from "@web/webclient/actions/action_plugin";
+import { ActionPlugin } from "@web/webclient/actions/action_plugin";
 
 patch(Composer.prototype, {
 
     setup() {
         super.setup();
-        this.actionService = usePlugin(ActionManagerPlugin);
+        this.actionService = usePlugin(ActionPlugin);
         this.orm = useService("orm");
     },
     async sendScheduleMessage() {
@@ -64,7 +64,11 @@ patch(Composer.prototype, {
     onKeydown(ev) {
         const composer = toRaw(this.props.composer);
         if (ev.key === "Enter") {
-            if (isEventHandled(ev, "NavigableList.select") || !this.state.active) {
+            if (
+                isEventHandled(ev, "NavigableList.select") ||
+                document.querySelector(".o-we-SuggestionList .o-navigable") ||
+                !this.state.active
+            ) {
                 ev.preventDefault();
                 return;
             }

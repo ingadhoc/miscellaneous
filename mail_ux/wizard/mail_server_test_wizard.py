@@ -34,7 +34,7 @@ class MailServerTestWizard(models.TransientModel):
         IrMailServer = self.env["ir.mail_server"]
 
         # Verify the user has read access on ir.mail_server before elevating.
-        IrMailServer.check_access_rights("read")
+        IrMailServer.check_access("read")
 
         # Browse with active_test=False so archived servers (neutralized DBs)
         # are accessible, but without bypassing ACLs / record rules.
@@ -43,7 +43,7 @@ class MailServerTestWizard(models.TransientModel):
             raise UserError(
                 _("No se encontró el servidor de correo. " "Por favor, recargue la página e intente de nuevo.")
             )
-        mail_server.check_access_rule("read")
+        mail_server.check_access("read")
         mail_server = mail_server.sudo()
 
         email_from = mail_server._get_test_email_from()

@@ -2,7 +2,7 @@
 <templates xml:space="preserve">
     <t t-inherit="mail.Composer.sendButton" t-inherit-mode="extension">
         <button position='attributes'>
-           <attribute name="t-on-click">sendScheduleMessage</attribute>
+           <attribute name="t-on-click">this.sendScheduleMessage</attribute>
         </button>
     </t>
 </templates>
