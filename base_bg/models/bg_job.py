@@ -10,7 +10,7 @@ import psycopg2
 from markupsafe import Markup, escape
 from odoo import _, api, fields, models, tools
 from odoo.exceptions import UserError
-from odoo.service.model import PG_CONCURRENCY_EXCEPTIONS_TO_RETRY
+from odoo.sql_db import PG_CONCURRENCY_EXCEPTIONS_TO_RETRY
 
 _logger = logging.getLogger(__name__)
 
@@ -431,7 +431,7 @@ class BgJob(models.Model):
         Read an int system parameter, falling back to ``default`` (with a warning)
         on a missing or non-integer value, so a bad param cannot crash the runner.
         """
-        value = self.env["ir.config_parameter"].sudo().get_param(key, default)
+        value = self.env["ir.config_parameter"].sudo().get_str(key) or default
         try:
             return int(value)
         except (TypeError, ValueError):

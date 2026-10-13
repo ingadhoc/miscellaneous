@@ -822,10 +822,10 @@ class TestBgJob(TransactionCase):
         """Set a system parameter and restore its prior state on cleanup.
 
         ir.config_parameter is cached in a process-global ormcache that survives
-        the TransactionCase rollback, so tests must undo their own set_param.
+        the TransactionCase rollback, so tests must undo their own set_str.
         """
         icp = self.env["ir.config_parameter"].sudo()
-        original = icp.get_param(key, False)
+        original = icp.get_str(key) or False
 
         def _restore():
             if original is False:
@@ -833,10 +833,10 @@ class TestBgJob(TransactionCase):
                 if param:
                     param.unlink()
             else:
-                icp.set_param(key, original)
+                icp.set_str(key, original)
 
         self.addCleanup(_restore)
-        icp.set_param(key, value)
+        icp.set_str(key, value)
 
     def test_is_transient_error_detects_serialization(self):
         """40001 failures are transient whether raw, chained via __cause__, or via __context__."""
