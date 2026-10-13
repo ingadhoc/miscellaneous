@@ -23,7 +23,10 @@ class MailComposeMessage(models.TransientModel):
         """
         Cambio de logica: si hay un retraso configurado, se programa el envío en lugar de enviarlo inmediatamente.
         """
-        if not self.env.user.send_message_delay:
+        # Scheduling only works in mono-comment mode, the other modes keep the delay on the mail values
+        if not self.env.user.send_message_delay or any(
+            wizard.composition_mode != "comment" or wizard.composition_batch for wizard in self
+        ):
             return super()._action_send_mail(auto_commit=auto_commit)
 
         # Limpiamos __action_done porque odoo guarda una base automation ahi
