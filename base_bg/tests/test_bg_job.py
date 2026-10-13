@@ -920,7 +920,7 @@ class TestBgJob(TransactionCase):
     def test_malformed_int_param_falls_back_to_default(self):
         """A non-integer system parameter must not crash the runner; it falls back to the default."""
         self._set_param("base_bg.transient_max_retries", "not-a-number")
-        with patch("odoo.addons.base_bg.models.bg_job._logger.warning"):
+        with patch("odoo.addons.base.models.ir_config_parameter._logger.warning"):
             self.assertEqual(self.BgJob._get_transient_max_retries(), 10)
 
     def test_fail_and_cancel_clear_backoff_gate(self):
