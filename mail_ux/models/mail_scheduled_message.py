@@ -3,12 +3,31 @@
 # directory
 ##############################################################################
 import json
+from collections import defaultdict
 
 from odoo import models
+from odoo.addons.mail.models.mail_message import _find_allowed_doc_ids
 
 
 class MailScheduledMessage(models.Model):
     _inherit = "mail.scheduled.message"
+
+    def _compute_res_access(self):
+        """Same as core, but checking the post access of the document (_mail_post_access) instead of write,
+        as in 19.0: a user who can post on a record can schedule a message on it."""
+        assert self.env.su
+        if not self or not self.browse().sudo(False).has_access("read"):
+            self.res_access = False
+            return
+
+        model_docid_msgids = defaultdict(lambda: defaultdict(list))
+        for message in self:
+            if message.model and message.res_id:
+                model_docid_msgids[message.model][message.res_id].append(message.id)
+
+        allowed = _find_allowed_doc_ids(self.env(su=False), model_docid_msgids, "create")
+        for message in self:
+            message.res_access = message.id in allowed
 
     def _post_message(self, raise_exception=True):
         """Resolve role_ids from notification_parameters into partner_ids before posting."""
