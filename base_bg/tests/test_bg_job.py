@@ -310,15 +310,14 @@ class TestBgJob(TransactionCase):
         self.BgJob._cron_check_running_jobs()
         self.assertEqual(stale.state, "running")
 
-    def test_cron_check_running_jobs_threaded_zero_falls_back_to_limit_time_real(self):
-        """In threaded mode 0 is not "no limit": the core falls back to --limit-time-real."""
+    def test_cron_check_running_jobs_threaded_zero_reaps_nothing(self):
+        """In threaded mode 0 also disables the cron time limit: the reaper must leave running jobs alone."""
         stale = self._create_timed_out_job("Stale Threaded Zero")
         tools.config["workers"] = 0
         tools.config["limit_time_real_cron"] = 0
         tools.config["limit_time_real"] = 3600
-        with patch.object(type(self.BgJob), "_notify_user"), tools.mute_logger("odoo.addons.base_bg.models.bg_job"):
-            self.BgJob._cron_check_running_jobs()
-        self.assertEqual(stale.state, "failed")
+        self.BgJob._cron_check_running_jobs()
+        self.assertEqual(stale.state, "running")
 
     def test_cron_check_running_jobs_without_time_limit_still_cancels_orphans(self):
         """No time limit must not turn off the orphan sweep: stuck orphans block their batch."""
@@ -684,33 +683,20 @@ class TestBgJob(TransactionCase):
             self.BgJob._cron_run_enqueued_jobs()
             mock_run.assert_called_once()
 
-    def test_enqueue_registers_trigger_crons_as_postcommit(self):
-        """_trigger_crons must be registered as a postcommit callback, not called via an
-        eager cr.commit(), so that the caller's transaction remains atomic.
+    def test_enqueue_triggers_runner_in_transaction(self):
+        """bg_enqueue_records schedules the runner inside the caller's transaction.
 
-        The postcommit hook fires after the caller's own commit, at which point both the
-        bg.job row and the caller's data are visible to the cron worker — no race condition
-        and no atomicity violation.
+        A postcommit callback would run on an already closed cursor, and ir.cron._trigger
+        notifies the workers itself once the transaction is committed.
         """
+        runner = self.env.ref("base_bg.ir_cron_bg_job_runner")
+        Trigger = self.env["ir.cron.trigger"].sudo()
+        before = Trigger.search_count([("cron_id", "=", runner.id)])
         partners = self.env["res.partner"].create([{"name": "P1"}, {"name": "P2"}])
-        registered = []
 
-        original_add = self.env.cr.postcommit.add
+        self.env["base.bg"].bg_enqueue_records(partners, "dummy_ordering_method", threshold=1)
 
-        def capture_add(func):
-            registered.append(func)
-            return original_add(func)
-
-        with (
-            patch.object(type(self.env.cr.postcommit), "add", side_effect=capture_add),
-            patch.object(BaseBg, "_trigger_crons"),
-        ):
-            self.env["base.bg"].bg_enqueue_records(partners, "dummy_ordering_method", threshold=1)
-
-        self.assertTrue(
-            registered,
-            "bg_enqueue_records must register _trigger_crons via cr.postcommit.add, not call it eagerly",
-        )
+        self.assertGreater(Trigger.search_count([("cron_id", "=", runner.id)]), before)
 
     def test_enqueue_does_not_commit_eagerly(self):
         """bg_enqueue_records must not call cr.commit() directly — the caller owns the
