@@ -585,21 +585,16 @@ class BgJob(models.Model):
     def _get_reaper_timeout(self) -> int:
         """
         Effective real-time limit (seconds) for cron-run jobs, mirroring how the
-        server resolves ``limit_time_real_cron`` in each mode:
-
-        - prefork (``workers`` > 0): ``0``/unset means no limit, ``-1`` delegates
-          to ``--limit-time-real`` (``PreforkServer.__init__``).
-        - threaded (``workers`` == 0): the value only applies when > 0, anything
-          else falls back to ``--limit-time-real`` (``ThreadedServer.process_limit``).
+        server resolves ``limit_time_real_cron``, the same in prefork and threaded
+        mode (``PreforkServer.__init__``, ``ThreadedServer.process_limit``):
+        ``0``/unset means no limit and ``-1`` delegates to ``--limit-time-real``.
 
         :return: the limit, or 0 when there is none.
         """
         timeout = tools.config.get("limit_time_real_cron") or 0
-        if timeout > 0:
-            return timeout
-        if timeout == -1 or not tools.config.get("workers"):
+        if timeout == -1:
             return tools.config.get("limit_time_real") or 0
-        return 0
+        return max(timeout, 0)
 
     @api.model
     def _cron_check_running_jobs(self):
