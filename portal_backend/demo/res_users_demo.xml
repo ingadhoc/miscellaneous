@@ -4,7 +4,6 @@
     <!-- Portal Backend: partner and user -->
     <record model="res.partner" id="partner_portal_advanced">
         <field name="name">John Portal Advanced</field>
-        <field name="company_name">YourCompany</field>
         <field name="street">41 Lakes Street</field>
         <field name="city">Rosario</field>
         <field name="zip">2000</field>
