@@ -50,17 +50,32 @@ Creating Portal / Portal Backend users
 ======================================
 
 Portal and Portal Backend users can be created directly from *Settings → Users → New*
-(and via import), without having to grant portal access from a contact first. Enable
-developer mode to show the **User Type** selector (Internal / Portal / Portal Backend):
-choosing a type sets the proper groups and the ``share`` flag automatically, so the
-*"exclusive groups"* error never appears. The same result is obtained on import, either
-through the ``Access Type`` column or the ``Role / Portal Backend`` group.
+(and via import), without having to grant portal access from a contact first. The
+**User Type** selector (Internal / Portal / Portal Backend) sets the proper groups and the
+``share`` flag automatically, so the *"exclusive groups"* error never appears. For
+internal users, the native **Role** (Light / User / Administrator) applies on top of it.
+The same result is obtained on import, either through the ``Access Type`` column or the
+``Role / Portal Backend`` group.
+
+The users list shows the **User Type** of each user, and can be filtered by
+*Portal Backend Users* or grouped by *User Type*.
 
 For Portal Backend users, the backend accesses defined under the *Advanced Portal*
 category (e.g. timesheets, holidays) can be granted from a dedicated section in the same
 form. If a contact with the same email already exists, it is reused instead of creating a
 duplicate.
 
+
+Menus
+=====
+
+A root menu without group is visible to every user, so the module hides those menus, with
+their submenus, from Portal Backend users when the visible menus are computed (nothing is
+written in the menus). The regular user tier, which Odoo uses to show menus like Discuss or
+Apps, is not applied to Portal Backend users either (through their own groups or the
+multi-company group) when menus, views and accesses are checked. Odoo still lists them as
+members of that group, so what reads the group membership directly (e.g. the maximum duration
+of API keys, or channels restricted to regular users) still sees it.
 
 Installation
 ============
