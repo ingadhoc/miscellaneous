@@ -305,7 +305,7 @@ class BaseCompanyDependent(models.AbstractModel):
             - ``comodel_name``: modelo del Many2one (solo si aplica).
             - ``selection_options``: lista [(key, label)] (solo si selection).
         """
-        self.env["ir.model.access"].check(res_model, "read")
+        self.env[res_model].browse().check_access("read")
         model_obj = self.env[res_model]
         model_obj.browse(res_id).check_access("read")
         field = model_obj._fields.get(field_name)
@@ -365,7 +365,7 @@ class BaseCompanyDependent(models.AbstractModel):
         :returns: dict con dos claves: ``updated`` (lista de company_ids actualizados)
                   y ``skipped`` (lista de company_ids omitidos).
         """
-        self.env["ir.model.access"].check(res_model, "write")
+        self.env[res_model].browse().check_access("write")
         model_obj = self.env[res_model]
         field = model_obj._fields.get(field_name)
 
@@ -512,7 +512,7 @@ class BaseCompanyDependent(models.AbstractModel):
         :returns: dict con dos claves: ``saved`` (lista de company_ids guardados)
                   y ``skipped`` (lista de dicts {id, name, reason} que fallaron).
         """
-        self.env["ir.model.access"].check(res_model, "write")
+        self.env[res_model].browse().check_access("write")
         model_obj = self.env[res_model]
         field = model_obj._fields.get(field_name)
 
@@ -591,7 +591,7 @@ class BaseCompanyDependent(models.AbstractModel):
 
         Usa una sola query SQL para no generar N+1 consultas.
         """
-        self.env["ir.model.access"].check(res_model, "read")
+        self.env[res_model].browse().check_access("read")
         model_obj = self.env[res_model]
         company_key = str(self.env.company.id)
 
