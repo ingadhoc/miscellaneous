@@ -31,9 +31,9 @@
     ],
     "data": [
         "security/res_groups.xml",
-        "security/ir.model.access.csv",
         "views/portal_templates.xml",
         "views/res_users_views.xml",
+        'security/ir.access.csv',
     ],
     "demo": [
         "demo/res_users_demo.xml",
