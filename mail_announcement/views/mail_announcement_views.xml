@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================
+         VIEWS: mail.announcement
+         ============================ -->
+
+    <record id="view_mail_announcement_list" model="ir.ui.view">
+        <field name="name">mail.announcement.list</field>
+        <field name="model">mail.announcement</field>
+        <field name="arch" type="xml">
+            <list string="Comunicados Importantes"
+                  decoration-info="is_pending_for_me"
+                  decoration-muted="state == 'draft'">
+                <field name="date"/>
+                <field name="author_id" widget="many2one_avatar_user"/>
+                <field name="channel_id" optional="show"/>
+                <field name="name" string="Asunto"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'sent'"/>
+                <field name="receipt_count" string="Destinatarios" optional="show"/>
+                <field name="pending_receipt_count" string="Pendientes" optional="show"/>
+                <field name="is_pending_for_me" column_invisible="1"/>
+                <button name="action_mark_as_read"
+                        string="Acusar Recibo"
+                        type="object"
+                        icon="fa-check"
+                        class="btn-success"
+                        invisible="not is_pending_for_me"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_mail_announcement_form" model="ir.ui.view">
+        <field name="name">mail.announcement.form</field>
+        <field name="model">mail.announcement</field>
+        <field name="arch" type="xml">
+            <form string="Comunicado Importante">
+                <header>
+                    <button name="action_send"
+                            string="Enviar Comunicado"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_mark_as_read"
+                            string="✔ Acusar Recibo"
+                            type="object"
+                            class="btn-success"
+                            invisible="not is_pending_for_me"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,sent"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Asunto"/>
+                        <h1>
+                            <field name="name"
+                                   placeholder="Ingrese el asunto del comunicado..."
+                                   readonly="state != 'draft'"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="author_id" readonly="1"/>
+                            <field name="date" readonly="state == 'sent'"/>
+                            <field name="channel_id"
+                                   readonly="state != 'draft'"
+                                   options="{'no_create': True}"/>
+                        </group>
+                        <group invisible="state == 'draft'">
+                            <field name="receipt_count" string="Total Destinatarios"/>
+                            <field name="pending_receipt_count" string="Pendientes de Leer"/>
+                        </group>
+                    </group>
+                    <group string="Destinatarios">
+                        <field name="recipient_ids"
+                               widget="many2many_tags"
+                               nolabel="1"
+                               readonly="state != 'draft'"
+                               options="{'no_create': True}"/>
+                    </group>
+                    <group string="Contenido">
+                        <field name="body"
+                               readonly="state != 'draft'"/>
+                    </group>
+                    <notebook invisible="state == 'draft'">
+                        <page string="Acuses de Recibo">
+                            <field name="receipt_ids" readonly="1">
+                                <list>
+                                    <field name="user_id" widget="many2one_avatar_user"/>
+                                    <field name="is_read" widget="boolean_toggle"/>
+                                    <field name="read_date"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_mail_announcement_search" model="ir.ui.view">
+        <field name="name">mail.announcement.search</field>
+        <field name="model">mail.announcement</field>
+        <field name="arch" type="xml">
+            <search string="Comunicados Importantes">
+                <field name="name" string="Asunto"/>
+                <field name="author_id"/>
+                <field name="channel_id"/>
+                <separator/>
+                <filter string="Mis Comunicados (Autor)"
+                        name="my_announcements"
+                        domain="[('author_id', '=', uid)]"/>
+                <separator/>
+                <filter string="Enviados"
+                        name="sent"
+                        domain="[('state', '=', 'sent')]"/>
+                <filter string="Borradores"
+                        name="draft"
+                        domain="[('state', '=', 'draft')]"/>
+                <group>
+                    <filter string="Autor"
+                            name="group_author"
+                            context="{'group_by': 'author_id'}"/>
+                    <filter string="Canal"
+                            name="group_channel"
+                            context="{'group_by': 'channel_id'}"/>
+                    <filter string="Mes"
+                            name="group_date"
+                            context="{'group_by': 'date:month'}"/>
+                    <filter string="Estado"
+                            name="group_state"
+                            context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================
+         ACTIONS
+         ============================ -->
+
+    <!-- Action: Pending announcements for current user (default filter) -->
+    <record id="action_mail_announcement_pending" model="ir.actions.act_window">
+        <field name="name">Comunicados Pendientes</field>
+        <field name="res_model">mail.announcement</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'sent'), ('receipt_ids', 'any', [('user_id', '=', uid), ('is_read', '=', False)])]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                ¡Estás al día! No tenés comunicados pendientes de leer.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action: All announcements (management view) -->
+    <record id="action_mail_announcement_all" model="ir.actions.act_window">
+        <field name="name">Todos los Comunicados</field>
+        <field name="res_model">mail.announcement</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aún no hay comunicados. ¡Creá el primero!
+            </p>
+            <p>
+                Usá los comunicados para enviar mensajes importantes a tu equipo
+                con control de lectura obligatoria.
+            </p>
+        </field>
+    </record>
+
+    <!-- ============================
+         MENUS
+         ============================ -->
+
+    <menuitem id="menu_mail_announcement_root"
+              name="Comunicados"
+              sequence="5"
+              web_icon="mail_announcement,static/description/icon.png"/>
+
+    <menuitem id="menu_mail_announcement_pending"
+              name="Mis Pendientes"
+              parent="menu_mail_announcement_root"
+              action="action_mail_announcement_pending"
+              sequence="10"/>
+
+    <menuitem id="menu_mail_announcement_all"
+              name="Todos los Comunicados"
+              parent="menu_mail_announcement_root"
+              action="action_mail_announcement_all"
+              sequence="20"/>
+
+</odoo>

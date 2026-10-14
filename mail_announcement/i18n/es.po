@@ -1,0 +1,137 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#   * mail_announcement
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 00:00+0000\n"
+"PO-Revision-Date: 2024-01-01 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: mail_announcement
+#: model:ir.model,name:mail_announcement.model_mail_announcement
+msgid "Important Announcement"
+msgstr "Comunicado Importante"
+
+#. module: mail_announcement
+#: model:ir.model,name:mail_announcement.model_mail_announcement_receipt
+msgid "Announcement Read Receipt"
+msgstr "Acuse de Recibo"
+
+#. module: mail_announcement
+#: model:ir.model.fields,field_description:mail_announcement.field_mail_announcement__name
+msgid "Subject"
+msgstr "Asunto"
+
+#. module: mail_announcement
+#: model:ir.model.fields,field_description:mail_announcement.field_mail_announcement__body
+msgid "Content"
+msgstr "Contenido"
+
+#. module: mail_announcement
+#: model:ir.model.fields,field_description:mail_announcement.field_mail_announcement__author_id
+msgid "Author"
+msgstr "Autor"
+
+#. module: mail_announcement
+#: model:ir.model.fields,field_description:mail_announcement.field_mail_announcement__channel_id
+msgid "Channel/Origin"
+msgstr "Canal/Origen"
+
+#. module: mail_announcement
+#: model:ir.model.fields,field_description:mail_announcement.field_mail_announcement__date
+msgid "Date"
+msgstr "Fecha"
+
+#. module: mail_announcement
+#: model:ir.model.fields.selection,name:mail_announcement.selection__mail_announcement__state__draft
+msgid "Draft"
+msgstr "Borrador"
+
+#. module: mail_announcement
+#: model:ir.model.fields.selection,name:mail_announcement.selection__mail_announcement__state__sent
+msgid "Sent"
+msgstr "Enviado"
+
+#. module: mail_announcement
+#: model:ir.model.fields,field_description:mail_announcement.field_mail_announcement__recipient_ids
+msgid "Recipients"
+msgstr "Destinatarios"
+
+#. module: mail_announcement
+#: model:ir.model.fields,field_description:mail_announcement.field_mail_announcement__receipt_count
+msgid "Total Recipients"
+msgstr "Total Destinatarios"
+
+#. module: mail_announcement
+#: model:ir.model.fields,field_description:mail_announcement.field_mail_announcement__pending_receipt_count
+msgid "Pending"
+msgstr "Pendientes"
+
+#. module: mail_announcement
+#: model:ir.model.fields,field_description:mail_announcement.field_mail_announcement__is_pending_for_me
+msgid "Pending for Me"
+msgstr "Pendiente para Mí"
+
+#. module: mail_announcement
+#: model:ir.model.fields,field_description:mail_announcement.field_mail_announcement__status
+msgid "Status"
+msgstr "Estado"
+
+#. module: mail_announcement
+#: model:ir.model.fields,field_description:mail_announcement.field_mail_announcement_receipt__announcement_id
+msgid "Announcement"
+msgstr "Comunicado"
+
+#. module: mail_announcement
+#: model:ir.model.fields,field_description:mail_announcement.field_mail_announcement_receipt__user_id
+msgid "User"
+msgstr "Usuario"
+
+#. module: mail_announcement
+#: model:ir.model.fields,field_description:mail_announcement.field_mail_announcement_receipt__is_read
+msgid "Read"
+msgstr "Leído"
+
+#. module: mail_announcement
+#: model:ir.model.fields,field_description:mail_announcement.field_mail_announcement_receipt__read_date
+msgid "Read Date"
+msgstr "Fecha de Lectura"
+
+#. module: mail_announcement
+#: model_terms:ir.ui.view,arch_db:mail_announcement.view_mail_announcement_form
+msgid "Enviar Comunicado"
+msgstr "Enviar Comunicado"
+
+#. module: mail_announcement
+#: model_terms:ir.ui.view,arch_db:mail_announcement.view_mail_announcement_form
+msgid "✔ Acusar Recibo"
+msgstr "✔ Acusar Recibo"
+
+#. module: mail_announcement
+#: model:ir.actions.act_window,name:mail_announcement.action_mail_announcement_pending
+msgid "Comunicados Pendientes"
+msgstr "Comunicados Pendientes"
+
+#. module: mail_announcement
+#: model:ir.actions.act_window,name:mail_announcement.action_mail_announcement_all
+msgid "Todos los Comunicados"
+msgstr "Todos los Comunicados"
+
+#. module: mail_announcement
+#: model:ir.ui.menu,name:mail_announcement.menu_mail_announcement_root
+msgid "Comunicados"
+msgstr "Comunicados"
+
+#. module: mail_announcement
+#: constraint:mail_announcement_receipt:0
+msgid "Each user can only have one read receipt per announcement."
+msgstr "Cada usuario solo puede tener un acuse de recibo por comunicado."
