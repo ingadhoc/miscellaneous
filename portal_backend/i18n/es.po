@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-16 20:46+0000\n"
-"PO-Revision-Date: 2025-12-11 18:10+0000\n"
+"POT-Creation-Date: 2026-10-15 00:10+0000\n"
+"PO-Revision-Date: 2026-10-15 00:10+0000\n"
 "Last-Translator: BAF <baf@adhoc.inc>\n"
 "Language-Team: Spanish <https://translation.dev-adhoc.com/projects/"
 "miscellaneous-19-0/miscellaneous-19-0-portal_backend/es/>\n"
@@ -23,9 +23,137 @@ msgstr ""
 "X-Generator: Weblate 5.10.4\n"
 
 #. module: portal_backend
+#: model:ir.module.module,description:base.module_portal_backend
+msgid ""
+".. |company| replace:: ADHOC SA\n"
+"\n"
+".. |company_logo| image:: https://raw.githubusercontent.com/ingadhoc/maintainer-tools/master/resources/adhoc-logo.png\n"
+"   :alt: ADHOC SA\n"
+"   :target: https://www.adhoc.com.ar\n"
+"\n"
+".. |icon| image:: https://raw.githubusercontent.com/ingadhoc/maintainer-tools/master/resources/adhoc-icon.png\n"
+"\n"
+".. image:: https://img.shields.io/badge/license-AGPL--3-blue.png\n"
+"   :target: https://www.gnu.org/licenses/agpl\n"
+"   :alt: License: AGPL-3\n"
+"\n"
+"==============\n"
+"Portal Backend\n"
+"==============\n"
+"\n"
+"This module creates a new user type \"Portal Backend\" that grants access to the Odoo backend. However, users with this group won't be able to use any app by default. To enable app access for Portal Backend users, it is necessary an specific module \"portal_app\" that defines the app permissions for this user group.\n"
+"\n"
+"To create the necessary groups and categories for \"portal_app\", you can use the following template:\n"
+"\n"
+"App category inheriting from portal advanced:\n"
+"\n"
+".. code-block:: xml\n"
+"\n"
+"    <record model=\"ir.module.category\" id=\"category_portal_app\">\n"
+"        <field name=\"name\">Portal app</field>\n"
+"        <field name=\"parent_id\" ref=\"portal_backend.category_portal_advanced\"/>\n"
+"    </record>\n"
+"\n"
+"Group to give access to Portal Backend users to use that app:\n"
+"\n"
+".. code-block:: xml\n"
+"\n"
+"    <record id=\"group_portal_backend_app\" model=\"res.groups\">\n"
+"        <field name=\"name\">Portal app</field>\n"
+"        <field name=\"category_id\" ref=\"category_portal_app\"/>\n"
+"    </record>\n"
+"\n"
+"You can also create a set of groups that inherit (or not) from each other, but the category always have to be \"category_portal_app\", because the views are different for each type of user. Here's an example:\n"
+"\n"
+".. code-block:: xml\n"
+"\n"
+"    <record id=\"group_portal_backend_app_2\" model=\"res.groups\">\n"
+"        <field name=\"name\">Portal app 2</field>\n"
+"        <field name=\"category_id\" ref=\"category_portal_app\"/>\n"
+"        <field name=\"implied_ids\" eval=\"[Command.link(ref('group_portal_backend_app'))]\"/>\n"
+"    </record>\n"
+"\n"
+"Creating Portal / Portal Backend users\n"
+"======================================\n"
+"\n"
+"Portal and Portal Backend users can be created directly from *Settings → Users → New*\n"
+"(and via import), without having to grant portal access from a contact first. The\n"
+"**User Type** selector (Internal / Portal / Portal Backend) sets the proper groups and the\n"
+"``share`` flag automatically, so the *\"exclusive groups\"* error never appears. For\n"
+"internal users, the native **Role** (Light / User / Administrator) applies on top of it.\n"
+"The same result is obtained on import, either through the ``Access Type`` column or the\n"
+"``Role / Portal Backend`` group.\n"
+"\n"
+"The users list shows the **User Type** of each user, and can be filtered by\n"
+"*Portal Backend Users* or grouped by *User Type*.\n"
+"\n"
+"For Portal Backend users, the backend accesses defined under the *Advanced Portal*\n"
+"category (e.g. timesheets, holidays) can be granted from a dedicated section in the same\n"
+"form. If a contact with the same email already exists, it is reused instead of creating a\n"
+"duplicate.\n"
+"\n"
+"\n"
+"Menus\n"
+"=====\n"
+"\n"
+"A root menu without group is visible to every user, so the module hides those menus, with\n"
+"their submenus, from Portal Backend users when the visible menus are computed (nothing is\n"
+"written in the menus). The regular user tier, which Odoo uses to show menus like Discuss or\n"
+"Apps, is not applied to Portal Backend users either (through their own groups or the\n"
+"multi-company group) when menus, views and accesses are checked. Odoo still lists them as\n"
+"members of that group, so what reads the group membership directly (e.g. the maximum duration\n"
+"of API keys, or channels restricted to regular users) still sees it.\n"
+"\n"
+"Installation\n"
+"============\n"
+"\n"
+"Only install the module.\n"
+"\n"
+"Configuration\n"
+"=============\n"
+"\n"
+"There is nothing to configure.\n"
+"\n"
+"Usage\n"
+"=====\n"
+"\n"
+".. image:: https://odoo-community.org/website/image/ir.attachment/5784_f2813bd/datas\n"
+"   :alt: Try me on Runbot\n"
+"   :target: http://runbot.adhoc.com.ar/\n"
+"\n"
+"Bug Tracker\n"
+"===========\n"
+"\n"
+"Bugs are tracked on `GitHub Issues\n"
+"<https://github.com/ingadhoc/miscellaneous/issues>`_. In case of trouble, please\n"
+"check there if your issue has already been reported. If you spotted it first,\n"
+"help us smashing it by providing a detailed and welcomed feedback.\n"
+"\n"
+"Credits\n"
+"=======\n"
+"\n"
+"Images\n"
+"------\n"
+"\n"
+"* |company| |icon|\n"
+"\n"
+"Contributors\n"
+"------------\n"
+"\n"
+"Maintainer\n"
+"----------\n"
+"\n"
+"|company_logo|\n"
+"\n"
+"This module is maintained by the |company|.\n"
+"\n"
+"To contribute to this module, please visit https://www.adhoc.com.ar.\n"
+msgstr ""
+
+#. module: portal_backend
 #: model:ir.model.fields,field_description:portal_backend.field_res_users__access_type
 msgid "Access Type"
-msgstr ""
+msgstr "Tipo de acceso"
 
 #. module: portal_backend
 #: model:ir.model.fields,field_description:portal_backend.field_ir_actions_server__activity_ids
@@ -63,7 +191,7 @@ msgstr "Portal Avanzado"
 #. module: portal_backend
 #: model:ir.model.fields,field_description:portal_backend.field_res_users__portal_advanced_group_ids
 msgid "Advanced Portal Access"
-msgstr ""
+msgstr "Accesos de Portal Avanzado"
 
 #. module: portal_backend
 #: model:ir.model,name:portal_backend.model_ir_attachment
@@ -97,6 +225,9 @@ msgid ""
 "holidays, ...). Provided by the portal_* modules under the Advanced Portal "
 "category."
 msgstr ""
+"Funcionalidades del backend a las que puede acceder un usuario Portal "
+"Backend (partes de horas, ausencias, ...). Las agregan los módulos portal_* "
+"dentro de la categoría Portal Avanzado."
 
 #. module: portal_backend
 #: model:ir.model.fields,field_description:portal_backend.field_ir_attachment__display_name
@@ -111,7 +242,7 @@ msgstr "Nombre para Mostrar"
 #. module: portal_backend
 #: model:ir.model,name:portal_backend.model_mail_thread
 msgid "Email Thread"
-msgstr "Hilo de correo electrónico"
+msgstr "Hilo de correos"
 
 #. module: portal_backend
 #: model:ir.model.fields,field_description:portal_backend.field_discuss_channel__message_follower_ids
@@ -151,7 +282,7 @@ msgstr "ID"
 #. module: portal_backend
 #: model:ir.model.fields.selection,name:portal_backend.selection__res_users__access_type__internal
 msgid "Internal User"
-msgstr ""
+msgstr "Usuario interno"
 
 #. module: portal_backend
 #: model:ir.model,name:portal_backend.model_ir_ui_menu
@@ -195,17 +326,23 @@ msgstr "Tipo de la siguiente actividad"
 #. module: portal_backend
 #: model:ir.model.fields.selection,name:portal_backend.selection__res_users__access_type__portal
 msgid "Portal"
-msgstr ""
+msgstr "Portal"
 
 #. module: portal_backend
 #: model:ir.model.fields,field_description:portal_backend.field_res_users__portal_advanced_view_group_hierarchy
 msgid "Portal Advanced View Group Hierarchy"
-msgstr ""
+msgstr "Jerarquía de grupos de Portal Avanzado"
 
 #. module: portal_backend
 #: model:ir.model.fields.selection,name:portal_backend.selection__res_users__access_type__portal_backend
+#: model:ir.module.module,shortdesc:base.module_portal_backend
 msgid "Portal Backend"
-msgstr ""
+msgstr "Portal Backend"
+
+#. module: portal_backend
+#: model_terms:ir.ui.view,arch_db:portal_backend.view_users_search_portal_backend
+msgid "Portal Backend Users"
+msgstr "Usuarios Portal Backend"
 
 #. module: portal_backend
 #: model:res.groups,comment:portal_backend.group_portal_backend
@@ -243,6 +380,10 @@ msgid ""
 "external users (share=True). Portal Backend users can additionally be "
 "granted Advanced Portal accesses."
 msgstr ""
+"Punto único de decisión del tipo de acceso del usuario. Los usuarios "
+"internos acceden al backend (Rol / Usuario o Administrador); Portal y Portal "
+"Backend son usuarios externos (share=True). A los usuarios Portal Backend se "
+"les pueden dar además accesos de Portal Avanzado."
 
 #. module: portal_backend
 #: model:ir.model.fields,help:portal_backend.field_ir_actions_server__activity_state
@@ -262,14 +403,14 @@ msgstr ""
 "Planificada: actividades futuras."
 
 #. module: portal_backend
-#: model:ir.model.fields,field_description:portal_backend.field_res_users__view_group_hierarchy
-msgid "Technical field for user group setting"
-msgstr ""
+#: model:ir.model.fields,field_description:portal_backend.field_ir_actions_server__activity_summary
+msgid "Summary"
+msgstr "Resumen"
 
 #. module: portal_backend
-#: model:ir.model.fields,field_description:portal_backend.field_ir_actions_server__activity_summary
-msgid "Title"
-msgstr "Título"
+#: model:ir.model.fields,field_description:portal_backend.field_res_users__view_group_hierarchy
+msgid "Technical field for user group setting"
+msgstr "Campo técnico para la configuración del grupo de usuarios"
 
 #. module: portal_backend
 #: model:ir.model,name:portal_backend.model_res_users
@@ -279,7 +420,7 @@ msgstr "Usuario"
 #. module: portal_backend
 #: model_terms:ir.ui.view,arch_db:portal_backend.view_users_form_portal_backend
 msgid "User Type"
-msgstr ""
+msgstr "Tipo de usuario"
 
 #. module: portal_backend
 #. odoo-python
