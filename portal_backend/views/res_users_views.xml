@@ -8,10 +8,8 @@
             <!-- access_type is the single decision point for the user access type. It lives in its
                  own "User Type" section before "Roles" so it stays visible even for external users
                  (the native "Roles" group hides itself when share=True). -->
-            <!-- The visible "User Type" selector only shows in developer mode, like Odoo 18.
-                 access_type is still loaded everywhere because the modifiers below reference it. -->
             <xpath expr="//field[@name='role'][@widget='radio']/.." position="before">
-                <group string="User Type" groups="base.group_no_one">
+                <group string="User Type">
                     <field name="access_type" widget="radio" options="{'horizontal': true}"
                            nolabel="1" colspan="2"/>
                 </group>
@@ -42,6 +40,35 @@
                            nolabel="1" colspan="2"/>
                 </group>
             </xpath>
+        </field>
+    </record>
+
+    <!-- The native Role badge is empty for external users: show the user type next to it. -->
+    <record id="view_users_tree_portal_backend" model="ir.ui.view">
+        <field name="name">res.users.list.portal_backend</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_tree"/>
+        <field name="arch" type="xml">
+            <field name="role" position="before">
+                <field name="access_type" widget="badge" optional="show"
+                       decoration-info="access_type == 'portal_backend'"
+                       decoration-muted="access_type == 'portal'"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_users_search_portal_backend" model="ir.ui.view">
+        <field name="name">res.users.search.portal_backend</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_search"/>
+        <field name="arch" type="xml">
+            <filter name="filter_share" position="after">
+                <filter name="filter_portal_backend" string="Portal Backend Users"
+                        domain="[('access_type', '=', 'portal_backend')]"/>
+            </filter>
+            <filter name="group_by_company" position="before">
+                <filter name="group_by_access_type" string="User Type" context="{'group_by': 'access_type'}"/>
+            </filter>
         </field>
     </record>
 </odoo>
