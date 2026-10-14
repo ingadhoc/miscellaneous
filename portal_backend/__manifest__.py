@@ -33,7 +33,7 @@
         "security/res_groups.xml",
         "views/portal_templates.xml",
         "views/res_users_views.xml",
-        'security/ir.access.csv',
+        "security/ir.access.csv",
     ],
     "demo": [
         "demo/res_users_demo.xml",

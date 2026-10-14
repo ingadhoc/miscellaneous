@@ -3,6 +3,7 @@
 # directory
 ##############################################################################
 from odoo import Command
+from odoo.tests import Form
 from odoo.tests.common import TransactionCase
 
 
@@ -156,3 +157,41 @@ class TestAccessType(TransactionCase):
         user.access_type = "internal"
         self.assertNotIn(advanced[0], user.group_ids)
         self.assertEqual(user.access_type, "internal")
+
+    def test_backend_to_internal_gets_default_groups(self):
+        """Coming from an external type, the user gets the groups of a new internal user (as the native Role)."""
+        user = self._create("at_pb_to_internal", access_type="portal_backend")
+        user.access_type = "internal"
+        self.assertFalse(user.share)
+        self.assertLessEqual(user._default_groups(), user.group_ids)
+        self.assertNotIn(self.group_pb, user.all_group_ids)
+
+    def test_create_internal_keeps_given_groups(self):
+        """On create or import the given groups are kept: the default groups are only for a type switch."""
+        self.env.ref("base.default_user_group").implied_ids = [
+            Command.link(self.env.ref("base.group_partner_manager").id)
+        ]
+        group = self.env.ref("base.group_multi_currency")
+        user = self._create("at_int_given", access_type="internal", group_ids=[Command.set(group.ids)])
+        self.assertEqual(user.group_ids, group + self.group_user)
+        switched = self._create("at_int_switched", access_type="portal_backend")
+        switched.access_type = "internal"
+        self.assertIn(self.env.ref("base.group_partner_manager"), switched.group_ids)
+
+    def test_access_type_follows_written_groups(self):
+        user = self._create("at_follow", access_type="portal")
+        user.write({"group_ids": [Command.set(self.group_user.ids)]})
+        self.assertEqual(user.access_type, "internal")
+
+    def test_form_internal_then_role_user(self):
+        """Switching the type and picking a Role in the same edit keeps the type (Roles shows up with 2 companies)."""
+        company = self.env["res.company"].create({"name": "at_form_company"})
+        user = self._create("at_form", access_type="portal_backend")
+        user.write({"company_ids": [Command.link(company.id)]})
+        for role in ("regular_user", "light_user", "group_system"):
+            with Form(user, view="base.view_users_form") as form:
+                form.access_type = "internal"
+                form.role = role
+            self.assertEqual(user.access_type, "internal", role)
+            self.assertFalse(user.share, role)
+            user.access_type = "portal_backend"
