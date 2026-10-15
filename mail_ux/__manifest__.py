@@ -30,6 +30,7 @@
     "assets": {
         "web.assets_backend": [
             "mail_ux/static/src/core/common/**/*",
+            "mail_ux/static/src/chatter/web/scheduled_message_model_patch.js",
             "mail_ux/static/src/views/composer_onchange.js",
         ],
     },
