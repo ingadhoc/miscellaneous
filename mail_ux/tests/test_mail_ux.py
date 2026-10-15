@@ -127,6 +127,25 @@ class TestMailUx(TransactionCase):
         scheduled.sudo()._post_message()
         self.assertIn("Read only, edited", self.partner.message_ids[0].body)
 
+    def test_read_only_author_can_cancel_own_scheduled_message(self):
+        reader = new_test_user(self.env, login="mail_ux_reader3", groups="base.group_user")
+        self.assertFalse(self.partner.with_user(reader).has_access("write"))
+        scheduled = (
+            self.env["mail.scheduled.message"]
+            .with_user(reader)
+            .create(
+                {
+                    "author_id": reader.partner_id.id,
+                    "body": "<p>To cancel</p>",
+                    "model": "res.partner",
+                    "res_id": self.partner.id,
+                    "scheduled_date": fields.Datetime.now() + timedelta(hours=1),
+                }
+            )
+        )
+        scheduled.unlink()
+        self.assertFalse(scheduled.exists())
+
     def test_cannot_schedule_on_unreadable_record(self):
         other_company = self.env["res.company"].create({"name": "Mail UX other company"})
         hidden_partner = self.env["res.partner"].create({"name": "Hidden", "company_id": other_company.id})
