@@ -1,0 +1,16 @@
+<odoo>
+
+    <record id="view_users_form_simple_modif" model="ir.ui.view">
+        <field name="name">res.users.preferences.form</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form_simple_modif"/>
+        <field name="arch" type="xml">
+            <group name="other_preferences" position="after">
+                <group>
+                    <field name="iot_device_id"/>
+                </group>
+            </group>
+        </field>
+    </record>
+
+</odoo>
