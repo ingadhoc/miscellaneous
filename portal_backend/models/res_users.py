@@ -47,6 +47,21 @@ class ResUsers(models.Model):
         store=False, copy=False, default=lambda self: self._portal_advanced_view_group_hierarchy()
     )
 
+    @api.ormcache("self.id")
+    def _get_group_ids(self):
+        """Drop base.group_user_regular from external users.
+
+        Every non light group implies it (Portal Backend groups, base.group_multi_company), and it
+        unlocks root menus and accesses meant for internal users. Group ids only: reading a field of
+        the user here would go through access checks.
+        """
+        group_ids = super()._get_group_ids()
+        definitions = self.env["res.groups"]._get_group_definitions()
+        if definitions.get_id("base.group_user") in group_ids:
+            return group_ids
+        group_regular_id = definitions.get_id("base.group_user_regular")
+        return tuple(gid for gid in group_ids if gid != group_regular_id)
+
     def _is_internal(self):
         self.ensure_one()
         if self.sudo().has_group("portal_backend.group_portal_backend") and self.env.context.get("portal_bypass"):
@@ -56,22 +71,28 @@ class ResUsers(models.Model):
     # -------------------------------------------------------------------------
     # access_type <-> groups
     # -------------------------------------------------------------------------
-    @api.depends("group_ids")
+    @api.depends("group_ids.all_implied_ids")
     def _compute_access_type(self):
         """Derive the access type from the user groups (source of truth = groups).
 
         Order matters: an internal user always wins; portal_backend is more specific than
-        plain portal (it implies group_portal), so it must be checked first.
+        plain portal (it implies group_portal), so it must be checked first. Not has_group: it is
+        cached and still answers the old groups while they are written.
         """
         for user in self:
-            if user.has_group("base.group_user"):
-                user.access_type = "internal"
-            elif user.has_group("portal_backend.group_portal_backend"):
-                user.access_type = "portal_backend"
-            elif user.has_group("base.group_portal"):
-                user.access_type = "portal"
-            else:
-                user.access_type = False
+            user.access_type = self._access_type_from_group_ids(user.group_ids._origin.all_implied_ids.ids)
+
+    @api.model
+    def _access_type_from_group_ids(self, group_ids):
+        # by id: on install the Portal Backend group is not loaded yet
+        get_id = self.env["res.groups"]._get_group_definitions().get_id
+        if get_id("base.group_user") in group_ids:
+            return "internal"
+        if get_id("portal_backend.group_portal_backend") in group_ids:
+            return "portal_backend"
+        if get_id("base.group_portal") in group_ids:
+            return "portal"
+        return False
 
     def _inverse_access_type(self):
         """Translate a manual access_type change into the right groups.
@@ -82,7 +103,12 @@ class ResUsers(models.Model):
         """
         for user in self:
             if user.access_type:
-                user.group_ids = self._groups_for_access_type(user.group_ids, user.access_type)
+                user.group_ids = self._groups_for_access_type(user.group_ids._origin, user.access_type)
+
+    @api.onchange("access_type")
+    def _onchange_access_type(self):
+        # Apply the groups right away: the native Role onchange would otherwise run on the old ones
+        self._inverse_access_type()
 
     def _view_group_hierarchy_without_advanced(self):
         """Full group hierarchy minus the Advanced Portal category and its subcategories (for the native widget)."""
@@ -142,7 +168,12 @@ class ResUsers(models.Model):
                     access_type = vals["access_type"] = "portal_backend"
                 elif group_user_id not in ids and group_portal_id in ids:
                     access_type = vals["access_type"] = "portal"
-            if access_type in ("portal", "portal_backend"):
+            if access_type == "internal" and "group_ids" in vals:
+                # Keep the given groups: the inverse would take them as a switch from an external type
+                groups = self.env["res.groups"].browse(self._resolve_group_ids(vals["group_ids"]))
+                target = self._groups_for_access_type(groups + self.env.ref("base.group_user"), access_type)
+                vals["group_ids"] = [Command.set(target.ids)]
+            elif access_type in ("portal", "portal_backend"):
                 # "Type wins over default": rebuild group_ids without group_user (nor any group that
                 # implies it) so the disjoint constraint never trips. We must also inject group_ids
                 # when absent, otherwise _default_groups() would add group_user during super().create.
@@ -184,6 +215,10 @@ class ResUsers(models.Model):
         # Drop groups implying another user type, plus the user-type groups themselves (re-added below).
         kept = groups.filtered(lambda g: not (g.all_implied_ids & other_types)) - user_type_groups
         if access_type == "internal":
+            if group_user not in groups.all_implied_ids:
+                # Coming from an external type: the default groups of a new internal user, as the native
+                # Role does, instead of a bare light user (create normalizes its groups beforehand)
+                return kept + self._default_groups()
             return kept + group_user
         if access_type == "portal":
             # Plain portal: also drop the backend marker and its Advanced Portal accesses.
