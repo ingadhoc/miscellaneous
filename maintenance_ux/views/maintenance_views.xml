@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <xpath expr="//sheet/div[1]" position="before">
                 <div class="oe_button_box" name="button_box">
-                    <button name="%(rating_rating_action_maintenance_request)d" type="action" class="oe_stat_button" icon="fa-smile-o">
+                    <button name="%(rating_rating_action_maintenance_request)d" type="action" class="oe_stat_button" icon="sentiment_satisfied">
                         <field name="rating_count" string="Rating" widget="statinfo"/>
                     </button>
                 </div>
