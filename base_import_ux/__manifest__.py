@@ -19,7 +19,7 @@
 ##############################################################################
 {
     "name": "First Steps",
-    "version": "19.0.1.2.0",
+    "version": "20.0.1.0.0",
     "category": "Tools",
     "sequence": 14,
     "summary": "Centralizes the onboarding initial imports in a single panel "
@@ -42,7 +42,7 @@
             "base_import_ux/static/src/**/*",
         ],
     },
-    "installable": False,
+    "installable": True,
     "auto_install": True,
     "application": False,
 }
