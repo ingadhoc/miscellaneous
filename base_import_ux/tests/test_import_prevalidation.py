@@ -1,3 +1,4 @@
+from odoo.addons.base_import.models.base_import import ImportValidationError
 from odoo.tests.common import TransactionCase
 
 
@@ -16,6 +17,13 @@ class TestImportPreValidation(TransactionCase):
         self.assertEqual(data[1][0], "abc")  # bad value deferred to the ORM
         # good value with thousands/decimal separators still normalised
         self.assertEqual(data[2][0], "1234.56")
+
+    def test_float_values_rejected_by_standard_are_not_stored(self):
+        imp = self.env["base_import.import"]
+        # Python's float() accepts these, so deferring them to the ORM would store them.
+        for value in ("nan", "inf", "Infinity", "1_000"):
+            with self.subTest(value=value), self.assertRaises(ImportValidationError):
+                imp._parse_float_from_data([["100"], [value]], 0, "list_price", {})
 
     def test_bad_date_does_not_abort_and_keeps_raw(self):
         imp = self.env["base_import.import"]
