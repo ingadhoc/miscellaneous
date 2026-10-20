@@ -2,16 +2,16 @@ import { _t } from "@web/core/l10n/translation";
 import { ControlPanel } from "@web/search/control_panel/control_panel";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
-import { Component, onWillStart, useState } from "@odoo/owl";
-import { standardActionServiceProps } from "@web/webclient/actions/action_service";
+import { Component, onWillStart, proxy, useProps, usePlugin } from "@odoo/owl";
+import { ActionPlugin, standardActionServiceProps } from "@web/webclient/actions/action_plugin";
 
 export class FirstStepsGuide extends Component {
     static template = "base_import_ux.FirstStepsGuide";
     static components = { ControlPanel };
-    static props = { ...standardActionServiceProps };
+    props = useProps(standardActionServiceProps);
 
     setup() {
-        this.actionService = useService("action");
+        this.actionService = usePlugin(ActionPlugin);
         this.orm = useService("orm");
         this.env.config.setDisplayName(_t("First Steps"));
 
@@ -19,7 +19,7 @@ export class FirstStepsGuide extends Component {
         // installed. Same pattern as the Enterprise accounting guide (t-if +
         // searchRead on ir.module.module). Avoids bridge modules: a single
         // module serves every combination of installed modules.
-        this.state = useState({
+        this.state = proxy({
             hasProduct: false,
             hasStock: false,
             hasAccountImport: false,

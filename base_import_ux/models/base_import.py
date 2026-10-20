@@ -1,6 +1,7 @@
 import datetime
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.addons.base_import.models.base_import import ImportValidationError
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT
 
 
@@ -36,11 +37,25 @@ class BaseImport(models.TransientModel):
                     pass
 
             line[index] = line[index].replace(thousand_separator, "").replace(decimal_separator, ".")
+            old_value = line[index]
             cleaned = self._remove_currency_symbol(line[index])
-            # Defer to the ORM converter instead of raising (which would cut the
-            # whole import): restore the raw value so the error is reported per
-            # row and accumulated with the rest.
-            line[index] = cleaned if cleaned is not False else raw
+            if cleaned is not False:
+                line[index] = cleaned
+                continue
+            try:
+                float(raw)
+            except ValueError:
+                # Defer to the ORM converter instead of raising (which would cut
+                # the whole import): restore the raw value so the error is
+                # reported per row and accumulated with the rest.
+                line[index] = raw
+                continue
+            # float() accepts values the standard rejects (nan, inf, 1_000), so
+            # the ORM would store them: reject them like the standard does.
+            raise ImportValidationError(
+                _("Column %(column)s contains incorrect values (value: %(value)s)", column=name, value=old_value),
+                field=name,
+            )
 
     @api.model
     def _parse_date_from_data(self, data, index, name, field_type, options):

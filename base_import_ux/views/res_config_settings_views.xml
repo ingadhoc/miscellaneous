@@ -15,7 +15,7 @@
                             <div class="mt8">
                                 <button
                                     name="%(base_import_ux.action_first_steps_guide)d"
-                                    icon="oi-arrow-right"
+                                    icon="east"
                                     type="action"
                                     string="Open First Steps"
                                     class="btn-link"/>
