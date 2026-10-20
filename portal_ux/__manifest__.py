@@ -19,7 +19,7 @@
 ##############################################################################
 {
     "name": "Portal UX",
-    "version": "19.0.1.0.0",
+    "version": "20.0.1.0.0",
     "category": "Tools",
     "sequence": 14,
     "summary": "",
@@ -35,7 +35,7 @@
     ],
     "demo": [],
     "test": [],
-    "installable": False,
+    "installable": True,
     "auto_install": False,
     "application": False,
 }
