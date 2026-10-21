@@ -32,7 +32,7 @@
     ],
     "data": [
         "security/res_groups.xml",
-        "security/ir.model.access.csv",
+        "security/ir.access.csv",
         "views/ir_model_dynamic_message_views.xml",
     ],
     "demo": [],
