@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-28 20:45+0000\n"
-"PO-Revision-Date: 2025-12-11 18:10+0000\n"
+"POT-Creation-Date: 2026-10-21 13:45+0000\n"
+"PO-Revision-Date: 2026-10-21 13:45+0000\n"
 "Last-Translator: BAF <baf@adhoc.inc>\n"
 "Language-Team: Spanish <https://translation.dev-adhoc.com/projects/"
 "miscellaneous-19-0/miscellaneous-19-0-base_dynamic_message/es/>\n"
@@ -21,6 +21,63 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n == 1) ? 0 : ((n != 0 && n % 1000000 == 0)"
 " ? 1 : 2);\n"
 "X-Generator: Weblate 5.10.4\n"
+
+#. module: base_dynamic_message
+#: model:ir.module.module,description:base.module_base_dynamic_message
+msgid ""
+".. |company| replace:: ADHOC SA\n"
+"\n"
+".. |company_logo| image:: https://raw.githubusercontent.com/ingadhoc/maintainer-tools/master/resources/adhoc-logo.png\n"
+"   :alt: ADHOC SA\n"
+"   :target: https://www.adhoc.com.ar\n"
+"\n"
+".. |icon| image:: https://raw.githubusercontent.com/ingadhoc/maintainer-tools/master/resources/adhoc-icon.png\n"
+"\n"
+".. image:: https://img.shields.io/badge/license-AGPL--3-blue.png\n"
+"   :target: https://www.gnu.org/licenses/agpl\n"
+"   :alt: License: AGPL-3\n"
+"\n"
+"==============================\n"
+"Dynamic Messages on form views\n"
+"==============================\n"
+"\n"
+"Este modulo sirve para generar mensajes dinamicos en vistas form de cualquier modelo de Odoo.\n"
+"Algunos ejemplos:\n"
+"\n"
+"#. Dar un determinado warning cuando un partner es de un determinado país\n"
+"#. Advertir cuando un ticket es de un cliente de una determinada categoría\n"
+"\n"
+"Roadmap:\n"
+"#. Mejorar readme\n"
+"\n"
+"Bug Tracker\n"
+"===========\n"
+"\n"
+"Bugs are tracked on `GitHub Issues\n"
+"<https://github.com/ingadhoc/miscellaneous/issues>`_. In case of trouble, please\n"
+"check there if your issue has already been reported. If you spotted it first,\n"
+"help us smashing it by providing a detailed and welcomed feedback.\n"
+"\n"
+"Credits\n"
+"=======\n"
+"\n"
+"Images\n"
+"------\n"
+"\n"
+"* |company| |icon|\n"
+"\n"
+"Contributors\n"
+"------------\n"
+"\n"
+"Maintainer\n"
+"----------\n"
+"\n"
+"|company_logo|\n"
+"\n"
+"This module is maintained by the |company|.\n"
+"\n"
+"To contribute to this module, please visit https://www.adhoc.com.ar.\n"
+msgstr ""
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__alert_type
@@ -97,12 +154,6 @@ msgid ""
 "En las expresiones, del lado derecho, se puede usar el string \"EXP:[expresion]\" para poner codigo dinamico. A la hora de pasar el dominio al calculo solo se\n"
 "                                    dejará la expresion. Es importante que \"EXP\" se ponga con comillas dobles y no comillas simples tal como se muestra en los ejemplos. Las variables disponibles son:"
 msgstr ""
-"En las expresiones, del lado derecho, se puede usar el string "
-"\"EXP:[expresion]\" para poner codigo dinamico. A la hora de pasar el "
-"dominio al calculo solo se\n"
-"                                    dejará la expresion. Es importante que "
-"\"EXP\" se ponga con comillas dobles y no comillas simples tal como se "
-"muestra en los ejemplos. Las variables disponibles son:"
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__field_id
@@ -113,7 +164,7 @@ msgstr "Campo"
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__id
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message_line__id
 msgid "ID"
-msgstr "ID"
+msgstr ""
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__write_uid
@@ -166,7 +217,7 @@ msgstr "Nombre"
 #. module: base_dynamic_message
 #: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
 msgid "Por ej:"
-msgstr "Por ej:"
+msgstr ""
 
 #. module: base_dynamic_message
 #: model:ir.model.fields,field_description:base_dynamic_message.field_ir_model_dynamic_message__view_id
@@ -184,13 +235,11 @@ msgid ""
 "[(\"create_date\", \"=\", \"EXP: datetime.datetime.now() - "
 "dateutil.relativedelta.relativedelta(days=-10)\")]"
 msgstr ""
-"[(\"create_date\", \"=\", \"EXP: datetime.datetime.now() - "
-"dateutil.relativedelta.relativedelta(days=-10)\")]"
 
 #. module: base_dynamic_message
 #: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
 msgid "[(\"partner_id\", \"in\", [\"EXP: rec.child_ids.ids\"])]"
-msgstr "[(\"partner_id\", \"in\", [\"EXP: rec.child_ids.ids\"])]"
+msgstr ""
 
 #. module: base_dynamic_message
 #: model:ir.model.fields.selection,name:base_dynamic_message.selection__ir_model_dynamic_message__alert_type__danger
@@ -200,17 +249,17 @@ msgstr "peligro"
 #. module: base_dynamic_message
 #: model:ir.model.fields.selection,name:base_dynamic_message.selection__ir_model_dynamic_message__alert_type__info
 msgid "info"
-msgstr "info"
+msgstr ""
 
 #. module: base_dynamic_message
 #: model:ir.model,name:base_dynamic_message.model_ir_model_dynamic_message
 msgid "ir.model.dynamic_message"
-msgstr "ir.model.dynamic_message"
+msgstr ""
 
 #. module: base_dynamic_message
 #: model:ir.model,name:base_dynamic_message.model_ir_model_dynamic_message_line
 msgid "ir.model.dynamic_message.line"
-msgstr "ir.model.dynamic_message.line"
+msgstr ""
 
 #. module: base_dynamic_message
 #: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
@@ -218,13 +267,11 @@ msgid ""
 "las mismas variables disponibles en un campo calculado, por ej "
 "\"datetime.datetime.now()\" y \"dateutil.relativedelta.relativedelta\":"
 msgstr ""
-"las mismas variables disponibles en un campo calculado, por ej "
-"\"datetime.datetime.now()\" y \"dateutil.relativedelta.relativedelta\":"
 
 #. module: base_dynamic_message
 #: model_terms:ir.ui.view,arch_db:base_dynamic_message.view_ir_model_dynamic_message_form
 msgid "rec: registro que se está evaluando"
-msgstr "rec: registro que se está evaluando"
+msgstr ""
 
 #. module: base_dynamic_message
 #: model:ir.model.fields.selection,name:base_dynamic_message.selection__ir_model_dynamic_message__alert_type__warning
