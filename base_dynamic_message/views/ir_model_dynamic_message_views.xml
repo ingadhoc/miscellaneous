@@ -85,5 +85,5 @@
         <field name='view_mode'>list,form</field>
     </record>
 
-    <menuitem id="menu_ir_model_dynamic_message" groups="group_dynamic_messages_manager" sequence="100" action="action_ir_model_dynamic_message" web_icon="fa fa-info,#f1c40f,#34495e"/>
+    <menuitem id="menu_ir_model_dynamic_message" groups="group_dynamic_messages_manager" sequence="100" action="action_ir_model_dynamic_message" web_icon="info,#f1c40f,#34495e"/>
 </odoo>
