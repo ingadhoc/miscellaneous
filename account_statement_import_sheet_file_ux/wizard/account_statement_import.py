@@ -319,22 +319,31 @@ class AccountStatementImport(models.TransientModel):
             "params": params,
         }
 
-    # The statement PDF
+    # The statement creation
 
     def _complete_stmts_vals(self, stmts_vals, journal, account_number):
-        """Ask for the statements to be created without rendering their PDF.
+        """Create the statements the way the Enterprise import does.
 
-        With Enterprise installed, creating a bank statement renders its PDF
-        synchronously (`account_accountant` hooks `create` unless the context
-        says otherwise). On a statement of a few hundred lines that render is
-        what makes the import time out, and the attachment is of no use to
-        somebody who is importing the file they already have. Odoo itself skips
-        it the same way when importing (`l10n_be_codabox`, `l10n_be_codaclean`).
+        Two context keys, both read by `account_accountant` on `create` and
+        harmless without it:
+
+        - `skip_pdf_attachment_generation`: creating a bank statement renders
+          its PDF synchronously. On a statement of a few hundred lines that
+          render is what makes the import time out, and the attachment is of no
+          use to somebody who is importing the file they already have. Odoo
+          itself skips it the same way when importing (`l10n_be_codabox`,
+          `l10n_be_codaclean`).
+        - `auto_statement_processing`: runs the automatic reconciliation models
+          on the new lines right away, as `account_bank_statement_import` does.
+          Without it they wait for the daily cron.
 
         `creation_context` is the seam the base module exposes for this: it
         pops it off the values and passes it to the create of the statement.
         """
         stmts_vals = super()._complete_stmts_vals(stmts_vals, journal, account_number)
         for st_vals in stmts_vals:
-            st_vals.setdefault("creation_context", {})["skip_pdf_attachment_generation"] = True
+            st_vals.setdefault("creation_context", {}).update(
+                skip_pdf_attachment_generation=True,
+                auto_statement_processing=True,
+            )
         return stmts_vals
