@@ -3,3 +3,4 @@ from . import test_skip_pdf_generation
 from . import test_import_feedback
 from . import test_amounts
 from . import test_sheet_type
+from . import test_auto_reconcile
