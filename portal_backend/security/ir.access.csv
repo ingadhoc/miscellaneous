@@ -1,0 +1,16 @@
+id,name,model_id,group_id/id,operation,domain
+access_ir_ui_menu_portal,ir.ui.menu.portal,ir.ui.menu,portal_backend.group_portal_backend,r,
+access_ir_model_portal,ir.model.portal,ir.model,portal_backend.group_portal_backend,r,
+access_ir_fields_portal,ir.model.fields.portal,ir.model.fields,portal_backend.group_portal_backend,r,
+access_ir_groups,ir.model.groups.portal,res.groups,portal_backend.group_portal_backend,r,
+access_ir_model_data_portal,ir.model.model.data.portal,ir.model.data,portal_backend.group_portal_backend,cr,
+access_ir_attachment_portal,ir_attachment.portal,ir.attachment,portal_backend.group_portal_backend,r,"['|', ('public', '=', True), ('res_access_read', '=', True)]"
+access_ir_attachment_portal_write,ir_attachment.portal.write,ir.attachment,portal_backend.group_portal_backend,cu,"[('res_access_write', '=', True)]"
+access_mail_activity_portal,mail.activity.portal,mail.activity,portal_backend.group_portal_backend,r,"['|', ('user_id', '=', user.id), ('res_access_read', '=', True)]"
+access_mail_activity_portal_create,mail.activity.portal.create,mail.activity,portal_backend.group_portal_backend,c,"['|', '&', ('res_model', '=', False), ('user_id', '=', user.id), ('res_access_create', '=', True)]"
+access_mail_activity_type_portal,access_mail_activity_type_portal.portal,mail.activity.type,portal_backend.group_portal_backend,r,
+access_mail_channel_portal,mail.group.portal,discuss.channel,portal_backend.group_portal_backend,c,"['|', '&', ('channel_type', '!=', 'channel'), '|', ('is_member', '=', True), ('parent_channel_id.is_member', '=', True), '&', ('channel_type', '=', 'channel'), '|', ('group_public_id', '=', False), ('group_public_id', 'in', user.all_group_ids.ids)]"
+access_mail_followers_portal,mail.followers.portal,mail.followers,portal_backend.group_portal_backend,r,
+access_mail_scheduled_message_portal,mail.scheduled.message.portal,mail.scheduled.message,portal_backend.group_portal_backend,r,"[('res_access', '=', True)]"
+access_mail_alias_portal,mail.alias.portal,mail.alias,portal_backend.group_portal_backend,r,
+access_mail_alias_domain_portal,mail.alias.domain.portal,mail.alias.domain,portal_backend.group_portal_backend,r,
