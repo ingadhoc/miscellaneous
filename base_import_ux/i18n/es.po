@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 20.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-20 19:54+0000\n"
-"PO-Revision-Date: 2026-10-20 19:54+0000\n"
+"POT-Creation-Date: 2026-10-26 19:56+0000\n"
+"PO-Revision-Date: 2026-10-26 19:56+0000\n"
 "Last-Translator: Luciano Esperlazza <les@adhoc.inc>\n"
 "Language-Team: Spanish\n"
 "Language: es\n"
@@ -157,6 +157,7 @@ msgstr "Importar Clientes"
 #. odoo-javascript
 #: code:addons/base_import_ux/static/src/xml/first_steps_guide.xml:0
 #: model:ir.actions.client,name:base_import_ux.action_first_steps_import_product
+#: model:ir.actions.client,name:base_import_ux.action_first_steps_import_storable_product
 msgid "Import Products"
 msgstr "Importar Productos"
 
