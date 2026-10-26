@@ -15,6 +15,7 @@ Maintenance UX
 ==============
 
 * Add posibility to rate maintenance requests.
+* The rating request is sent to the user who created the request, and rates the technician when the request has exactly one.
 
 Installation
 ============
@@ -35,7 +36,9 @@ Usage
 
 To use this module, you need to:
 
-#. Just use it.
+#. Open a maintenance request and click "Send Rating Request". The creator of the request receives an email to rate the service.
+#. The "Rating" smart button shows the ratings received for the request.
+#. If the request has several technicians, or none, the rating is not linked to any technician.
 
 .. image:: https://odoo-community.org/website/image/ir.attachment/5784_f2813bd/datas
    :alt: Try me on Runbot

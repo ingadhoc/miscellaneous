@@ -70,7 +70,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="padding:15px 20px 10px 20px;" t-out="object.user_id.signature or ''"/>
+                            <td style="padding:15px 20px 10px 20px;" t-out="len(object.user_ids) == 1 and object.user_ids.signature or ''"/>
                         </tr>
                     </tbody>
                 </table>
