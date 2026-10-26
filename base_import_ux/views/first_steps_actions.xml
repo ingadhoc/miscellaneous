@@ -13,14 +13,23 @@
         (no FK to the model), so these records load even when the model's module
         is not installed; the card is hidden via t-if.
 
-        The product action mirrors the context of the Inventory > Products action
-        (stock_ux' product_template_action_product): default_is_storable plus the
-        stock_product_template flag, which makes get_import_templates serve the
+        The storable product action mirrors the context of the Inventory > Products
+        action (stock_ux' product_template_action_product): default_is_storable plus
+        the stock_product_template flag, which makes get_import_templates serve the
         improved Adhoc product template (with stock columns) instead of the base
         one. The flag is just a context key, so it is a no-op when stock_ux is not
-        installed (no dependency added).
+        installed (no dependency added). The panel opens it only when stock is
+        installed: is_storable lives in product, so without stock it would still
+        mark the imported products as tracked.
     -->
     <record id="action_first_steps_import_product" model="ir.actions.client">
+        <field name="name">Import Products</field>
+        <field name="tag">import</field>
+        <field name="target">current</field>
+        <field name="params" eval="{'model': 'product.template', 'context': {'search_default_goods': 1}}"/>
+    </record>
+
+    <record id="action_first_steps_import_storable_product" model="ir.actions.client">
         <field name="name">Import Products</field>
         <field name="tag">import</field>
         <field name="target">current</field>

@@ -30,7 +30,7 @@
                                         </t>
                                     </p>
                                     <button type="button" class="btn btn-primary"
-                                        t-on-click="() => this.openAction('base_import_ux.action_first_steps_import_product')">
+                                        t-on-click="() => this.openAction(this.state.hasStock ? 'base_import_ux.action_first_steps_import_storable_product' : 'base_import_ux.action_first_steps_import_product')">
                                         Import Products
                                     </button>
                                 </div>
