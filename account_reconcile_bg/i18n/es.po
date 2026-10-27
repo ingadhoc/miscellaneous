@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 12:16+0000\n"
-"PO-Revision-Date: 2026-06-01 12:16+0000\n"
+"POT-Creation-Date: 2026-10-27 17:39+0000\n"
+"PO-Revision-Date: 2026-10-27 17:39+0000\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
 "Language: es\n"
@@ -17,20 +17,122 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
 #. module: account_reconcile_bg
+#: model:ir.module.module,shortdesc:base.module_account_reconcile_bg
+msgid "Account Reconcile Background"
+msgstr "Conciliación bancaria en segundo plano"
+
+#. module: account_reconcile_bg
+#: model:ir.module.module,description:base.module_account_reconcile_bg
+msgid ""
+"Account Reconcile Background\n"
+"============================\n"
+"\n"
+"This module enables background processing for bank reconciliation operations when dealing with large payment batches, preventing timeouts and improving user experience.\n"
+"\n"
+"**Table of contents**\n"
+"\n"
+".. contents::\n"
+"   :local:\n"
+"\n"
+"Overview\n"
+"========\n"
+"\n"
+"When reconciling a bank statement line with a large batch payment (many payments included in a single batch), the operation can take a long time and may cause timeouts. This module solves this problem by automatically processing large reconciliations in the background, allowing users to continue working while the reconciliation completes.\n"
+"\n"
+"Features\n"
+"========\n"
+"\n"
+"* **Automatic Background Processing**: Large reconciliations are automatically sent to background processing\n"
+"* **Configurable Threshold**: System parameter to control when background processing kicks in (default: 100 payments)\n"
+"* **User Notifications**: Users receive a notification when the reconciliation is enqueued, and the background job reports the result with a link to the statement line\n"
+"* **Locked Statement Line**: While the reconciliation runs in background, the statement line cannot be reconciled again and its amount and currency cannot be modified\n"
+"* **No UI Blocking**: Users can continue reconciling other transactions while large batches process\n"
+"* **Seamless Integration**: Works transparently with existing bank reconciliation workflow\n"
+"\n"
+"How It Works\n"
+"============\n"
+"\n"
+"The module monitors the number of payments of the batch payment being reconciled with a bank statement line:\n"
+"\n"
+"1. When a batch payment is set on a bank statement line, it counts the payments of the batch\n"
+"2. If the count is **below the threshold** (default 100), the reconciliation proceeds normally (synchronous)\n"
+"3. If the count is **equal to or above the threshold**, the statement line is flagged and the reconciliation is enqueued as a background job\n"
+"4. The user receives an immediate notification and can continue working\n"
+"5. When the background job completes or fails, the flag is cleared and the job reports the result (success or error) with a link to the statement line. The flag is also cleared if the job is cancelled\n"
+"\n"
+"Configuration\n"
+"=============\n"
+"\n"
+"The threshold for background processing can be configured via system parameters:\n"
+"\n"
+"* Navigate to **Settings > Technical > Parameters > System Parameters**\n"
+"* Find or create the parameter ``account_reconcile_bg.lines_threshold``\n"
+"* Default value: ``100``\n"
+"* Set to a higher value to process larger reconciliations synchronously\n"
+"* Set to a lower value to send more reconciliations to background\n"
+"\n"
+"Technical Details\n"
+"=================\n"
+"\n"
+"Dependencies\n"
+"------------\n"
+"\n"
+"* ``account_batch_payment``: Odoo Enterprise batch payments, reconciled with bank statement lines\n"
+"* ``base_bg``: Background job processing system\n"
+"\n"
+"Model Inheritance\n"
+"-----------------\n"
+"\n"
+"``account.bank.statement.line``:\n"
+"\n"
+"* ``reconciliation_in_background``: Flag set while the line is being reconciled in background\n"
+"* ``set_batch_payment_bank_statement_line()``: Detects large batch payments and routes them to background\n"
+"* ``_enqueue_batch_reconciliation()``: Flags the line and enqueues the job using base_bg\n"
+"* ``_bg_set_batch_payment_bank_statement_line()``: Executes the actual reconciliation in background\n"
+"* ``_check_reconciliation_in_background()``: Prevents modifying the amount or currency of a flagged line\n"
+"\n"
+"``account.move.line``:\n"
+"\n"
+"* ``reconciliation_in_background``: Flag field\n"
+"\n"
+"``bg.job``:\n"
+"\n"
+"* ``cancel()`` and ``fail()``: Clear the flag of the statement line when a reconciliation job is cancelled or fails\n"
+"\n"
+"Credits\n"
+"=======\n"
+"\n"
+"Authors\n"
+"-------\n"
+"\n"
+"* ADHOC SA\n"
+"\n"
+"Contributors\n"
+"------------\n"
+"\n"
+"* ADHOC SA\n"
+"\n"
+"Maintainers\n"
+"-----------\n"
+"\n"
+"This module is maintained by ADHOC SA.\n"
+msgstr ""
+
+#. module: account_reconcile_bg
 #: model:ir.model,name:account_reconcile_bg.model_bg_job
 msgid "Background Job"
-msgstr ""
+msgstr "Trabajo en Segundo Plano"
 
 #. module: account_reconcile_bg
 #. odoo-python
 #: code:addons/account_reconcile_bg/models/account_bank_statement_line.py:0
 msgid "Bank Reconciliation: %s"
-msgstr ""
+msgstr "Conciliación bancaria: %s"
 
 #. module: account_reconcile_bg
 #: model:ir.model,name:account_reconcile_bg.model_account_bank_statement_line
-msgid "Bank Statement Line"
-msgstr ""
+msgid "Bank Transaction"
+msgstr "Transacción bancaria"
 
 #. module: account_reconcile_bg
 #. odoo-python
@@ -39,6 +141,8 @@ msgid ""
 "Bank reconciliation completed successfully:<br><a href='%s' "
 "target='_blank'>%s</a>"
 msgstr ""
+"Conciliación bancaria completada correctamente:<br><a href='%s' "
+"target='_blank'>%s</a>"
 
 #. module: account_reconcile_bg
 #. odoo-python
@@ -47,6 +151,8 @@ msgid ""
 "Bank reconciliation failed:<br><a href='%s' "
 "target='_blank'>%s</a><br><br>Error: %s"
 msgstr ""
+"La conciliación bancaria falló:<br><a href='%s' "
+"target='_blank'>%s</a><br><br>Error: %s"
 
 #. module: account_reconcile_bg
 #. odoo-python
@@ -55,37 +161,44 @@ msgid ""
 "Cannot modify payment lines that are being reconciled in background. Please wait until the reconciliation process is complete.\n"
 "Journal Entry (id): %(entry)s (%(id)s)"
 msgstr ""
+"No se pueden modificar líneas de pago que se están conciliando en segundo plano. Espere a que termine el proceso de conciliación.\n"
+"Asiento contable (id): %(entry)s (%(id)s)"
 
 #. module: account_reconcile_bg
 #: model:ir.model.fields,field_description:account_reconcile_bg.field_account_bank_statement_line__display_name
 #: model:ir.model.fields,field_description:account_reconcile_bg.field_account_move_line__display_name
 #: model:ir.model.fields,field_description:account_reconcile_bg.field_bg_job__display_name
 msgid "Display Name"
-msgstr ""
+msgstr "Mostrar nombre"
 
 #. module: account_reconcile_bg
 #: model:ir.model.fields,field_description:account_reconcile_bg.field_account_bank_statement_line__id
 #: model:ir.model.fields,field_description:account_reconcile_bg.field_account_move_line__id
 #: model:ir.model.fields,field_description:account_reconcile_bg.field_bg_job__id
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #. module: account_reconcile_bg
 #: model:ir.model.fields,help:account_reconcile_bg.field_account_bank_statement_line__reconciliation_in_background
 #: model:ir.model.fields,help:account_reconcile_bg.field_account_move_line__reconciliation_in_background
 msgid "Indicates that this line is being reconciled in background"
-msgstr ""
+msgstr "Indica que esta línea se está conciliando en segundo plano"
 
 #. module: account_reconcile_bg
 #: model:ir.model,name:account_reconcile_bg.model_account_move_line
 msgid "Journal Item"
-msgstr ""
+msgstr "Apunte contable"
+
+#. module: account_reconcile_bg
+#: model:ir.module.module,summary:base.module_account_reconcile_bg
+msgid "Process bank reconciliation in background for large payment batches"
+msgstr "Procesa en segundo plano la conciliación bancaria de lotes de pagos grandes"
 
 #. module: account_reconcile_bg
 #: model:ir.model.fields,field_description:account_reconcile_bg.field_account_bank_statement_line__reconciliation_in_background
 #: model:ir.model.fields,field_description:account_reconcile_bg.field_account_move_line__reconciliation_in_background
 msgid "Reconciliation in Background"
-msgstr ""
+msgstr "Conciliación en segundo plano"
 
 #. module: account_reconcile_bg
 #. odoo-python
@@ -94,6 +207,8 @@ msgid ""
 "This reconciliation is already being processed in background. Please wait "
 "until it finishes."
 msgstr ""
+"Esta conciliación ya se está procesando en segundo plano. Espere a que "
+"termine."
 
 #. module: account_reconcile_bg
 #. odoo-python
@@ -102,3 +217,5 @@ msgid ""
 "This reconciliation is being processed in background. You will be notified "
 "when it's done."
 msgstr ""
+"Esta conciliación se está procesando en segundo plano. Se le notificará "
+"cuando termine."
