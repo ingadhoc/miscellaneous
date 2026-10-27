@@ -15,14 +15,14 @@ First Steps
 ===========
 
  * Adds a "First Steps" section as the first block of General Settings, linking to a single panel that gathers the onboarding initial imports.
- * Shows each shortcut depending on the installed modules: Import Products (with ``product``), Import Customers / Import Vendors (with ``account_balance_import``, classified through the rank), Import Contacts (otherwise), and the Accounting setup guide (with ``account_balance_import``).
+ * Shows each shortcut depending on the installed modules: Import Products (with ``product``; with ``stock`` the imported products track inventory), Import Customers / Import Vendors (with ``account_balance_import``, classified through the rank), Import Contacts (otherwise), and the Accounting setup guide (with ``account_balance_import``).
  * Recommends always using a fresh, clean template downloaded from the system to avoid errors carried by reused spreadsheets.
- * Makes import errors less disruptive: a single badly-formatted number or date no longer cancels the whole import. Instead of raising on the first bad cell (which hides every other error and the offending row number), the value is deferred to the per-record ORM converter, which reports it **with its row number and expected-format hint**, accumulated together with every other field/record error in one pass.
+ * Makes import errors less disruptive: a single badly-formatted number or date no longer cancels the whole import. Instead of raising on the first bad cell (which hides every other error and the offending row number), the value is deferred to the per-record ORM converter, which reports it **with its row number and expected-format hint**, accumulated together with every other field/record error in one pass. Numbers the standard import rejects but Python would read (``nan``, ``inf``, ``1_000``, full-width digits) are still rejected the standard way, so they are never stored.
 
 Technical notes
 ===============
 
- * ``base_import.import._parse_float_from_data`` / ``_parse_date_from_data`` are overridden to stop aborting the import on the first unparseable value (they used to ``raise ImportValidationError``). Only genuinely unexpected (non-``ValueError``) date failures are still raised.
+ * ``base_import.import._parse_float_from_data`` / ``_parse_date_from_data`` are overridden to stop aborting the import on the first value the ORM converter can report per row (they used to ``raise ImportValidationError``). They still raise it, as the standard does, for numbers ``float()`` accepts but the standard rejects, and for genuinely unexpected (non-``ValueError``) date failures.
 
 Installation
 ============
