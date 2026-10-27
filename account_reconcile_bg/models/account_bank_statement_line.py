@@ -28,7 +28,7 @@ class AccountBankStatementLine(models.Model):
             )
 
         batch_payment = self.env["account.batch.payment"].browse(batch_payment_id)
-        threshold = int(self.env["ir.config_parameter"].sudo().get_param("account_reconcile_bg.lines_threshold", "100"))
+        threshold = self.env["ir.config_parameter"].sudo().get_int("account_reconcile_bg.lines_threshold", 100)
         if len(batch_payment.payment_ids) < threshold:
             return super().set_batch_payment_bank_statement_line(batch_payment_id)
 
@@ -51,8 +51,7 @@ class AccountBankStatementLine(models.Model):
             self.write({"reconciliation_in_background": False})
             raise
 
-        self.env["bus.bus"]._sendone(
-            self.env.user.partner_id,
+        self.env.user._bus_send(
             "simple_notification",
             {
                 "type": "success",
@@ -64,7 +63,7 @@ class AccountBankStatementLine(models.Model):
 
     def _bg_set_batch_payment_bank_statement_line(self, batch_payment_id=None):
         self.ensure_one()
-        base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
+        base_url = self.env["ir.config_parameter"].sudo().get_str("web.base.url")
         st_line_url = f"{base_url}/odoo/account.bank.statement.line/{self.id}"
         st_line_name = self.name or f"Line {self.id}"
 
