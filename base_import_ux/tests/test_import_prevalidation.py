@@ -6,6 +6,8 @@ class TestImportPreValidation(TransactionCase):
     """A single badly-formatted number/date must NOT abort the whole import:
     the raw value is kept so the per-record ORM converter reports it (with its
     row) alongside every other error, instead of raising on the first bad cell.
+    Values the converter would accept but the standard rejects (nan, inf, 1_000)
+    and unexpected date failures still abort it, as in the standard.
     """
 
     def test_bad_float_does_not_abort_and_keeps_raw(self):
@@ -32,3 +34,9 @@ class TestImportPreValidation(TransactionCase):
         self.assertEqual(data[0][0], "2024-01-15")
         self.assertEqual(data[1][0], "not-a-date")  # bad value deferred, not cut
         self.assertEqual(data[2][0], "2024-02-20")
+
+    def test_unexpected_date_failure_is_wrapped_like_standard(self):
+        imp = self.env["base_import.import"]
+        # A non-string format makes strptime raise TypeError, not ValueError.
+        with self.assertRaises(ImportValidationError):
+            imp._parse_date_from_data([["2024-01-15"]], 0, "date", "date", {"date_format": 123})
