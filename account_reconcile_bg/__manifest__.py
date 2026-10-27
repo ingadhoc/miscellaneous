@@ -19,7 +19,7 @@
 ##############################################################################
 {
     "name": "Account Reconcile Background",
-    "version": "19.0.1.0.0",
+    "version": "20.0.1.0.0",
     "category": "Accounting",
     "author": "ADHOC SA",
     "website": "https://www.adhoc.com.ar",
@@ -32,6 +32,6 @@
     "data": [
         "data/ir_config_parameter_data.xml",
     ],
-    "installable": False,
+    "installable": True,
     "auto_install": False,
 }
