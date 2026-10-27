@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 20.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-26 19:56+0000\n"
-"PO-Revision-Date: 2026-10-26 19:56+0000\n"
+"POT-Creation-Date: 2026-10-27 12:33+0000\n"
+"PO-Revision-Date: 2026-10-27 12:33+0000\n"
 "Last-Translator: Luciano Esperlazza <les@adhoc.inc>\n"
 "Language-Team: Spanish\n"
 "Language: es\n"
@@ -36,14 +36,14 @@ msgid ""
 "===========\n"
 "\n"
 " * Adds a \"First Steps\" section as the first block of General Settings, linking to a single panel that gathers the onboarding initial imports.\n"
-" * Shows each shortcut depending on the installed modules: Import Products (with ``product``), Import Customers / Import Vendors (with ``account_balance_import``, classified through the rank), Import Contacts (otherwise), and the Accounting setup guide (with ``account_balance_import``).\n"
+" * Shows each shortcut depending on the installed modules: Import Products (with ``product``; with ``stock`` the imported products track inventory), Import Customers / Import Vendors (with ``account_balance_import``, classified through the rank), Import Contacts (otherwise), and the Accounting setup guide (with ``account_balance_import``).\n"
 " * Recommends always using a fresh, clean template downloaded from the system to avoid errors carried by reused spreadsheets.\n"
-" * Makes import errors less disruptive: a single badly-formatted number or date no longer cancels the whole import. Instead of raising on the first bad cell (which hides every other error and the offending row number), the value is deferred to the per-record ORM converter, which reports it **with its row number and expected-format hint**, accumulated together with every other field/record error in one pass.\n"
+" * Makes import errors less disruptive: a single badly-formatted number or date no longer cancels the whole import. Instead of raising on the first bad cell (which hides every other error and the offending row number), the value is deferred to the per-record ORM converter, which reports it **with its row number and expected-format hint**, accumulated together with every other field/record error in one pass. Numbers the standard import rejects but Python would read (``nan``, ``inf``, ``1_000``, full-width digits) are still rejected the standard way, so they are never stored.\n"
 "\n"
 "Technical notes\n"
 "===============\n"
 "\n"
-" * ``base_import.import._parse_float_from_data`` / ``_parse_date_from_data`` are overridden to stop aborting the import on the first unparseable value (they used to ``raise ImportValidationError``). Only genuinely unexpected (non-``ValueError``) date failures are still raised.\n"
+" * ``base_import.import._parse_float_from_data`` / ``_parse_date_from_data`` are overridden to stop aborting the import on the first value the ORM converter can report per row (they used to ``raise ImportValidationError``). They still raise it, as the standard does, for numbers ``float()`` accepts but the standard rejects, and for genuinely unexpected (non-``ValueError``) date failures.\n"
 "\n"
 "Installation\n"
 "============\n"
@@ -125,6 +125,12 @@ msgstr "La columna %(column)s contiene valores incorrectos (valor: %(value)s)"
 #: model:ir.model.fields,field_description:base_import_ux.field_base_import_import__display_name
 msgid "Display Name"
 msgstr "Nombre en pantalla"
+
+#. module: base_import_ux
+#. odoo-python
+#: code:addons/base_import_ux/models/base_import.py:0
+msgid "Error Parsing Date [%(field)s:L%(line)d]: %(error)s"
+msgstr "Error al procesar la fecha [%(field)s:L%(line)d]: %(error)s"
 
 #. module: base_import_ux
 #. odoo-javascript
