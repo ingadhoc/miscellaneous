@@ -23,10 +23,10 @@
     "category": "Accounting",
     "author": "ADHOC SA",
     "website": "https://www.adhoc.com.ar",
-    "license": "AGPL-3",
+    "license": "LGPL-3",
     "summary": "Process bank reconciliation in background for large payment batches",
     "depends": [
-        "account_accountant_batch_payment",
+        "account_batch_payment",
         "base_bg",
     ],
     "data": [

@@ -4,12 +4,12 @@
 ##############################################################################
 from unittest.mock import patch
 
-from odoo.addons.account_accountant_batch_payment.tests.test_batch_payment import TestBatchPayment
+from odoo.addons.account_batch_payment.tests.test_account_batch_payment import TestAccountBatchPayment
 from odoo.tests import tagged
 
 
 @tagged("post_install", "-at_install")
-class TestAccountReconcileBg(TestBatchPayment):
+class TestAccountReconcileBg(TestAccountBatchPayment):
     def _create_batch_payment(self, payment_count):
         payments = self.env["account.payment"]
         for _ in range(payment_count):
@@ -18,7 +18,7 @@ class TestAccountReconcileBg(TestBatchPayment):
         return self.env["account.batch.payment"].browse(result["res_id"])
 
     def test_sync_below_threshold(self):
-        self.env["ir.config_parameter"].sudo().set_param("account_reconcile_bg.lines_threshold", "3")
+        self.env["ir.config_parameter"].sudo().set_int("account_reconcile_bg.lines_threshold", 3)
 
         batch = self._create_batch_payment(payment_count=2)
         st_line = self._create_st_line(amount=200.0)
@@ -32,7 +32,7 @@ class TestAccountReconcileBg(TestBatchPayment):
         self.assertTrue(st_line.is_reconciled)
 
     def test_background_above_threshold(self):
-        self.env["ir.config_parameter"].sudo().set_param("account_reconcile_bg.lines_threshold", "2")
+        self.env["ir.config_parameter"].sudo().set_int("account_reconcile_bg.lines_threshold", 2)
 
         batch = self._create_batch_payment(payment_count=3)
         st_line = self._create_st_line(amount=300.0)
