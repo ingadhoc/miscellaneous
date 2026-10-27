@@ -64,14 +64,14 @@ class BaseImport(models.TransientModel):
         A badly-formatted date no longer cancels the whole import: the raw value
         is kept and the per-record ORM converter reports it (with its row number
         and the expected format hint) alongside every other error. Genuinely
-        unexpected (non-``ValueError``) failures are still raised, as they signal
-        a real problem rather than user data.
+        unexpected (non-``ValueError``) failures still cut the import, wrapped in
+        an ``ImportValidationError`` as the standard method does.
         """
         dt = datetime.datetime
         fmt = fields.Date.to_string if field_type == "date" else fields.Datetime.to_string
         d_fmt = options.get("date_format") or DEFAULT_SERVER_DATE_FORMAT
         dt_fmt = options.get("datetime_format") or DEFAULT_SERVER_DATETIME_FORMAT
-        for line in data:
+        for num, line in enumerate(data):
             if not line[index] or isinstance(line[index], datetime.date):
                 continue
 
@@ -92,3 +92,9 @@ class BaseImport(models.TransientModel):
                 # Bad user-supplied date: keep the raw value and let the ORM
                 # converter report it per row instead of cutting the import.
                 line[index] = raw
+            except Exception as e:
+                raise ImportValidationError(
+                    _("Error Parsing Date [%(field)s:L%(line)d]: %(error)s", field=name, line=num + 1, error=e),
+                    field=name,
+                    field_type=field_type,
+                ) from e
