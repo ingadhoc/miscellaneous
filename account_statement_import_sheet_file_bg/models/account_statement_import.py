@@ -46,10 +46,6 @@ class AccountStatementImport(models.TransientModel):
             # error shows in the wizard instead of in a message afterwards
             if not self.sheet_mapping_id:
                 return super().import_file_button()
-            # bg jobs only take json values: the file travels as base64 text
-            statement_file = (
-                base64.b64encode(self.statement_file.content).decode("ascii") if self.statement_file else False
-            )
 
             if rows_limit and self.sheet_mapping_id:
                 header_column = self.sheet_mapping_id.header_lines_skip_count
@@ -99,14 +95,8 @@ class AccountStatementImport(models.TransientModel):
                             "next": {"type": "ir.actions.act_window_close"},
                         },
                     }
-                # Pass wizard data for single file
-                wizard_data = {
-                    "statement_file": statement_file,
-                    "statement_filename": self.statement_filename,
-                    "sheet_mapping_id": self.sheet_mapping_id.id if self.sheet_mapping_id else False,
-                }
-                res, job = self.env[self._name].bg_enqueue("import_file_button", wizard_data=wizard_data)
-                return res
+            # no dated rows: nothing to split, import now
+            return super().import_file_button()
         if not self.env.context.get("bg_job"):
             # not in a job: let the error reach the wizard
             return super().import_file_button()

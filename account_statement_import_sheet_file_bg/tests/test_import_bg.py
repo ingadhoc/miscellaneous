@@ -127,8 +127,8 @@ class TestImportBg(TransactionCase):
     def test_import_runs_now_without_valid_limit_or_mapping(self):
         """Without a valid row limit, or without mapping, the import runs right away.
 
-        A file that cannot be read raises in the wizard, instead of failing later
-        in a background job.
+        Also with nothing to split (no mapping, or no dated rows) even with the limit
+        set: a file that cannot be imported raises in the wizard, not in a background job.
         """
         # the OCA csv parser drops empty lines and fails on a row without date,
         # which only the split takes out: this file has neither
@@ -147,3 +147,9 @@ class TestImportBg(TransactionCase):
                 with self.assertRaises(UserError):
                     self._wizard(mapping=False).import_file_button()
                 self.assertFalse(self._jobs())
+        with self.subTest("a sheet without dated rows has nothing to split and imports right away"):
+            self.env["ir.config_parameter"].set_str(LIMIT_PARAM, "2")
+            self.rows = self.rows[:1]
+            with self.assertRaises(UserError):
+                self._wizard().import_file_button()
+            self.assertFalse(self._jobs())
