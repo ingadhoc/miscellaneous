@@ -43,7 +43,15 @@ class AccountStatementImport(models.TransientModel):
                 rows_limit = int(rows_limit)
             except (ValueError, TypeError):
                 # Parameter not valid, skip bg processing
-                rows_limit = None
+                return super().import_file_button()
+            # without mapping there is nothing to split: import now, so an
+            # error shows in the wizard instead of in a message afterwards
+            if not self.sheet_mapping_id:
+                return super().import_file_button()
+            # bg jobs only take json values, and the wizard keeps the file as bytes
+            statement_file = self.statement_file
+            if isinstance(statement_file, bytes):
+                statement_file = statement_file.decode("ascii")
 
             if rows_limit and self.sheet_mapping_id:
                 header_column = self.sheet_mapping_id.header_lines_skip_count
@@ -95,71 +103,70 @@ class AccountStatementImport(models.TransientModel):
                     }
                 # Pass wizard data for single file
                 wizard_data = {
-                    "statement_file": self.statement_file,
+                    "statement_file": statement_file,
                     "statement_filename": self.statement_filename,
                     "sheet_mapping_id": self.sheet_mapping_id.id if self.sheet_mapping_id else False,
                 }
                 res, job = self.env[self._name].bg_enqueue("import_file_button", wizard_data=wizard_data)
                 return res
-            # No sheet_mapping_id, pass basic data
-            wizard_data = {
-                "statement_file": self.statement_file,
-                "statement_filename": self.statement_filename,
-            }
-            res, job = self.env[self._name].bg_enqueue("import_file_button", wizard_data=wizard_data)
-            return res
+        if not self.env.context.get("bg_job"):
+            # not in a job: let the error reach the wizard
+            return super().import_file_button()
+        return self._import_file_in_job(wizard_data)
+
+    def _import_file_in_job(self, wizard_data):
+        """Run the import of one part inside its background job."""
+        # Running in background job - recreate wizard from passed data
+        part_number = None
+        total_parts = None
+        if wizard_data:
+            # Extract part info before creating wizard
+            part_number = wizard_data.pop("part_number", None)
+            total_parts = wizard_data.pop("total_parts", None)
+            csv_or_xls = wizard_data.pop("csv_or_xls", None)
+            # Decode file from string back to bytes based on file type
+            statement_file = wizard_data.get("statement_file")
+            if statement_file and isinstance(statement_file, str):
+                if csv_or_xls == "csv":
+                    # CSV files use UTF-8 encoding
+                    wizard_data["statement_file"] = base64.b64encode(statement_file.encode("utf-8"))
+                elif csv_or_xls == "xls":
+                    # Excel files are already base64 encoded as ASCII strings
+                    wizard_data["statement_file"] = statement_file.encode("ascii")
+            wizard = self.create(wizard_data)
         else:
-            # Running in background job - recreate wizard from passed data
-            part_number = None
-            total_parts = None
-            if wizard_data:
-                # Extract part info before creating wizard
-                part_number = wizard_data.pop("part_number", None)
-                total_parts = wizard_data.pop("total_parts", None)
-                csv_or_xls = wizard_data.pop("csv_or_xls", None)
-                # Decode file from string back to bytes based on file type
-                statement_file = wizard_data.get("statement_file")
-                if statement_file and isinstance(statement_file, str):
-                    if csv_or_xls == "csv":
-                        # CSV files use UTF-8 encoding
-                        wizard_data["statement_file"] = base64.b64encode(statement_file.encode("utf-8"))
-                    elif csv_or_xls == "xls":
-                        # Excel files are already base64 encoded as ASCII strings
-                        wizard_data["statement_file"] = statement_file.encode("ascii")
-                wizard = self.create(wizard_data)
-            else:
-                wizard = self
-            try:
-                result = super(AccountStatementImport, wizard).import_file_button()
+            wizard = self
+        try:
+            result = super(AccountStatementImport, wizard).import_file_button()
 
-                statement_id = False
+            statement_id = False
 
-                if result and result.get("domain"):
-                    for dom in result["domain"]:
-                        if dom[0] == "id" and dom[1] == "in" and dom[2]:
-                            statement_id = dom[2][0]
-                            break
+            if result and result.get("domain"):
+                for dom in result["domain"]:
+                    if dom[0] == "id" and dom[1] == "in" and dom[2]:
+                        statement_id = dom[2][0]
+                        break
 
-                if statement_id:
-                    statement = self.env["account.bank.statement"].browse(statement_id)
+            if statement_id:
+                statement = self.env["account.bank.statement"].browse(statement_id)
 
-                    # Add part info to statement name if split was done
-                    if part_number and total_parts:
-                        part_suffix = f" - Part {part_number}/{total_parts}"
-                        statement.write({"name": statement.name + part_suffix})
+                # Add part info to statement name if split was done
+                if part_number and total_parts:
+                    part_suffix = f" - Part {part_number}/{total_parts}"
+                    statement.write({"name": statement.name + part_suffix})
 
-                    base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
-                    url = f"{base_url}/odoo/account.bank.statement/{statement_id}"
-                    name = statement.name or f"Statement {statement_id}"
+                base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
+                url = f"{base_url}/odoo/account.bank.statement/{statement_id}"
+                name = statement.name or f"Statement {statement_id}"
 
-                    # % on the Markup template escapes the interpolations
-                    # (the statement name is user data)
-                    return Markup(
-                        _('The following bank statement has been created:<br><a href="%s" target="_blank">%s</a><br>')
-                    ) % (url, name)
-            except Exception as e:
-                return _("Error importing bank statement: %s") % str(e)
-            return result
+                # % on the Markup template escapes the interpolations
+                # (the statement name is user data)
+                return Markup(
+                    _('The following bank statement has been created:<br><a href="%s" target="_blank">%s</a><br>')
+                ) % (url, name)
+        except Exception as e:
+            return _("Error importing bank statement: %s") % str(e)
+        return result
 
     def split_base64_excel(self, header_rows_count, rows_per_file_limit):
         """Split Excel/CSV file into multiple parts."""
