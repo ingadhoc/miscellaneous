@@ -4,6 +4,7 @@ from io import BytesIO, StringIO
 
 from dateutil.relativedelta import relativedelta
 from odoo import fields
+from odoo.exceptions import UserError
 from odoo.tests import TransactionCase, tagged
 from openpyxl import Workbook
 
@@ -37,6 +38,8 @@ class TestImportBg(TransactionCase):
                 "description_column": "Label",
             }
         )
+        # jobs that other runs left in the database are not this test's
+        cls.old_jobs = cls.env["bg.job"].search([]).ids
         cls.labels = [f"Line {i}" for i in range(1, 6)]
         cls.rows = [["Bank report"], [], ["Date", "Label", "Amount"]]
         cls.rows += [[str(cls.today - relativedelta(days=i)), label, "10.00"] for i, label in enumerate(cls.labels)]
@@ -70,7 +73,9 @@ class TestImportBg(TransactionCase):
         )
 
     def _jobs(self):
-        return self.env["bg.job"].search([("model", "=", "account.statement.import")], order="id")
+        return self.env["bg.job"].search(
+            [("model", "=", "account.statement.import"), ("id", "not in", self.old_jobs)], order="id"
+        )
 
     def _run(self, job):
         """Run the job method the way bg.job.run does, without its commits."""
@@ -119,17 +124,26 @@ class TestImportBg(TransactionCase):
                     self.assertEqual(sorted(lines.mapped("payment_ref")), self.labels)
                     self.assertEqual([len(st.line_ids) for st in self._statements()], [2, 2, 1])
 
-    def test_import_runs_now_without_limit(self):
-        """Without the row limit the import runs right away, with no background job.
+    def test_import_runs_now_without_valid_limit_or_mapping(self):
+        """Without a valid row limit, or without mapping, the import runs right away.
 
-        Not covered: an invalid limit or a wizard without mapping enqueue the file
-        as bytes, which base_bg rejects as not JSON serializable.
+        A file that cannot be read raises in the wizard, instead of failing later
+        in a background job.
         """
-        self.env["ir.config_parameter"].set_param(LIMIT_PARAM, False)
         # the OCA csv parser drops empty lines and fails on a row without date,
         # which only the split takes out: this file has neither
         self.rows = self.rows[2:-1]
         self.mapping.header_lines_skip_count = 1
-        self._wizard().import_file_button()
-        self.assertFalse(self._jobs())
-        self.assertEqual(sorted(self._statements().line_ids.mapped("payment_ref")), self.labels)
+        for value in (False, "abc"):
+            with self.subTest(limit=value):
+                self.env["ir.config_parameter"].set_param(LIMIT_PARAM, value)
+                self._statements().unlink()
+                self._wizard().import_file_button()
+                self.assertFalse(self._jobs())
+                self.assertEqual(sorted(self._statements().line_ids.mapped("payment_ref")), self.labels)
+        for value in (False, "2"):
+            with self.subTest("without mapping, a csv that cannot be read raises in the wizard", limit=value):
+                self.env["ir.config_parameter"].set_param(LIMIT_PARAM, value)
+                with self.assertRaises(UserError):
+                    self._wizard(mapping=False).import_file_button()
+                self.assertFalse(self._jobs())
