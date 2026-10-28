@@ -4,6 +4,7 @@ from io import BytesIO, StringIO
 
 from dateutil.relativedelta import relativedelta
 from odoo import fields
+from odoo.exceptions import UserError
 from odoo.tests import TransactionCase, tagged
 from openpyxl import Workbook
 
@@ -122,8 +123,8 @@ class TestImportBg(TransactionCase):
     def test_import_runs_now_without_limit(self):
         """Without the row limit the import runs right away, with no background job.
 
-        Not covered: an invalid limit or a wizard without mapping enqueue the file
-        as bytes, which base_bg rejects as not JSON serializable.
+        Also with nothing to split (no mapping, or no dated rows) even with the limit
+        set: a file that cannot be imported raises in the wizard, not in a background job.
         """
         self.env["ir.config_parameter"].set_param(LIMIT_PARAM, False)
         # the OCA csv parser drops empty lines and fails on a row without date,
@@ -133,3 +134,17 @@ class TestImportBg(TransactionCase):
         self._wizard().import_file_button()
         self.assertFalse(self._jobs())
         self.assertEqual(sorted(self._statements().line_ids.mapped("payment_ref")), self.labels)
+        for value in (False, "2"):
+            with self.subTest(
+                "without mapping, the import runs right away and its error reaches the wizard", limit=value
+            ):
+                self.env["ir.config_parameter"].set_param(LIMIT_PARAM, value)
+                with self.assertRaisesRegex(UserError, "format is not supported"):
+                    self._wizard(mapping=False).import_file_button()
+                self.assertFalse(self._jobs())
+        with self.subTest("a sheet without dated rows has nothing to split and imports right away"):
+            self.env["ir.config_parameter"].set_param(LIMIT_PARAM, "2")
+            self.rows = self.rows[:1]
+            with self.assertRaisesRegex(UserError, "already imported"):
+                self._wizard().import_file_button()
+            self.assertFalse(self._jobs())
