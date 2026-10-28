@@ -31,7 +31,7 @@ When importing large bank statement files (TXT/CSV/XLSX), the process can take c
 Features
 ========
 
-* **Background Processing**: When the ``account_statement_import_sheet_file_bg.rows_per_file_limit`` system parameter holds a number (1000 by default), the import runs in background. Without it, or with a value that is not a number, the import runs right away
+* **Background Processing**: When the ``account_statement_import_sheet_file_bg.rows_per_file_limit`` system parameter holds a number (1000 by default), and a sheet mapping is chosen, the import runs in background. Without the parameter, with a value that is not a number, or without a sheet mapping (there is nothing to split), the import runs right away, and an error shows in the wizard
 * **Split in Parts**: With a sheet mapping, the rows are split in parts of that many rows. Each part keeps the header rows, rows without date are left out, and each part is imported by its own job into a statement named "<name> - Part n/m"
 * **Smart Notifications**: Upon completion, users receive notifications with direct links to view the imported bank statements
 * **Seamless Integration**: Works transparently with existing sheet file import workflows
@@ -72,7 +72,7 @@ The module works transparently with the existing bank statement import process:
 
 3. **Background Processing**:
 
-   * Instead of waiting for the import to complete, you'll receive an immediate notification that the jobs have been queued, one per part
+   * With a sheet mapping, instead of waiting for the import to complete, you'll receive an immediate notification that the jobs have been queued, one per part
    * You can continue working while the import processes in the background
    * Progress can be monitored in *Settings > Technical > Background Jobs > Jobs*
 
