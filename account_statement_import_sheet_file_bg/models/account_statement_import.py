@@ -93,21 +93,11 @@ class AccountStatementImport(models.TransientModel):
                             "next": {"type": "ir.actions.act_window_close"},
                         },
                     }
-                # Pass wizard data for single file
-                wizard_data = {
-                    "statement_file": self.statement_file,
-                    "statement_filename": self.statement_filename,
-                    "sheet_mapping_id": self.sheet_mapping_id.id if self.sheet_mapping_id else False,
-                }
-                res, job = self.env[self._name].bg_enqueue("import_file_button", wizard_data=wizard_data)
-                return res
-            # No sheet_mapping_id, pass basic data
-            wizard_data = {
-                "statement_file": self.statement_file,
-                "statement_filename": self.statement_filename,
-            }
-            res, job = self.env[self._name].bg_enqueue("import_file_button", wizard_data=wizard_data)
-            return res
+            # no mapping or no dated rows: nothing to split, import now
+            return super().import_file_button()
+        elif not self.env.context.get("bg_job"):
+            # not in a job: let the error reach the wizard
+            return super().import_file_button()
         else:
             # Running in background job - recreate wizard from passed data
             part_number = None
