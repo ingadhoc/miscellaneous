@@ -1,6 +1,6 @@
 {
     "name": "Account statement import sheet file BG",
-    "version": "19.0.1.2.0",
+    "version": "20.0.1.0.0",
     "category": "Productivity/Documents",
     "summary": "Integration between Documents and Base BG modules",
     "depends": [
@@ -11,7 +11,7 @@
         "data/ir_config_parameter_data.xml",
     ],
     "demo": [],
-    "installable": False,
+    "installable": True,
     "auto_install": False,
     "application": False,
     "author": "ADHOC SA",
