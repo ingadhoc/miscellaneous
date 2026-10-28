@@ -50,14 +50,14 @@ class TestImportBg(TransactionCase):
         if kind == "csv":
             buffer = StringIO()
             csv.writer(buffer).writerows(self.rows)
-            return base64.b64encode(buffer.getvalue().encode())
+            return base64.b64encode(buffer.getvalue().encode()).decode()
         workbook = Workbook()
         for row in self.rows:
             # an empty cell at the end of the header, read as "" and not "None"
             workbook.active.append(row + [None] if row and row[0] == "Date" else row)
         buffer = BytesIO()
         workbook.save(buffer)
-        return base64.b64encode(buffer.getvalue())
+        return base64.b64encode(buffer.getvalue()).decode()
 
     def _wizard(self, kind="csv", mapping=True):
         return (
@@ -97,7 +97,7 @@ class TestImportBg(TransactionCase):
         if not hasattr(self.env["account.statement.import.sheet.parser"], "_parse_lines_xlsx"):
             # the parts are written as xlsx, and the module does not depend on the reader
             self.skipTest("account_statement_import_sheet_file_xlsx is not installed")
-        self.env["ir.config_parameter"].set_param(LIMIT_PARAM, "2")
+        self.env["ir.config_parameter"].set_str(LIMIT_PARAM, "2")
         for kind in ("csv", "xlsx"):
             with self.subTest(kind=kind):
                 self._jobs().unlink()
@@ -136,14 +136,14 @@ class TestImportBg(TransactionCase):
         self.mapping.header_lines_skip_count = 1
         for value in (False, "abc"):
             with self.subTest(limit=value):
-                self.env["ir.config_parameter"].set_param(LIMIT_PARAM, value)
+                self.env["ir.config_parameter"].set_str(LIMIT_PARAM, value)
                 self._statements().unlink()
                 self._wizard().import_file_button()
                 self.assertFalse(self._jobs())
                 self.assertEqual(sorted(self._statements().line_ids.mapped("payment_ref")), self.labels)
         for value in (False, "2"):
             with self.subTest("without mapping, a csv that cannot be read raises in the wizard", limit=value):
-                self.env["ir.config_parameter"].set_param(LIMIT_PARAM, value)
+                self.env["ir.config_parameter"].set_str(LIMIT_PARAM, value)
                 with self.assertRaises(UserError):
                     self._wizard(mapping=False).import_file_button()
                 self.assertFalse(self._jobs())

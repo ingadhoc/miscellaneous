@@ -33,9 +33,7 @@ class AccountStatementImport(models.TransientModel):
         """Process the file chosen in the wizard, create a bank statement
         and return a link to its reconciliation page."""
         rows_limit = (
-            self.env["ir.config_parameter"]
-            .sudo()
-            .get_param("account_statement_import_sheet_file_bg.rows_per_file_limit")
+            self.env["ir.config_parameter"].sudo().get_str("account_statement_import_sheet_file_bg.rows_per_file_limit")
         )
         if not self.env.context.get("bg_job") and rows_limit:
             # Validate parameter is a valid integer
@@ -48,10 +46,10 @@ class AccountStatementImport(models.TransientModel):
             # error shows in the wizard instead of in a message afterwards
             if not self.sheet_mapping_id:
                 return super().import_file_button()
-            # bg jobs only take json values, and the wizard keeps the file as bytes
-            statement_file = self.statement_file
-            if isinstance(statement_file, bytes):
-                statement_file = statement_file.decode("ascii")
+            # bg jobs only take json values: the file travels as base64 text
+            statement_file = (
+                base64.b64encode(self.statement_file.content).decode("ascii") if self.statement_file else False
+            )
 
             if rows_limit and self.sheet_mapping_id:
                 header_column = self.sheet_mapping_id.header_lines_skip_count
@@ -129,10 +127,10 @@ class AccountStatementImport(models.TransientModel):
             if statement_file and isinstance(statement_file, str):
                 if csv_or_xls == "csv":
                     # CSV files use UTF-8 encoding
-                    wizard_data["statement_file"] = base64.b64encode(statement_file.encode("utf-8"))
+                    wizard_data["statement_file"] = base64.b64encode(statement_file.encode("utf-8")).decode("ascii")
                 elif csv_or_xls == "xls":
                     # Excel files are already base64 encoded as ASCII strings
-                    wizard_data["statement_file"] = statement_file.encode("ascii")
+                    wizard_data["statement_file"] = statement_file
             wizard = self.create(wizard_data)
         else:
             wizard = self
@@ -155,7 +153,7 @@ class AccountStatementImport(models.TransientModel):
                     part_suffix = f" - Part {part_number}/{total_parts}"
                     statement.write({"name": statement.name + part_suffix})
 
-                base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
+                base_url = self.env["ir.config_parameter"].sudo().get_str("web.base.url")
                 url = f"{base_url}/odoo/account.bank.statement/{statement_id}"
                 name = statement.name or f"Statement {statement_id}"
 
@@ -177,7 +175,7 @@ class AccountStatementImport(models.TransientModel):
         mapping = self.sheet_mapping_id
         all_rows = []
         try:
-            file_bytes = base64.b64decode(self.statement_file)
+            file_bytes = self.statement_file.content
             read_buffer = BytesIO(file_bytes)
 
             # Try openpyxl (xlsx)
