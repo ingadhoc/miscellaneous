@@ -37,7 +37,7 @@ class AccountStatementImport(models.TransientModel):
             .sudo()
             .get_param("account_statement_import_sheet_file_bg.rows_per_file_limit")
         )
-        if not self._context.get("bg_job") and rows_limit:
+        if not self.env.context.get("bg_job") and rows_limit:
             # Validate parameter is a valid integer
             try:
                 rows_limit = int(rows_limit)
