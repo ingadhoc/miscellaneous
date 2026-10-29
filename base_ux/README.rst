@@ -22,6 +22,7 @@ Several Improvements:
     * Keep the activity's description when changing the activity type, regardless of the activity type's description, and change the activity user only if the activity type has a default user.
     * Make company_registry field on res.company invisible as it is useless now
     * On the "Schedule Activity" dialog, show only the first N activity types (ordered by sequence) as quick badges, plus a dropdown to search among all the remaining ones. It applies both when scheduling a new activity and when editing an existing one; on an existing activity its current type is always kept among the badges. N is set through the system parameter base_ux.activity_quick_badges (default to 5).
+    * Add a trigram index on every column the contact search looks into (complete_name, email, ref, vat and company_registry), so finding a contact by a part of its name stops reading the whole table. It is only created when the database has pg_trgm and an immutable unaccent.
 
 
 Installation
