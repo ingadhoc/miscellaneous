@@ -28,10 +28,9 @@ class TestMappingPreview(SheetMappingCase):
                 self.assertEqual(header_rows[0]["number"], expected)
                 self.assertEqual(self._rows(layout, "data")[0]["number"], expected + 1)
 
-    def test_header_row_zero_is_warned_about(self):
-        """0 makes the spreadsheet parser read the header as a transaction."""
-        self.assertTrue(self._layout(header_lines_skip_count=0)["warnings"])
-        self.assertFalse(self._layout(header_lines_skip_count=1)["warnings"])
+    def test_header_row_zero_is_not_warned_about(self):
+        """0 reads the header from the first row, as 1 does, so nothing breaks."""
+        self.assertFalse(self._layout(header_lines_skip_count=0)["warnings"])
 
     def test_skipping_rows_without_a_header_is_warned_about(self):
         """Without a header the first rows are transactions, not headers."""
