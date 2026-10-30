@@ -139,7 +139,7 @@ class TestImportFeedback(SheetMappingCase):
             .create(
                 {
                     "journal_id": self.journal.id,
-                    "statement_file": b64encode(self.sheet([("21/08/2026", "Pago", "1.500,00", "1.500,00")])),
+                    "statement_file": b64encode(self.sheet([("21/08/2026", "Pago", "1.500,00", "1.500,00")])).decode(),
                     "statement_filename": "statement.xlsx",
                 }
             )

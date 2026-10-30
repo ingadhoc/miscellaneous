@@ -67,7 +67,7 @@ class SheetMappingCase(TransactionCase):
             "sheet_mapping_id": (mapping or self.mapping).id,
         }
         if data_file is not None:
-            values["statement_file"] = b64encode(data_file)
+            values["statement_file"] = b64encode(data_file).decode()
         return self.env["account.statement.import"].with_context(journal_id=self.journal.id).create(values)
 
     def parse(self, data_file, mapping=None):

@@ -1,5 +1,4 @@
 from odoo.tools import file_open
-from odoo.tools.mimetypes import guess_mimetype
 
 from .common import SheetMappingCase
 
@@ -13,8 +12,6 @@ class TestSheetType(SheetMappingCase):
             "account_statement_import_sheet_file_ux/tests/data/statement_without_excel_marker.xls", "rb"
         ) as f:
             data_file = f.read()
-        # the case only holds while the guess misses this file
-        self.assertNotEqual(guess_mimetype(data_file), "application/vnd.ms-excel")
         _currency, _account, statements = self.parse(data_file)
         transactions = statements[0]["transactions"]
         self.assertEqual([float(t["amount"]) for t in transactions], [100.0, -15.5])

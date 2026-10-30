@@ -105,7 +105,12 @@ class AccountStatementImportSheetParser(models.TransientModel):
             if not configured:
                 raise
             normalized = [configured.get(str(cell).strip().lower(), cell) for cell in header]
-            return super()._get_column_indexes(normalized, column_name, mapping)
+            try:
+                return super()._get_column_indexes(normalized, column_name, mapping)
+            except ValueError as error:
+                # python 3.14 no longer names the value in the ``list.index`` error
+                missing = next(spelling for spelling in configured.values() if spelling not in normalized)
+                raise ValueError(f"{missing!r} is not in list") from error
 
     def _get_values_from_column(self, values, columns, column_name):
         """Read the month names of a date column in Spanish as well as English."""
