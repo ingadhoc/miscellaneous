@@ -19,7 +19,7 @@
 ##############################################################################
 {
     "name": "Dynamic Message",
-    "version": "19.0.1.0.0",
+    "version": "20.0.1.0.0",
     "category": "Base",
     "sequence": 14,
     "summary": "",
@@ -32,11 +32,11 @@
     ],
     "data": [
         "security/res_groups.xml",
-        "security/ir.model.access.csv",
+        "security/ir.access.csv",
         "views/ir_model_dynamic_message_views.xml",
     ],
     "demo": [],
-    "installable": False,
+    "installable": True,
     "auto_install": False,
     "application": False,
 }
