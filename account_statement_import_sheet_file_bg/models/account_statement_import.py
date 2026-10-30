@@ -124,36 +124,33 @@ class AccountStatementImport(models.TransientModel):
             wizard = self.create(wizard_data)
         else:
             wizard = self
-        try:
-            result = super(AccountStatementImport, wizard).import_file_button()
+        result = super(AccountStatementImport, wizard).import_file_button()
 
-            statement_id = False
+        statement_id = False
 
-            if result and result.get("domain"):
-                for dom in result["domain"]:
-                    if dom[0] == "id" and dom[1] == "in" and dom[2]:
-                        statement_id = dom[2][0]
-                        break
+        if result and result.get("domain"):
+            for dom in result["domain"]:
+                if dom[0] == "id" and dom[1] == "in" and dom[2]:
+                    statement_id = dom[2][0]
+                    break
 
-            if statement_id:
-                statement = self.env["account.bank.statement"].browse(statement_id)
+        if statement_id:
+            statement = self.env["account.bank.statement"].browse(statement_id)
 
-                # Add part info to statement name if split was done
-                if part_number and total_parts:
-                    part_suffix = f" - Part {part_number}/{total_parts}"
-                    statement.write({"name": statement.name + part_suffix})
+            # Add part info to statement name if split was done
+            if part_number and total_parts:
+                part_suffix = f" - Part {part_number}/{total_parts}"
+                statement.write({"name": statement.name + part_suffix})
 
-                base_url = self.env["ir.config_parameter"].sudo().get_str("web.base.url")
-                url = f"{base_url}/odoo/account.bank.statement/{statement_id}"
-                name = statement.name or f"Statement {statement_id}"
+            base_url = self.env["ir.config_parameter"].sudo().get_str("web.base.url")
+            url = f"{base_url}/odoo/account.bank.statement/{statement_id}"
+            name = statement.name or f"Statement {statement_id}"
 
-                # % on the Markup template escapes the interpolations
-                # (the statement name is user data)
-                return Markup(
-                    _('The following bank statement has been created:<br><a href="%s" target="_blank">%s</a><br>')
-                ) % (url, name)
-        except Exception as e:
-            return _("Error importing bank statement: %s") % str(e)
+            # % on the Markup template escapes the interpolations
+            # (the statement name is user data)
+            return Markup(
+                _('The following bank statement has been created:<br><a href="%s" target="_blank">%s</a><br>')
+            ) % (url, name)
         return result
 
     def split_base64_excel(self, header_rows_count, rows_per_file_limit):
@@ -222,6 +219,9 @@ class AccountStatementImport(models.TransientModel):
 
         header = parser.parse_header(iter(all_rows), mapping)
 
+        if not mapping.no_header:
+            # a header at 0 is read from the first row, so every part needs it
+            header_rows_count = max(header_rows_count, 1)
         header_rows = all_rows[:header_rows_count]
         data_rows = all_rows[header_rows_count:]
 

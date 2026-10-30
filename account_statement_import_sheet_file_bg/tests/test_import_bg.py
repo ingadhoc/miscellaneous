@@ -49,7 +49,7 @@ class TestImportBg(TransactionCase):
     def _file(self, kind):
         if kind == "csv":
             buffer = StringIO()
-            csv.writer(buffer).writerows(self.rows)
+            csv.writer(buffer, delimiter=self.mapping._get_column_delimiter_character()).writerows(self.rows)
             return base64.b64encode(buffer.getvalue().encode()).decode()
         workbook = Workbook()
         for row in self.rows:
@@ -153,3 +153,34 @@ class TestImportBg(TransactionCase):
             with self.assertRaises(UserError):
                 self._wizard().import_file_button()
             self.assertFalse(self._jobs())
+
+    def test_header_row_zero_in_parts(self):
+        """A mapping with the header row at 0 imports in parts as it does right away.
+
+        The parts are written as xlsx, and the xlsx reader of the ux module reads
+        a header at 0 from the first row, as the csv parser does.
+        """
+        parser = self.env["account.statement.import.sheet.parser"]
+        if not hasattr(parser, "_skip_header_row"):
+            self.skipTest("account_statement_import_sheet_file_ux is not installed")
+        self.env["ir.config_parameter"].set_str(LIMIT_PARAM, "2")
+        self.rows = self.rows[2:]
+        self.mapping.write({"header_lines_skip_count": 0, "delimiter": "semicolon"})
+        self._wizard().import_file_button()
+        for job in self._jobs():
+            self._run(job)
+        self.assertEqual([len(st.line_ids) for st in self._statements()], [2, 2, 1])
+        self.assertEqual(sorted(self._statements().line_ids.mapped("payment_ref")), self.labels)
+
+    def test_failed_part_raises(self):
+        """A part that cannot be imported raises instead of returning a message.
+
+        bg.job.run marks the job done when the method returns and failed when it
+        raises, so the error has to travel as an exception.
+        """
+        self.env["ir.config_parameter"].set_str(LIMIT_PARAM, "2")
+        self.mapping.timestamp_format = "%d/%m/%Y"
+        self._wizard().import_file_button()
+        with self.assertRaises(UserError):
+            self._run(self._jobs()[0])
+        self.assertFalse(self._statements())
