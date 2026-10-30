@@ -31,9 +31,8 @@ mapping is wrong.
    statement.
  * The preview reads the mapping back to the user in plain words (date format,
    separators, ignored rows and columns) and **warns about the configurations
-   that are going to fail**: a header row number of 0 (the header row is then
-   read as a transaction too and the spreadsheet import fails), or column names
-   on a mapping declared as having no header line.
+   that are going to fail**: column names on a mapping declared as having no
+   header line.
  * Rewrites the error of a **failed import**. Instead of the bare
    ``'Date' is not in list``, it names the mapping and the column that is
    missing (or the date format that does not match, or the encoding that could

@@ -109,7 +109,9 @@ class AccountStatementImportSheetParser(models.TransientModel):
                 return super()._get_column_indexes(normalized, column_name, mapping)
             except ValueError as error:
                 # python 3.14 no longer names the value in the ``list.index`` error
-                missing = next(spelling for spelling in configured.values() if spelling not in normalized)
+                missing = next((spelling for spelling in configured.values() if spelling not in normalized), None)
+                if missing is None:
+                    raise
                 raise ValueError(f"{missing!r} is not in list") from error
 
     def _get_values_from_column(self, values, columns, column_name):
