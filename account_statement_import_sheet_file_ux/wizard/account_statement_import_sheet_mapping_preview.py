@@ -61,7 +61,7 @@ class AccountStatementImportSheetMappingPreview(models.TransientModel):
 
     def action_download_xlsx(self):
         self.ensure_one()
-        self.file_data = base64.b64encode(self._build_xlsx())
+        self.file_data = base64.b64encode(self._build_xlsx()).decode()
         params = urlencode(
             {
                 "model": self._name,

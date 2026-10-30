@@ -1,4 +1,3 @@
-import base64
 import re
 from contextlib import contextmanager
 
@@ -205,7 +204,7 @@ class AccountStatementImport(models.TransientModel):
         """
         self.ensure_one()
         with self._offer_the_preview():
-            transactions = self._test_import_file(base64.b64decode(self.statement_file))
+            transactions = self._test_import_file(self.statement_file.content)
         if next_action is None:
             next_action = self._reopen_wizard()
         return self._test_import_notification(transactions, next_action)
@@ -319,26 +318,15 @@ class AccountStatementImport(models.TransientModel):
     def _complete_stmts_vals(self, stmts_vals, journal, account_number):
         """Create the statements the way the Enterprise import does.
 
-        Two context keys, both read by `account_accountant` on `create` and
-        harmless without it:
-
-        - `skip_pdf_attachment_generation`: creating a bank statement renders
-          its PDF synchronously. On a statement of a few hundred lines that
-          render is what makes the import time out, and the attachment is of no
-          use to somebody who is importing the file they already have. Odoo
-          itself skips it the same way when importing (`l10n_be_codabox`,
-          `l10n_be_codaclean`).
-        - `auto_statement_processing`: runs the automatic reconciliation models
-          on the new lines right away, as `account_bank_statement_import` does.
-          Without it they wait for the daily cron.
+        `auto_statement_processing` runs the automatic reconciliation models on
+        the new lines right away, as `account_bank_statement_import` does.
+        Without it they wait for the daily cron. It is read by
+        `account_accountant` on `create` and harmless without it.
 
         `creation_context` is the seam the base module exposes for this: it
         pops it off the values and passes it to the create of the statement.
         """
         stmts_vals = super()._complete_stmts_vals(stmts_vals, journal, account_number)
         for st_vals in stmts_vals:
-            st_vals.setdefault("creation_context", {}).update(
-                skip_pdf_attachment_generation=True,
-                auto_statement_processing=True,
-            )
+            st_vals.setdefault("creation_context", {}).update(auto_statement_processing=True)
         return stmts_vals

@@ -1,3 +1,4 @@
+from odoo import Command
 from odoo.addons.account_statement_import_sheet_file_ux.models import (
     account_statement_import_sheet_mapping as mapping_module,
 )
@@ -246,7 +247,15 @@ class TestMappingPreview(SheetMappingCase):
         )
         self.assertEqual(context, {"preview_mapping_id": mapping.id})
         self.assertTrue(button)
-        opened = self.env["ir.actions.server"].browse(action).with_context(**context).run()
+        # the superuser is not in the group the action asks for
+        accountant = self.env["res.users"].create(
+            {
+                "name": "Accountant",
+                "login": "accountant_ux",
+                "group_ids": [Command.set(self.env.ref("account.group_account_user").ids)],
+            }
+        )
+        opened = self.env["ir.actions.server"].with_user(accountant).browse(action).with_context(**context).run()
         self.assertEqual(opened["res_model"], "account.statement.import.sheet.mapping.preview")
         self.assertEqual(self.env[opened["res_model"]].browse(opened["res_id"]).mapping_id, mapping)
 
