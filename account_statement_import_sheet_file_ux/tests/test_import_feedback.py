@@ -190,21 +190,18 @@ class TestImportFeedback(SheetMappingCase):
 
     # Which mistake the message names
 
-    def test_a_header_read_as_a_transaction_is_named_as_such(self):
-        """The header row number, not the date format.
+    def test_a_header_at_row_zero_reads_like_row_one(self):
+        """An xlsx reads a header at 0 from the first row, as the csv parser does.
 
-        With the header row number at 0 the mapping reads its own headers as a
-        transaction, and the first thing that breaks is the date -- so the
-        parser complains about the format of a date that was never one, and
-        sends the user to fix a field that is right.
+        It used to read that row as a transaction too, so a mapping that imports
+        a csv failed on the same file saved as xlsx.
         """
-        mapping = self.new_mapping(header_lines_skip_count=0)
-        wizard = self.import_wizard(self.sheet([("21/08/2026", "Pago", "1.500,00", "1.500,00")]), mapping)
-        with self.assertRaises(RedirectWarning) as catcher:
-            wizard.action_test_import()
-        message = catcher.exception.args[0]
-        self.assertIn("The header row number is 0", message)
-        self.assertNotIn("Timestamp format", message)
+        data_file = self.sheet([("21/08/2026", "Pago", "1.500,00", "1.500,00")])
+        for row_number in (0, 1):
+            with self.subTest(header_lines_skip_count=row_number):
+                mapping = self.new_mapping(header_lines_skip_count=row_number)
+                _currency, _account, [statement] = self.parse(data_file, mapping)
+                self.assertEqual(len(statement["transactions"]), 1)
 
     def test_a_date_the_file_really_writes_differently_still_blames_the_format(self):
         """The control case: the header is skipped, so the date is the problem."""
@@ -213,7 +210,6 @@ class TestImportFeedback(SheetMappingCase):
             wizard.action_test_import()
         message = catcher.exception.args[0]
         self.assertIn("Timestamp format", message)
-        self.assertNotIn("The header row number is 0", message)
 
     def test_the_preview_of_a_mapping_opens_for_an_accountant(self):
         """The button of the error message is useless to whoever imports.

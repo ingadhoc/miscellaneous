@@ -168,11 +168,6 @@ class AccountStatementImport(models.TransientModel):
                 mapping=mapping.name,
                 column=missing_column.group(1),
             )
-        misread_date = re.search(r"time data '(.+?)' does not match format", message)
-        if misread_date and mapping._reads_its_own_header() and mapping._names_a_column(misread_date.group(1)):
-            # the date that cannot be read is the header of its own column, so
-            # the mapping is reading the header row as if it were a transaction
-            return mapping._header_row_zero_warning()
         if "does not match format" in message:
             return self.env._(
                 "The mapping '%(mapping)s' reads the dates with the format "
