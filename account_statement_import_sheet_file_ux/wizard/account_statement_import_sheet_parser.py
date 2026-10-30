@@ -119,6 +119,21 @@ class AccountStatementImportSheetParser(models.TransientModel):
             value = SPANISH_MONTHS_RE.sub(lambda match: SPANISH_MONTHS[match.group(0).lower()], value)
         return value
 
+    @api.model
+    def _skip_header_row(self, mapping, rows):
+        """Start the transactions after the header also when its row number is 0.
+
+        The csv parser and the preview of the mapping read a header at 0 from the
+        first row, as with 1. The xls and xlsx parsers read that row as a
+        transaction too, so the same mapping fails on a spreadsheet.
+        """
+        if not mapping.no_header and not mapping.header_lines_skip_count:
+            return rows[1:]
+        return rows
+
+    def _get_xls_row_values(self, mapping, xls, rows, label_line):
+        return super()._get_xls_row_values(mapping, xls, self._skip_header_row(mapping, rows), label_line)
+
     def _get_xlsx_row_values(self, mapping, xlsx, rows, label_line):
         """Read the rows of an xlsx keeping the numeric cells native.
 
@@ -131,6 +146,7 @@ class AccountStatementImportSheetParser(models.TransientModel):
         # openpyxl walks every cell of the sheet to answer max_column, so it is
         # read once instead of once per row
         last_column = xlsx.max_column
+        rows = self._skip_header_row(mapping, rows)
         return [
             [
                 self._xlsx_cell_value(mapping, xlsx.cell(row=row, column=column).value)
