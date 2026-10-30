@@ -83,11 +83,9 @@ mapping is wrong.
    come from.
  * Clears the amount columns when the **Amount type** changes, so a mapping
    cannot keep columns that no longer apply to it.
- * Stops rendering the statement PDF while a file is being imported. With
-   Enterprise installed, creating a bank statement renders its PDF
-   synchronously, and on a statement of a few hundred lines that render is what
-   makes the import time out. The attachment is also of no use to somebody who
-   is importing the file they already have.
+ * Runs the **automatic reconciliation models** on the imported lines right away,
+   instead of leaving them to the daily cron. It needs Enterprise's
+   ``account_accountant``.
 
 Technical notes
 ===============
@@ -171,13 +169,11 @@ Technical notes
    base module leaves to work with: it flattens the parser exception into
    ``UserError(_("Bad file/mapping: ") + str(exc))``. A message that is already
    one of ours gets no hint and is shown as it is.
- * ``skip_pdf_attachment_generation`` is added to the per-statement
+ * ``auto_statement_processing`` is added to the per-statement
    ``creation_context``, which is the seam the base module exposes: it pops that
    key off the values and passes it to the ``create`` of the statement.
-   ``account_accountant`` reads it there to decide whether to call
-   ``action_generate_attachment()``; Odoo itself skips the render the same way
-   when importing statements (``l10n_be_codabox``, ``l10n_be_codaclean``), and
-   without Enterprise the flag is a no-op.
+   ``account_accountant`` reads it there to run the automatic reconciliation
+   models on the new lines, and without Enterprise the flag is a no-op.
 
 Installation
 ============
