@@ -19,7 +19,7 @@
 ##############################################################################
 {
     "name": "Bank Statement Sheet Import UX",
-    "version": "19.0.1.2.0",
+    "version": "20.0.1.0.0",
     "category": "Accounting",
     "summary": "Preview and test import of a statement sheet mapping, plus "
     "usability fixes on the mapping configuration, the column parser and the "
@@ -40,7 +40,7 @@
         "views/account_statement_import_sheet_mapping_views.xml",
         "views/account_statement_import_views.xml",
     ],
-    "installable": False,
+    "installable": True,
     "auto_install": ["account_statement_import_sheet_file"],
     "application": False,
 }
