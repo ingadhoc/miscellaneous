@@ -35,7 +35,7 @@
         "account_statement_import_sheet_file_xlsx",
     ],
     "data": [
-        "security/ir.model.access.csv",
+        "security/ir.access.csv",
         "views/account_statement_import_sheet_mapping_preview_views.xml",
         "views/account_statement_import_sheet_mapping_views.xml",
         "views/account_statement_import_views.xml",
