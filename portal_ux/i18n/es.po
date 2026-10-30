@@ -10,10 +10,11 @@ msgstr ""
 "PO-Revision-Date: 2026-10-20 15:08+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
-"Plural-Forms: \n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 
 #. module: portal_ux
 #: model:ir.module.module,description:base.module_portal_ux
