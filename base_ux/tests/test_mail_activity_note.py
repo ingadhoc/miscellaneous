@@ -33,6 +33,16 @@ class TestMailActivityNote(TransactionCase):
             form.activity_type_id = self.type_with_note
             self.assertIn("Default note", str(form.note))
 
+    def test_activity_created_from_code_takes_default_note(self):
+        activity = self.env["mail.activity"].create(
+            {
+                "res_model_id": self.env["ir.model"]._get_id("res.partner"),
+                "res_id": self.partner.id,
+                "activity_type_id": self.type_with_note.id,
+            }
+        )
+        self.assertIn("Default note", str(activity.note))
+
     def test_written_note_is_kept_when_editing_saved_activity(self):
         activity = self.env["mail.activity"].create(
             {
