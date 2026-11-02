@@ -17,7 +17,7 @@ Base UX
 Several Improvements:
     * New button to add/remove a window action as a contextual action in the windows source model.
     * If a partner is Actived/Archived will be tracked in its message log.
-    * Be able to use re python library and html2plaintext function from odoo.tools.in server actions, ir.cron, base.automation, etc.
+    * Be able to use the re python library (search, match, fullmatch, findall, sub, subn, split, escape and its flags) and the html2plaintext function from odoo.tools in server actions, ir.cron, base.automation, etc.
     * Make parent field on res.company invisible as it is useless now
     * When editing an existing activity, keep its description when changing the activity type, regardless of the activity type's default note.
 
