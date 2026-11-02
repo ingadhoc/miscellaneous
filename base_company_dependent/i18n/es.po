@@ -228,7 +228,7 @@ msgstr "Descartar"
 #. module: base_company_dependent
 #: model:ir.model.fields,field_description:base_company_dependent.field_base_company_dependent__display_name
 msgid "Display Name"
-msgstr "Nombre para mostrar"
+msgstr "Mostrar nombre"
 
 #. module: base_company_dependent
 #: model:ir.model,name:base_company_dependent.model_base_company_dependent
