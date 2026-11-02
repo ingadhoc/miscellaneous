@@ -1,9 +1,10 @@
 /** @odoo-module **/
 
-import { Component, onWillStart, useState } from "@odoo/owl";
+import { Component, onWillStart, proxy, types, usePlugin, useProps } from "@odoo/owl";
 import { AutoComplete } from "@web/core/autocomplete/autocomplete";
 import { Dialog } from "@web/core/dialog/dialog";
 import { _t } from "@web/core/l10n/translation";
+import { NotificationPlugin } from "@web/core/notifications/notification_plugin";
 import { useService } from "@web/core/utils/hooks";
 
 /**
@@ -21,24 +22,24 @@ import { useService } from "@web/core/utils/hooks";
 export class CompanyDependentDialog extends Component {
     static template = "base_company_dependent.CompanyDependentDialog";
     static components = { Dialog, AutoComplete };
-    static props = {
-        fieldName: { type: String },
-        fieldString: { type: String },
-        required: { type: Boolean },
-        resId: { type: Number },
-        resModel: { type: String },
-        onSaved: { type: Function },
-        close: { type: Function },
-    };
+    props = useProps({
+        fieldName: types.string(),
+        fieldString: types.string(),
+        required: types.boolean(),
+        resId: types.number(),
+        resModel: types.string(),
+        onSaved: types.function(),
+        close: types.function(),
+    });
 
     setup() {
         this.orm = useService("orm");
         this.cdService = useService("company_dependent");
-        this.notification = useService("notification");
+        this.notification = usePlugin(NotificationPlugin);
 
         this.title = _t("Company Values: %s", this.props.fieldString);
 
-        this.state = useState({
+        this.state = proxy({
             rows: [],
             fieldType: null,
             comodelName: null,
