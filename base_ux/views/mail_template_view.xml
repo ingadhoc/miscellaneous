@@ -42,7 +42,7 @@
     </record> -->
 
     <record id="mail.action_email_template_tree_all" model="ir.actions.act_window">
-        <field name="context">{'search_default_active': True, 'active_test': False}</field>
+        <field name="context">{'search_default_base_templates': 1, 'search_default_active': True, 'active_test': False}</field>
     </record>
 
 </odoo>
