@@ -64,6 +64,7 @@ class TestMaintenanceRating(TransactionCase):
         self.assertNotIn("Tech signature", message.body)
         self.assertIn(request.maintenance_team_id.name, message.body)
         self.assertIn(request.company_id.name, message.body)
+        self.assertEqual(message.author_id, self.env.user.partner_id, "Sent by the user who sends the rating")
 
     def test_send_rating_without_technician(self):
         request = self._create_request(self.env["res.users"])
