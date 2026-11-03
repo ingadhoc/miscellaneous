@@ -8,9 +8,15 @@ class TestMaintenanceRating(TransactionCase):
         super().setUpClass()
         cls.requester = new_test_user(cls.env, login="maintenance_ux_requester", email="requester@example.com")
         cls.technician = new_test_user(
-            cls.env, login="maintenance_ux_technician", email="technician@example.com", signature="Tech signature"
+            cls.env,
+            login="maintenance_ux_technician",
+            name="First Technician",
+            email="technician@example.com",
+            signature="Tech signature",
         )
-        cls.technician_2 = new_test_user(cls.env, login="maintenance_ux_technician_2", email="technician2@example.com")
+        cls.technician_2 = new_test_user(
+            cls.env, login="maintenance_ux_technician_2", name="Second Technician", email="technician2@example.com"
+        )
         cls.template = cls.env.ref("maintenance_ux.mail_template_maintenance_request_rating")
 
     def _create_request(self, technicians):
@@ -50,8 +56,21 @@ class TestMaintenanceRating(TransactionCase):
     def test_send_rating_with_several_technicians(self):
         request = self._create_request(self.technician | self.technician_2)
         request.action_send_rating()
-        self.assertEqual(len(request.rating_ids), 1)
-        self.assertFalse(request.rating_ids.rated_partner_id)
+        rating = request.rating_ids
+        self.assertEqual(len(rating), 1)
+        self.assertFalse(rating.rated_partner_id)
+        message = request.message_ids.filtered(lambda m: rating.access_token in (m.body or ""))
+        self.assertIn("First Technician, Second Technician", message.body)
+        self.assertNotIn("Tech signature", message.body)
+        self.assertIn(request.maintenance_team_id.name, message.body)
+        self.assertIn(request.company_id.name, message.body)
+
+    def test_send_rating_without_technician(self):
+        request = self._create_request(self.env["res.users"])
+        request.action_send_rating()
+        message = request.message_ids.filtered(lambda m: request.rating_ids.access_token in (m.body or ""))
+        self.assertNotIn("assigned to", message.body)
+        self.assertIn(request.company_id.name, message.body)
 
     def test_apply_rating_updates_request_stats(self):
         request = self._create_request(self.technician)
