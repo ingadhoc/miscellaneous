@@ -27,8 +27,8 @@
                         <tr>
                             <td style="padding:15px 20px 10px 20px;">
                             <p>Hello,</p>
-                            <p>Please take a moment to rate our services related to the order "<strong><t t-out="object.name or ''"/></strong>"
-                            assigned to <strong><t t-out="object._rating_get_operator().name or ''"/></strong>.</p>
+                            <p>Please take a moment to rate our services related to the order "<strong><t t-out="object.name or ''"/></strong>"<t t-if="object.user_ids">
+                            assigned to <strong><t t-out="', '.join(object.user_ids.mapped('name'))"/></strong></t>.</p>
                             <p>We appreciate your feedback. It helps us to improve continuously.</p>
                             </td>
                         </tr>
@@ -70,7 +70,13 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="padding:15px 20px 10px 20px;" t-out="len(object.user_ids) == 1 and object.user_ids.signature or ''"/>
+                            <td style="padding:15px 20px 10px 20px;">
+                                <t t-if="len(object.user_ids) == 1 and object.user_ids.signature" t-out="object.user_ids.signature"/>
+                                <t t-else="">
+                                    <t t-if="object.maintenance_team_id"><t t-out="object.maintenance_team_id.name"/><br/></t>
+                                    <t t-out="object.company_id.name or ''"/>
+                                </t>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

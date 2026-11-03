@@ -38,7 +38,7 @@ To use this module, you need to:
 
 #. Open a maintenance request and click "Send Rating Request". The creator of the request receives an email to rate the service.
 #. The "Rating" smart button shows the ratings received for the request.
-#. If the request has several technicians, or none, the rating is not linked to any technician.
+#. If the request has several technicians, or none, the rating is not linked to any technician. The email lists every technician and is signed with the maintenance team and the company.
 
 .. image:: https://odoo-community.org/website/image/ir.attachment/5784_f2813bd/datas
    :alt: Try me on Runbot
