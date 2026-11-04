@@ -15,15 +15,20 @@ class MailComposeMessage(models.TransientModel):
             return mail_values_all
 
         scheduled_date = datetime.now() + timedelta(seconds=self.env.user.send_message_delay)
-        for res_id, mail_values in mail_values_all.items():
-            mail_values["scheduled_date"] = scheduled_date
+        for mail_values in mail_values_all.values():
+            # Keep the date set by the composer or its template
+            if not mail_values.get("scheduled_date"):
+                mail_values["scheduled_date"] = scheduled_date
         return mail_values_all
 
     def _action_send_mail(self, auto_commit=False):
         """
         Cambio de logica: si hay un retraso configurado, se programa el envío en lugar de enviarlo inmediatamente.
         """
-        if not self.env.user.send_message_delay:
+        # Scheduling only works in mono-comment mode, the other modes keep the delay on the mail values
+        if not self.env.user.send_message_delay or any(
+            wizard.composition_mode != "comment" or wizard.composition_batch for wizard in self
+        ):
             return super()._action_send_mail(auto_commit=auto_commit)
 
         self._action_schedule_message()
