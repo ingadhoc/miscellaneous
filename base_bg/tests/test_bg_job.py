@@ -6,6 +6,7 @@ from datetime import timedelta
 from unittest.mock import patch
 from uuid import uuid4
 
+import psycopg2
 from odoo import fields, tools
 from odoo.addons.base_bg.models.base_bg import BaseBg
 from odoo.exceptions import UserError
@@ -400,3 +401,47 @@ class TestBgJob(TransactionCase):
             base_bg.check_serializable(list_data)
         with self.assertRaises(ValueError):
             base_bg.check_serializable(function_data)
+
+    def test_run_notification_failure_keeps_job_done(self):
+        """A failed notification must not roll back nor retry a job that already finished."""
+        partner = self.env["res.partner"].create({"name": "Notify Failure Partner"})
+        job = self._create_job(
+            name="Notify Failure Job",
+            method="write",
+            args_json=[{"function": "written by the job"}],
+            kwargs_json={"_record_ids": [partner.id]},
+        )
+
+        with (
+            patch.object(
+                type(job),
+                "_notify_user",
+                side_effect=psycopg2.errors.SerializationFailure("concurrent update"),
+            ) as mock_notify,
+            patch.object(self.env.cr, "commit"),
+            patch.object(BaseBg, "_trigger_crons"),
+            self.assertLogs("odoo.addons.base_bg.models.bg_job", level="WARNING") as logs,
+        ):
+            job.run()
+
+        mock_notify.assert_called_once()
+        self.assertEqual(job.state, "done")
+        self.assertEqual(job.retry_count, 0)
+        self.assertEqual(partner.function, "written by the job")
+        self.assertIn("notification failed", logs.output[0])
+
+    def test_cron_runs_one_job_per_run_and_retriggers(self):
+        """Each runner execution processes a single job and triggers itself while jobs remain."""
+        self.BgJob.search([("state", "=", "enqueued")]).cancel()
+        jobs = self._create_job(name="Runner Job 1") | self._create_job(name="Runner Job 2")
+        cron = self.env.ref("base_bg.ir_cron_bg_job_runner")
+
+        with (
+            patch.object(self.env.cr, "commit"),
+            patch.object(BaseBg, "_trigger_crons") as mock_trigger,
+        ):
+            self.BgJob.with_context(cron_id=cron.id)._cron_run_enqueued_jobs()
+
+        self.assertCountEqual(jobs.mapped("state"), ["done", "enqueued"])
+        # One trigger from finish() and one from the runner, since a job is still enqueued.
+        self.assertEqual(mock_trigger.call_count, 2)

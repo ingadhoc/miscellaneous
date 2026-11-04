@@ -190,13 +190,15 @@ class BgJob(models.Model):
             # Execute the method and capture the result
             result = getattr(records, self.method)(*args, **kwargs)
             self.finish()
-            if result:
-                self._notify_user(result)
-                self.env.cr.commit()  # pylint: disable=invalid-commit
+            # Commit before notifying: a failed notification must not roll back the job's work.
+            self.env.cr.commit()  # pylint: disable=invalid-commit
         except Exception as e:
             self.env.cr.rollback()  # pylint: disable=invalid-commit
             self._handle_job_error(e)
             raise
+
+        if result:
+            self._notify_result(result)
 
     def enqueue(self, retry: bool = False):
         """Mark the job as enqueued."""
@@ -295,6 +297,21 @@ class BgJob(models.Model):
             subtype_xmlid="mail.mt_comment",
         )
 
+    def _notify_result(self, result: str):
+        """
+        Notify the result of a job that is already done and committed.
+
+        The notification is best effort: an error here (typically a serialization
+        failure on ``discuss_channel_member``) is logged and dropped, so the job is
+        neither failed nor run again.
+        """
+        try:
+            with self.env.cr.savepoint():
+                self._notify_user(result)
+        except Exception:
+            _logger.warning("Job %s is done but its user notification failed", self.name, exc_info=True)
+        self.env.cr.commit()  # pylint: disable=invalid-commit
+
     def _get_next_jobs(self) -> "BgJob":
         """
         Get the next jobs in the same batch.
@@ -310,11 +327,15 @@ class BgJob(models.Model):
         return jobs
 
     @api.model
-    def _cron_run_enqueued_jobs(self, limit: int = 5):
+    def _cron_run_enqueued_jobs(self, limit: int = 1):
         """
         Execute enqueued background jobs.
 
-        :param limit: Maximum number of jobs to process (default: 5)
+        The cron real-time limit applies to the whole run, so chaining several long
+        jobs gets the worker killed. One job per run by default; the runner triggers
+        itself again while enqueued jobs remain.
+
+        :param limit: Maximum number of jobs to process (default: 1)
         """
         cron_id = (
             self.env.context.get("cron_id", False)
@@ -336,6 +357,9 @@ class BgJob(models.Model):
             except Exception as e:
                 _logger.exception("Error executing job %s: %s", job.id, e)
                 continue
+
+        if self.search_count([("state", "=", "enqueued")], limit=1):
+            self.env["base.bg"].sudo()._trigger_crons()
 
     @api.model
     def _cron_check_running_jobs(self):
