@@ -1066,3 +1066,31 @@ class TestBgJob(TransactionCase):
             deleted, more = self.BgJob._gc_finished_jobs(limit=1)
             self.assertLessEqual(deleted, 1)
         self.assertFalse(jobs.exists())
+
+    def test_run_notification_failure_keeps_job_done(self):
+        """A failed notification must not roll back nor retry a job that already finished."""
+        partner = self.env["res.partner"].create({"name": "Notify Failure Partner"})
+        job = self._create_job(
+            name="Notify Failure Job",
+            state="running",
+            method="write",
+            args_json=[{"function": "written by the job"}],
+            kwargs_json={"_record_ids": [partner.id]},
+        )
+
+        with (
+            patch.object(
+                type(job),
+                "_notify_user",
+                side_effect=psycopg2.errors.SerializationFailure("concurrent update"),
+            ) as mock_notify,
+            patch.object(self.env.cr, "commit"),
+            self.assertLogs("odoo.addons.base_bg.models.bg_job", level="WARNING") as logs,
+        ):
+            job.run()
+
+        mock_notify.assert_called_once()
+        self.assertEqual(job.state, "done")
+        self.assertEqual(job.retry_count, 0)
+        self.assertEqual(partner.function, "written by the job")
+        self.assertIn("notification failed", logs.output[0])
