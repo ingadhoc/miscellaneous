@@ -32,7 +32,7 @@
         "hr_timesheet_attendance",
     ],
     "data": [
-        "security/ir.model.access.csv",
+        'security/ir.access.csv',
     ],
     "demo": [],
     "installable": True,
