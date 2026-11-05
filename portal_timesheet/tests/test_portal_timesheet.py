@@ -37,8 +37,8 @@ class TestPortalTimesheet(TransactionCase):
         """Portal backend users log hours as followers of the project, not as collaborators.
 
         Covers: project read limited to followed portal projects, timesheet creation on a
-        followed task, no access to the timesheets of other projects, task write kept as in
-        19.0 with the default config, and the timesheet helpers that need sudo.
+        followed task, no access to the timesheets of other projects, no task write, and the
+        timesheet helpers that need sudo.
         """
         Project = self.env["project.project"].with_user(self.user)
         Line = self.env["account.analytic.line"].with_user(self.user)
@@ -57,8 +57,10 @@ class TestPortalTimesheet(TransactionCase):
             self.assertFalse(Line.search([("id", "=", self.other_line.id)]))
             with self.assertRaises(AccessError):
                 self.other_line.with_user(self.user).check_access("read")
-        with self.subTest("can write tasks, as in 19.0 with the portal sharing rule inactive"):
-            self.other_task.with_user(self.user).check_access("write")
+        with self.subTest("does not write tasks: logging hours does not need it"):
+            for task in self.task | self.other_task:
+                with self.assertRaises(AccessError):
+                    task.with_user(self.user).check_access("write")
         with self.subTest("timesheet helpers do not raise access errors"):
             self.user.with_user(self.user).get_last_validated_timesheet_date()
             self.assertEqual(
