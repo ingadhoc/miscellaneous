@@ -1,2 +1,2 @@
 id,name,model_id,group_id/id,operation,domain
-access_hr_attendance,portal_timesheet_hr_attendance,hr.attendance,portal_timesheet.group_portal_backend_timesheet,r,
+access_hr_attendance,portal_timesheet_hr_attendance,hr.attendance,portal_timesheet.group_portal_backend_timesheet,r,"[] if not user.has_group('hr_attendance.group_hr_attendance_own_reader') else [(0, '=', 1)]"
