@@ -6,15 +6,17 @@
 
 .. |icon| image:: https://raw.githubusercontent.com/ingadhoc/maintainer-tools/master/resources/adhoc-icon.png
 
-.. image:: https://img.shields.io/badge/license-AGPL--3-blue.png
-   :target: https://www.gnu.org/licenses/agpl
-   :alt: License: AGPL-3
+.. image:: https://img.shields.io/badge/license-LGPL--3-blue.png
+   :target: https://www.gnu.org/licenses/lgpl
+   :alt: License: LGPL-3
 
 ================
 Portal Timesheet
 ================
 
 This module adds a new group that allows the portal backend user to manage its own timesheets. 
+
+#. Users with this group log hours on the projects with portal visibility that they follow, and on the tasks of those projects. They do not need to be collaborators of the project.
 
 #. This module creates the necessary groups to be able to give permissions to a portal user for timesheet, but the installation of the module alone does nothing, it is then necessary to choose the portal group that includes this functionality and add these groups as inheritance.
 
