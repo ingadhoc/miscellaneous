@@ -35,8 +35,7 @@
     ],
     "data": [
         "security/res_groups.xml",
-        "security/ir_rule.xml",
-        "security/ir.model.access.csv",
+        "security/ir.access.csv",
         "views/base_menus.xml",
         "views/hr_employee_views.xml",
         "views/project_project_views.xml",
