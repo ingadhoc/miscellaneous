@@ -1,31 +1,28 @@
 /** @odoo-module **/
 
 import { registry } from "@web/core/registry";
+import { exprToBoolean } from "@web/core/utils/strings";
 import { importRecordsItem } from "@base_import/import_records/import_records";
 
 const cogMenuRegistry = registry.category("cogMenu");
 
 /**
- * Core hides the "Import records" gear menu item on small screens
- * (isDisplayed checks `!isSmall`, see base_import/import_records.js).
- * That's intentional for the default import wizard, but some clients
- * still want the entry available on mobile. Re-register the same item,
- * only forcing `isSmall` to false so the rest of the original condition
- * (view type, `import`/`create` arch attributes, action type) still applies.
- *
- * Owl envs are built with `Object.create` (prototypal, frozen) — `config`
- * lives on a prototype, not as an own property. A plain `{...env}` spread
- * only copies own properties and drops `config`, so `Object.create` is used
- * here to shadow `isSmall` while keeping the rest of the chain intact.
+ * Core hides the "Import records" gear menu item on small screens, and some
+ * clients still want it there. Re-register the same item with core's condition
+ * minus that check. The check cannot be delegated: core reads `isSmall` from
+ * the `ui` service, not from the env it gets, so the condition is repeated
+ * here and has to stay in sync with
+ * base_import/static/src/import_records/import_records.js.
  */
 cogMenuRegistry.add(
     "import-menu",
     {
         ...importRecordsItem,
-        isDisplayed: (env) =>
-            importRecordsItem.isDisplayed(
-                Object.create(env, { isSmall: { value: false, enumerable: true } })
-            ),
+        isDisplayed: ({ config }) =>
+            config.actionType === "ir.actions.act_window" &&
+            ["kanban", "list", "grid"].includes(config.viewType) &&
+            exprToBoolean(config.viewArch.getAttribute("import"), true) &&
+            exprToBoolean(config.viewArch.getAttribute("create"), true),
     },
     { force: true, sequence: 1 }
 );
