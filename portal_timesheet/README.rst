@@ -16,7 +16,7 @@ Portal Timesheet
 
 This module adds a new group that allows the portal backend user to manage its own timesheets. 
 
-#. Users with this group log hours on the projects with portal visibility that they follow, and on the tasks of those projects. They do not need to be collaborators of the project.
+#. Users with this group log hours on the projects with portal visibility that they follow, and on the tasks they follow. They do not need to be collaborators of the project.
 
 #. This module creates the necessary groups to be able to give permissions to a portal user for timesheet, but the installation of the module alone does nothing, it is then necessary to choose the portal group that includes this functionality and add these groups as inheritance.
 
