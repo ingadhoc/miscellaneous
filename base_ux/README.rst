@@ -21,6 +21,7 @@ Several Improvements:
     * Make parent field on res.company invisible as it is useless now
     * Keep the activity's description when changing the activity type, regardless of the activity type's description, and change the activity user only if the activity type has a default user.
     * Make company_registry field on res.company invisible as it is useless now
+    * Blank a sensitive field on the client read path (read, search_read, web_read) and refuse to export it, while the ORM goes on reading it for the business logic.
 
 
 Installation
@@ -31,7 +32,23 @@ Only install the module.
 Configuration
 =============
 
-There is nothing to configure.
+There is nothing to configure, except for the list of fields that must not
+reach a client, in ``models/field_edge_security.py``::
+
+    FIELD_EDGE_SECURITY = {
+        "product.product": {
+            "standard_price": "!price_security.group_only_view_sale_price",
+        },
+    }
+
+The value is a ``has_groups`` spec, so it reads like ``groups=`` on the field:
+the groups that may read it, with ``!`` for the ones that may not. Unlike
+``groups=``, it does not take the field away from the server, so the computes
+and the valuation go on working.
+
+A field whose module is not installed is simply not there and its entry does
+nothing, so one list covers every base. Adding a field is a pull request to
+that file.
 
 Usage
 =====
