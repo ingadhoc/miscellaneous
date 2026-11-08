@@ -10,9 +10,9 @@
    :target: https://www.gnu.org/licenses/agpl
    :alt: License: AGPL-3
 
-=======
-Base UX
-=======
+============
+Base UX Test
+============
 
 Several Improvements:
     * New button to add/remove a window action as a contextual action in the windows source model.
