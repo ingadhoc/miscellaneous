@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Record Rule: internal users can only write/delete their own receipts -->
+    <record id="rule_mail_announcement_receipt_own" model="ir.rule">
+        <field name="name">Announcement Receipt: own records only (write/delete)</field>
+        <field name="model_id" ref="model_mail_announcement_receipt"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="perm_read" eval="0"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+</odoo>
