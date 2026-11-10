@@ -67,6 +67,14 @@ class TestPortalTimesheet(TransactionCase):
                 Line._get_favorite_project_id(self.employee.id), Line.sudo()._get_favorite_project_id(self.employee.id)
             )
 
+    def test_portal_user_filters_tasks_by_timeoff(self):
+        """The timesheet grid filters tasks by is_timeoff_task, a field restricted to timesheet users."""
+        if "is_timeoff_task" not in self.env["project.task"]._fields:
+            self.skipTest("project_timesheet_holidays is not installed")
+        Task = self.env["project.task"].with_user(self.user)
+        self.assertIn(self.task, Task.search([("is_timeoff_task", "=", False)]))
+        self.assertFalse(self.task.with_user(self.user).is_timeoff_task)
+
     def test_timesheet_menu_visible(self):
         """The Timesheets root menu stays visible to the group: portal_backend hides root menus without group."""
         menu = self.env.ref("hr_timesheet.timesheet_menu_root")
