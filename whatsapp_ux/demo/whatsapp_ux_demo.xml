@@ -6,6 +6,7 @@
         <field name="body">Hello {{1}}, this is a demo bulk WhatsApp message.</field>
         <field name="status">approved</field>
         <field name="model_id" ref="base.model_res_partner"/>
+        <field name="use_default_recipient" eval="False"/>
         <field name="phone_field">phone</field>
         <field name="wa_account_id" ref="whatsapp.demo_whatsapp_account"/>
         <field name="wa_template_uid">whatsapp_ux_demo_template</field>
