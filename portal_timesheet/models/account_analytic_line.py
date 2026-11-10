@@ -19,6 +19,13 @@ class AccountAnalyticLine(models.Model):
         else:
             super()._compute_readonly_timesheet()
 
+    @api.onchange("product_id", "product_uom_id", "unit_amount", "currency_id")
+    def on_change_unit_amount(self):
+        # It reads product costs, categories and accounts, which these users cannot read.
+        if not self.env.su and self.env.user.has_group("portal_timesheet.group_portal_backend_timesheet"):
+            return super(AccountAnalyticLine, self.sudo()).on_change_unit_amount()
+        return super().on_change_unit_amount()
+
     @api.model_create_multi
     def create(self, vals_list):
         if self.env.user.has_group("portal_timesheet.group_portal_backend_timesheet"):

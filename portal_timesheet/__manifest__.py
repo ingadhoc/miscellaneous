@@ -28,6 +28,7 @@
     "license": "LGPL-3",
     "images": [],
     "depends": [
+        "account",
         "portal_backend",
         "hr_timesheet",
         "timesheet_grid",
