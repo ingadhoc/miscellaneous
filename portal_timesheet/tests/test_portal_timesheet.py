@@ -75,6 +75,31 @@ class TestPortalTimesheet(TransactionCase):
         self.assertIn(self.task, Task.search([("is_timeoff_task", "=", False)]))
         self.assertFalse(self.task.with_user(self.user).is_timeoff_task)
 
+    def test_portal_user_onchange_with_product(self):
+        """The timesheet form onchanges read product costs and accounts, which portal users cannot read.
+
+        sale_timesheet fills the product of the line from the sale order line, so this happens when
+        logging hours on a project sold with a service invoiced on timesheets.
+        """
+        if "product_id" not in self.env["account.analytic.line"]._fields:
+            self.skipTest("account is not installed")
+        product = self.env["product.product"].create({"name": "Consulting", "type": "service", "standard_price": 30})
+        result = (
+            self.env["account.analytic.line"]
+            .with_user(self.user)
+            .onchange(
+                {
+                    "project_id": self.project.id,
+                    "task_id": self.task.id,
+                    "product_id": product.id,
+                    "unit_amount": 2,
+                },
+                ["unit_amount"],
+                {"project_id": {}, "task_id": {}, "product_id": {}, "unit_amount": {}, "amount": {}},
+            )
+        )
+        self.assertEqual(result["value"]["amount"], -60)
+
     def test_timesheet_menu_visible(self):
         """The Timesheets root menu stays visible to the group: portal_backend hides root menus without group."""
         menu = self.env.ref("hr_timesheet.timesheet_menu_root")
