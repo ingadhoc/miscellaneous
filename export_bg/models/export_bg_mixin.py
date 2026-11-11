@@ -53,7 +53,7 @@ class Base(models.AbstractModel):
         export_data = self.export_data(field_names).get("datas", [])
 
         if export_format == "csv":
-            content = CSVExport().from_data(params["fields"], field_labels, export_data).encode()
+            content = CSVExport().from_data(params["fields"], field_labels, export_data)
             ext, mime = "csv", "text/csv;charset=utf8"
         else:
             content = json.dumps({"headers": field_labels, "rows": export_data}, cls=DateTimeEncoder).encode()
@@ -62,7 +62,7 @@ class Base(models.AbstractModel):
         self.env["ir.attachment"].create(
             {
                 "name": f"export_{export_id}_chunk_{chunk_num}.{ext}",
-                "datas": base64.b64encode(content),
+                "raw": content,
                 "mimetype": mime,
                 "res_model": False,
                 "res_id": False,
@@ -83,7 +83,7 @@ class IrModel(models.Model):
     @api.model
     def get_export_threshold(self):
         """Get the threshold for background export without requiring admin permissions."""
-        return int(self.env["ir.config_parameter"].sudo().get_param("export_bg.record_threshold", "500"))
+        return self.env["ir.config_parameter"].sudo().get_int("export_bg.record_threshold", 500)
 
     @api.model
     def web_export(self, data, export_format):
@@ -129,8 +129,7 @@ class IrModel(models.Model):
 
         if export_format == "csv":
             combined = b"".join(
-                base64.b64decode(c.datas) if i == 0 else b"\n".join(base64.b64decode(c.datas).split(b"\n")[1:])
-                for i, c in enumerate(chunks)
+                c.raw.content if i == 0 else b"\n".join(c.raw.content.split(b"\n")[1:]) for i, c in enumerate(chunks)
             )
             chunks.unlink()
             return self._save_attachment(combined, ".csv", "text/csv;charset=utf8")
@@ -140,7 +139,7 @@ class IrModel(models.Model):
             ws = wb.add_worksheet()
             row_num = 0
             for chunk in chunks:
-                chunk_data = json.loads(base64.b64decode(chunk.datas))
+                chunk_data = json.loads(chunk.raw.content)
                 if row_num == 0:
                     ws.write_row(0, 0, chunk_data["headers"])
                     row_num = 1
@@ -155,9 +154,7 @@ class IrModel(models.Model):
             )
 
     def _save_attachment(self, content, ext, mime):
-        att = self.env["ir.attachment"].create(
-            {"name": f"export{ext}", "datas": base64.b64encode(content), "mimetype": mime}
-        )
+        att = self.env["ir.attachment"].create({"name": f"export{ext}", "raw": content, "mimetype": mime})
         return Markup(
             f'<p>{_("Your export is ready!")}</p><p><a href="/web/content/{att.id}?download=true" class="btn btn-primary"><i class="oi" data-icon="download"/> {_("Download")} {att.name}</a></p>'
         )

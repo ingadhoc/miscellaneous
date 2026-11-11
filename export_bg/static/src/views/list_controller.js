@@ -25,7 +25,7 @@ patch(ExportDataDialog.prototype, {
             const format = this.availableFormats[this.state.selectedFormat].tag;
             const method = format === "csv" ? "web_export_csv" : "web_export_xlsx";
 
-            const exportedFields = this.state.exportList.map((field) => ({
+            const exportedFields = this.getFieldsToExport().map((field) => ({
                 string: field.label || field.string,
                 value: field.name || field.id,
                 name: field.name || field.id,
