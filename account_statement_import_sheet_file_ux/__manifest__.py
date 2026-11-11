@@ -36,6 +36,7 @@
     ],
     "data": [
         "security/ir.model.access.csv",
+        "views/res_config_settings_views.xml",
         "views/account_statement_import_sheet_mapping_preview_views.xml",
         "views/account_statement_import_sheet_mapping_views.xml",
         "views/account_statement_import_views.xml",

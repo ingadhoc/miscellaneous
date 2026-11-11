@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.statement.import.ux</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form" />
+        <field name="arch" type="xml">
+            <block id="bank_cash" position="inside">
+                <setting
+                    id="statement_import_auto_reconcile"
+                    company_dependent="1"
+                    invisible="not is_root_company"
+                    help="Imported statement lines are matched with invoices and payments right away"
+                >
+                    <field name="statement_import_auto_reconcile" />
+                </setting>
+            </block>
+        </field>
+    </record>
+</odoo>
