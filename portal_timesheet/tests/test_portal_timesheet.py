@@ -2,6 +2,9 @@
 # For copyright and license notices, see __manifest__.py file in module root
 # directory
 ##############################################################################
+from datetime import timedelta
+
+from odoo import fields
 from odoo.exceptions import AccessError
 from odoo.tests.common import TransactionCase
 
@@ -67,6 +70,33 @@ class TestPortalTimesheet(TransactionCase):
                 Line._get_favorite_project_id(self.employee.id), Line.sudo()._get_favorite_project_id(self.employee.id)
             )
 
+    def test_portal_user_deletes_hours_of_a_sold_project(self):
+        """sale reads the sale order line of the hours when deleting them, which portal users cannot read."""
+        if "so_line" not in self.env["account.analytic.line"]._fields:
+            self.skipTest("sale is not installed")
+        product = self.env["product.product"].create({"name": "Consulting", "type": "service"})
+        order = self.env["sale.order"].create(
+            {
+                "partner_id": self.env["res.partner"].create({"name": "Customer"}).id,
+                "order_line": [(0, 0, {"product_id": product.id})],
+            }
+        )
+        line = self.env["account.analytic.line"].create(
+            {
+                "name": "Sold hours",
+                "project_id": self.project.id,
+                "task_id": self.task.id,
+                "employee_id": self.employee.id,
+                "so_line": order.order_line.id,
+                "unit_amount": 1,
+            }
+        )
+        self.env.invalidate_all()
+        line.with_user(self.user).unlink()
+        self.assertFalse(line.exists())
+        with self.assertRaises(AccessError):
+            self.other_line.with_user(self.user).unlink()
+
     def test_portal_user_filters_tasks_by_timeoff(self):
         """The timesheet grid filters tasks by is_timeoff_task, a field restricted to timesheet users."""
         if "is_timeoff_task" not in self.env["project.task"]._fields:
@@ -97,6 +127,23 @@ class TestPortalTimesheet(TransactionCase):
                     [],
                     {"employee_id": {"fields": {"private_email": {}}}, "unit_amount": {}},
                 )
+
+    def test_portal_user_cannot_delete_validated_hours(self):
+        """Deleting runs as superuser for sale: the validation of timesheet_grid still applies."""
+        self.employee.sudo().last_validated_timesheet_date = fields.Date.today() - timedelta(days=2)
+        line = self.env["account.analytic.line"].create(
+            {
+                "name": "Validated hours",
+                "project_id": self.project.id,
+                "task_id": self.task.id,
+                "employee_id": self.employee.id,
+                "date": fields.Date.today() - timedelta(days=10),
+                "unit_amount": 1,
+            }
+        )
+        with self.assertRaises(AccessError):
+            line.with_user(self.user).unlink()
+        self.assertTrue(line.exists())
 
     def test_timesheet_menu_visible(self):
         """The Timesheets root menu stays visible to the group: portal_backend hides root menus without group."""
