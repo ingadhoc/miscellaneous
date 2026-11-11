@@ -318,15 +318,23 @@ class AccountStatementImport(models.TransientModel):
     def _complete_stmts_vals(self, stmts_vals, journal, account_number):
         """Create the statements the way the Enterprise import does.
 
-        `auto_statement_processing` runs the automatic reconciliation models on
-        the new lines right away, as `account_bank_statement_import` does.
-        Without it they wait for the daily cron. It is read by
-        `account_accountant` on `create` and harmless without it.
+        `auto_statement_processing` runs on the new lines the whole automatic
+        reconciliation of the cron, as `account_bank_statement_import` does: not
+        just the reconciliation models, but also matching open invoices and
+        payments of the partner by amount. It follows the company setting
+        `statement_import_auto_reconcile`, and it is always written, False
+        included, because the bank matching action of `account_accountant` puts
+        it at True in the context an import opened from there inherits. It is
+        read by `account_accountant` on `create` and harmless without it.
 
         `creation_context` is the seam the base module exposes for this: it
         pops it off the values and passes it to the create of the statement.
         """
         stmts_vals = super()._complete_stmts_vals(stmts_vals, journal, account_number)
+        creation_context = {
+            # read from the root, the company the settings write it on
+            "auto_statement_processing": journal.company_id.root_id.statement_import_auto_reconcile,
+        }
         for st_vals in stmts_vals:
-            st_vals.setdefault("creation_context", {}).update(auto_statement_processing=True)
+            st_vals.setdefault("creation_context", {}).update(creation_context)
         return stmts_vals
