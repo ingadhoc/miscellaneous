@@ -19,13 +19,13 @@
 ##############################################################################
 {
     "name": "Portal Timesheet",
-    "version": "19.0.1.0.0",
+    "version": "20.0.1.0.0",
     "category": "Base",
     "sequence": 14,
     "summary": "",
     "author": "ADHOC SA",
     "website": "www.adhoc.com.ar",
-    "license": "AGPL-3",
+    "license": "LGPL-3",
     "images": [],
     "depends": [
         "portal_backend",
@@ -35,8 +35,7 @@
     ],
     "data": [
         "security/res_groups.xml",
-        "security/ir_rule.xml",
-        "security/ir.model.access.csv",
+        "security/ir.access.csv",
         "views/base_menus.xml",
         "views/hr_employee_views.xml",
         "views/project_project_views.xml",
@@ -46,7 +45,7 @@
         "demo/project_demo.xml",
         "demo/res_users_demo.xml",
     ],
-    "installable": False,
+    "installable": True,
     "auto_install": False,
     "application": False,
 }

@@ -1,0 +1,166 @@
+##############################################################################
+# For copyright and license notices, see __manifest__.py file in module root
+# directory
+##############################################################################
+from odoo.exceptions import AccessError
+from odoo.tests.common import TransactionCase
+
+
+class TestPortalTimesheet(TransactionCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        Users = cls.env["res.users"].with_context(no_reset_password=True)
+        cls.group_timesheet = cls.env.ref("portal_timesheet.group_portal_backend_timesheet")
+        cls.user = Users.create({"name": "pt_user", "login": "pt_user", "access_type": "portal_backend"})
+        cls.user.group_ids = [(4, cls.group_timesheet.id)]
+        cls.user_no_group = Users.create(
+            {"name": "pt_no_group", "login": "pt_no_group", "access_type": "portal_backend"}
+        )
+        cls.employee = cls.env["hr.employee"].create({"name": "pt_user", "user_id": cls.user.id})
+        cls.project = cls.env["project.project"].create({"name": "Followed", "privacy_visibility": "portal"})
+        cls.project.message_subscribe(partner_ids=cls.user.partner_id.ids)
+        cls.other_project = cls.env["project.project"].create({"name": "Not followed", "privacy_visibility": "portal"})
+        cls.task = cls.env["project.task"].create({"name": "Followed task", "project_id": cls.project.id})
+        cls.other_task = cls.env["project.task"].create({"name": "Other task", "project_id": cls.other_project.id})
+        cls.other_line = cls.env["account.analytic.line"].create(
+            {
+                "name": "Other hours",
+                "project_id": cls.other_project.id,
+                "task_id": cls.other_task.id,
+                "employee_id": cls.env["hr.employee"].create({"name": "other"}).id,
+                "unit_amount": 2,
+            }
+        )
+
+    def test_portal_user_logs_hours_on_followed_project(self):
+        """Portal backend users log hours as followers of the project.
+
+        Covers: project read limited to followed portal projects, timesheet creation on a
+        followed task, no access to the timesheets of other projects, no task write, and the
+        timesheet helpers that need sudo.
+        """
+        Project = self.env["project.project"].with_user(self.user)
+        Line = self.env["account.analytic.line"].with_user(self.user)
+        with self.subTest("sees the followed project and not the other one"):
+            self.assertEqual(Project.search([("id", "in", (self.project | self.other_project).ids)]), self.project)
+            with self.assertRaises(AccessError):
+                self.other_project.with_user(self.user).check_access("read")
+        with self.subTest("logs hours on a task of the followed project"):
+            line = Line.create(
+                {"name": "My hours", "project_id": self.project.id, "task_id": self.task.id, "unit_amount": 3}
+            )
+            self.assertEqual(line.employee_id, self.employee)
+            self.assertEqual(Line.search([("project_id", "=", self.project.id)]), line)
+            self.assertFalse(line.readonly_timesheet)
+        with self.subTest("does not see the hours of the other project"):
+            self.assertFalse(Line.search([("id", "=", self.other_line.id)]))
+            with self.assertRaises(AccessError):
+                self.other_line.with_user(self.user).check_access("read")
+        with self.subTest("does not write tasks: logging hours does not need it"):
+            for task in self.task | self.other_task:
+                with self.assertRaises(AccessError):
+                    task.with_user(self.user).check_access("write")
+        with self.subTest("timesheet helpers do not raise access errors"):
+            self.user.with_user(self.user).get_last_validated_timesheet_date()
+            self.assertEqual(
+                Line._get_favorite_project_id(self.employee.id), Line.sudo()._get_favorite_project_id(self.employee.id)
+            )
+
+    def test_portal_user_logs_hours_as_collaborator(self):
+        """Sharing a project only adds collaborators: they log, edit and delete hours like followers.
+
+        Covers portal and invited users projects. Following an invited users project is not enough.
+        """
+        Line = self.env["account.analytic.line"].with_user(self.user)
+        for privacy in ("portal", "invited_users"):
+            with self.subTest(privacy=privacy):
+                project = self.env["project.project"].create(
+                    {"name": f"Shared {privacy}", "privacy_visibility": privacy}
+                )
+                self.env["project.collaborator"].create(
+                    {"project_id": project.id, "partner_id": self.user.partner_id.id}
+                )
+                self.assertNotIn(self.user.partner_id, project.message_partner_ids)
+                selectable = self.env["project.project"].with_user(self.user).search(Line._domain_project_id())
+                self.assertIn(project, selectable)
+                # create runs as superuser: browse the line again as the user to edit and delete it
+                line = Line.browse(Line.create({"name": "Shared hours", "project_id": project.id, "unit_amount": 1}).id)
+                self.assertEqual(Line.search([("project_id", "=", project.id)]), line)
+                line.write({"unit_amount": 2})
+                self.assertEqual(line.unit_amount, 2)
+                line.unlink()
+                self.assertFalse(line.exists())
+        with self.subTest("following an invited users project is not enough"):
+            project = self.env["project.project"].create({"name": "Invited", "privacy_visibility": "invited_users"})
+            project.message_subscribe(partner_ids=self.user.partner_id.ids)
+            line = Line.create({"name": "Invited hours", "project_id": project.id, "unit_amount": 1})
+            with self.assertRaises(AccessError):
+                line.with_user(self.user).check_access("write")
+
+    def test_portal_user_deletes_hours_of_a_sold_project(self):
+        """sale reads the sale order line of the hours when deleting them, which portal users cannot read."""
+        if "so_line" not in self.env["account.analytic.line"]._fields:
+            self.skipTest("sale is not installed")
+        product = self.env["product.product"].create({"name": "Consulting", "type": "service"})
+        order = self.env["sale.order"].create(
+            {
+                "partner_id": self.env["res.partner"].create({"name": "Customer"}).id,
+                "order_line": [(0, 0, {"product_id": product.id})],
+            }
+        )
+        line = self.env["account.analytic.line"].create(
+            {
+                "name": "Sold hours",
+                "project_id": self.project.id,
+                "task_id": self.task.id,
+                "employee_id": self.employee.id,
+                "so_line": order.order_line.id,
+                "unit_amount": 1,
+            }
+        )
+        self.env.invalidate_all()
+        line.with_user(self.user).unlink()
+        self.assertFalse(line.exists())
+        with self.assertRaises(AccessError):
+            self.other_line.with_user(self.user).unlink()
+
+    def test_portal_user_filters_tasks_by_timeoff(self):
+        """The timesheet grid filters tasks by is_timeoff_task, a field restricted to timesheet users."""
+        if "is_timeoff_task" not in self.env["project.task"]._fields:
+            self.skipTest("project_timesheet_holidays is not installed")
+        Task = self.env["project.task"].with_user(self.user)
+        self.assertIn(self.task, Task.search([("is_timeoff_task", "=", False)]))
+        self.assertFalse(self.task.with_user(self.user).is_timeoff_task)
+
+    def test_portal_user_onchange_with_product(self):
+        """The timesheet form onchanges read product costs and accounts, which portal users cannot read.
+
+        sale_timesheet fills the product of the line from the sale order line, so this happens when
+        logging hours on a project sold with a service invoiced on timesheets.
+        """
+        if "product_id" not in self.env["account.analytic.line"]._fields:
+            self.skipTest("account is not installed")
+        product = self.env["product.product"].create({"name": "Consulting", "type": "service", "standard_price": 30})
+        result = (
+            self.env["account.analytic.line"]
+            .with_user(self.user)
+            .onchange(
+                {
+                    "project_id": self.project.id,
+                    "task_id": self.task.id,
+                    "product_id": product.id,
+                    "unit_amount": 2,
+                },
+                ["unit_amount"],
+                {"project_id": {}, "task_id": {}, "product_id": {}, "unit_amount": {}, "amount": {}},
+            )
+        )
+        self.assertEqual(result["value"]["amount"], -60)
+
+    def test_timesheet_menu_visible(self):
+        """The Timesheets root menu stays visible to the group: portal_backend hides root menus without group."""
+        menu = self.env.ref("hr_timesheet.timesheet_menu_root")
+        Menu = self.env["ir.ui.menu"]
+        self.assertIn(menu.id, Menu.with_user(self.user)._visible_menu_ids())
+        self.assertNotIn(menu.id, Menu.with_user(self.user_no_group)._visible_menu_ids())
