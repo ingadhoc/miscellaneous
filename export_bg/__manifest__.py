@@ -19,7 +19,7 @@
 ##############################################################################
 {
     "name": "Export Background",
-    "version": "19.0.1.1.0",
+    "version": "20.0.1.0.0",
     "category": "Technical",
     "author": "ADHOC SA",
     "website": "https://www.adhoc.com.ar",
@@ -35,7 +35,7 @@
             "export_bg/static/src/views/list_controller.js",
         ],
     },
-    "installable": False,
+    "installable": True,
     "auto_install": False,
     "application": False,
 }
