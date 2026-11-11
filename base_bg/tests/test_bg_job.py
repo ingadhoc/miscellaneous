@@ -1015,3 +1015,54 @@ class TestBgJob(TransactionCase):
         ), patch.object(type(self.env), "invalidate_all") as mock_inv_err:
             err_job.run()
         mock_inv_err.assert_called()
+
+    def test_indexes_exist(self):
+        """The queue index and the self-referencing FK index are created with the table."""
+        self.assertTrue(tools.sql.index_exists(self.env.cr, "bg_job_queue_idx"))
+        self.assertTrue(tools.sql.index_exists(self.env.cr, "bg_job__next_job_id_index"))
+
+    def _create_finished_job(self, state, days_ago, **vals):
+        """Helper to build a finished job whose relevant timestamp is ``days_ago`` days old."""
+        when = fields.Datetime.now() - timedelta(days=days_ago)
+        date_field = "cancel_time" if state == "canceled" else "end_time"
+        return self._create_job(state=state, **{date_field: when}, **vals)
+
+    def test_gc_finished_jobs_respects_retention(self):
+        """Old done/canceled/failed jobs go away; recent and queued ones stay."""
+        old_done = self._create_finished_job("done", 31)
+        old_canceled = self._create_finished_job("canceled", 31)
+        old_failed = self._create_finished_job("failed", 91)
+        recent_done = self._create_finished_job("done", 29)
+        recent_failed = self._create_finished_job("failed", 31)
+        old_date = fields.Datetime.now() - timedelta(days=365)
+        queued = self._create_job(state="enqueued", end_time=old_date)
+        waiting = self._create_job(state="waiting", end_time=old_date)
+        running = self._create_job(state="running", end_time=old_date)
+
+        deleted, remaining = self.BgJob._gc_finished_jobs()
+
+        self.assertGreaterEqual(deleted, 3)
+        self.assertFalse(remaining)
+        self.assertFalse((old_done | old_canceled | old_failed).exists())
+        kept = recent_done | recent_failed | queued | waiting | running
+        self.assertEqual(kept.exists(), kept)
+
+    def test_gc_finished_jobs_disabled_by_zero_retention(self):
+        """A retention of 0 days keeps finished jobs forever."""
+        self._set_param("base_bg.done_retention_days", "0")
+        self._set_param("base_bg.failed_retention_days", "0")
+        old_done = self._create_finished_job("done", 400)
+        old_failed = self._create_finished_job("failed", 400)
+
+        self.assertEqual(self.BgJob._gc_finished_jobs(), (0, False))
+        self.assertEqual((old_done | old_failed).exists(), old_done | old_failed)
+
+    def test_gc_finished_jobs_batch_limit(self):
+        """Each batch deletes at most ``limit`` jobs, so the caller can commit in between."""
+        jobs = self._create_finished_job("done", 400) | self._create_finished_job("done", 400)
+
+        more = True
+        while more:
+            deleted, more = self.BgJob._gc_finished_jobs(limit=1)
+            self.assertLessEqual(deleted, 1)
+        self.assertFalse(jobs.exists())
