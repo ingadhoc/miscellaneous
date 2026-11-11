@@ -9,6 +9,10 @@
         <field name="group_ids" eval="[Command.set([ref('base.group_user')])]"/>
     </record>
 
+    <record id="hr_holidays.menu_hr_holidays_dashboard" model="ir.ui.menu">
+        <field name="group_ids" eval="[Command.set([ref('base.group_user')])]"/>
+    </record>
+
     <!-- Add portal holidays menu for My Time Off -->
     <menuitem
         id="hr_leave_menu_my_portal_holidays"
