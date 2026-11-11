@@ -67,6 +67,33 @@ class TestPortalTimesheet(TransactionCase):
                 Line._get_favorite_project_id(self.employee.id), Line.sudo()._get_favorite_project_id(self.employee.id)
             )
 
+    def test_portal_user_deletes_hours_of_a_sold_project(self):
+        """sale reads the sale order line of the hours when deleting them, which portal users cannot read."""
+        if "so_line" not in self.env["account.analytic.line"]._fields:
+            self.skipTest("sale is not installed")
+        product = self.env["product.product"].create({"name": "Consulting", "type": "service"})
+        order = self.env["sale.order"].create(
+            {
+                "partner_id": self.env["res.partner"].create({"name": "Customer"}).id,
+                "order_line": [(0, 0, {"product_id": product.id})],
+            }
+        )
+        line = self.env["account.analytic.line"].create(
+            {
+                "name": "Sold hours",
+                "project_id": self.project.id,
+                "task_id": self.task.id,
+                "employee_id": self.employee.id,
+                "so_line": order.order_line.id,
+                "unit_amount": 1,
+            }
+        )
+        self.env.invalidate_all()
+        line.with_user(self.user).unlink()
+        self.assertFalse(line.exists())
+        with self.assertRaises(AccessError):
+            self.other_line.with_user(self.user).unlink()
+
     def test_portal_user_filters_tasks_by_timeoff(self):
         """The timesheet grid filters tasks by is_timeoff_task, a field restricted to timesheet users."""
         if "is_timeoff_task" not in self.env["project.task"]._fields:
