@@ -18,7 +18,7 @@
     <!-- allocations -->
     <record id="hr_holidays_allocation_cl_pa" model="hr.leave.allocation">
         <field name="name">Paid Time Off for John Portal Advanced</field>
-        <field name="holiday_status_id" ref="hr_holidays.leave_type_paid_time_off"/>
+        <field name="work_entry_type_id" ref="hr_work_entry.generic_work_entry_type_legal_leave"/>
         <field name="number_of_days">10</field>
         <field name="employee_id" ref="portal_holidays.employee_portal_advanced"/>
         <field name="state">confirm</field>
@@ -31,7 +31,7 @@
 
     <record id="hr_holidays_allocation_vc_pa" model="hr.leave.allocation">
         <field name="name">Time Management Training</field>
-        <field name="holiday_status_id" ref="hr_holidays.leave_type_compensatory_days"/>
+        <field name="work_entry_type_id" ref="hr_work_entry.generic_work_entry_type_compensatory"/>
         <field name="number_of_days">7</field>
         <field name="employee_id" ref="portal_holidays.employee_portal_advanced"/>
         <field name="state">confirm</field>
@@ -41,7 +41,7 @@
 
     <record id="hr_holidays_cl_pa" model="hr.leave">
         <field name="name">Trip with Family</field>
-        <field name="holiday_status_id" ref="hr_holidays.leave_type_paid_time_off"/>
+        <field name="work_entry_type_id" ref="hr_work_entry.generic_work_entry_type_legal_leave"/>
         <field eval="time.strftime('%Y-%m-05')" name="date_from"/>
         <field eval="time.strftime('%Y-%m-08')" name="date_to"/>
         <field eval="time.strftime('%Y-%m-05')" name="request_date_from"/>
@@ -51,7 +51,7 @@
 
     <record id="hr_holidays_sl_pa" model="hr.leave">
         <field name="name">Sick day</field>
-        <field name="holiday_status_id" ref="hr_holidays.leave_type_sick_time_off"/>
+        <field name="work_entry_type_id" ref="hr_work_entry.generic_work_entry_type_sick_leave"/>
         <field eval="(datetime.now()+relativedelta(months=1, day=3, weekday=0)).strftime('%Y-%m-%d 01:00:00')" name="date_from"/>
         <field eval="(datetime.now()+relativedelta(months=1, day=3, weekday=0) + relativedelta(weekday=2)).strftime('%Y-%m-%d 23:00:00')" name="date_to"/>
         <field eval="(datetime.now()+relativedelta(months=1, day=3, weekday=0)).strftime('%Y-%m-%d 01:00:00')" name="request_date_from"/>
