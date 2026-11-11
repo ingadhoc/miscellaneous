@@ -11,6 +11,7 @@ from markupsafe import Markup, escape
 from odoo import _, api, fields, models, tools
 from odoo.exceptions import UserError
 from odoo.service.model import PG_CONCURRENCY_EXCEPTIONS_TO_RETRY
+from odoo.tools import SQL
 
 _logger = logging.getLogger(__name__)
 
@@ -26,6 +27,9 @@ MAX_ACQUIRE_RETRIES = 5
 # and resurrect the batch. With a limit configured the sweep uses that instead — past
 # it the worker would have been killed anyway, so the job is genuinely presumed dead.
 ORPHAN_SWEEP_GRACE = 3600
+
+# Finished jobs deleted per batch by the retention cleanup; each batch is committed on its own.
+GC_BATCH_SIZE = 10_000
 
 
 class BgJob(models.Model):
@@ -123,12 +127,17 @@ class BgJob(models.Model):
     next_job_id = fields.Many2one(
         "bg.job",
         readonly=True,
+        # Without it, deleting a job scans the table to clear the self-referencing FK.
+        index="btree_not_null",
         help="Next job in the batch sequence",
     )
     next_retry_at = fields.Datetime(
         readonly=True,
         help="Earliest time this job may be retried after a transient failure.",
     )
+
+    # Partial index for the queue read by _get_next_job and _has_eligible_jobs
+    _queue_idx = models.Index("(priority, create_date, id) WHERE state = 'enqueued'")
 
     @api.depends("start_time", "end_time")
     def _compute_duration(self):
@@ -457,6 +466,62 @@ class BgJob(models.Model):
                 limit=1,
             )
         )
+
+    @api.autovacuum
+    def _gc_finished_jobs(self, limit: int = GC_BATCH_SIZE) -> tuple[int, bool]:
+        """
+        Delete up to ``limit`` finished jobs past their retention period, without committing.
+
+        ``done`` and ``canceled`` jobs are kept ``base_bg.done_retention_days`` days
+        (default 30), ``failed`` ones ``base_bg.failed_retention_days`` days (default 90).
+        A value of 0 or less keeps them forever. Jobs still in the queue are never deleted.
+
+        The autovacuum runner commits after each call and calls again while the
+        second value is true, so a large backlog advances batch by batch.
+
+        :return: number of deleted jobs, and whether more may remain
+        """
+        done_days = self._get_int_param("base_bg.done_retention_days", 30)
+        failed_days = self._get_int_param("base_bg.failed_retention_days", 90)
+        now = fields.Datetime.now()
+        conditions = [
+            SQL(
+                "(state = %s AND COALESCE(%s, write_date) < %s)",
+                state,
+                SQL.identifier(date_field),
+                now - timedelta(days=days),
+            )
+            for state, date_field, days in (
+                ("done", "end_time", done_days),
+                ("canceled", "cancel_time", done_days),
+                ("failed", "end_time", failed_days),
+            )
+            if days > 0
+        ]
+        if not conditions:
+            return 0, False
+
+        self.flush_model()
+        self.env.cr.execute(
+            SQL(
+                """
+                DELETE FROM bg_job
+                WHERE id IN (
+                    SELECT id FROM bg_job
+                    WHERE %s
+                    LIMIT %s
+                    FOR UPDATE SKIP LOCKED
+                )
+                """,
+                SQL(" OR ").join(conditions),
+                limit,
+            )
+        )
+        deleted = self.env.cr.rowcount
+        if deleted:
+            self.invalidate_model()
+            _logger.info("Deleted %d finished background jobs past their retention period.", deleted)
+        return deleted, deleted == limit
 
     def _notify_user(self, result: str):
         """
