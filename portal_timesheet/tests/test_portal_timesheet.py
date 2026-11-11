@@ -34,7 +34,7 @@ class TestPortalTimesheet(TransactionCase):
         )
 
     def test_portal_user_logs_hours_on_followed_project(self):
-        """Portal backend users log hours as followers of the project, not as collaborators.
+        """Portal backend users log hours as followers of the project.
 
         Covers: project read limited to followed portal projects, timesheet creation on a
         followed task, no access to the timesheets of other projects, no task write, and the
@@ -66,6 +66,37 @@ class TestPortalTimesheet(TransactionCase):
             self.assertEqual(
                 Line._get_favorite_project_id(self.employee.id), Line.sudo()._get_favorite_project_id(self.employee.id)
             )
+
+    def test_portal_user_logs_hours_as_collaborator(self):
+        """Sharing a project only adds collaborators: they log, edit and delete hours like followers.
+
+        Covers portal and invited users projects. Following an invited users project is not enough.
+        """
+        Line = self.env["account.analytic.line"].with_user(self.user)
+        for privacy in ("portal", "invited_users"):
+            with self.subTest(privacy=privacy):
+                project = self.env["project.project"].create(
+                    {"name": f"Shared {privacy}", "privacy_visibility": privacy}
+                )
+                self.env["project.collaborator"].create(
+                    {"project_id": project.id, "partner_id": self.user.partner_id.id}
+                )
+                self.assertNotIn(self.user.partner_id, project.message_partner_ids)
+                selectable = self.env["project.project"].with_user(self.user).search(Line._domain_project_id())
+                self.assertIn(project, selectable)
+                # create runs as superuser: browse the line again as the user to edit and delete it
+                line = Line.browse(Line.create({"name": "Shared hours", "project_id": project.id, "unit_amount": 1}).id)
+                self.assertEqual(Line.search([("project_id", "=", project.id)]), line)
+                line.write({"unit_amount": 2})
+                self.assertEqual(line.unit_amount, 2)
+                line.unlink()
+                self.assertFalse(line.exists())
+        with self.subTest("following an invited users project is not enough"):
+            project = self.env["project.project"].create({"name": "Invited", "privacy_visibility": "invited_users"})
+            project.message_subscribe(partner_ids=self.user.partner_id.ids)
+            line = Line.create({"name": "Invited hours", "project_id": project.id, "unit_amount": 1})
+            with self.assertRaises(AccessError):
+                line.with_user(self.user).check_access("write")
 
     def test_portal_user_deletes_hours_of_a_sold_project(self):
         """sale reads the sale order line of the hours when deleting them, which portal users cannot read."""
