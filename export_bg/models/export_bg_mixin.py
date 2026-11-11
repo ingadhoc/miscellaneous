@@ -159,5 +159,5 @@ class IrModel(models.Model):
             {"name": f"export{ext}", "datas": base64.b64encode(content), "mimetype": mime}
         )
         return Markup(
-            f'<p>{_("Your export is ready!")}</p><p><a href="/web/content/{att.id}?download=true" class="btn btn-primary"><i class="fa fa-download"/> {_("Download")} {att.name}</a></p>'
+            f'<p>{_("Your export is ready!")}</p><p><a href="/web/content/{att.id}?download=true" class="btn btn-primary"><i class="oi" data-icon="download"/> {_("Download")} {att.name}</a></p>'
         )
