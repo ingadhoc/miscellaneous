@@ -17,6 +17,8 @@ Portal Holidays
 This module adds a new group that allows the portal backend user to manage its own time off.
 
 #. This module creates the necessary groups to be able to give permissions to a portal user for time off, but the installation of the module alone does nothing, it is then necessary to choose the portal group that includes this functionality and add these groups as inheritance.
+#. Users of the "Portal Backend: Holidays" group get their own "My Time Off" and "My Allocations" menus, and can only create time off requests and allocations for their own employee.
+#. They can also read the contact of their manager and only see the calendar events they attend.
 
 Installation
 ============
