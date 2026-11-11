@@ -35,10 +35,13 @@ Usage
 1. Go to any list view and select records to export
 2. Click **Export** and choose your format (CSV or XLSX)
 3. If records exceed the threshold:
-   - You'll receive a notification: "Export sent to background"
-   - You'll receive a message with download link when ready
+   - You'll receive a notification: "Processes sent to background successfully"
+   - You'll receive a chat message with the download link when ready
 
 For exports under the threshold, it works as normal (instant download).
+
+The background export uses the same columns as the standard export, including
+one column per language when export languages are selected for translatable fields.
 
 .. image:: https://odoo-community.org/website/image/ir.attachment/5784_f2813bd/datas
    :alt: Try me on Runbot
