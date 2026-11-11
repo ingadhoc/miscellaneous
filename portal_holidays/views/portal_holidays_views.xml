@@ -24,6 +24,14 @@
         <field name="view_id" ref="hr_holidays.hr_leave_view_tree_my"/>
     </record>
 
+    <!-- The default manager form only shows employee_id to time off responsibles -->
+    <record id="hr_leave_action_my_view_form_portal_holidays" model="ir.actions.act_window.view">
+        <field name="sequence">3</field>
+        <field name="view_mode">form</field>
+        <field name="act_window_id" ref="hr_leave_action_my_portal_holidays"/>
+        <field name="view_id" ref="hr_holidays.hr_leave_view_form"/>
+    </record>
+
     <!-- Add My Allocations Action for portal holidays users -->
     <record id="hr_leave_allocation_action_my_portal_holidays" model="ir.actions.act_window">
         <field name="name">My Allocations</field>
