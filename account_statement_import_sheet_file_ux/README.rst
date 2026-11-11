@@ -181,7 +181,11 @@ csv statements can also import xls and xlsx ones.
 Configuration
 =============
 
-This module does not need any configuration.
+By default an import tries to reconcile the new statement lines right away,
+the same way the automatic reconciliation cron does (it needs Accounting,
+Enterprise). To leave them for the cron or for somebody to reconcile, uncheck
+"Reconcile on Statement Import" in "Accounting > Configuration > Settings > Bank
+& Cash". The setting is on the main company and applies to its branches too.
 
 Usage
 =====
