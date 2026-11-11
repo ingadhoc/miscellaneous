@@ -1,9 +1,25 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-from odoo import api, models
+from odoo import api, fields, models
+from odoo.fields import Domain
 
 
 class AccountAnalyticLine(models.Model):
     _inherit = "account.analytic.line"
+
+    def _domain_project_id(self):
+        domain = super()._domain_project_id()
+        if self.env.user.has_group("portal_timesheet.group_portal_backend_timesheet"):
+            # Sharing a project only adds collaborators, and invited users projects are offered to followers only.
+            domain |= Domain(
+                [
+                    ("allow_timesheets", "=", True),
+                    ("is_template", "=", False),
+                    ("collaborator_ids.partner_id", "in", [self.env.user.partner_id.id]),
+                ]
+            )
+        return domain
+
+    project_id = fields.Many2one(domain=_domain_project_id)
 
     @api.model
     def _get_favorite_project_id(self, employee_id=False):
