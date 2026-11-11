@@ -1,15 +1,11 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import _, api, fields, models
+from odoo import _, api, models
 from odoo.exceptions import AccessError
 
 
 class HolidaysAllocation(models.Model):
     _inherit = "hr.leave.allocation"
-
-    employee_overtime = fields.Float(
-        related="employee_id.total_overtime", groups="base.group_user,portal_holidays.group_portal_backend_holiday"
-    )
 
     @api.model_create_multi
     def create(self, vals_list):

@@ -5,10 +5,6 @@
     </record>
 
     <!-- Restrict new portal holidays menus to base group_user -->
-    <record id="hr_holidays.hr_leave_menu_my" model="ir.ui.menu">
-        <field name="group_ids" eval="[Command.set([ref('base.group_user')])]"/>
-    </record>
-
     <record id="hr_holidays.menu_open_allocation" model="ir.ui.menu">
         <field name="group_ids" eval="[Command.set([ref('base.group_user')])]"/>
     </record>
