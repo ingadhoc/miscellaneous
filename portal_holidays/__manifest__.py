@@ -30,8 +30,7 @@
     "depends": ["portal_backend", "hr_holidays", "hr_holidays_attendance"],
     "data": [
         "security/res_groups.xml",
-        "security/ir_rule.xml",
-        "security/ir.model.access.csv",
+        "security/ir.access.csv",
         "views/hr_employee_views.xml",
         "views/portal_holidays_views.xml",
         "views/base_menus.xml",
