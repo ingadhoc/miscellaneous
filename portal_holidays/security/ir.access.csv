@@ -1,0 +1,17 @@
+id,name,model_id,group_id/id,operation,domain
+portal_holiday_user_allocation,portal-holiday-model_hr_leave_allocation,hr.leave.allocation,portal_holidays.group_portal_backend_holiday,r,"[('employee_id.user_id', '=', user.id)]"
+portal_holiday_user_allocation_update,portal-holiday-model_hr_leave_allocation-update,hr.leave.allocation,portal_holidays.group_portal_backend_holiday,cu,"[('employee_id.user_id', '=', user.id), ('state', '=', 'confirm')]"
+portal_holiday_user_holidays,portal-holiday-model_hr_leave,hr.leave,portal_holidays.group_portal_backend_holiday,r,"[('employee_id.user_id', '=', user.id)]"
+portal_holiday_user_holidays_update,portal-holiday-model_hr_leave-update,hr.leave,portal_holidays.group_portal_backend_holiday,cu,"[('employee_id.user_id', '=', user.id), ('state', 'not in', ['validate', 'validate1'])]"
+portal_holiday_calendar_event,portal-holiday-model_calendar_event,calendar.event,portal_holidays.group_portal_backend_holiday,cru,"[('partner_ids', 'in', user.partner_id.id)]"
+portal_holiday_hr_department,portal-holiday-model_hr_department,hr.department,portal_holidays.group_portal_backend_holiday,r,
+portal_holiday_hr_employee_public,portal-holiday-model_hr_employee_public,hr.employee.public,portal_holidays.group_portal_backend_holiday,r,
+portal_holiday_hr_leave_type,portal-holiday-model_hr_work_entry_type,hr.work.entry.type,portal_holidays.group_portal_backend_holiday,r,
+portal_holiday_resource_calendar,portal-holiday-model_resource_calendar,resource.calendar,portal_holidays.group_portal_backend_holiday,r,
+portal_holiday_resource_calendar_attendance,portal-holiday-model_resource_calendar_attendance,resource.calendar.attendance,portal_holidays.group_portal_backend_holiday,r,
+portal_holiday_resource_calendar_leaves,portal-holiday-model_resource_calendar_leaves,resource.calendar.leaves,portal_holidays.group_portal_backend_holiday,r,
+portal_holiday_resource_resource,portal-holiday-model_resource_resource,resource.resource,portal_holidays.group_portal_backend_holiday,r,
+portal_holiday_hr_leave_mandatory_day,portal-holiday-model_hr_leave_mandatory_day,hr.leave.mandatory.day,portal_holidays.group_portal_backend_holiday,r,
+portal_holiday_user_calendar,portal_holiday_calendar_atendee,calendar.attendee,portal_holidays.group_portal_backend_holiday,cr,
+res_partner_portal_holiday_rule,res_partner: portal holiday: read access on manager partner,res.partner,portal_holidays.group_portal_backend_holiday,r,"['|', '|', ('id', '=', user.employee_id.parent_id.address_id.id), ('id', '=', user.employee_id.parent_id.work_contact_id.id), ('id', '=', user.employee_id.parent_id.user_id.partner_id.id)]"
+portal_holiday_hr_leave_report_calendar,portal-holiday-model_hr_leave_report_calendar,hr.leave.report.calendar,portal_holidays.group_portal_backend_holiday,r,

@@ -5,13 +5,22 @@
     </record>
 
     <!-- Restrict new portal holidays menus to base group_user -->
-    <record id="hr_holidays.hr_leave_menu_my" model="ir.ui.menu">
-        <field name="group_ids" eval="[Command.set([ref('base.group_user')])]"/>
-    </record>
-
     <record id="hr_holidays.menu_open_allocation" model="ir.ui.menu">
         <field name="group_ids" eval="[Command.set([ref('base.group_user')])]"/>
     </record>
+
+    <record id="hr_holidays.menu_hr_holidays_dashboard" model="ir.ui.menu">
+        <field name="group_ids" eval="[Command.set([ref('base.group_user')])]"/>
+    </record>
+
+    <!-- hr_holidays_gantt points the core Overview menu to a server action only for base.group_user -->
+    <menuitem
+        id="menu_hr_holidays_dashboard_portal_holidays"
+        name="Overview"
+        parent="hr_holidays.menu_hr_holidays_root"
+        action="hr_holidays.action_hr_holidays_dashboard"
+        sequence="2"
+        groups="portal_holidays.group_portal_backend_holiday"/>
 
     <!-- Add portal holidays menu for My Time Off -->
     <menuitem
