@@ -1,12 +1,20 @@
 import inspect
 from unittest.mock import patch
 
-from odoo.addons.mail.tests.common import MailCommon
-from odoo.tests import tagged
+from odoo.addons.mail.tests.common import mail_new_test_user
+from odoo.tests import TransactionCase, tagged
 
 
 @tagged("post_install", "-at_install")
-class TestChannelFetched(MailCommon):
+class TestChannelFetched(TransactionCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.user_employee = mail_new_test_user(cls.env, login="mail_ux_employee", groups="base.group_user")
+        cls.partner_employee = cls.user_employee.partner_id
+        cls.user_admin = mail_new_test_user(cls.env, login="mail_ux_admin", groups="base.group_user")
+        cls.partner_admin = cls.user_admin.partner_id
+
     def _search_spy(self):
         MailMessage = self.env.registry["mail.message"]
         return patch.object(MailMessage, "_search", autospec=True, side_effect=MailMessage._search)
