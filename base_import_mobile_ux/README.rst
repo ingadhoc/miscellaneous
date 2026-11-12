@@ -2,12 +2,12 @@
 Base Import Mobile UX
 ==========================
 
-Show the Import action in the list view gear menu on small screens
+Show the Import action in the gear menu on small screens
 
 Características
 ===============
 
-- Muestra la opción "Importar registros" en el menú de acciones (engranaje)
+- Muestra la opción "Importar" en el menú de acciones (engranaje)
   de las vistas lista, kanban y grilla cuando la pantalla es chica (mobile),
   donde el core de Odoo la oculta por defecto.
 - No cambia ningún otro criterio de visibilidad: sigue respetando el tipo de
@@ -31,7 +31,7 @@ Uso
 
 Con el módulo instalado, al abrir una vista lista, kanban o grilla desde una
 pantalla angosta (mobile), el menú de acciones (ícono de engranaje) incluye la
-opción "Importar registros" además de las que ya se mostraban.
+opción "Importar" además de las que ya se mostraban.
 
 Arquitectura
 ============
