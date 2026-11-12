@@ -7,10 +7,10 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 18.0+e\n"
+"Project-Id-Version: Odoo Server 20.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-29 19:54+0000\n"
-"PO-Revision-Date: 2024-12-12 14:55+0000\n"
+"POT-Creation-Date: 2026-11-05 20:49+0000\n"
+"PO-Revision-Date: 2026-11-05 20:49+0000\n"
 "Last-Translator: Juan José Scarafía <scarafia.juanjose@gmail.com>, 2025\n"
 "Language-Team: Spanish (https://app.transifex.com/adhoc/teams/46451/es/)\n"
 "MIME-Version: 1.0\n"
@@ -20,11 +20,95 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
 #. module: portal_timesheet
+#: model:ir.module.module,description:base.module_portal_timesheet
+msgid ""
+".. |company| replace:: ADHOC SA\n"
+"\n"
+".. |company_logo| image:: https://raw.githubusercontent.com/ingadhoc/maintainer-tools/master/resources/adhoc-logo.png\n"
+"   :alt: ADHOC SA\n"
+"   :target: https://www.adhoc.com.ar\n"
+"\n"
+".. |icon| image:: https://raw.githubusercontent.com/ingadhoc/maintainer-tools/master/resources/adhoc-icon.png\n"
+"\n"
+".. image:: https://img.shields.io/badge/license-LGPL--3-blue.png\n"
+"   :target: https://www.gnu.org/licenses/lgpl\n"
+"   :alt: License: LGPL-3\n"
+"\n"
+"================\n"
+"Portal Timesheet\n"
+"================\n"
+"\n"
+"This module adds a new group that allows the portal backend user to manage its own timesheets. \n"
+"\n"
+"#. Users with this group log hours on the projects with portal visibility that they follow, and on the tasks they follow. They do not need to be collaborators of the project.\n"
+"\n"
+"#. This module creates the necessary groups to be able to give permissions to a portal user for timesheet, but the installation of the module alone does nothing, it is then necessary to choose the portal group that includes this functionality and add these groups as inheritance.\n"
+"\n"
+"Installation\n"
+"============\n"
+"\n"
+"Only install the module.\n"
+"\n"
+"Configuration\n"
+"=============\n"
+"\n"
+"There is nothing to configure.\n"
+"\n"
+"Usage\n"
+"=====\n"
+"\n"
+".. image:: https://odoo-community.org/website/image/ir.attachment/5784_f2813bd/datas\n"
+"   :alt: Try me on Runbot\n"
+"   :target: http://runbot.adhoc.com.ar/\n"
+"\n"
+"Bug Tracker\n"
+"===========\n"
+"\n"
+"Bugs are tracked on `GitHub Issues\n"
+"<https://github.com/ingadhoc/miscellaneous/issues>`_. In case of trouble, please\n"
+"check there if your issue has already been reported. If you spotted it first,\n"
+"help us smashing it by providing a detailed and welcomed feedback.\n"
+"\n"
+"Credits\n"
+"=======\n"
+"\n"
+"Images\n"
+"------\n"
+"\n"
+"* |company| |icon|\n"
+"\n"
+"Contributors\n"
+"------------\n"
+"\n"
+"Maintainer\n"
+"----------\n"
+"\n"
+"|company_logo|\n"
+"\n"
+"This module is maintained by the |company|.\n"
+"\n"
+"To contribute to this module, please visit https://www.adhoc.com.ar.\n"
+msgstr ""
+
+#. module: portal_timesheet
+#: model:res.groups.privilege,name:portal_timesheet.privilege_portal_advanced_timesheet
+msgid "Advanced Timesheet"
+msgstr "Hoja de horas avanzada"
+
+#. module: portal_timesheet
+#: model:res.groups.privilege,description:portal_timesheet.privilege_portal_advanced_timesheet
+msgid "Advanced timesheet permissions"
+msgstr "Permisos avanzados de hojas de horas"
+
+#. module: portal_timesheet
 #: model:res.groups,comment:portal_timesheet.group_portal_backend_timesheet
 msgid ""
 "Allows portal backend users to access the application dashboard to record "
 "hours worked on tasks and projects that have been shared with them."
 msgstr ""
+"Permite que los usuarios portal backend accedan al tablero de la "
+"aplicación para registrar las horas trabajadas en las tareas y proyectos que "
+"se compartieron con ellos."
 
 #. module: portal_timesheet
 #: model:ir.model,name:portal_timesheet.model_account_analytic_line
@@ -32,25 +116,50 @@ msgid "Analytic Line"
 msgstr "Línea analítica"
 
 #. module: portal_timesheet
-#: model:ir.model,name:portal_timesheet.model_ir_http
-msgid "HTTP Routing"
-msgstr "Enrutamiento HTTP "
+#: model:ir.model.fields,field_description:portal_timesheet.field_account_analytic_line__display_name
+#: model:ir.model.fields,field_description:portal_timesheet.field_ir_http__display_name
+#: model:ir.model.fields,field_description:portal_timesheet.field_project_project__display_name
+#: model:ir.model.fields,field_description:portal_timesheet.field_res_users__display_name
+msgid "Display Name"
+msgstr "Mostrar nombre"
 
 #. module: portal_timesheet
-#: model:ir.module.category,name:portal_timesheet.category_portal_timesheet
+#: model:ir.model,name:portal_timesheet.model_ir_http
+msgid "HTTP Routing"
+msgstr "Enrutamiento HTTP"
+
+#. module: portal_timesheet
+#: model:ir.model.fields,field_description:portal_timesheet.field_account_analytic_line__id
+#: model:ir.model.fields,field_description:portal_timesheet.field_ir_http__id
+#: model:ir.model.fields,field_description:portal_timesheet.field_project_project__id
+#: model:ir.model.fields,field_description:portal_timesheet.field_res_users__id
+msgid "ID"
+msgstr "ID"
+
+#. module: portal_timesheet
+#: model:res.groups.privilege,placeholder:portal_timesheet.privilege_portal_advanced_timesheet
+msgid "No"
+msgstr "No"
+
+#. module: portal_timesheet
 #: model:res.groups,name:portal_timesheet.group_portal_backend_timesheet
+msgid "Portal Backend: Timesheets"
+msgstr "Portal Backend: Hojas de horas"
+
+#. module: portal_timesheet
+#: model:ir.module.module,shortdesc:base.module_portal_timesheet
 msgid "Portal Timesheet"
 msgstr "Portal de Hojas de Horas"
 
 #. module: portal_timesheet
 #: model:ir.model,name:portal_timesheet.model_project_project
 msgid "Project"
-msgstr "Proyecto"
+msgstr "Proyectos"
 
 #. module: portal_timesheet
-#: model:ir.model,name:portal_timesheet.model_project_task
-msgid "Task"
-msgstr "Tarea"
+#: model:ir.model.fields,field_description:portal_timesheet.field_project_project__total_timesheet_time
+msgid "Total Timesheet Time"
+msgstr "Tiempo total de hojas de horas"
 
 #. module: portal_timesheet
 #: model:ir.model,name:portal_timesheet.model_res_users

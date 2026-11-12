@@ -5,13 +5,19 @@ class Project(models.Model):
     _inherit = "project.project"
 
     total_timesheet_time = fields.Integer(
-        groups="hr_timesheet.group_hr_timesheet_user, portal_timesheet.group_portal_backend_timesheet"
+        groups="hr_timesheet.group_hr_timesheet_user,portal_timesheet.group_portal_backend_timesheet"
     )
 
 
-class Task(models.Model):
+class ProjectTask(models.Model):
     _inherit = "project.task"
 
-    def _ensure_fields_are_accessible(self, fields, operation="read", check_group_user=True):
-        if not self.env.user.has_group("portal_timesheet.group_portal_backend_timesheet"):
-            super()._ensure_fields_are_accessible(fields, operation, check_group_user)
+    def _has_field_access(self, field, operation):
+        # The timesheet grid filters tasks by is_timeoff_task, a field restricted to timesheet users.
+        if (
+            field.name == "is_timeoff_task"
+            and operation == "read"
+            and self.env.user.has_group("portal_timesheet.group_portal_backend_timesheet")
+        ):
+            return True
+        return super()._has_field_access(field, operation)
