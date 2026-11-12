@@ -318,15 +318,61 @@ class AccountStatementImport(models.TransientModel):
     def _complete_stmts_vals(self, stmts_vals, journal, account_number):
         """Create the statements the way the Enterprise import does.
 
+<<<<<<< 086c83624004bfae7825ce04f154c14c47009ecd
         `auto_statement_processing` runs the automatic reconciliation models on
         the new lines right away, as `account_bank_statement_import` does.
         Without it they wait for the daily cron. It is read by
         `account_accountant` on `create` and harmless without it.
+||||||| 50e95b33c6d5bd1994e00dae22440b71eed52adb
+        Two context keys, both read by `account_accountant` on `create` and
+        harmless without it:
+
+        - `skip_pdf_attachment_generation`: creating a bank statement renders
+          its PDF synchronously. On a statement of a few hundred lines that
+          render is what makes the import time out, and the attachment is of no
+          use to somebody who is importing the file they already have. Odoo
+          itself skips it the same way when importing (`l10n_be_codabox`,
+          `l10n_be_codaclean`).
+        - `auto_statement_processing`: runs the automatic reconciliation models
+          on the new lines right away, as `account_bank_statement_import` does.
+          Without it they wait for the daily cron.
+=======
+        Two context keys, both read by `account_accountant` on `create` and
+        harmless without it:
+
+        - `skip_pdf_attachment_generation`: creating a bank statement renders
+          its PDF synchronously. On a statement of a few hundred lines that
+          render is what makes the import time out, and the attachment is of no
+          use to somebody who is importing the file they already have. Odoo
+          itself skips it the same way when importing (`l10n_be_codabox`,
+          `l10n_be_codaclean`).
+        - `auto_statement_processing`: runs on the new lines the whole
+          automatic reconciliation of the cron, as `account_bank_statement_import`
+          does: not just the reconciliation models, but also matching open
+          invoices and payments of the partner by amount. It follows the company
+          setting `statement_import_auto_reconcile`, and it is always written,
+          False included, because the bank matching action of `account_accountant`
+          puts it at True in the context an import opened from there inherits.
+>>>>>>> 3cd891eb0fd6c0808717fcc92d52da9b7561c132
 
         `creation_context` is the seam the base module exposes for this: it
         pops it off the values and passes it to the create of the statement.
         """
         stmts_vals = super()._complete_stmts_vals(stmts_vals, journal, account_number)
+        creation_context = {
+            "skip_pdf_attachment_generation": True,
+            # read from the root, the company the settings write it on
+            "auto_statement_processing": journal.company_id.root_id.statement_import_auto_reconcile,
+        }
         for st_vals in stmts_vals:
+<<<<<<< 086c83624004bfae7825ce04f154c14c47009ecd
             st_vals.setdefault("creation_context", {}).update(auto_statement_processing=True)
+||||||| 50e95b33c6d5bd1994e00dae22440b71eed52adb
+            st_vals.setdefault("creation_context", {}).update(
+                skip_pdf_attachment_generation=True,
+                auto_statement_processing=True,
+            )
+=======
+            st_vals.setdefault("creation_context", {}).update(creation_context)
+>>>>>>> 3cd891eb0fd6c0808717fcc92d52da9b7561c132
         return stmts_vals
