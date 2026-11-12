@@ -164,7 +164,7 @@ msgstr "Quitar acción contextual relacionada a esta acción"
 #. odoo-javascript
 #: code:addons/base_ux/static/src/model_field_selector/model_field_selector.xml:0
 msgid "Select a field..."
-msgstr ""
+msgstr "Seleccionar campo..."
 
 #. module: base_ux
 #: model:ir.model,name:base_ux.model_ir_actions_server
