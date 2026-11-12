@@ -6,8 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 20.0+e\n"
 "Report-Msgid-Bugs-To: \n"
+<<<<<<< 086c83624004bfae7825ce04f154c14c47009ecd
 "POT-Creation-Date: 2026-10-30 19:18+0000\n"
 "PO-Revision-Date: 2026-10-30 19:18+0000\n"
+||||||| 610be02babbc684443206c8762eed55859f02560
+"POT-Creation-Date: 2026-10-30 11:16+0000\n"
+"PO-Revision-Date: 2026-10-30 11:16+0000\n"
+=======
+"POT-Creation-Date: 2026-11-12 15:32+0000\n"
+"PO-Revision-Date: 2026-11-12 15:32+0000\n"
+>>>>>>> 4144be1a9f6632b23ae2b9cd04de6743153dbff5
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -340,6 +348,16 @@ msgid "Columns to ignore before starting to parse"
 msgstr ""
 
 #. module: account_statement_import_sheet_file_ux
+#: model:ir.model,name:account_statement_import_sheet_file_ux.model_res_company
+msgid "Companies"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model,name:account_statement_import_sheet_file_ux.model_res_config_settings
+msgid "Config Settings"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
 #: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_preview__create_uid
 #: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_test__create_uid
 msgid "Created by"
@@ -368,6 +386,8 @@ msgstr ""
 #: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_preview__display_name
 #: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_test__display_name
 #: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_parser__display_name
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_res_company__display_name
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_res_config_settings__display_name
 msgid "Display Name"
 msgstr ""
 
@@ -406,6 +426,8 @@ msgstr ""
 #: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_preview__id
 #: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_test__id
 #: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_parser__id
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_res_company__id
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_res_config_settings__id
 msgid "ID"
 msgstr ""
 
@@ -418,6 +440,12 @@ msgstr ""
 #. module: account_statement_import_sheet_file_ux
 #: model:ir.model,name:account_statement_import_sheet_file_ux.model_account_statement_import
 msgid "Import Bank Statement Files"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model_terms:ir.ui.view,arch_db:account_statement_import_sheet_file_ux.res_config_settings_view_form
+msgid ""
+"Imported statement lines are matched with invoices and payments right away"
 msgstr ""
 
 #. module: account_statement_import_sheet_file_ux
@@ -489,6 +517,12 @@ msgstr ""
 msgid ""
 "Read a real file with this mapping and report what would be imported, "
 "without saving anything"
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_res_company__statement_import_auto_reconcile
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_res_config_settings__statement_import_auto_reconcile
+msgid "Reconcile on Statement Import"
 msgstr ""
 
 #. module: account_statement_import_sheet_file_ux
@@ -760,6 +794,17 @@ msgstr ""
 msgid ""
 "Transactions found: %(count)s, from %(first)s to %(last)s. Nothing was "
 "saved: run the import itself to create the statement."
+msgstr ""
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,help:account_statement_import_sheet_file_ux.field_res_company__statement_import_auto_reconcile
+#: model:ir.model.fields,help:account_statement_import_sheet_file_ux.field_res_config_settings__statement_import_auto_reconcile
+msgid ""
+"When a statement file is imported, try to reconcile its lines right away, "
+"the same way the automatic reconciliation cron does: it matches invoices and"
+" payments of the same partner by amount and applies the automatic "
+"reconciliation models. Needs Accounting (Enterprise). When unchecked, the "
+"imported lines wait for the cron or for somebody to reconcile them."
 msgstr ""
 
 #. module: account_statement_import_sheet_file_ux
