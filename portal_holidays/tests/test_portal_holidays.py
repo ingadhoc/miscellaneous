@@ -69,3 +69,34 @@ class TestPortalHolidays(TransactionCase):
                     self.env[model].search_count([("employee_id", "=", self.other_employee.id)]),
                     count,
                 )
+
+    def test_portal_user_only_reaches_coworkers_through_overview(self):
+        """A portal backend holidays user can neither read nor modify the time
+        off and allocations of another employee, but sees them in the overview
+        report, without the time off type."""
+        other_leave = self.env["hr.leave"].create(
+            {**self.vals_by_model["hr.leave"], "employee_id": self.other_employee.id}
+        )
+        other_allocation = self.env["hr.leave.allocation"].create(
+            {**self.vals_by_model["hr.leave.allocation"], "employee_id": self.other_employee.id}
+        )
+        self.env.flush_all()
+        for record in (other_leave, other_allocation):
+            records = self.env[record._name].with_user(self.portal_user)
+            with self.subTest(f"{record._name}: another employee's records are not readable"):
+                self.assertFalse(records.search([("employee_id", "=", self.other_employee.id)]))
+                with self.assertRaises(AccessError):
+                    records.browse(record.id).read(["name"])
+        with self.subTest("hr.leave.allocation: another employee's pending allocation cannot be modified"):
+            self.assertEqual(other_allocation.state, "confirm")
+            with self.assertRaises(AccessError):
+                other_allocation.with_user(self.portal_user).write({"number_of_days": 50})
+            self.assertEqual(other_allocation.number_of_days, 2)
+        with self.subTest("overview shows the coworker's time off without its type"):
+            report = self.env["hr.leave.report.calendar"].with_user(self.portal_user)
+            row = report.search([("employee_id", "=", self.other_employee.id)])
+            self.assertEqual(row.id, other_leave.id)
+            self.assertIn(self.other_employee.name, row.display_name)
+            self.assertNotIn(self.leave_type.name, row.display_name)
+            with self.assertRaises(AccessError):
+                row.read(["work_entry_type_id"])
