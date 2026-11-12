@@ -24,7 +24,7 @@
     "author": "ADHOC SA",
     "website": "https://www.adhoc.com.ar",
     "license": "AGPL-3",
-    "summary": "Show the Import action in the list view gear menu on small screens",
+    "summary": "Show the Import action in the gear menu on small screens",
     "depends": [
         "base_import",
     ],
