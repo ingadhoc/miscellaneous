@@ -19,7 +19,7 @@
 ##############################################################################
 {
     "name": "IOT Print Node Printing",
-    "version": "19.0.0.1.0",
+    "version": "20.0.1.0.0",
     "category": "Generic Modules/Base",
     "author": "ADHOC SA",
     "license": "AGPL-3",
@@ -29,5 +29,5 @@
         "views/iot_views.xml",
         "wizard/add_iot_printnode_views.xml",
     ],
-    "installable": False,
+    "installable": True,
 }
