@@ -25,7 +25,7 @@
     "license": "AGPL-3",
     "depends": ["iot"],
     "data": [
-        "security/ir.model.access.csv",
+        "security/ir.access.csv",
         "views/iot_views.xml",
         "wizard/add_iot_printnode_views.xml",
     ],
