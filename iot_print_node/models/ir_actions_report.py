@@ -1,13 +1,4 @@
-import base64
-
 from odoo import api, models
-
-PRINTNODE_JOB_TYPES = {
-    "qweb-pdf": "pdf",
-    "pdf": "pdf",
-    "aeroo": "pdf",
-    "qweb-text": "txt",
-}
 
 
 class IrActionsReport(models.Model):
@@ -15,17 +6,27 @@ class IrActionsReport(models.Model):
 
     @api.model
     def get_print_jobs(self, report_name, docids, data) -> list:
+        """Add a PrintNode job without rendering the report.
+
+        The report is rendered when printing, as the user, in
+        ``printer.printer.printnode_print``: this method also runs from
+        ``_read_format`` under the sudo of ``/web/action/load``.
+        """
         jobs = super().get_print_jobs(report_name, docids, data)
         report = self._get_report(report_name)
         if not report.printer_ids.filtered(lambda p: p.type == "printnode"):
             return jobs
 
-        printnode_type = PRINTNODE_JOB_TYPES.get(report.report_type)
-        job = {"type": "printnode", "report_type": report.report_type, "printnode_type": printnode_type}
-        if printnode_type:
-            report_data = self._render(report_name, docids, data)[0]
-            if not report_data:
-                return jobs
-            job["report"] = base64.b64encode(report_data).decode()
-        jobs.append(job)
+        if isinstance(docids, models.BaseModel):
+            docids = docids.ids
+        elif isinstance(docids, int):
+            docids = [docids]
+        jobs.append(
+            {
+                "type": "printnode",
+                "report_id": report.id,
+                "docids": list(docids or []),
+                "data": data,
+            }
+        )
         return jobs

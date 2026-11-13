@@ -58,8 +58,8 @@
                 <field name="printnode_status" invisible="type != 'printnode'"/>
             </field>
             <field name="ip_address" position="attributes">
-                <attribute name="invisible">type == 'printnode'</attribute>
-                <attribute name="required">type not in ('iot', 'printnode')</attribute>
+                <attribute name="invisible" separator="or" add="type == 'printnode'"/>
+                <attribute name="required" separator="and" add="type != 'printnode'"/>
             </field>
         </field>
     </record>
@@ -70,7 +70,7 @@
         <field name="inherit_id" ref="printer.printer_view_list"/>
         <field name="arch" type="xml">
             <field name="ip_address" position="attributes">
-                <attribute name="required">type not in ('iot', 'printnode')</attribute>
+                <attribute name="required" separator="and" add="type != 'printnode'"/>
             </field>
         </field>
     </record>
@@ -94,5 +94,12 @@
         action="printer.manage_printers_action"
         parent="menu_printnode"
         sequence="20"/>
+
+    <menuitem
+        id="menu_printnode_reset_linked_printers"
+        name="Reset Linked Printers"
+        action="printer.action_reset_linked_printers"
+        parent="menu_printnode"
+        sequence="30"/>
 
 </odoo>
