@@ -14,7 +14,7 @@
 IoT Print Node Printing
 =========================
 
-This module integrates PrintNode cloud printing service with Odoo's IoT functionality, allowing you to print documents directly to PrintNode printers without requiring a physical IoT Box.
+This module integrates PrintNode cloud printing service with Odoo's printers, adding PrintNode as a printer type, so you can print documents directly to PrintNode printers without requiring an IoT Box.
 
 Installation
 ============
@@ -29,30 +29,31 @@ Configuration
 
 To configure this module:
 
-1. Go to **IoT > Add PrintNode**
-2. Enter a name for your PrintNode IoT Box
+1. Activate the developer mode and go to **Settings > Technical > Reporting > PrintNode > Add PrintNode**
+2. Enter a name for your PrintNode account
 3. Enter your PrintNode API Key
-4. Click **Add** to create the IoT Box and automatically import your printers
-5. Your PrintNode printers will be automatically synced with Odoo
+4. Click **Add** to create the PrintNode account and automatically import your printers
+5. Use **Update printnode printers** on the account to sync them again with Odoo
+6. Link each printer to the reports it has to print, from **PrintNode > Printers** or from the report
 
 Usage
 =====
 
 Once configured:
 
-* Your PrintNode printers will appear in the IoT devices list
-* You can print reports directly to PrintNode printers from any Odoo document
+* Your PrintNode printers will appear in the printers list, with the PrintNode type
+* You can print reports directly to PrintNode printers from any Odoo document, choosing the printer when printing
 * The system will automatically send print jobs to PrintNode cloud service
 * You'll receive a notification when a print job is successfully sent
 
 Features
 ========
 
-* **Cloud-based printing**: Print without a physical IoT Box
+* **Cloud-based printing**: Print without an IoT Box
 * **Automatic printer sync**: Printers are automatically imported from your PrintNode account
 * **Easy setup**: Simple wizard to add PrintNode credentials
 * **Real-time notifications**: Get notified when print jobs are sent
-* **Multiple printer support**: Manage multiple PrintNode printers from a single Odoo instance
+* **Multiple printer support**: Manage multiple PrintNode accounts and printers from a single Odoo instance
 
 Bug Tracker
 ===========
