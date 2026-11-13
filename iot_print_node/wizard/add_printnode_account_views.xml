@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_add_printnode_account_form" model="ir.ui.view">
+        <field name="name">add.printnode.account.form</field>
+        <field name="model">add.printnode.account</field>
+        <field name="arch" type="xml">
+            <form string="Add PrintNode">
+                <group>
+                    <field name="name" placeholder="e.g. Office Printer"/>
+                    <field name="print_node_api_key" password="True" placeholder="Enter your PrintNode API Key"/>
+                </group>
+                <footer>
+                    <button string="Add" name="action_add_printnode_account" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_add_printnode_account" model="ir.actions.act_window">
+        <field name="name">Add PrintNode</field>
+        <field name="res_model">add.printnode.account</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem
+        id="menu_add_printnode_account"
+        name="Add PrintNode"
+        parent="menu_printnode"
+        action="action_add_printnode_account"
+        sequence="10"/>
+
+</odoo>

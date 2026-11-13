@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="printnode_account_view_form" model="ir.ui.view">
+        <field name="name">printnode.account.view.form</field>
+        <field name="model">printnode.account</field>
+        <field name="arch" type="xml">
+            <form string="PrintNode Account">
+                <header>
+                    <button name="action_print_update_devices" type="object" string="Update printnode printers" class="btn btn-secondary"/>
+                    <button name="action_open_printnode" type="object" string="Open PrintNode" class="btn btn-secondary"/>
+                </header>
+                <sheet>
+                    <h1>
+                        <field name="name" placeholder="e.g. Office Printer"/>
+                    </h1>
+                    <group>
+                        <field name="print_node_api_key" password="True"/>
+                    </group>
+                    <field name="printer_ids" readonly="1">
+                        <list>
+                            <field name="name"/>
+                            <field name="printnode_identifier"/>
+                            <field name="printnode_status"/>
+                            <field name="report_ids" widget="many2many_tags"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="printnode_account_view_list" model="ir.ui.view">
+        <field name="name">printnode.account.view.list</field>
+        <field name="model">printnode.account</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="printer_count"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="printnode_account_action" model="ir.actions.act_window">
+        <field name="name">PrintNode Accounts</field>
+        <field name="res_model">printnode.account</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="printer_view_form_inherit_printnode" model="ir.ui.view">
+        <field name="name">printer.view.form.inherit.printnode</field>
+        <field name="model">printer.printer</field>
+        <field name="inherit_id" ref="printer.printer_view_form"/>
+        <field name="arch" type="xml">
+            <field name="type" position="after">
+                <field name="printnode_account_id" invisible="type != 'printnode'" required="type == 'printnode'"/>
+                <field name="printnode_identifier" invisible="type != 'printnode'"/>
+                <field name="printnode_status" invisible="type != 'printnode'"/>
+            </field>
+            <field name="ip_address" position="attributes">
+                <attribute name="invisible">type == 'printnode'</attribute>
+                <attribute name="required">type not in ('iot', 'printnode')</attribute>
+            </field>
+        </field>
+    </record>
+
+    <record id="printer_view_list_inherit_printnode" model="ir.ui.view">
+        <field name="name">printer.view.list.inherit.printnode</field>
+        <field name="model">printer.printer</field>
+        <field name="inherit_id" ref="printer.printer_view_list"/>
+        <field name="arch" type="xml">
+            <field name="ip_address" position="attributes">
+                <attribute name="required">type not in ('iot', 'printnode')</attribute>
+            </field>
+        </field>
+    </record>
+
+    <menuitem
+        id="menu_printnode"
+        name="PrintNode"
+        parent="base.reporting_menuitem"
+        groups="base.group_system"
+        sequence="50"/>
+
+    <menuitem
+        id="menu_printnode_account"
+        action="printnode_account_action"
+        parent="menu_printnode"
+        sequence="5"/>
+
+    <menuitem
+        id="menu_printnode_printers"
+        name="Printers"
+        action="printer.manage_printers_action"
+        parent="menu_printnode"
+        sequence="20"/>
+
+</odoo>

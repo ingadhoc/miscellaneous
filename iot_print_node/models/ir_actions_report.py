@@ -1,30 +1,31 @@
-from odoo import _, models
+import base64
+
+from odoo import api, models
+
+PRINTNODE_JOB_TYPES = {
+    "qweb-pdf": "pdf",
+    "pdf": "pdf",
+    "aeroo": "pdf",
+    "qweb-text": "txt",
+}
 
 
 class IrActionsReport(models.Model):
     _inherit = "ir.actions.report"
 
-    def render_document(self, device_id_list, res_ids, data=None):
-        result = super().render_document(device_id_list, res_ids, data)
-        filtered_result = []
-        for item in result:
-            iot_box = self.env["iot.box"].browse(item["iotBoxId"])
-            if iot_box.print_node_api_key:
-                job = iot_box._print_node_submit_job(
-                    printerid=item["deviceIdentifier"],
-                    jobtype=self.report_type,
-                    content=item["document"],
-                )
-                if job:
-                    device = iot_box.device_ids.filtered(lambda d: d.identifier == item["deviceIdentifier"])
-                    printer_name = device.name if device else _("Printer")
-                    self.env.user._bus_send(
-                        "simple_notification",
-                        {
-                            "type": "success",
-                            "message": _("Print job successfully sent to %s via PrintNode", printer_name),
-                        },
-                    )
-            else:
-                filtered_result.append(item)
-        return filtered_result
+    @api.model
+    def get_print_jobs(self, report_name, docids, data) -> list:
+        jobs = super().get_print_jobs(report_name, docids, data)
+        report = self._get_report(report_name)
+        if not report.printer_ids.filtered(lambda p: p.type == "printnode"):
+            return jobs
+
+        printnode_type = PRINTNODE_JOB_TYPES.get(report.report_type)
+        job = {"type": "printnode", "report_type": report.report_type, "printnode_type": printnode_type}
+        if printnode_type:
+            report_data = self._render(report_name, docids, data)[0]
+            if not report_data:
+                return jobs
+            job["report"] = base64.b64encode(report_data).decode()
+        jobs.append(job)
+        return jobs

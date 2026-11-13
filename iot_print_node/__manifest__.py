@@ -23,11 +23,16 @@
     "category": "Generic Modules/Base",
     "author": "ADHOC SA",
     "license": "AGPL-3",
-    "depends": ["iot"],
+    "depends": ["printer"],
     "data": [
         "security/ir.access.csv",
-        "views/iot_views.xml",
-        "wizard/add_iot_printnode_views.xml",
+        "views/printnode_account_views.xml",
+        "wizard/add_printnode_account_views.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "iot_print_node/static/src/**/*",
+        ],
+    },
     "installable": True,
 }
