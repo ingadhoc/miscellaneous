@@ -146,8 +146,64 @@ class TestPrintnode(TransactionCase):
             )
         with self.assertRaises(AccessError):
             printer.with_user(user).write({"printnode_identifier": "999999"})
+        with self.assertRaises(AccessError):
+            printer.with_user(user).write({"printnode_status": "disconnected"})
+        with self.assertRaises(AccessError):
+            printer.with_user(user).write({"type": "zpl"})
+        with self.assertRaises(AccessError):
+            self.account.with_user(user).action_print_update_devices()
         printer.with_user(user).write({"name": "Zebra front"})
         self.assertEqual(printer.name, "Zebra front")
+
+    def _shipping_labels_printer(self, attachments_vals):
+        printer = self._printnode_printer()
+        report = self.env["ir.actions.report"].create(
+            {
+                "name": "Shipping Labels",
+                "model": "res.partner",
+                "report_type": "qweb-pdf",
+                "report_name": "stock_delivery.report_shipping_labels",
+                "printer_ids": [(6, 0, printer.ids)],
+            }
+        )
+        attachments = self.env["ir.attachment"].create(
+            [dict(vals, res_model="res.partner", res_id=self.env.user.partner_id.id) for vals in attachments_vals]
+        )
+        return printer, report, attachments
+
+    def test_shipping_labels_send_every_attachment(self):
+        printer, report, attachments = self._shipping_labels_printer(
+            [
+                {"name": "Label-1.pdf", "raw": b"%PDF-1.4 label one", "mimetype": "application/pdf"},
+                {"name": "Label-2.zpl", "raw": b"^XA^FDlabel two^FS^XZ", "mimetype": "text/plain"},
+            ]
+        )
+        job = {"type": "printnode", "report_id": report.id, "docids": [self.env.user.partner_id.id]}
+        with (
+            patch.object(type(report), "get_reports_from_chatter", create=True, return_value=attachments),
+            patch(REQUESTS) as requests_mock,
+        ):
+            requests_mock.post.return_value = _response(123)
+            printer.printnode_print(job)
+
+        payloads = [call.kwargs["json"] for call in requests_mock.post.call_args_list]
+        self.assertEqual(len(payloads), 2)
+        sent = {p["contentType"]: base64.b64decode(p["content"]) for p in payloads}
+        self.assertEqual(sent["pdf_base64"], b"%PDF-1.4 label one")
+        self.assertEqual(sent["raw_base64"], b"^XA^FDlabel two^FS^XZ")
+
+    def test_shipping_labels_unsupported_attachment_raises(self):
+        printer, report, attachments = self._shipping_labels_printer(
+            [{"name": "Label-1.png", "raw": b"\x89PNG\r\n\x1a\n", "mimetype": "image/png"}]
+        )
+        job = {"type": "printnode", "report_id": report.id, "docids": [self.env.user.partner_id.id]}
+        with (
+            patch.object(type(report), "get_reports_from_chatter", create=True, return_value=attachments),
+            patch(REQUESTS) as requests_mock,
+        ):
+            with self.assertRaises(UserError):
+                printer.printnode_print(job)
+        self.assertFalse(requests_mock.post.called)
 
     def test_wizard_creates_account_and_syncs(self):
         wizard = self.env["add.printnode.account"].create({"name": "Warehouse", "print_node_api_key": "key2"})

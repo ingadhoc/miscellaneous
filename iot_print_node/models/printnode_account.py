@@ -5,7 +5,7 @@ import uuid
 
 import requests
 from odoo import Command, api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import AccessError, UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -56,6 +56,8 @@ class PrintnodeAccount(models.Model):
 
     def action_print_update_devices(self):
         self.ensure_one()
+        if not self.env.is_system():
+            raise AccessError(self.env._("Only administrators can update the PrintNode printers"))
         _logger.info("Updating Print Node Printers")
         pn_printers = self._get_response("printers")
         printer_commands = []
