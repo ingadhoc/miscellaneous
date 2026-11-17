@@ -27,7 +27,7 @@
     "website": "www.adhoc.com.ar",
     "license": "AGPL-3",
     "images": [],
-    "depends": ["portal_backend", "hr_holidays", "hr_holidays_attendance"],
+    "depends": ["portal_backend", "hr_holidays"],
     "data": [
         "security/res_groups.xml",
         "security/ir.access.csv",
