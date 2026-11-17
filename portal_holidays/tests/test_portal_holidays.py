@@ -61,6 +61,10 @@ class TestPortalHolidays(TransactionCase):
                 record = records.create({**vals, "employee_id": self.own_employee.id})
                 self.assertEqual(record.employee_id, self.own_employee)
                 self.assertEqual(record.create_uid, self.portal_user)
+            with self.subTest(f"{model}: own request cannot be moved to another employee"):
+                with self.assertRaises(AccessError):
+                    records.browse(record.ids).write({"employee_id": self.other_employee.id})
+                self.assertEqual(record.employee_id, self.own_employee)
             with self.subTest(f"{model}: request for another employee is refused"):
                 count = self.env[model].search_count([("employee_id", "=", self.other_employee.id)])
                 with self.assertRaises(AccessError):
@@ -86,7 +90,7 @@ class TestPortalHolidays(TransactionCase):
             with self.subTest(f"{record._name}: another employee's records are not readable"):
                 self.assertFalse(records.search([("employee_id", "=", self.other_employee.id)]))
                 with self.assertRaises(AccessError):
-                    records.browse(record.id).read(["name"])
+                    records.browse(record.ids).read(["name"])
         with self.subTest("hr.leave.allocation: another employee's pending allocation cannot be modified"):
             self.assertEqual(other_allocation.state, "confirm")
             with self.assertRaises(AccessError):
@@ -94,9 +98,11 @@ class TestPortalHolidays(TransactionCase):
             self.assertEqual(other_allocation.number_of_days, 2)
         with self.subTest("overview shows the coworker's time off without its type"):
             report = self.env["hr.leave.report.calendar"].with_user(self.portal_user)
-            row = report.search([("employee_id", "=", self.other_employee.id)])
-            self.assertEqual(row.id, other_leave.id)
-            self.assertIn(self.other_employee.name, row.display_name)
-            self.assertNotIn(self.leave_type.name, row.display_name)
+            rows = report.search([("employee_id", "=", self.other_employee.id)])
+            self.assertTrue(rows)
+            self.assertLessEqual(set(rows.ids), set(other_leave.ids))
+            for row in rows:
+                self.assertIn(self.other_employee.name, row.display_name)
+                self.assertNotIn(self.leave_type.name, row.display_name)
             with self.assertRaises(AccessError):
-                row.read(["work_entry_type_id"])
+                rows.read(["work_entry_type_id"])
