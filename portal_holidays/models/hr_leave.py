@@ -22,3 +22,12 @@ class HolidaysRequest(models.Model):
             self = self.sudo()
 
         return super().create(vals_list)
+
+    def write(self, vals):
+        if (
+            "employee_id" in vals
+            and self.env.user.has_group("portal_holidays.group_portal_backend_holiday")
+            and vals["employee_id"] != self.env.user.employee_id.id
+        ):
+            raise AccessError(_("You can only assign time off requests to yourself."))
+        return super().write(vals)
