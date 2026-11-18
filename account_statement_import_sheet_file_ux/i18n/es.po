@@ -6,8 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 20.0+e\n"
 "Report-Msgid-Bugs-To: \n"
+<<<<<<< 086c83624004bfae7825ce04f154c14c47009ecd
 "POT-Creation-Date: 2026-10-30 19:18+0000\n"
 "PO-Revision-Date: 2026-10-30 19:18+0000\n"
+||||||| 610be02babbc684443206c8762eed55859f02560
+"POT-Creation-Date: 2026-10-30 11:16+0000\n"
+"PO-Revision-Date: 2026-09-04 17:26+0000\n"
+=======
+"POT-Creation-Date: 2026-11-12 15:32+0000\n"
+"PO-Revision-Date: 2026-11-12 15:32+0000\n"
+>>>>>>> 4144be1a9f6632b23ae2b9cd04de6743153dbff5
 "Last-Translator: Carla Spiaggi <sca@adhoc.inc>\n"
 "Language-Team: Spanish\n"
 "Language: es\n"
@@ -586,6 +594,16 @@ msgid "Columns to ignore before starting to parse"
 msgstr "Columnas que se deben ignorar antes de comenzar el análisis."
 
 #. module: account_statement_import_sheet_file_ux
+#: model:ir.model,name:account_statement_import_sheet_file_ux.model_res_company
+msgid "Companies"
+msgstr "Empresas"
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model,name:account_statement_import_sheet_file_ux.model_res_config_settings
+msgid "Config Settings"
+msgstr "Ajustes de configuración"
+
+#. module: account_statement_import_sheet_file_ux
 #: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_preview__create_uid
 #: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping_test__create_uid
 msgid "Created by"
@@ -671,6 +689,14 @@ msgid "Import Bank Statement Files"
 msgstr "Importar ficheros de extracto bancario"
 
 #. module: account_statement_import_sheet_file_ux
+#: model_terms:ir.ui.view,arch_db:account_statement_import_sheet_file_ux.res_config_settings_view_form
+msgid ""
+"Imported statement lines are matched with invoices and payments right away"
+msgstr ""
+"Las líneas de extracto importadas se concilian con facturas y pagos en el "
+"momento"
+
+#. module: account_statement_import_sheet_file_ux
 #. odoo-python
 #: code:addons/account_statement_import_sheet_file_ux/models/account_statement_import_sheet_mapping.py:0
 msgid "Incoming transfer"
@@ -745,6 +771,12 @@ msgid ""
 msgstr ""
 "Lee un archivo real con este mapeo e informa qué se importaría, sin guardar "
 "nada"
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_res_company__statement_import_auto_reconcile
+#: model:ir.model.fields,field_description:account_statement_import_sheet_file_ux.field_res_config_settings__statement_import_auto_reconcile
+msgid "Reconcile on Statement Import"
+msgstr "Conciliar al importar extractos"
 
 #. module: account_statement_import_sheet_file_ux
 #: model_terms:ir.ui.view,arch_db:account_statement_import_sheet_file_ux.account_statement_import_form
@@ -1067,6 +1099,23 @@ msgid ""
 msgstr ""
 "Transacciones encontradas: %(count)s, del %(first)s al %(last)s. No se "
 "guardó nada: ejecute la importación real para crear el extracto."
+
+#. module: account_statement_import_sheet_file_ux
+#: model:ir.model.fields,help:account_statement_import_sheet_file_ux.field_res_company__statement_import_auto_reconcile
+#: model:ir.model.fields,help:account_statement_import_sheet_file_ux.field_res_config_settings__statement_import_auto_reconcile
+msgid ""
+"When a statement file is imported, try to reconcile its lines right away, "
+"the same way the automatic reconciliation cron does: it matches invoices and"
+" payments of the same partner by amount and applies the automatic "
+"reconciliation models. Needs Accounting (Enterprise). When unchecked, the "
+"imported lines wait for the cron or for somebody to reconcile them."
+msgstr ""
+"Al importar un archivo de extracto, intenta conciliar sus líneas en el "
+"momento, de la misma forma que la acción planificada de conciliación "
+"automática: concilia facturas y pagos del mismo contacto por importe y "
+"aplica los modelos de conciliación automáticos. Requiere Contabilidad "
+"(Enterprise). Si no está marcada, las líneas importadas esperan a la acción "
+"planificada o a que alguien las concilie."
 
 #. module: account_statement_import_sheet_file_ux
 #: model:ir.model.fields,help:account_statement_import_sheet_file_ux.field_account_statement_import_sheet_mapping__float_decimal_sep
