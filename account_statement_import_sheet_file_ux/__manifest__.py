@@ -35,7 +35,14 @@
         "account_statement_import_sheet_file_xlsx",
     ],
     "data": [
+<<<<<<< 086c83624004bfae7825ce04f154c14c47009ecd
         "security/ir.access.csv",
+||||||| 50e95b33c6d5bd1994e00dae22440b71eed52adb
+        "security/ir.model.access.csv",
+=======
+        "security/ir.model.access.csv",
+        "views/res_config_settings_views.xml",
+>>>>>>> 3cd891eb0fd6c0808717fcc92d52da9b7561c132
         "views/account_statement_import_sheet_mapping_preview_views.xml",
         "views/account_statement_import_sheet_mapping_views.xml",
         "views/account_statement_import_views.xml",
