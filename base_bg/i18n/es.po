@@ -30,8 +30,14 @@ msgid ""
 "Attempts lost to transient DB contention, counted separately from the normal "
 "retry budget."
 msgstr ""
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 "Intentos perdidos por contención transitoria de la base de datos, contados "
 "aparte del límite normal de reintentos."
+||||||| c863258c8a6a7deaddad5db8957fc26536dbd4c4
+=======
+"Intentos perdidos por contención transitoria de la base de datos, contados "
+"aparte del máximo normal de reintentos."
+>>>>>>> 5ae896c835ba3ffa96c75a561972490dc4c9572f
 
 #. module: base_bg
 #: model:ir.model,name:base_bg.model_bg_job
@@ -824,18 +830,36 @@ msgstr "Lote"
 #. module: base_bg
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_form
 msgid "Batch Jobs"
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 msgstr "Trabajos del Lote"
+||||||| c863258c8a6a7deaddad5db8957fc26536dbd4c4
+msgstr ""
+=======
+msgstr "Trabajos del lote"
+>>>>>>> 5ae896c835ba3ffa96c75a561972490dc4c9572f
 
 #. module: base_bg
 #. odoo-python
 #: code:addons/base_bg/models/bg_job.py:0
 msgid "Batch Jobs: %s"
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 msgstr "Trabajos del Lote: %s"
+||||||| c863258c8a6a7deaddad5db8957fc26536dbd4c4
+msgstr ""
+=======
+msgstr "Trabajos del lote: %s"
+>>>>>>> 5ae896c835ba3ffa96c75a561972490dc4c9572f
 
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__batch_key
 msgid "Batch Key"
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 msgstr "Clave de Lote"
+||||||| c863258c8a6a7deaddad5db8957fc26536dbd4c4
+msgstr ""
+=======
+msgstr "Clave del lote"
+>>>>>>> 5ae896c835ba3ffa96c75a561972490dc4c9572f
 
 #. module: base_bg
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_form
@@ -903,7 +927,15 @@ msgstr "Duración"
 #. module: base_bg
 #: model:ir.model.fields,help:base_bg.field_bg_job__next_retry_at
 msgid "Earliest time this job may be retried after a transient failure."
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 msgstr "Momento a partir del cual este trabajo puede reintentarse después de un fallo transitorio."
+||||||| c863258c8a6a7deaddad5db8957fc26536dbd4c4
+msgstr ""
+=======
+msgstr ""
+"Momento a partir del cual se puede reintentar este trabajo después de una "
+"falla transitoria."
+>>>>>>> 5ae896c835ba3ffa96c75a561972490dc4c9572f
 
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__end_time
@@ -940,7 +972,13 @@ msgstr "Fallido"
 #. module: base_bg
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_form
 msgid "General Information"
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 msgstr "Información General"
+||||||| c863258c8a6a7deaddad5db8957fc26536dbd4c4
+msgstr ""
+=======
+msgstr "Información general"
+>>>>>>> 5ae896c835ba3ffa96c75a561972490dc4c9572f
 
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_base_bg__id
@@ -1029,17 +1067,35 @@ msgstr "Modelo"
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__next_job_id
 msgid "Next Job"
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 msgstr "Siguiente Trabajo"
+||||||| c863258c8a6a7deaddad5db8957fc26536dbd4c4
+msgstr ""
+=======
+msgstr "Trabajo siguiente"
+>>>>>>> 5ae896c835ba3ffa96c75a561972490dc4c9572f
 
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__next_retry_at
 msgid "Next Retry At"
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 msgstr "Próximo Reintento"
+||||||| c863258c8a6a7deaddad5db8957fc26536dbd4c4
+msgstr ""
+=======
+msgstr "Próximo reintento"
+>>>>>>> 5ae896c835ba3ffa96c75a561972490dc4c9572f
 
 #. module: base_bg
 #: model:ir.model.fields,help:base_bg.field_bg_job__next_job_id
 msgid "Next job in the batch sequence"
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 msgstr "Siguiente trabajo en la secuencia del lote"
+||||||| c863258c8a6a7deaddad5db8957fc26536dbd4c4
+msgstr ""
+=======
+msgstr "Trabajo siguiente en la secuencia del lote"
+>>>>>>> 5ae896c835ba3ffa96c75a561972490dc4c9572f
 
 #. module: base_bg
 #: model_terms:ir.actions.act_window,help:base_bg.action_bg_job
@@ -1068,12 +1124,25 @@ msgstr "Solo se pueden ejecutar los trabajos en ejecución"
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_form
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_list
 msgid "Open Records"
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 msgstr "Abrir Registros"
+||||||| c863258c8a6a7deaddad5db8957fc26536dbd4c4
+msgstr ""
+=======
+msgstr "Abrir registros"
+>>>>>>> 5ae896c835ba3ffa96c75a561972490dc4c9572f
 
 #. module: base_bg
 #: model:ir.model.fields,help:base_bg.field_bg_job__args_json
 msgid "Positional arguments for the method call, serialized as JSON"
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 msgstr "Argumentos posicionales para la llamada al método, serializados como JSON"
+||||||| c863258c8a6a7deaddad5db8957fc26536dbd4c4
+msgstr ""
+=======
+msgstr ""
+"Argumentos posicionales para la llamada al método, serializados como JSON"
+>>>>>>> 5ae896c835ba3ffa96c75a561972490dc4c9572f
 
 #. module: base_bg
 #. odoo-python
@@ -1102,7 +1171,13 @@ msgstr "Procesos enviados a segundo plano correctamente"
 #. odoo-python
 #: code:addons/base_bg/models/bg_job.py:0
 msgid "Related Records"
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 msgstr "Registros Relacionados"
+||||||| c863258c8a6a7deaddad5db8957fc26536dbd4c4
+msgstr ""
+=======
+msgstr "Registros relacionados"
+>>>>>>> 5ae896c835ba3ffa96c75a561972490dc4c9572f
 
 #. module: base_bg
 #. odoo-python
@@ -1123,7 +1198,13 @@ msgstr "Reintentar"
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__retry_count
 msgid "Retry Count"
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 msgstr "Cantidad de Reintentos"
+||||||| c863258c8a6a7deaddad5db8957fc26536dbd4c4
+msgstr ""
+=======
+msgstr "Cantidad de reintentos"
+>>>>>>> 5ae896c835ba3ffa96c75a561972490dc4c9572f
 
 #. module: base_bg
 #: model:ir.model.fields.selection,name:base_bg.selection__bg_job__state__running
@@ -1134,7 +1215,13 @@ msgstr "En ejecución"
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__start_time
 msgid "Start Time"
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 msgstr "Hora de Inicio"
+||||||| c863258c8a6a7deaddad5db8957fc26536dbd4c4
+msgstr ""
+=======
+msgstr "Hora de inicio"
+>>>>>>> 5ae896c835ba3ffa96c75a561972490dc4c9572f
 
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__state
@@ -1150,7 +1237,13 @@ msgstr "Nombre del método a ejecutar"
 #. module: base_bg
 #: model:ir.model.fields,help:base_bg.field_bg_job__model
 msgid "The model name on which the job method will be executed"
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 msgstr "Nombre del modelo sobre el que se ejecutará el método del trabajo"
+||||||| c863258c8a6a7deaddad5db8957fc26536dbd4c4
+msgstr ""
+=======
+msgstr "Nombre del modelo sobre el que se ejecuta el método del trabajo"
+>>>>>>> 5ae896c835ba3ffa96c75a561972490dc4c9572f
 
 #. module: base_bg
 #. odoo-python
@@ -1161,7 +1254,13 @@ msgstr "Los registros de este trabajo ya no existen"
 #. module: base_bg
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
 msgid "This Week"
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 msgstr "Esta Semana"
+||||||| c863258c8a6a7deaddad5db8957fc26536dbd4c4
+msgstr ""
+=======
+msgstr "Esta semana"
+>>>>>>> 5ae896c835ba3ffa96c75a561972490dc4c9572f
 
 #. module: base_bg
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
@@ -1171,12 +1270,26 @@ msgstr "Hoy"
 #. module: base_bg
 #: model:ir.model.fields,help:base_bg.field_bg_job__retry_count
 msgid "Total number of attempts made so far (transient + non-transient)."
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 msgstr "Cantidad total de intentos realizados hasta el momento (transitorios y no transitorios)."
+||||||| c863258c8a6a7deaddad5db8957fc26536dbd4c4
+msgstr ""
+=======
+msgstr ""
+"Cantidad total de intentos hechos hasta ahora (transitorios y no "
+"transitorios)."
+>>>>>>> 5ae896c835ba3ffa96c75a561972490dc4c9572f
 
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__transient_retry_count
 msgid "Transient Retry Count"
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 msgstr "Cantidad de Reintentos Transitorios"
+||||||| c863258c8a6a7deaddad5db8957fc26536dbd4c4
+msgstr ""
+=======
+msgstr "Cantidad de reintentos transitorios"
+>>>>>>> 5ae896c835ba3ffa96c75a561972490dc4c9572f
 
 #. module: base_bg
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
@@ -1187,7 +1300,13 @@ msgstr "Usuario"
 #. odoo-python
 #: code:addons/base_bg/models/base_bg.py:0
 msgid "Value %s is not JSON serializable"
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 msgstr "El valor %s no es serializable como JSON"
+||||||| c863258c8a6a7deaddad5db8957fc26536dbd4c4
+msgstr ""
+=======
+msgstr "El valor %s no se puede serializar como JSON"
+>>>>>>> 5ae896c835ba3ffa96c75a561972490dc4c9572f
 
 #. module: base_bg
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
@@ -1197,7 +1316,13 @@ msgstr "En espera"
 #. module: base_bg
 #: model:ir.model.fields.selection,name:base_bg.selection__bg_job__state__waiting
 msgid "Waiting For Previous Job"
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 msgstr "Esperando el Trabajo Anterior"
+||||||| c863258c8a6a7deaddad5db8957fc26536dbd4c4
+msgstr ""
+=======
+msgstr "Esperando el trabajo anterior"
+>>>>>>> 5ae896c835ba3ffa96c75a561972490dc4c9572f
 
 #. module: base_bg
 #: model:ir.model.fields,help:base_bg.field_bg_job__end_time
@@ -1207,7 +1332,13 @@ msgstr "Cuándo terminó la ejecución del trabajo"
 #. module: base_bg
 #: model:ir.model.fields,help:base_bg.field_bg_job__start_time
 msgid "When the job execution started"
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 msgstr "Cuándo comenzó la ejecución del trabajo"
+||||||| c863258c8a6a7deaddad5db8957fc26536dbd4c4
+msgstr ""
+=======
+msgstr "Cuándo empezó la ejecución del trabajo"
+>>>>>>> 5ae896c835ba3ffa96c75a561972490dc4c9572f
 
 #. module: base_bg
 #: model:ir.model.fields,help:base_bg.field_bg_job__cancel_time
@@ -1218,4 +1349,34 @@ msgstr "Cuándo se canceló el trabajo"
 #. odoo-python
 #: code:addons/base_bg/models/base_bg.py:0
 msgid "You will be notified when they are done."
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 msgstr "Se le notificará cuando terminen."
+||||||| c863258c8a6a7deaddad5db8957fc26536dbd4c4
+msgstr ""
+
+#~ msgid "Job %s timed out"
+#~ msgstr "El trabajo %s agotó el tiempo de espera"
+
+#~ msgid "Current number of retry attempts"
+#~ msgstr "Número actual de intentos de reintento"
+
+#~ msgid "Only enqueued jobs can be executed"
+#~ msgstr "Solo se pueden ejecutar los trabajos encolados"
+
+#~ msgid "Human readable job name"
+#~ msgstr "Nombre del trabajo legible para humanos"
+=======
+msgstr "Recibirá un aviso cuando terminen."
+
+#~ msgid "Job %s timed out"
+#~ msgstr "El trabajo %s agotó el tiempo de espera"
+
+#~ msgid "Current number of retry attempts"
+#~ msgstr "Número actual de intentos de reintento"
+
+#~ msgid "Only enqueued jobs can be executed"
+#~ msgstr "Solo se pueden ejecutar los trabajos encolados"
+
+#~ msgid "Human readable job name"
+#~ msgstr "Nombre del trabajo legible para humanos"
+>>>>>>> 5ae896c835ba3ffa96c75a561972490dc4c9572f
