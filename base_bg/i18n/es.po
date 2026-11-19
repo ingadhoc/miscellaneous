@@ -30,6 +30,8 @@ msgid ""
 "Attempts lost to transient DB contention, counted separately from the normal "
 "retry budget."
 msgstr ""
+"Intentos perdidos por contención transitoria de la base de datos, contados "
+"aparte del máximo normal de reintentos."
 
 #. module: base_bg
 #: model:ir.model,name:base_bg.model_bg_job
@@ -78,23 +80,23 @@ msgstr ""
 #. module: base_bg
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
 msgid "Batch"
-msgstr ""
+msgstr "Lote"
 
 #. module: base_bg
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_form
 msgid "Batch Jobs"
-msgstr ""
+msgstr "Trabajos del lote"
 
 #. module: base_bg
 #. odoo-python
 #: code:addons/base_bg/models/bg_job.py:0
 msgid "Batch Jobs: %s"
-msgstr ""
+msgstr "Trabajos del lote: %s"
 
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__batch_key
 msgid "Batch Key"
-msgstr ""
+msgstr "Clave del lote"
 
 #. module: base_bg
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_form
@@ -140,7 +142,7 @@ msgstr "Fecha de Creación"
 #. module: base_bg
 #: model:ir.model.fields,help:base_bg.field_bg_job__state
 msgid "Current state of the job"
-msgstr ""
+msgstr "Estado actual del trabajo"
 
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_base_bg__display_name
@@ -163,6 +165,8 @@ msgstr "Duración"
 #: model:ir.model.fields,help:base_bg.field_bg_job__next_retry_at
 msgid "Earliest time this job may be retried after a transient failure."
 msgstr ""
+"Momento a partir del cual se puede reintentar este trabajo después de una "
+"falla transitoria."
 
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__end_time
@@ -200,7 +204,7 @@ msgstr "Fallido"
 #. module: base_bg
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_form
 msgid "General Information"
-msgstr ""
+msgstr "Información general"
 
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_base_bg__id
@@ -211,13 +215,13 @@ msgstr "ID"
 #. module: base_bg
 #: model:ir.model.fields,help:base_bg.field_bg_job__batch_key
 msgid "Identifier for related jobs in a batch"
-msgstr ""
+msgstr "Identificador de los trabajos relacionados de un lote"
 
 #. module: base_bg
 #. odoo-python
 #: code:addons/base_bg/models/bg_job.py:0
 msgid "Job %s failed: %s"
-msgstr ""
+msgstr "El trabajo %s falló: %s"
 
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__name
@@ -289,17 +293,17 @@ msgstr "Modelo"
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__next_job_id
 msgid "Next Job"
-msgstr ""
+msgstr "Trabajo siguiente"
 
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__next_retry_at
 msgid "Next Retry At"
-msgstr ""
+msgstr "Próximo reintento"
 
 #. module: base_bg
 #: model:ir.model.fields,help:base_bg.field_bg_job__next_job_id
 msgid "Next job in the batch sequence"
-msgstr ""
+msgstr "Trabajo siguiente en la secuencia del lote"
 
 #. module: base_bg
 #: model_terms:ir.actions.act_window,help:base_bg.action_bg_job
@@ -322,163 +326,166 @@ msgstr "Solo se pueden reintentar los trabajos fallidos"
 #. odoo-python
 #: code:addons/base_bg/models/bg_job.py:0
 msgid "Only running jobs can be executed"
-msgstr ""
+msgstr "Solo se pueden ejecutar los trabajos en ejecución"
 
 #. module: base_bg
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_form
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_list
 msgid "Open Records"
-msgstr ""
+msgstr "Abrir registros"
 
 #. module: base_bg
 #: model:ir.model.fields,help:base_bg.field_bg_job__args_json
 msgid "Positional arguments for the method call, serialized as JSON"
 msgstr ""
+"Argumentos posicionales para la llamada al método, serializados como JSON"
 
 #. module: base_bg
 #. odoo-python
 #: code:addons/base_bg/models/bg_job.py:0
 msgid "Previous job in batch failed"
-msgstr ""
+msgstr "Falló el trabajo anterior del lote"
 
 #. module: base_bg
 #. odoo-python
 #: code:addons/base_bg/models/bg_job.py:0
 msgid "Previous job in batch was canceled"
-msgstr ""
+msgstr "Se canceló el trabajo anterior del lote"
 
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__priority
 msgid "Priority"
-msgstr ""
+msgstr "Prioridad"
 
 #. module: base_bg
 #. odoo-python
 #: code:addons/base_bg/models/base_bg.py:0
 msgid "Processes sent to background successfully"
-msgstr ""
+msgstr "Procesos enviados a segundo plano correctamente"
 
 #. module: base_bg
 #. odoo-python
 #: code:addons/base_bg/models/bg_job.py:0
 msgid "Related Records"
-msgstr ""
+msgstr "Registros relacionados"
 
 #. module: base_bg
 #. odoo-python
 #: code:addons/base_bg/models/bg_job.py:0
 msgid "Related records: %s"
-msgstr ""
+msgstr "Registros relacionados: %s"
 
 #. module: base_bg
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_list
 msgid "Retries"
-msgstr ""
+msgstr "Reintentos"
 
 #. module: base_bg
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_form
 msgid "Retry"
-msgstr ""
+msgstr "Reintentar"
 
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__retry_count
 msgid "Retry Count"
-msgstr ""
+msgstr "Cantidad de reintentos"
 
 #. module: base_bg
 #: model:ir.model.fields.selection,name:base_bg.selection__bg_job__state__running
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
 msgid "Running"
-msgstr ""
+msgstr "En ejecución"
 
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__start_time
 msgid "Start Time"
-msgstr ""
+msgstr "Hora de inicio"
 
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__state
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
 msgid "State"
-msgstr ""
+msgstr "Estado"
 
 #. module: base_bg
 #: model:ir.model.fields,help:base_bg.field_bg_job__method
 msgid "The method name to be executed"
-msgstr ""
+msgstr "Nombre del método a ejecutar"
 
 #. module: base_bg
 #: model:ir.model.fields,help:base_bg.field_bg_job__model
 msgid "The model name on which the job method will be executed"
-msgstr ""
+msgstr "Nombre del modelo sobre el que se ejecuta el método del trabajo"
 
 #. module: base_bg
 #. odoo-python
 #: code:addons/base_bg/models/bg_job.py:0
 msgid "The records of this job no longer exist"
-msgstr ""
+msgstr "Los registros de este trabajo ya no existen"
 
 #. module: base_bg
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
 msgid "This Week"
-msgstr ""
+msgstr "Esta semana"
 
 #. module: base_bg
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
 msgid "Today"
-msgstr ""
+msgstr "Hoy"
 
 #. module: base_bg
 #: model:ir.model.fields,help:base_bg.field_bg_job__retry_count
 msgid "Total number of attempts made so far (transient + non-transient)."
 msgstr ""
+"Cantidad total de intentos hechos hasta ahora (transitorios y no "
+"transitorios)."
 
 #. module: base_bg
 #: model:ir.model.fields,field_description:base_bg.field_bg_job__transient_retry_count
 msgid "Transient Retry Count"
-msgstr ""
+msgstr "Cantidad de reintentos transitorios"
 
 #. module: base_bg
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
 msgid "User"
-msgstr ""
+msgstr "Usuario"
 
 #. module: base_bg
 #. odoo-python
 #: code:addons/base_bg/models/base_bg.py:0
 msgid "Value %s is not JSON serializable"
-msgstr ""
+msgstr "El valor %s no se puede serializar como JSON"
 
 #. module: base_bg
 #: model_terms:ir.ui.view,arch_db:base_bg.view_bg_job_search
 msgid "Waiting"
-msgstr ""
+msgstr "En espera"
 
 #. module: base_bg
 #: model:ir.model.fields.selection,name:base_bg.selection__bg_job__state__waiting
 msgid "Waiting For Previous Job"
-msgstr ""
+msgstr "Esperando el trabajo anterior"
 
 #. module: base_bg
 #: model:ir.model.fields,help:base_bg.field_bg_job__end_time
 msgid "When the job execution finished"
-msgstr ""
+msgstr "Cuándo terminó la ejecución del trabajo"
 
 #. module: base_bg
 #: model:ir.model.fields,help:base_bg.field_bg_job__start_time
 msgid "When the job execution started"
-msgstr ""
+msgstr "Cuándo empezó la ejecución del trabajo"
 
 #. module: base_bg
 #: model:ir.model.fields,help:base_bg.field_bg_job__cancel_time
 msgid "When the job was canceled"
-msgstr ""
+msgstr "Cuándo se canceló el trabajo"
 
 #. module: base_bg
 #. odoo-python
 #: code:addons/base_bg/models/base_bg.py:0
 msgid "You will be notified when they are done."
-msgstr ""
+msgstr "Recibirá un aviso cuando terminen."
 
 #~ msgid "Job %s timed out"
 #~ msgstr "El trabajo %s agotó el tiempo de espera"
