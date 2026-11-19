@@ -1,3 +1,3 @@
-from . import iot_box
-from . import iot_device
+from . import printnode_account
+from . import printer
 from . import ir_actions_report
