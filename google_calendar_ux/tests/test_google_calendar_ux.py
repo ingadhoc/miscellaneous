@@ -48,14 +48,12 @@ class TestGoogleCalendarUx(TransactionCase):
         self.assertFalse(self.disconnected.sudo().google_synchronization_stopped)
         self.assertEqual(len(self.env.cr.postcommit._funcs), queued)
 
-    def test_restart_with_token_marks_without_patching(self):
+    def test_restart_with_token_is_standard(self):
         event = self._event(self.connected)
-        queued = len(self.env.cr.postcommit._funcs)
 
         self.connected.with_user(self.connected).restart_google_synchronization()
 
         self.assertTrue(event.need_sync)
-        self.assertEqual(len(self.env.cr.postcommit._funcs), queued)
 
     def test_post_init_hook_resets_disconnected_users_only(self):
         settings = self.env["res.users.settings"]._find_or_create_for_user(self.disconnected).sudo()

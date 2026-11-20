@@ -18,14 +18,13 @@ Reconnecting Google Calendar from the Calendar "Google" button no longer hangs.
 
 * Without a Google token, the button goes straight to Google's consent screen.
   Odoo standard first marks every event of the user (one year back and one
-  year ahead) to be resent and sends them to Google one by one in the same
-  request; with many events the browser times out before reaching Google, and
-  a second click ends in a ``SerializationFailure``. The marks are not needed:
-  without a sync token the first synchronization is a full one and already
-  takes every event in range.
-* With a token (synchronization only stopped), events are still marked, but
-  they are sent by the regular synchronization in batches of 200 instead of
-  one Google call per event during the click.
+  year ahead) to be resent. The events organized by a connected colleague are
+  sent right away, one by one, with the colleague's account, and may notify
+  their attendees; with many events the browser times out before reaching
+  Google, and a second click ends in a ``SerializationFailure``. The marks are
+  not needed: nothing can be sent without a token, and events edited while
+  disconnected are already marked.
+* With a token (synchronization only stopped), the button behaves as standard.
 * The button ignores a second click while the first one is running.
 
 Installation
