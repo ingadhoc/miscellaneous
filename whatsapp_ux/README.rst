@@ -28,6 +28,12 @@ versioned, upgrade-safe, one-click bulk send action. For example, with the
 "Send by WhatsApp: Invoice" shows up in the invoices list Action menu with no
 manual UI setup.
 
+It also lets members leave a WhatsApp conversation:
+
+    * Natively a WhatsApp conversation can only be unpinned, which keeps the membership: the next incoming message brings it back.
+    * Any member except the owner of the conversation gets a *Leave Conversation* action next to *Unpin Conversation*. After leaving, new messages no longer reach them.
+    * The owner (the first internal member, as the native rule defines it) keeps only *Unpin Conversation*, because the backend does not let them leave.
+
 
 Installation
 ============
