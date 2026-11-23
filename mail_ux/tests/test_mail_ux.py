@@ -169,6 +169,31 @@ class TestMailUx(TransactionCase):
         scheduled.unlink()
         self.assertFalse(scheduled.exists())
 
+    def test_only_record_editors_cancel_others_scheduled_messages(self):
+        reader = new_test_user(self.env, login="mail_ux_reader4", groups="base.group_user")
+        self.assertFalse(self.partner.with_user(reader).has_access("write"))
+        self.assertTrue(self.partner.with_user(self.user).has_access("write"))
+        values = {
+            "body": "<p>Someone else's</p>",
+            "model": "res.partner",
+            "res_id": self.partner.id,
+            "scheduled_date": fields.Datetime.now() + timedelta(hours=1),
+        }
+        by_editor = (
+            self.env["mail.scheduled.message"]
+            .with_user(self.user)
+            .create({**values, "author_id": self.user.partner_id.id})
+        )
+        with self.assertRaises(AccessError):
+            by_editor.with_user(reader).unlink()
+        self.assertTrue(by_editor.exists())
+
+        by_reader = (
+            self.env["mail.scheduled.message"].with_user(reader).create({**values, "author_id": reader.partner_id.id})
+        )
+        by_reader.with_user(self.user).unlink()
+        self.assertFalse(by_reader.exists())
+
     def test_cannot_schedule_on_unreadable_record(self):
         other_company = self.env["res.company"].create({"name": "Mail UX other company"})
         hidden_partner = self.env["res.partner"].create({"name": "Hidden", "company_id": other_company.id})

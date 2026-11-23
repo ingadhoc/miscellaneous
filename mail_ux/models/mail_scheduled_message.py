@@ -29,6 +29,15 @@ class MailScheduledMessage(models.Model):
         for message in self:
             message.res_access = message.id in allowed
 
+    def unlink(self):
+        """Post access is enough to cancel your own scheduled messages; cancelling another user's
+        still needs write access on the record, as in core."""
+        if not self.env.su:
+            others = self.filtered(lambda message: message.create_uid != self.env.user)
+            for model, messages in others.grouped("model").items():
+                self.env[model].browse(messages.mapped("res_id")).check_access("write")
+        return super().unlink()
+
     def _post_message(self, raise_exception=True):
         """Resolve role_ids from notification_parameters into partner_ids before posting."""
         for scheduled_message in self:
