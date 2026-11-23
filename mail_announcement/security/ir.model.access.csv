@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mail_announcement_user,mail.announcement.user,model_mail_announcement,base.group_user,1,1,1,0
+access_mail_announcement_system,mail.announcement.system,model_mail_announcement,base.group_system,1,1,1,1
+access_mail_announcement_receipt_user,mail.announcement.receipt.user,model_mail_announcement_receipt,base.group_user,1,1,1,0
+access_mail_announcement_receipt_system,mail.announcement.receipt.system,model_mail_announcement_receipt,base.group_system,1,1,1,1
