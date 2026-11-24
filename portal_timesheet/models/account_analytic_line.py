@@ -35,11 +35,12 @@ class AccountAnalyticLine(models.Model):
         else:
             super()._compute_readonly_timesheet()
 
-    def onchange(self, values, field_names, fields_spec):
-        # The form onchanges read product costs, categories and accounts, which these users cannot read.
+    @api.onchange("product_id", "product_uom_id", "unit_amount", "currency_id")
+    def on_change_unit_amount(self):
+        # It reads product costs, categories and accounts, which these users cannot read.
         if not self.env.su and self.env.user.has_group("portal_timesheet.group_portal_backend_timesheet"):
-            return super(AccountAnalyticLine, self.sudo()).onchange(values, field_names, fields_spec)
-        return super().onchange(values, field_names, fields_spec)
+            return super(AccountAnalyticLine, self.sudo()).on_change_unit_amount()
+        return super().on_change_unit_amount()
 
     @api.model_create_multi
     def create(self, vals_list):
