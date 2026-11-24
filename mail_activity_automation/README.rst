@@ -14,7 +14,7 @@
 Mail Activity Automation
 ========================
 
-* This module incorporates the functionality of automatically executing the activity, whether it is sending an email or marking Done.
+* This module incorporates the functionality of automatically executing the activity: when an activity of a type with "Run automatically" reaches its due date, a scheduled action sends the email templates of the activity type and marks the activity as done.
 
 Installation
 ============
@@ -29,6 +29,7 @@ Configuration
 To configure this module, you need to:
 
 #. In the activities type configure with "run automatically".
+#. Optionally, set the email templates to send when the activity runs.
 
 
 Usage
