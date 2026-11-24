@@ -12,6 +12,9 @@ from odoo import _, api, models
 if TYPE_CHECKING:
     from base_bg.models.bg_job import BgJob
 
+# Progress keys of the enqueuing cron run: the job reports on the cron that runs it.
+CRON_RUN_CONTEXT_KEYS = ("ir_cron_progress_id", "cron_id", "cron_end_time")
+
 
 class BaseBg(models.AbstractModel):
     _name = "base.bg"
@@ -43,7 +46,9 @@ class BaseBg(models.AbstractModel):
         jobs = self.env["bg.job"]
         model = records._name
         record_ids = records.ids if records else []
-        context = {k: v for k, v in self.env.context.items() if self.is_serializable(v)}
+        context = {
+            k: v for k, v in self.env.context.items() if k not in CRON_RUN_CONTEXT_KEYS and self.is_serializable(v)
+        }
         priority = max(kwargs.pop("priority", 10), 0)
         max_retries = kwargs.pop("max_retries", 3)
         name = kwargs.pop("name", "")

@@ -488,13 +488,16 @@ class TestBgJob(TransactionCase):
         self.assertEqual(job.priority, 3)
 
     def test_bg_enqueue_filters_unserializable_context_entries(self):
-        """Only JSON-safe context keys should be stored in bg.job."""
+        """Only JSON-safe context keys that do not belong to the enqueuing cron run are stored."""
         job_name = f"Context Test Job {uuid4().hex}"
         partners = self.env["res.partner"].create([{"name": "Test Partner"}])
         with patch.object(BaseBg, "_trigger_crons"):
             self.env["base.bg"].with_context(
                 serializable_flag="ok",
                 unserializable_env=self.env,
+                ir_cron_progress_id=1,
+                cron_id=1,
+                cron_end_time=1.0,
             ).bg_enqueue_records(partners, "dummy_context_method", name=job_name)
 
         job = self._job_by_name(job_name)
