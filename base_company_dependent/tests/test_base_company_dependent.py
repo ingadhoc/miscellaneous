@@ -507,6 +507,19 @@ class TestBaseCompanyDependent(TransactionCase):
         result = self.helper._check_orm_is_specific(settings, field, self.env.company)
         self.assertFalse(result)
 
+    def test_detect_strategy_computed_company_context(self):
+        """A computed field with @api.depends_context('company') uses ORM mode."""
+        self.assertEqual(self.helper._detect_field_strategy("product.template", "standard_price"), "orm")
+
+    def test_meta_reports_template_standard_price(self):
+        """A single-variant template reports standard_price as specific once
+        the variant has a per-company value."""
+        template = self.env["product.template"].create({"name": "CD Test Product"})
+        template.product_variant_id.with_company(self.company_1).standard_price = 42.0
+        self.env.flush_all()
+        meta = self.helper.get_company_dependent_meta("product.template", template.id)
+        self.assertTrue(meta.get("standard_price"))
+
     # ------------------------------------------------------------------
     # Public RPC path: set_company_dependent_values(..., mode="orm")
     # Covers access control and accessible-companies filtering, since the

@@ -22,7 +22,7 @@ import json
 import logging
 
 from odoo import api, models
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import AccessError, MissingError, UserError, ValidationError
 from odoo.fields import Domain
 from psycopg2 import sql
 
@@ -127,6 +127,10 @@ class BaseCompanyDependent(models.AbstractModel):
     # Detección de estrategia (JSON directo vs ORM puro)
     # ------------------------------------------------------------------
 
+    def _depends_on_company(self, field):
+        """True when ``field`` depends on the ``company`` context key."""
+        return "company" in self.env.registry.field_depends_context[field]
+
     def _detect_field_strategy(self, res_model, field_name):
         """Determina si un campo debe usar lectura JSONB directa o ORM puro.
 
@@ -143,7 +147,7 @@ class BaseCompanyDependent(models.AbstractModel):
             return "json"
 
         # Caso ORM: computed con depends_context('company')
-        if "company" in (getattr(field, "depends_context", None) or ()):
+        if self._depends_on_company(field):
             return "orm"
 
         # Caso related: seguir la cadena hasta el campo real
@@ -167,9 +171,7 @@ class BaseCompanyDependent(models.AbstractModel):
             else:
                 break
         final_field = self.env[current_model]._fields.get(related_parts[-1])
-        if final_field and (
-            final_field.company_dependent or "company" in (getattr(final_field, "depends_context", None) or ())
-        ):
+        if final_field and (final_field.company_dependent or self._depends_on_company(final_field)):
             return "orm"
         raise ValueError(f"El campo '{field.name}' en '{res_model}' no traza a un campo company_dependent.")
 
@@ -212,20 +214,6 @@ class BaseCompanyDependent(models.AbstractModel):
                 current = current[part]
             if traversable and current and len(current) == 1:
                 return current._name, related_parts[-1], current.id
-
-        # Computed/inverse: buscar si el campo existe como CD en un modelo
-        # relacionado. Caso emblemático: product.template → product.product.
-        # Verificamos que el res_id sea válido en el modelo destino antes de
-        # recurrir — los IDs no son intercambiables entre modelos, así que solo
-        # tiene sentido si el target apunta a un registro existente con ese id.
-        if hasattr(field, "related_field") and field.related_field:
-            target_model_name = field.related_field.model_name
-            if self.env[target_model_name].browse(res_id).exists():
-                return self._resolve_orm_target(
-                    target_model_name,
-                    res_id,
-                    field.related_field.name,
-                )
 
         # product.template.standard_price → product.product.standard_price
         # Con variante única delegamos a la variante para acceder al JSONB real de
@@ -375,7 +363,7 @@ class BaseCompanyDependent(models.AbstractModel):
             if target_field_obj and target_field_obj.company_dependent and target_field_obj.store:
                 raw_json = self._get_raw_json(self.env[target_model]._table, target_field, target_id)
                 return str(company.id) in raw_json
-        except (ValueError, Exception):
+        except (ValueError, AccessError, MissingError):
             pass
 
         # Computed puro sin JSONB: no se puede determinar is_specific sin ambigüedad.
@@ -774,13 +762,6 @@ class BaseCompanyDependent(models.AbstractModel):
                 record_for_company = self.env["res.company"].browse(company.id)
             else:
                 record_for_company = target_record
-            _logger.debug(
-                "[CD ORM GET] reading for company=%s record=%s.%s → %r",
-                company.name,
-                record_for_company._name,
-                record_for_company.id,
-                record_for_company.with_company(company)[target_field],
-            )
             row = self._build_row_data_orm(target_field_obj, record_for_company, company)
             hier = hierarchy.get(company.id, {})
             row["parent_id"] = hier.get("parent_id")
@@ -972,16 +953,12 @@ class BaseCompanyDependent(models.AbstractModel):
                 result.update({field_name: (company_key in (row[i] or {})) for i, field_name in enumerate(cd_fields)})
 
         # Campos ORM-mode: computed con depends_context('company')
+        # Only True values are reported: the client reads a missing key as False.
+        record = model_obj.browse(res_id)
         for name, f in model_obj._fields.items():
-            if name in result:
+            if name in result or not self._depends_on_company(f):
                 continue
-            depends_ctx = getattr(f, "depends_context", None) or ()
-            if "company" not in depends_ctx:
-                continue
-            try:
-                record = model_obj.browse(res_id)
-                result[name] = self._check_orm_is_specific(record, f, self.env.company)
-            except Exception:
-                pass
+            if self._check_orm_is_specific(record, f, self.env.company):
+                result[name] = True
 
         return result

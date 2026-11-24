@@ -18,6 +18,7 @@ import { patch } from "@web/core/utils/patch";
 import { BooleanField } from "@web/views/fields/boolean/boolean_field";
 import { CharField } from "@web/views/fields/char/char_field";
 import { DateTimeField } from "@web/views/fields/datetime/datetime_field";
+import { Field } from "@web/views/fields/field";
 import { FloatField } from "@web/views/fields/float/float_field";
 import { IntegerField } from "@web/views/fields/integer/integer_field";
 import { Many2OneField } from "@web/views/fields/many2one/many2one_field";
@@ -54,8 +55,7 @@ function makeCDPatch() {
             const fieldDef = this.props.record?.fields?.[this.props.name];
             if (fieldDef?.company_dependent === true) return true;
             // Explicit opt-in via options="{'company_dependent_mode': 'orm'}"
-            const options = this.props.options || {};
-            return options.company_dependent_mode === "orm";
+            return this.props.companyDependentMode === "orm";
         },
 
         /**
@@ -63,8 +63,7 @@ function makeCDPatch() {
          * 'orm' for computed/related fields, 'json' for native JSONB fields.
          */
         get cdMode() {
-            const options = this.props.options || {};
-            if (options.company_dependent_mode === "orm") return "orm";
+            if (this.props.companyDependentMode === "orm") return "orm";
             return null; // let backend auto-detect
         },
 
@@ -97,10 +96,27 @@ const FIELDS = [
     DateTimeField,
 ];
 
-for (const Field of FIELDS) {
-    patch(Field.prototype, makeCDPatch());
-    Field.components = { ...Field.components, CompanyDependentButton };
+for (const FieldComponent of FIELDS) {
+    patch(FieldComponent.prototype, makeCDPatch());
+    FieldComponent.components = { ...FieldComponent.components, CompanyDependentButton };
+    FieldComponent.props = {
+        ...FieldComponent.props,
+        companyDependentMode: { type: String, optional: true },
+    };
 }
+
+// Field components only receive what their extractProps returns, so the
+// view option has to be forwarded explicitly.
+patch(Field.prototype, {
+    get fieldComponentProps() {
+        const props = super.fieldComponentProps;
+        const mode = this.props.fieldInfo?.options?.company_dependent_mode;
+        if (mode && "companyDependentMode" in (this.field.component.props || {})) {
+            props.companyDependentMode = mode;
+        }
+        return props;
+    },
+});
 
 // Each class points to its own extended template defined in templates.xml.
 Many2OneField.template = "base_company_dependent.Many2OneField";
