@@ -52,5 +52,7 @@ class AccountAnalyticLine(models.Model):
         # sale reads the sale order lines of the hours on delete, which these users cannot read.
         if not self.env.su and self.env.user.has_group("portal_timesheet.group_portal_backend_timesheet"):
             self.check_access("unlink")
+            # as superuser it would skip the check of validated timesheets
+            self.check_if_allowed(delete=True)
             return super(AccountAnalyticLine, self.sudo()).unlink()
         return super().unlink()

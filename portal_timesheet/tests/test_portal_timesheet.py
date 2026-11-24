@@ -2,6 +2,9 @@
 # For copyright and license notices, see __manifest__.py file in module root
 # directory
 ##############################################################################
+from datetime import timedelta
+
+from odoo import fields
 from odoo.exceptions import AccessError
 from odoo.tests.common import TransactionCase
 
@@ -155,6 +158,23 @@ class TestPortalTimesheet(TransactionCase):
                     [],
                     {"employee_id": {"fields": {"private_email": {}}}, "unit_amount": {}},
                 )
+
+    def test_portal_user_cannot_delete_validated_hours(self):
+        """Deleting runs as superuser for sale: the validation of timesheet_grid still applies."""
+        self.employee.sudo().last_validated_timesheet_date = fields.Date.today() - timedelta(days=2)
+        line = self.env["account.analytic.line"].create(
+            {
+                "name": "Validated hours",
+                "project_id": self.project.id,
+                "task_id": self.task.id,
+                "employee_id": self.employee.id,
+                "date": fields.Date.today() - timedelta(days=10),
+                "unit_amount": 1,
+            }
+        )
+        with self.assertRaises(AccessError):
+            line.with_user(self.user).unlink()
+        self.assertTrue(line.exists())
 
     def test_timesheet_menu_visible(self):
         """The Timesheets root menu stays visible to the group: portal_backend hides root menus without group."""
