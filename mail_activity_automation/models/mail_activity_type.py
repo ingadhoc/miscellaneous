@@ -5,5 +5,6 @@ class MailActivityType(models.Model):
     _inherit = "mail.activity.type"
 
     run_automatically = fields.Boolean(
-        help="Si marca esta opción, llegada la fecha de vencimiento, se enviará la plantilla seleccionada y se marcará la actividad como realizado."
+        help="If checked, when the due date is reached, the email templates of the activity type are sent "
+        "and the activity is marked as done."
     )
