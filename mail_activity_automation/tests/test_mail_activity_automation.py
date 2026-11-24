@@ -1,6 +1,9 @@
+from unittest.mock import patch
+
 from dateutil.relativedelta import relativedelta
 from odoo import fields
 from odoo.tests import TransactionCase, tagged
+from odoo.tools import mute_logger
 
 
 @tagged("post_install", "-at_install")
@@ -81,8 +84,40 @@ class TestMailActivityAutomation(TransactionCase):
 
     def test_manual_done_does_not_send_template(self):
         activity = self._create_activity(self.type_auto_template, -1)
+        not_due = self._create_activity(self.type_auto_template, 10)
 
         activity.action_done()
+        # the old bot context key must not trigger the automatic run anymore
+        not_due.with_context(from_bot=True).action_done()
 
         self.assertTrue(self._is_done(activity))
+        self.assertTrue(self._is_done(not_due))
         self.assertFalse(self._template_messages())
+
+    @mute_logger("odoo.addons.mail_activity_automation.models.mail_activity")
+    def test_cron_isolates_failing_activities(self):
+        generic_type = self.env["mail.activity.type"].create({"name": "Auto generic", "run_automatically": True})
+        without_document = self.env["mail.activity"].create(
+            {
+                "activity_type_id": generic_type.id,
+                "user_id": self.env.user.id,
+                "date_deadline": self.today - relativedelta(days=1),
+            }
+        )
+        failing = self._create_activity(self.type_auto_no_template, -1)
+        good = self._create_activity(self.type_auto_template, -1)
+        activity_class = type(self.env["mail.activity"])
+        original_run = activity_class._run_automatically
+
+        def run_or_fail(activity):
+            if activity == failing:
+                raise ValueError("Simulated failure")
+            return original_run(activity)
+
+        with patch.object(activity_class, "_run_automatically", autospec=True, side_effect=run_or_fail):
+            self.env["mail.activity"]._cron_run_activities()
+
+        self.assertFalse(self._is_done(without_document), "Activities without document are skipped")
+        self.assertFalse(self._is_done(failing))
+        self.assertTrue(self._is_done(good), "A failing activity does not block the others")
+        self.assertEqual(len(self._template_messages()), 1)
