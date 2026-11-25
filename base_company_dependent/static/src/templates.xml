@@ -544,7 +544,7 @@
                         <i class="fa fa-undo me-1"/>
                         <strong><t t-esc="footerNoteHtml.reset"/></strong>
                         <em><t t-esc="footerNoteHtml.resetDesc"/></em>
-                        <span class="mx-2 text-muted">·</span>
+                        <br/>
                         <i class="fa fa-copy me-1"/>
                         <strong><t t-esc="footerNoteHtml.copy"/></strong>
                         <em><t t-esc="footerNoteHtml.copyDesc"/></em>
