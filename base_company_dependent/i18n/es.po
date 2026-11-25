@@ -29,7 +29,7 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/base_company_dependent/static/src/templates.xml:0
 msgid "Actions"
-msgstr ""
+msgstr "Acciones"
 
 #. module: base_company_dependent
 #: model:ir.model,name:base_company_dependent.model_base
@@ -52,19 +52,19 @@ msgstr "Valores por compañía: %s"
 #. odoo-javascript
 #: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
 msgid "Copy"
-msgstr ""
+msgstr "Copiar"
 
 #. module: base_company_dependent
 #. odoo-javascript
 #: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
 msgid "Copy "
-msgstr ""
+msgstr "Copiar "
 
 #. module: base_company_dependent
 #. odoo-javascript
 #: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
 msgid "Copy this value to all child companies"
-msgstr ""
+msgstr "Copiar este valor a todas las compañías hijas"
 
 #. module: base_company_dependent
 #. odoo-javascript
@@ -87,7 +87,7 @@ msgstr "Descartar"
 #. module: base_company_dependent
 #: model:ir.model.fields,field_description:base_company_dependent.field_base_company_dependent__display_name
 msgid "Display Name"
-msgstr ""
+msgstr "Nombre para mostrar"
 
 #. module: base_company_dependent
 #: model:ir.model,name:base_company_dependent.model_base_company_dependent
@@ -97,13 +97,13 @@ msgstr "Helpers para campos company_dependent"
 #. module: base_company_dependent
 #: model:ir.model.fields,field_description:base_company_dependent.field_base_company_dependent__id
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #. module: base_company_dependent
 #. odoo-javascript
 #: code:addons/base_company_dependent/static/src/templates.xml:0
 msgid "Insert Field"
-msgstr ""
+msgstr "Insertar campo"
 
 #. module: base_company_dependent
 #. odoo-javascript
@@ -179,6 +179,16 @@ msgstr ""
 
 #. module: base_company_dependent
 #. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_button.js:0
+msgid ""
+"These values are company-specific. Switch company to see or edit values for "
+"other companies."
+msgstr ""
+"Estos valores son específicos de cada compañía. Cambie de compañía para ver "
+"o editar los valores de otras compañías."
+
+#. module: base_company_dependent
+#. odoo-javascript
 #: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
 msgid "Value"
 msgstr "Valor"
@@ -193,7 +203,7 @@ msgstr "Valores guardados correctamente."
 #. odoo-javascript
 #: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
 msgid "propagates the value of a parent company to all its child companies."
-msgstr ""
+msgstr "propaga el valor de una compañía padre a todas sus compañías hijas."
 
 #. module: base_company_dependent
 #. odoo-javascript

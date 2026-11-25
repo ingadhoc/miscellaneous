@@ -175,6 +175,14 @@ msgstr ""
 
 #. module: base_company_dependent
 #. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_button.js:0
+msgid ""
+"These values are company-specific. Switch company to see or edit values for "
+"other companies."
+msgstr ""
+
+#. module: base_company_dependent
+#. odoo-javascript
 #: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
 msgid "Value"
 msgstr ""
