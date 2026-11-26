@@ -39,6 +39,8 @@ class TestProductCompanyDependent(TransactionCase):
         )
         self.assertEqual(len(template.product_variant_ids), 2)
         with self.assertRaises(UserError):
+            self.helper.get_company_dependent_values("product.template", template.id, "standard_price", mode="orm")
+        with self.assertRaises(UserError):
             self.helper.set_company_dependent_values(
                 "product.template", template.id, "standard_price", {str(self.env.company.id): 10.0}, mode="orm"
             )

@@ -28,6 +28,8 @@ from psycopg2 import sql
 
 _logger = logging.getLogger(__name__)
 
+READ_ERRORS = (AccessError, MissingError, UserError, ValidationError, ValueError, KeyError)
+
 
 class BaseCompanyDependent(models.AbstractModel):
     """Proporciona métodos de backend para leer y escribir campos
@@ -196,7 +198,7 @@ class BaseCompanyDependent(models.AbstractModel):
                 # related='company_id.xxx' → operar sobre res.company
                 real_field_name = related_parts[1]
                 real_model = "res.company"
-                real_id = self.env[res_model].browse(res_id).company_id.id or self.env.company.id
+                real_id = self.env.company.id
                 return real_model, real_field_name, real_id
 
             # Related genérico: seguir la cadena, pero solo a través de many2one.
@@ -229,11 +231,11 @@ class BaseCompanyDependent(models.AbstractModel):
         iterando por compañías con ``record.with_company(company)``.
         """
         rec = record.with_company(company)
-        # Broad on purpose: one company with incomplete config must not break
-        # the whole dialog, its row just shows empty.
+        # One company with incomplete config must not break the whole dialog:
+        # its row just shows empty. Database and programming errors still raise.
         try:
             raw_val = rec[field.name]
-        except Exception:
+        except READ_ERRORS:
             _logger.debug("[CD ORM GET] cannot read %s for company %s", field.name, company.id, exc_info=True)
             raw_val = None
 
@@ -241,7 +243,7 @@ class BaseCompanyDependent(models.AbstractModel):
         base_company = record.company_id if hasattr(record, "company_id") and record.company_id else self.env.company
         try:
             base_val = record.with_company(base_company)[field.name]
-        except Exception:
+        except READ_ERRORS:
             _logger.debug("[CD ORM GET] cannot read base value of %s", field.name, exc_info=True)
             base_val = None
 

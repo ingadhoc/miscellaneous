@@ -424,10 +424,10 @@ class TestBaseCompanyDependent(TesterModelMixin, TransactionCase):
 
     def test_resolve_orm_target_company_related(self):
         """_resolve_orm_target maps `related='company_id.foo'` to res.company.foo
-        of the record's company — the path the widget uses on Setting views."""
-        tester = self.env[self.MODEL].create({"company_id": self.company_2.id})
+        for the current company — the path the widget uses on Setting views."""
+        tester = self.env[self.MODEL].create({"company_id": self.company_1.id})
         target = self.helper._resolve_orm_target(self.MODEL, tester.id, "company_color")
-        self.assertEqual(target, ("res.company", "primary_color", self.company_2.id))
+        self.assertEqual(target, ("res.company", "primary_color", self.env.company.id))
 
     def test_set_values_orm_res_company_branch(self):
         """ORM-mode setter on a res.company target writes each company's own

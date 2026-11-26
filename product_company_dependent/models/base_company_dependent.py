@@ -21,5 +21,6 @@ class BaseCompanyDependent(models.AbstractModel):
         super()._check_orm_target(target_model, target_field, target_id)
         if target_model == "product.template":
             variant_field = self.env["product.product"]._fields.get(target_field)
-            if variant_field and variant_field.company_dependent:
+            variants = self.env["product.template"].browse(target_id).product_variant_ids
+            if variant_field and variant_field.company_dependent and len(variants) != 1:
                 self._raise_not_manageable()
