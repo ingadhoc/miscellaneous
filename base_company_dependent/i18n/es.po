@@ -182,6 +182,12 @@ msgstr ""
 "anterior."
 
 #. module: base_company_dependent
+#. odoo-python
+#: code:addons/base_company_dependent/models/base_company_dependent.py:0
+msgid "The record to edit no longer exists."
+msgstr "El registro a editar ya no existe."
+
+#. module: base_company_dependent
 #. odoo-javascript
 #: code:addons/base_company_dependent/static/src/company_dependent_button.js:0
 msgid ""
