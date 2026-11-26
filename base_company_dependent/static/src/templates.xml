@@ -24,11 +24,26 @@
                         searchable="!this.isBottomSheet" required="this.props.required"/>
                 </t>
                 <CompanyDependentButton
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
                     fieldName="this.props.name"
                     fieldString="this.props.record.fields[this.props.name].string || this.props.name"
                     required="this.props.record._isRequired(this.props.name)"
                     record="this.props.record"
                     isSpecific="this._cdState.isSpecific"
+||||||| 01ef66dbf3ec84f203e9b3c63c47739c308d4150
+                    fieldName="props.name"
+                    fieldString="props.record.fields[props.name].string || props.name"
+                    required="props.record._isRequired(props.name)"
+                    record="props.record"
+                    isSpecific="_cdState.isSpecific"
+=======
+                    fieldName="props.name"
+                    fieldString="props.record.fields[props.name].string || props.name"
+                    required="props.record._isRequired(props.name)"
+                    record="props.record"
+                    isSpecific="_cdState.isSpecific"
+                    mode="cdMode"
+>>>>>>> 2f7d49b093ce9012e8d29e591ffb369db801f4d9
                     onSaved="() => this._loadCDMeta()"
                 />
             </div>
@@ -80,11 +95,26 @@
                     </div>
                 </t>
                 <CompanyDependentButton
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
                     fieldName="this.props.name"
                     fieldString="this.props.record.fields[this.props.name].string || this.props.name"
                     required="this.props.record._isRequired(this.props.name)"
                     record="this.props.record"
                     isSpecific="this._cdState.isSpecific"
+||||||| 01ef66dbf3ec84f203e9b3c63c47739c308d4150
+                    fieldName="props.name"
+                    fieldString="props.record.fields[props.name].string || props.name"
+                    required="props.record._isRequired(props.name)"
+                    record="props.record"
+                    isSpecific="_cdState.isSpecific"
+=======
+                    fieldName="props.name"
+                    fieldString="props.record.fields[props.name].string || props.name"
+                    required="props.record._isRequired(props.name)"
+                    record="props.record"
+                    isSpecific="_cdState.isSpecific"
+                    mode="cdMode"
+>>>>>>> 2f7d49b093ce9012e8d29e591ffb369db801f4d9
                     onSaved="() => this._loadCDMeta()"
                 />
             </div>
@@ -140,11 +170,26 @@
                     t-att-step="this.props.step"
                 />
                 <CompanyDependentButton
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
                     fieldName="this.props.name"
                     fieldString="this.props.record.fields[this.props.name].string || this.props.name"
                     required="this.props.record._isRequired(this.props.name)"
                     record="this.props.record"
                     isSpecific="this._cdState.isSpecific"
+||||||| 01ef66dbf3ec84f203e9b3c63c47739c308d4150
+                    fieldName="props.name"
+                    fieldString="props.record.fields[props.name].string || props.name"
+                    required="props.record._isRequired(props.name)"
+                    record="props.record"
+                    isSpecific="_cdState.isSpecific"
+=======
+                    fieldName="props.name"
+                    fieldString="props.record.fields[props.name].string || props.name"
+                    required="props.record._isRequired(props.name)"
+                    record="props.record"
+                    isSpecific="_cdState.isSpecific"
+                    mode="cdMode"
+>>>>>>> 2f7d49b093ce9012e8d29e591ffb369db801f4d9
                     onSaved="() => this._loadCDMeta()"
                 />
             </div>
@@ -187,11 +232,26 @@
                     t-att-step="this.props.step"
                 />
                 <CompanyDependentButton
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
                     fieldName="this.props.name"
                     fieldString="this.props.record.fields[this.props.name].string || this.props.name"
                     required="this.props.record._isRequired(this.props.name)"
                     record="this.props.record"
                     isSpecific="this._cdState.isSpecific"
+||||||| 01ef66dbf3ec84f203e9b3c63c47739c308d4150
+                    fieldName="props.name"
+                    fieldString="props.record.fields[props.name].string || props.name"
+                    required="props.record._isRequired(props.name)"
+                    record="props.record"
+                    isSpecific="_cdState.isSpecific"
+=======
+                    fieldName="props.name"
+                    fieldString="props.record.fields[props.name].string || props.name"
+                    required="props.record._isRequired(props.name)"
+                    record="props.record"
+                    isSpecific="_cdState.isSpecific"
+                    mode="cdMode"
+>>>>>>> 2f7d49b093ce9012e8d29e591ffb369db801f4d9
                     onSaved="() => this._loadCDMeta()"
                 />
             </div>
@@ -231,11 +291,26 @@
                     <span class="opacity-0" t-if="!this.props.hideSymbol and this.currency and this.currency.position === 'after'" t-out="this.nbsp + this.currencySymbol"/>
                 </div>
                 <CompanyDependentButton
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
                     fieldName="this.props.name"
                     fieldString="this.props.record.fields[this.props.name].string || this.props.name"
                     required="this.props.record._isRequired(this.props.name)"
                     record="this.props.record"
                     isSpecific="this._cdState.isSpecific"
+||||||| 01ef66dbf3ec84f203e9b3c63c47739c308d4150
+                    fieldName="props.name"
+                    fieldString="props.record.fields[props.name].string || props.name"
+                    required="props.record._isRequired(props.name)"
+                    record="props.record"
+                    isSpecific="_cdState.isSpecific"
+=======
+                    fieldName="props.name"
+                    fieldString="props.record.fields[props.name].string || props.name"
+                    required="props.record._isRequired(props.name)"
+                    record="props.record"
+                    isSpecific="_cdState.isSpecific"
+                    mode="cdMode"
+>>>>>>> 2f7d49b093ce9012e8d29e591ffb369db801f4d9
                     onSaved="() => this._loadCDMeta()"
                 />
             </div>
@@ -268,11 +343,26 @@
                     &#8203; <!-- Zero width space needed to set height -->
                 </t></CheckBox>
                 <CompanyDependentButton
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
                     fieldName="this.props.name"
                     fieldString="this.props.record.fields[this.props.name].string || this.props.name"
                     required="this.props.record._isRequired(this.props.name)"
                     record="this.props.record"
                     isSpecific="this._cdState.isSpecific"
+||||||| 01ef66dbf3ec84f203e9b3c63c47739c308d4150
+                    fieldName="props.name"
+                    fieldString="props.record.fields[props.name].string || props.name"
+                    required="props.record._isRequired(props.name)"
+                    record="props.record"
+                    isSpecific="_cdState.isSpecific"
+=======
+                    fieldName="props.name"
+                    fieldString="props.record.fields[props.name].string || props.name"
+                    required="props.record._isRequired(props.name)"
+                    record="props.record"
+                    isSpecific="_cdState.isSpecific"
+                    mode="cdMode"
+>>>>>>> 2f7d49b093ce9012e8d29e591ffb369db801f4d9
                     onSaved="() => this._loadCDMeta()"
                 />
             </div>
@@ -299,12 +389,29 @@
         </xpath>
         <xpath expr="//div[@t-ref='this.rootRef']" position="inside">
             <CompanyDependentButton
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
                 t-if="this.isCompanyDependent"
                 fieldName="this.props.name"
                 fieldString="this.props.record.fields[this.props.name].string || this.props.name"
                 required="this.props.record._isRequired(this.props.name)"
                 record="this.props.record"
                 isSpecific="this._cdState.isSpecific"
+||||||| 01ef66dbf3ec84f203e9b3c63c47739c308d4150
+                t-if="isCompanyDependent"
+                fieldName="props.name"
+                fieldString="props.record.fields[props.name].string || props.name"
+                required="props.record._isRequired(props.name)"
+                record="props.record"
+                isSpecific="_cdState.isSpecific"
+=======
+                t-if="isCompanyDependent"
+                fieldName="props.name"
+                fieldString="props.record.fields[props.name].string || props.name"
+                required="props.record._isRequired(props.name)"
+                record="props.record"
+                isSpecific="_cdState.isSpecific"
+                mode="cdMode"
+>>>>>>> 2f7d49b093ce9012e8d29e591ffb369db801f4d9
                 onSaved="() => this._loadCDMeta()"
             />
         </xpath>
@@ -327,12 +434,29 @@
                 <Many2One t-props="this.m2oProps"/>
             </div>
             <CompanyDependentButton
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
                 t-if="this.isCompanyDependent"
                 fieldName="this.props.name"
                 fieldString="this.props.record.fields[this.props.name].string || this.props.name"
                 required="this.props.record._isRequired(this.props.name)"
                 record="this.props.record"
                 isSpecific="this._cdState.isSpecific"
+||||||| 01ef66dbf3ec84f203e9b3c63c47739c308d4150
+                t-if="isCompanyDependent"
+                fieldName="props.name"
+                fieldString="props.record.fields[props.name].string || props.name"
+                required="props.record._isRequired(props.name)"
+                record="props.record"
+                isSpecific="_cdState.isSpecific"
+=======
+                t-if="isCompanyDependent"
+                fieldName="props.name"
+                fieldString="props.record.fields[props.name].string || props.name"
+                required="props.record._isRequired(props.name)"
+                record="props.record"
+                isSpecific="_cdState.isSpecific"
+                mode="cdMode"
+>>>>>>> 2f7d49b093ce9012e8d29e591ffb369db801f4d9
                 onSaved="() => this._loadCDMeta()"
             />
         </div>
@@ -520,6 +644,7 @@
 
                                             <!-- Botón Reset -->
                                             <button
+                                                t-if="state.canReset"
                                                 type="button"
                                                 class="btn btn-sm btn-outline-danger"
                                                 t-att-disabled="!this.isSpecificRow(row)"
@@ -537,6 +662,7 @@
 
                     <!-- Nota aclaratoria -->
                     <div class="alert alert-info py-2 small mt-2">
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
                         <i class="oi me-1" data-icon="undo"/>
                         <strong><t t-out="this.footerNoteHtml.reset"/></strong>
                         <em><t t-out="this.footerNoteHtml.resetDesc"/></em>
@@ -544,6 +670,25 @@
                         <i class="oi me-1" data-icon="content_copy"/>
                         <strong><t t-out="this.footerNoteHtml.copy"/></strong>
                         <em><t t-out="this.footerNoteHtml.copyDesc"/></em>
+||||||| 01ef66dbf3ec84f203e9b3c63c47739c308d4150
+                        <i class="fa fa-undo me-1"/>
+                        <strong><t t-esc="footerNoteHtml.reset"/></strong>
+                        <em><t t-esc="footerNoteHtml.resetDesc"/></em>
+                        <span class="mx-2 text-muted">·</span>
+                        <i class="fa fa-copy me-1"/>
+                        <strong><t t-esc="footerNoteHtml.copy"/></strong>
+                        <em><t t-esc="footerNoteHtml.copyDesc"/></em>
+=======
+                        <t t-if="state.canReset">
+                            <i class="fa fa-undo me-1"/>
+                            <strong><t t-esc="footerNoteHtml.reset"/></strong>
+                            <em><t t-esc="footerNoteHtml.resetDesc"/></em>
+                            <br/>
+                        </t>
+                        <i class="fa fa-copy me-1"/>
+                        <strong><t t-esc="footerNoteHtml.copy"/></strong>
+                        <em><t t-esc="footerNoteHtml.copyDesc"/></em>
+>>>>>>> 2f7d49b093ce9012e8d29e591ffb369db801f4d9
                     </div>
                 </t>
             </div>

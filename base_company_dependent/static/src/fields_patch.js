@@ -19,6 +19,7 @@ import { patch } from "@web/core/utils/patch";
 import { BooleanField } from "@web/views/fields/boolean/boolean_field";
 import { CharField } from "@web/views/fields/char/char_field";
 import { DateTimeField } from "@web/views/fields/datetime/datetime_field";
+import { Field } from "@web/views/fields/field";
 import { FloatField } from "@web/views/fields/float/float_field";
 import { IntegerField } from "@web/views/fields/integer/integer_field";
 import { Many2OneField } from "@web/views/fields/many2one/many2one_field";
@@ -48,10 +49,23 @@ function makeCDPatch() {
         },
 
         /**
-         * True when the field is marked as company_dependent in the model.
+         * True when the field is marked as company_dependent in the model,
+         * OR when explicitly opted-in via field options.
          */
         get isCompanyDependent() {
-            return this.props.record?.fields?.[this.props.name]?.company_dependent === true;
+            const fieldDef = this.props.record?.fields?.[this.props.name];
+            if (fieldDef?.company_dependent === true) return true;
+            // Explicit opt-in via options="{'company_dependent_mode': 'orm'}"
+            return this.props.companyDependentMode === "orm";
+        },
+
+        /**
+         * Returns the persistence mode for the company_dependent dialog.
+         * 'orm' for computed/related fields, 'json' for native JSONB fields.
+         */
+        get cdMode() {
+            if (this.props.companyDependentMode === "orm") return "orm";
+            return null; // let backend auto-detect
         },
 
         /**
@@ -83,11 +97,16 @@ const FIELDS = [
     DateTimeField,
 ];
 
-for (const Field of FIELDS) {
-    patch(Field.prototype, makeCDPatch());
-    Field.components = { ...Field.components, CompanyDependentButton };
+for (const FieldComponent of FIELDS) {
+    patch(FieldComponent.prototype, makeCDPatch());
+    FieldComponent.components = { ...FieldComponent.components, CompanyDependentButton };
+    FieldComponent.props = {
+        ...FieldComponent.props,
+        companyDependentMode: { type: String, optional: true },
+    };
 }
 
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 /**
  * Subclasses loaded before this file (e.g. ``Many2OneBankField``) copied their
  * parent's ``components`` without the button but still inherit the patched
@@ -106,6 +125,22 @@ export function addButtonToFieldSubclasses() {
 
 addButtonToFieldSubclasses();
 
+||||||| 01ef66dbf3ec84f203e9b3c63c47739c308d4150
+=======
+// Field components only receive what their extractProps returns, so the
+// view option has to be forwarded explicitly.
+patch(Field.prototype, {
+    get fieldComponentProps() {
+        const props = super.fieldComponentProps;
+        const mode = this.props.fieldInfo?.options?.company_dependent_mode;
+        if (mode && "companyDependentMode" in (this.field.component.props || {})) {
+            props.companyDependentMode = mode;
+        }
+        return props;
+    },
+});
+
+>>>>>>> 2f7d49b093ce9012e8d29e591ffb369db801f4d9
 // Each class points to its own extended template defined in templates.xml.
 Many2OneField.template = "base_company_dependent.Many2OneField";
 SelectionField.template = "base_company_dependent.SelectionField";
