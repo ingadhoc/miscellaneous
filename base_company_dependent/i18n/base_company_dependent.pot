@@ -320,6 +320,28 @@ msgid ""
 msgstr ""
 
 #. module: base_company_dependent
+#. odoo-python
+#: code:addons/base_company_dependent/models/base_company_dependent.py:0
+msgid "The record to edit no longer exists."
+msgstr ""
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_button.js:0
+msgid ""
+"These values are company-specific. Switch company to see or edit values for "
+"other companies."
+msgstr ""
+
+#. module: base_company_dependent
+#. odoo-python
+#: code:addons/base_company_dependent/models/base_company_dependent.py:0
+msgid ""
+"This value cannot be managed per company from here. Switch company to edit "
+"it."
+msgstr ""
+
+#. module: base_company_dependent
 #. odoo-javascript
 #: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
 msgid "Value"
@@ -329,6 +351,12 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
 msgid "Values saved successfully."
+msgstr ""
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_button.js:0
+msgid "Values set here are company-specific. Click to manage."
 msgstr ""
 
 #. module: base_company_dependent

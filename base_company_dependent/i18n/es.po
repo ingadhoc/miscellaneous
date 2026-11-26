@@ -24,6 +24,7 @@ msgid ""
 "%(field)s '%(value)s' belongs to a different company and cannot be used with "
 "company '%(company)s'."
 msgstr ""
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 "%(field)s '%(value)s' pertenece a otra compañía y no se puede usar con la "
 "compañía '%(company)s'."
 
@@ -160,6 +161,11 @@ msgid ""
 "\n"
 "AGPL-3. Ver ``LICENSE`` para más detalles.\n"
 msgstr ""
+||||||| 01ef66dbf3ec84f203e9b3c63c47739c308d4150
+=======
+"%(field)s '%(value)s' pertenece a otra compañía y no se puede usar con la "
+"compañía '%(company)s'."
+>>>>>>> 2f7d49b093ce9012e8d29e591ffb369db801f4d9
 
 #. module: base_company_dependent
 #. odoo-javascript
@@ -228,7 +234,13 @@ msgstr "Descartar"
 #. module: base_company_dependent
 #: model:ir.model.fields,field_description:base_company_dependent.field_base_company_dependent__display_name
 msgid "Display Name"
+<<<<<<< 208b26e0e55785923fe13f62205ef33006ebee79
 msgstr "Mostrar nombre"
+||||||| 01ef66dbf3ec84f203e9b3c63c47739c308d4150
+msgstr ""
+=======
+msgstr "Nombre para mostrar"
+>>>>>>> 2f7d49b093ce9012e8d29e591ffb369db801f4d9
 
 #. module: base_company_dependent
 #: model:ir.model,name:base_company_dependent.model_base_company_dependent
@@ -328,6 +340,32 @@ msgstr ""
 "anterior."
 
 #. module: base_company_dependent
+#. odoo-python
+#: code:addons/base_company_dependent/models/base_company_dependent.py:0
+msgid "The record to edit no longer exists."
+msgstr "El registro a editar ya no existe."
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_button.js:0
+msgid ""
+"These values are company-specific. Switch company to see or edit values for "
+"other companies."
+msgstr ""
+"Estos valores son específicos de cada compañía. Cambie de compañía para ver "
+"o editar los valores de otras compañías."
+
+#. module: base_company_dependent
+#. odoo-python
+#: code:addons/base_company_dependent/models/base_company_dependent.py:0
+msgid ""
+"This value cannot be managed per company from here. Switch company to edit "
+"it."
+msgstr ""
+"Este valor no se puede gestionar por compañía desde aquí. Cambie de "
+"compañía para editarlo."
+
+#. module: base_company_dependent
 #. odoo-javascript
 #: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
 msgid "Value"
@@ -338,6 +376,14 @@ msgstr "Valor"
 #: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
 msgid "Values saved successfully."
 msgstr "Valores guardados correctamente."
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_button.js:0
+msgid "Values set here are company-specific. Click to manage."
+msgstr ""
+"Los valores configurados aquí son específicos de cada compañía. Haga clic "
+"para gestionarlos."
 
 #. module: base_company_dependent
 #. odoo-javascript

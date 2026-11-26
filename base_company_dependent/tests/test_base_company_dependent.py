@@ -18,14 +18,17 @@
 #
 ##############################################################################
 
+from odoo.exceptions import AccessError, MissingError, UserError
 from odoo.fields import Domain
 from odoo.tests import TransactionCase, tagged
+
+from .test_company_cross_check import TesterModelMixin
 
 # Domain is available in Odoo 19+ (odoo.fields.Domain)
 
 
 @tagged("-at_install", "post_install")
-class TestBaseCompanyDependent(TransactionCase):
+class TestBaseCompanyDependent(TesterModelMixin, TransactionCase):
     """Tests para el módulo base_company_dependent.
 
     Valida los helpers de lectura/escritura JSONB cruda, la resolución de
@@ -40,6 +43,7 @@ class TestBaseCompanyDependent(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls._register_test_model()
         cls.helper = cls.env["base.company.dependent"]
 
         # Dos compañías para probar valores multi-compañía
@@ -413,3 +417,111 @@ class TestBaseCompanyDependent(TransactionCase):
     def test_access_check_on_meta(self):
         """get_company_dependent_meta verifica acceso de lectura al modelo."""
         self.helper.get_company_dependent_meta("res.partner", self.partner.id)
+
+    # ------------------------------------------------------------------
+    # ORM mode: fields related to company_id.* (as on res.config.settings)
+    # ------------------------------------------------------------------
+
+    def test_resolve_orm_target_company_related(self):
+        """_resolve_orm_target maps `related='company_id.foo'` to res.company.foo
+        for the current company — the path the widget uses on Setting views."""
+        tester = self.env[self.MODEL].create({"company_id": self.company_1.id})
+        target = self.helper._resolve_orm_target(self.MODEL, tester.id, "company_color")
+        self.assertEqual(target, ("res.company", "primary_color", self.env.company.id))
+
+    def test_set_values_orm_res_company_branch(self):
+        """ORM-mode setter on a res.company target writes each company's own
+        record directly (each company is its own record)."""
+        result = self.helper._set_values_orm(
+            "res.company",
+            self.company_1.id,
+            "primary_color",
+            {str(self.company_1.id): "#111111", str(self.company_2.id): "#222222"},
+        )
+        self.assertEqual(self.company_1.primary_color, "#111111")
+        self.assertEqual(self.company_2.primary_color, "#222222")
+        self.assertCountEqual(result["saved"], [self.company_1.id, self.company_2.id])
+
+    def test_set_values_orm_reset_not_supported(self):
+        """A plain column has no default to go back to: RESET is skipped and
+        the value is kept."""
+        self.company_1.primary_color = "#111111"
+        result = self.helper._set_values_orm(
+            "res.company", self.company_1.id, "primary_color", {str(self.company_1.id): "RESET"}
+        )
+        self.assertFalse(result["saved"])
+        self.assertEqual([s["id"] for s in result["skipped"]], [self.company_1.id])
+        self.assertEqual(self.company_1.primary_color, "#111111")
+
+    def test_get_values_orm_plain_column_cannot_reset(self):
+        result = self.helper.get_company_dependent_values("res.company", self.company_1.id, "primary_color", mode="orm")
+        self.assertFalse(result["can_reset"])
+
+    def test_orm_refuses_transient_target(self):
+        """A field that resolves to a transient record (e.g. a settings field
+        that is not `company_id.x`) must fail instead of reporting a save that
+        never persists."""
+        wizard = self.env["base.language.install"].create({})
+        with self.assertRaises(UserError):
+            self.helper.get_company_dependent_values("base.language.install", wizard.id, "overwrite", mode="orm")
+        with self.assertRaises(UserError):
+            self.helper.set_company_dependent_values(
+                "base.language.install", wizard.id, "overwrite", {str(self.company_1.id): True}, mode="orm"
+            )
+
+    def test_orm_refuses_missing_target(self):
+        with self.assertRaises(MissingError):
+            self.helper.set_company_dependent_values(
+                "res.company", 999999999, "primary_color", {str(self.company_1.id): "#111111"}, mode="orm"
+            )
+
+    def test_check_orm_is_specific_non_cd_returns_false(self):
+        """_check_orm_is_specific returns False for fields whose underlying
+        target is a regular res.company column (not CD): there is no
+        Specific/Default distinction to report."""
+        tester = self.env[self.MODEL].create({"company_id": self.company_1.id})
+        field = tester._fields["company_color"]
+        self.assertFalse(self.helper._check_orm_is_specific(tester, field, self.env.company))
+
+    # ------------------------------------------------------------------
+    # Public RPC path: set_company_dependent_values(..., mode="orm")
+    # Covers access control and accessible-companies filtering, since the
+    # RPC entrypoint is the one a malicious client would invoke directly.
+    # ------------------------------------------------------------------
+
+    def test_public_orm_filters_inaccessible_companies(self):
+        """A company_id outside env.companies must be skipped (not written)
+        even if it appears in the values_dict — protects against crafted
+        RPC payloads listing arbitrary company IDs."""
+        forbidden = self.env["res.company"].create({"name": "CD Test Forbidden", "primary_color": "#000000"})
+        helper = self.helper.with_context(allowed_company_ids=[self.company_1.id, self.company_2.id])
+        result = helper.set_company_dependent_values(
+            "res.company",
+            self.company_1.id,
+            "primary_color",
+            {str(self.company_1.id): "#111111", str(forbidden.id): "#ffffff"},
+            mode="orm",
+        )
+        self.assertIn(self.company_1.id, result["saved"])
+        self.assertNotIn(forbidden.id, result["saved"])
+        self.assertIn(forbidden.id, [s["id"] for s in result["skipped"]])
+        self.assertEqual(forbidden.primary_color, "#000000")
+
+    def test_public_orm_enforces_write_access(self):
+        """The public RPC entrypoint must enforce write access on res_model
+        before reaching the ORM branch — same guarantee as the JSON path."""
+        portal_user = self.env["res.users"].create(
+            {
+                "name": "CD Portal User",
+                "login": "cd_portal_user",
+                "group_ids": [(6, 0, [self.env.ref("base.group_portal").id])],
+            }
+        )
+        with self.assertRaises(AccessError):
+            self.helper.with_user(portal_user).set_company_dependent_values(
+                "res.company",
+                self.company_1.id,
+                "primary_color",
+                {str(self.company_1.id): "#111111"},
+                mode="orm",
+            )
