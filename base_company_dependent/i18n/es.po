@@ -24,6 +24,8 @@ msgid ""
 "%(field)s '%(value)s' belongs to a different company and cannot be used with "
 "company '%(company)s'."
 msgstr ""
+"%(field)s '%(value)s' pertenece a otra compañía y no se puede usar con la "
+"compañía '%(company)s'."
 
 #. module: base_company_dependent
 #. odoo-javascript
@@ -148,6 +150,8 @@ msgid ""
 "Saved %s company value(s). Could not save %s due to company inconsistencies: "
 "%s."
 msgstr ""
+"Se guardaron %s valor(es) por compañía. No se pudieron guardar %s por "
+"inconsistencias de compañía: %s."
 
 #. module: base_company_dependent
 #. odoo-javascript
@@ -188,6 +192,16 @@ msgstr ""
 "o editar los valores de otras compañías."
 
 #. module: base_company_dependent
+#. odoo-python
+#: code:addons/base_company_dependent/models/base_company_dependent.py:0
+msgid ""
+"This value cannot be managed per company from here. Switch company to edit "
+"it."
+msgstr ""
+"Este valor no se puede gestionar por compañía desde aquí. Cambie de "
+"compañía para editarlo."
+
+#. module: base_company_dependent
 #. odoo-javascript
 #: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
 msgid "Value"
@@ -198,6 +212,14 @@ msgstr "Valor"
 #: code:addons/base_company_dependent/static/src/company_dependent_dialog.js:0
 msgid "Values saved successfully."
 msgstr "Valores guardados correctamente."
+
+#. module: base_company_dependent
+#. odoo-javascript
+#: code:addons/base_company_dependent/static/src/company_dependent_button.js:0
+msgid "Values set here are company-specific. Click to manage."
+msgstr ""
+"Los valores configurados aquí son específicos de cada compañía. Haga clic "
+"para gestionarlos."
 
 #. module: base_company_dependent
 #. odoo-javascript
