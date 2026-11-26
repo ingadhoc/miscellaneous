@@ -36,6 +36,9 @@ class TesterModelMixin:
         cls.registry._setup_models__(cls.env.cr, [cls.MODEL])
         cls.registry.init_models(cls.env.cr, [cls.MODEL], {"models_to_check": True})
         cls.addClassCleanup(cls.registry.__delitem__, cls.MODEL)
+        # Cleanups run in reverse order: drop the tester fields from the field
+        # triggers before the model leaves the registry.
+        cls.addClassCleanup(cls.registry._discard_fields, list(cls.registry[cls.MODEL]._fields.values()))
         # Group-less ACL so the non-superuser test actor can operate the model.
         cls.env["ir.model"]._reflect_models([cls.MODEL])
         cls.env["ir.model.access"].create(

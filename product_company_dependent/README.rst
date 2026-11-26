@@ -20,9 +20,8 @@ product cost (``standard_price``) on the product form.
 * With a single variant, the dialog reads and writes the variant cost, so it
   shows which companies have their own value and *Reset* goes back to the
   default.
-* With several variants, the dialog works on the product template as standard
-  Odoo does: it shows the computed cost and writing sets every variant. There
-  is no default to go back to, so *Reset* is not shown.
+* With several variants, standard Odoo hides the cost on the template and only
+  saves it on each variant, so the dialog refuses to work on the template.
 
 Installation
 ============

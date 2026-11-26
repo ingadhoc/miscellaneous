@@ -14,7 +14,6 @@
                     required="cdFieldRequired"
                     record="props.record"
                     mode="'orm'"
-                    onSaved="() => this.props.record.load()"
                 />
             </t>
             <t t-elif="displayCompanyDependentIcon">

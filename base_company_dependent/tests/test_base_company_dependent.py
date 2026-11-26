@@ -18,7 +18,7 @@
 #
 ##############################################################################
 
-from odoo.exceptions import AccessError, UserError
+from odoo.exceptions import AccessError, MissingError, UserError
 from odoo.fields import Domain
 from odoo.tests import TransactionCase, tagged
 
@@ -424,10 +424,10 @@ class TestBaseCompanyDependent(TesterModelMixin, TransactionCase):
 
     def test_resolve_orm_target_company_related(self):
         """_resolve_orm_target maps `related='company_id.foo'` to res.company.foo
-        for the current company — the path the widget uses on Setting views."""
-        tester = self.env[self.MODEL].create({"company_id": self.company_1.id})
+        of the record's company — the path the widget uses on Setting views."""
+        tester = self.env[self.MODEL].create({"company_id": self.company_2.id})
         target = self.helper._resolve_orm_target(self.MODEL, tester.id, "company_color")
-        self.assertEqual(target, ("res.company", "primary_color", self.env.company.id))
+        self.assertEqual(target, ("res.company", "primary_color", self.company_2.id))
 
     def test_set_values_orm_res_company_branch(self):
         """ORM-mode setter on a res.company target writes each company's own
@@ -470,7 +470,7 @@ class TestBaseCompanyDependent(TesterModelMixin, TransactionCase):
             )
 
     def test_orm_refuses_missing_target(self):
-        with self.assertRaises(UserError):
+        with self.assertRaises(MissingError):
             self.helper.set_company_dependent_values(
                 "res.company", 999999999, "primary_color", {str(self.company_1.id): "#111111"}, mode="orm"
             )
