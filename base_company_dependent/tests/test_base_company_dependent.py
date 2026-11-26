@@ -18,14 +18,17 @@
 #
 ##############################################################################
 
+from odoo.exceptions import AccessError, UserError
 from odoo.fields import Domain
 from odoo.tests import TransactionCase, tagged
+
+from .test_company_cross_check import TesterModelMixin
 
 # Domain is available in Odoo 19+ (odoo.fields.Domain)
 
 
 @tagged("-at_install", "post_install")
-class TestBaseCompanyDependent(TransactionCase):
+class TestBaseCompanyDependent(TesterModelMixin, TransactionCase):
     """Tests para el módulo base_company_dependent.
 
     Valida los helpers de lectura/escritura JSONB cruda, la resolución de
@@ -40,6 +43,7 @@ class TestBaseCompanyDependent(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls._register_test_model()
         cls.helper = cls.env["base.company.dependent"]
 
         # Dos compañías para probar valores multi-compañía
@@ -415,110 +419,69 @@ class TestBaseCompanyDependent(TransactionCase):
         self.helper.get_company_dependent_meta("res.partner", self.partner.id)
 
     # ------------------------------------------------------------------
-    # ORM mode: res.config.settings related to company_id.*
+    # ORM mode: fields related to company_id.* (as on res.config.settings)
     # ------------------------------------------------------------------
 
-    def _find_settings_related_field(self):
-        """Pick a field on res.config.settings related to a stored, non-CD
-        field on res.company. Used by the ORM-mode tests; returns
-        ``(settings_field_name, company_field_name)`` or ``None`` if none
-        is installed (in which case the caller should skip)."""
-        Settings = self.env["res.config.settings"]
-        Company = self.env["res.company"]
-        for fname, field in Settings._fields.items():
-            if not field.related or not field.related.startswith("company_id."):
-                continue
-            parts = field.related.split(".")
-            if len(parts) != 2:
-                continue
-            company_field = Company._fields.get(parts[1])
-            if not company_field or not company_field.store:
-                continue
-            return fname, parts[1]
-        return None
-
-    def test_resolve_orm_target_settings_related(self):
+    def test_resolve_orm_target_company_related(self):
         """_resolve_orm_target maps `related='company_id.foo'` to res.company.foo
         for the current company — the path the widget uses on Setting views."""
-        pair = self._find_settings_related_field()
-        if not pair:
-            self.skipTest("No suitable related field on res.config.settings")
-        settings_field, company_field = pair
-        settings = self.env["res.config.settings"].create({})
-        target_model, target_field, target_id = self.helper._resolve_orm_target(
-            "res.config.settings", settings.id, settings_field
-        )
-        self.assertEqual(target_model, "res.company")
-        self.assertEqual(target_field, company_field)
-        self.assertEqual(target_id, self.env.company.id)
+        tester = self.env[self.MODEL].create({"company_id": self.company_1.id})
+        target = self.helper._resolve_orm_target(self.MODEL, tester.id, "company_color")
+        self.assertEqual(target, ("res.company", "primary_color", self.env.company.id))
 
     def test_set_values_orm_res_company_branch(self):
         """ORM-mode setter on a res.company target writes each company's own
-        record directly (each company is its own record) — this is the branch
-        the widget uses for res.config.settings related fields whose target
-        is a plain (non-CD, non-related) column on res.company.
-
-        Picks any stored boolean field on res.company that is not related
-        and not computed, so the test is independent of which add-ons are
-        installed.
-        """
-        Company = self.env["res.company"]
-        bool_field = next(
-            (
-                fname
-                for fname, f in Company._fields.items()
-                if f.type == "boolean" and f.store and not f.related and not f.compute and fname not in ("active",)
-            ),
-            None,
-        )
-        if not bool_field:
-            self.skipTest("No suitable owned boolean field on res.company")
-
-        original_c1 = self.company_1[bool_field]
-        original_c2 = self.company_2[bool_field]
-
+        record directly (each company is its own record)."""
         result = self.helper._set_values_orm(
             "res.company",
             self.company_1.id,
-            bool_field,
-            {
-                str(self.company_1.id): not original_c1,
-                str(self.company_2.id): not original_c2,
-            },
+            "primary_color",
+            {str(self.company_1.id): "#111111", str(self.company_2.id): "#222222"},
         )
-        self.assertEqual(self.company_1[bool_field], not original_c1)
-        self.assertEqual(self.company_2[bool_field], not original_c2)
-        self.assertIn(self.company_1.id, result["saved"])
-        self.assertIn(self.company_2.id, result["saved"])
+        self.assertEqual(self.company_1.primary_color, "#111111")
+        self.assertEqual(self.company_2.primary_color, "#222222")
+        self.assertCountEqual(result["saved"], [self.company_1.id, self.company_2.id])
+
+    def test_set_values_orm_reset_not_supported(self):
+        """A plain column has no default to go back to: RESET is skipped and
+        the value is kept."""
+        self.company_1.primary_color = "#111111"
+        result = self.helper._set_values_orm(
+            "res.company", self.company_1.id, "primary_color", {str(self.company_1.id): "RESET"}
+        )
+        self.assertFalse(result["saved"])
+        self.assertEqual([s["id"] for s in result["skipped"]], [self.company_1.id])
+        self.assertEqual(self.company_1.primary_color, "#111111")
+
+    def test_get_values_orm_plain_column_cannot_reset(self):
+        result = self.helper.get_company_dependent_values("res.company", self.company_1.id, "primary_color", mode="orm")
+        self.assertFalse(result["can_reset"])
+
+    def test_orm_refuses_transient_target(self):
+        """A field that resolves to a transient record (e.g. a settings field
+        that is not `company_id.x`) must fail instead of reporting a save that
+        never persists."""
+        wizard = self.env["base.language.install"].create({})
+        with self.assertRaises(UserError):
+            self.helper.get_company_dependent_values("base.language.install", wizard.id, "overwrite", mode="orm")
+        with self.assertRaises(UserError):
+            self.helper.set_company_dependent_values(
+                "base.language.install", wizard.id, "overwrite", {str(self.company_1.id): True}, mode="orm"
+            )
+
+    def test_orm_refuses_missing_target(self):
+        with self.assertRaises(UserError):
+            self.helper.set_company_dependent_values(
+                "res.company", 999999999, "primary_color", {str(self.company_1.id): "#111111"}, mode="orm"
+            )
 
     def test_check_orm_is_specific_non_cd_returns_false(self):
         """_check_orm_is_specific returns False for fields whose underlying
-        target is a regular res.company column (not CD) — the dialog still
-        works but doesn't pretend a Specific/Default distinction exists."""
-        pair = self._find_settings_related_field()
-        if not pair:
-            self.skipTest("No suitable related field on res.config.settings")
-        settings_field, _company_field = pair
-        settings = self.env["res.config.settings"].create({})
-        Settings = self.env["res.config.settings"]
-        field = Settings._fields[settings_field]
-        # The current company should report False (not "specific" in the
-        # JSONB sense — there's no JSONB for related fields).
-        result = self.helper._check_orm_is_specific(settings, field, self.env.company)
-        self.assertFalse(result)
-
-    def test_detect_strategy_computed_company_context(self):
-        """A computed field with @api.depends_context('company') uses ORM mode."""
-        self.assertEqual(self.helper._detect_field_strategy("product.template", "standard_price"), "orm")
-
-    def test_meta_reports_template_standard_price(self):
-        """A single-variant template reports standard_price as specific once
-        the variant has a per-company value."""
-        template = self.env["product.template"].create({"name": "CD Test Product"})
-        template.product_variant_id.with_company(self.company_1).standard_price = 42.0
-        self.env.flush_all()
-        meta = self.helper.get_company_dependent_meta("product.template", template.id)
-        self.assertTrue(meta.get("standard_price"))
+        target is a regular res.company column (not CD): there is no
+        Specific/Default distinction to report."""
+        tester = self.env[self.MODEL].create({"company_id": self.company_1.id})
+        field = tester._fields["company_color"]
+        self.assertFalse(self.helper._check_orm_is_specific(tester, field, self.env.company))
 
     # ------------------------------------------------------------------
     # Public RPC path: set_company_dependent_values(..., mode="orm")
@@ -530,62 +493,35 @@ class TestBaseCompanyDependent(TransactionCase):
         """A company_id outside env.companies must be skipped (not written)
         even if it appears in the values_dict — protects against crafted
         RPC payloads listing arbitrary company IDs."""
-        forbidden = self.env["res.company"].create({"name": "CD Test Forbidden"})
-        Company = self.env["res.company"]
-        bool_field = next(
-            (
-                fname
-                for fname, f in Company._fields.items()
-                if f.type == "boolean" and f.store and not f.related and not f.compute and fname not in ("active",)
-            ),
-            None,
-        )
-        if not bool_field:
-            self.skipTest("No suitable owned boolean field on res.company")
-        original_forbidden = forbidden[bool_field]
-
-        # Force the env to expose only company_1 and company_2 (the ones the
-        # user is allowed into in setUpClass). `forbidden` is not in this set.
-        helper = self.helper.with_context(
-            allowed_company_ids=[self.company_1.id, self.company_2.id],
-        )
+        forbidden = self.env["res.company"].create({"name": "CD Test Forbidden", "primary_color": "#000000"})
+        helper = self.helper.with_context(allowed_company_ids=[self.company_1.id, self.company_2.id])
         result = helper.set_company_dependent_values(
             "res.company",
             self.company_1.id,
-            bool_field,
-            {
-                str(self.company_1.id): not self.company_1[bool_field],
-                str(forbidden.id): not original_forbidden,
-            },
+            "primary_color",
+            {str(self.company_1.id): "#111111", str(forbidden.id): "#ffffff"},
             mode="orm",
         )
-        # The accessible company was written; the forbidden one was skipped.
         self.assertIn(self.company_1.id, result["saved"])
         self.assertNotIn(forbidden.id, result["saved"])
-        skipped_ids = [s["id"] for s in result["skipped"]]
-        self.assertIn(forbidden.id, skipped_ids)
-        # The forbidden company's value is untouched.
-        self.assertEqual(forbidden[bool_field], original_forbidden)
+        self.assertIn(forbidden.id, [s["id"] for s in result["skipped"]])
+        self.assertEqual(forbidden.primary_color, "#000000")
 
     def test_public_orm_enforces_write_access(self):
         """The public RPC entrypoint must enforce write access on res_model
         before reaching the ORM branch — same guarantee as the JSON path."""
-        from odoo.exceptions import AccessError
-
-        # Use the demo `portal` user (Joel Willis): in stock Odoo it has no
-        # write access on res.config.settings, so the ir.model.access.check
-        # must raise before any field is touched.
-        portal_user = self.env.ref("base.demo_user0", raise_if_not_found=False) or self.env["res.users"].search(
-            [("login", "=", "portal")], limit=1
+        portal_user = self.env["res.users"].create(
+            {
+                "name": "CD Portal User",
+                "login": "cd_portal_user",
+                "group_ids": [(6, 0, [self.env.ref("base.group_portal").id])],
+            }
         )
-        if not portal_user:
-            self.skipTest("No portal demo user available")
-        settings = self.env["res.config.settings"].create({})
         with self.assertRaises(AccessError):
             self.helper.with_user(portal_user).set_company_dependent_values(
-                "res.config.settings",
-                settings.id,
-                "company_id",
-                {str(self.company_1.id): self.company_1.id},
+                "res.company",
+                self.company_1.id,
+                "primary_color",
+                {str(self.company_1.id): "#111111"},
                 mode="orm",
             )

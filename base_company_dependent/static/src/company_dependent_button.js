@@ -15,7 +15,8 @@ import { CompanyDependentDialog } from "./company_dependent_dialog";
  * Props:
  *   - fieldName  {string}       : nombre técnico del campo.
  *   - record     {Record}       : instancia del record del formulario.
- *   - isSpecific {boolean|null} : null = cargando, true = específico, false = fallback.
+ *   - isSpecific {boolean|null|undefined} : null = cargando, true = específico,
+ *                                 false = fallback, undefined = no aplica (ajustes).
  *   - onSaved    {Function}     : callback llamado tras guardar en el diálogo
  *                                 (el padre recarga el record y refresca cdState).
  */
@@ -26,7 +27,8 @@ export class CompanyDependentButton extends Component {
         fieldString: { type: String },
         required: { type: Boolean },
         record: { type: Object },
-        isSpecific: { validate: (v) => v === null || typeof v === "boolean" },
+        // Left undefined where no specific/default state applies (settings).
+        isSpecific: { validate: (v) => v === null || typeof v === "boolean", optional: true },
         onSaved: { type: Function, optional: true },
         mode: { validate: (v) => v == null || typeof v === "string", optional: true },
     };
@@ -37,6 +39,9 @@ export class CompanyDependentButton extends Component {
     }
 
     get title() {
+        if (this.props.isSpecific === undefined) {
+            return _t("Values set here are company-specific. Click to manage.");
+        }
         if (this.props.isSpecific === null) {
             return _t("Loading company information…");
         }

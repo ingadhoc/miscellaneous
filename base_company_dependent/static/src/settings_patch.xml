@@ -13,9 +13,8 @@
                     fieldString="cdFieldString"
                     required="cdFieldRequired"
                     record="props.record"
-                    isSpecific="_cdState.isSpecific"
                     mode="'orm'"
-                    onSaved="() => this._onCDSaved()"
+                    onSaved="() => this.props.record.load()"
                 />
             </t>
             <t t-elif="displayCompanyDependentIcon">

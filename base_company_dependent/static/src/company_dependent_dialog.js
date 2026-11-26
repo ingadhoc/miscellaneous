@@ -44,6 +44,7 @@ export class CompanyDependentDialog extends Component {
             fieldType: null,
             comodelName: null,
             selectionOptions: [],
+            canReset: true,
             /** Cambios pendientes: Map<company_id, {value_id, is_reset}> */
             changes: {},
             /** Counter per row to force AutoComplete re-render on revert */
@@ -143,6 +144,7 @@ export class CompanyDependentDialog extends Component {
         this.state.fieldType = result.field_type;
         this.state.comodelName = result.comodel_name;
         this.state.selectionOptions = result.selection_options || [];
+        this.state.canReset = result.can_reset !== false;
     }
 
     // ---------------------------------------------------------------

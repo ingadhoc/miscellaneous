@@ -30,7 +30,8 @@ directo:
 * **Campos ``related``** (típicos en ``res.config.settings`` con
   ``related='company_id.xxx'``) → el valor real vive en ``res.company``.
 * **Campos ``computed``/``inverse``** (ej. ``standard_price`` en
-  ``product.template``, cuyo valor vive en ``product.product``).
+  ``product.template``, cuyo valor vive en ``product.product``; ese caso lo
+  resuelve el módulo puente ``product_company_dependent``).
 
 El widget soporta los tres casos detectando automáticamente la estrategia.
 
@@ -71,10 +72,8 @@ Diferencia clave Vaciar vs. Reset
 
 **Reset en ORM-mode:** cuando el target real no es un campo JSONB nativo
 (p. ej. una columna propia de ``res.company`` expuesta como ``related`` desde
-``res.config.settings``) no hay clave que eliminar — cada compañía es su
-propio registro. En esos casos *Reset* equivale a vaciar al falsy del tipo
-(``False`` / ``0`` / ``""``); el badge "Por Defecto" sigue siendo informativo
-pero no implica que el valor venga de un fallback global.
+``res.config.settings``) no hay valor por defecto al que volver — cada
+compañía es su propio registro. En esos casos el diálogo no muestra *Reset*.
 
 Tipos de campo soportados
 ==========================
@@ -103,6 +102,12 @@ El ícono ``fa-building-o`` que Odoo renderiza automáticamente en
 widget. Funciona tanto cuando el campo es el primer hijo del ``<setting>``
 (caso común) como cuando está envuelto en un ``<div>`` con ``<label>`` previo
 (detección por DOM del primer campo visible).
+
+En ajustes el ícono no indica valor específico o por defecto: los valores
+viven en columnas de ``res.company``, sin fallback global. Si el campo no se
+puede resolver a un registro real (p. ej. un ``config_parameter`` o un campo
+propio del asistente de ajustes), el diálogo avisa que se edite cambiando de
+compañía en lugar de guardar en el registro transitorio.
 
 Modo claro y oscuro
 ====================
@@ -134,7 +139,8 @@ Backend (``base.company.dependent`` AbstractModel)
 
   * ``res.config.settings`` con ``related='company_id.xxx'`` →
     ``res.company`` directo.
-  * ``product.template.standard_price`` con variante única →
+  * Otros módulos lo extienden: ``product_company_dependent`` resuelve
+    ``product.template.standard_price`` con variante única a
     ``product.product``.
 
 Frontend (OWL)
@@ -168,7 +174,6 @@ Dependencias
 
 * ``base``
 * ``web``
-* ``product``
 
 Licencia
 ========

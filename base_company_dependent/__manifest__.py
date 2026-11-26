@@ -30,15 +30,13 @@
     "website": "www.adhoc.com.ar",
     "license": "AGPL-3",
     "images": [],
-    "depends": ["base", "web", "product"],
+    "depends": ["base", "web"],
     "assets": {
         "web.assets_backend": [
             "base_company_dependent/static/src/**/*",
         ],
     },
-    "data": [
-        "views/product_template_views.xml",
-    ],
+    "data": [],
     "installable": True,
     "auto_install": False,
     "application": False,

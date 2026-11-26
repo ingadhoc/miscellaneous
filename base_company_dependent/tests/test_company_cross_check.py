@@ -21,33 +21,10 @@ from odoo.exceptions import ValidationError
 from odoo.tests import TransactionCase, tagged
 
 
-@tagged("-at_install", "post_install")
-class TestCompanyCrossCheck(TransactionCase):
-    """End-to-end coverage for the cross-company protection on
-    company_dependent Many2one fields, through load().
-
-    The check lives exclusively in load() — the entry point for UI imports
-    and module CSV data — so write()/create() are intentionally unchecked.
-
-    Uses a transient ``company.dependent.tester`` model (registered only for
-    this run, rolled back by TransactionCase) so the protection is exercised
-    without depending on ``account``.
-    """
+class TesterModelMixin:
+    """Registers ``company.dependent.tester`` for the test class."""
 
     MODEL = "company.dependent.tester"
-
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls._register_test_model()
-
-        cls.company_a = cls.env.company
-        cls.company_b = cls.env["res.company"].create({"name": "E2E Company B"})
-        cls.test_actor = cls.env.ref("base.user_admin")
-
-        cls.partner_a = cls.env["res.partner"].create({"name": "E2E Partner A", "company_id": cls.company_a.id})
-        cls.partner_b = cls.env["res.partner"].create({"name": "E2E Partner B", "company_id": cls.company_b.id})
-        cls.partner_shared = cls.env["res.partner"].create({"name": "E2E Shared Partner", "company_id": False})
 
     @classmethod
     def _register_test_model(cls):
@@ -71,6 +48,33 @@ class TestCompanyCrossCheck(TransactionCase):
                 "perm_unlink": True,
             }
         )
+
+
+@tagged("-at_install", "post_install")
+class TestCompanyCrossCheck(TesterModelMixin, TransactionCase):
+    """End-to-end coverage for the cross-company protection on
+    company_dependent Many2one fields, through load().
+
+    The check lives exclusively in load() — the entry point for UI imports
+    and module CSV data — so write()/create() are intentionally unchecked.
+
+    Uses a transient ``company.dependent.tester`` model (registered only for
+    this run, rolled back by TransactionCase) so the protection is exercised
+    without depending on ``account``.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls._register_test_model()
+
+        cls.company_a = cls.env.company
+        cls.company_b = cls.env["res.company"].create({"name": "E2E Company B"})
+        cls.test_actor = cls.env.ref("base.user_admin")
+
+        cls.partner_a = cls.env["res.partner"].create({"name": "E2E Partner A", "company_id": cls.company_a.id})
+        cls.partner_b = cls.env["res.partner"].create({"name": "E2E Partner B", "company_id": cls.company_b.id})
+        cls.partner_shared = cls.env["res.partner"].create({"name": "E2E Shared Partner", "company_id": False})
 
     def _env_a(self):
         ctx = dict(self.env.context, allowed_company_ids=[self.company_a.id])

@@ -7,9 +7,8 @@
  * values per company, just like on regular form views.
  */
 
-import { onMounted, onWillStart, useState } from "@odoo/owl";
+import { onMounted, useState } from "@odoo/owl";
 import { user } from "@web/core/user";
-import { useService } from "@web/core/utils/hooks";
 import { patch } from "@web/core/utils/patch";
 import { Setting } from "@web/views/form/setting/setting";
 import { SearchableSetting } from "@web/webclient/settings_form_view/settings/searchable_setting";
@@ -21,19 +20,15 @@ SearchableSetting.components = { ...SearchableSetting.components, CompanyDepende
 patch(Setting.prototype, {
     setup() {
         super.setup();
-        this._cdService = useService("company_dependent");
-        this._cdState = useState({ isSpecific: null, discoveredField: null });
+        this._cdState = useState({ discoveredField: null });
         // Upstream's compiler sets `companyDependent` to `true` (boolean) when
         // the <setting> has `company_dependent="1"`, otherwise to the literal
         // string `"false"` (which is truthy in JS). Compare strictly to `true`
-        // so the meta lookup/DOM discovery only runs on opted-in settings.
-        if (this.props.companyDependent === true) {
-            if (this.props.fieldName) {
-                onWillStart(() => this._loadCDMeta());
-            } else {
-                // No fieldName from compiler: discover from DOM after mount
-                onMounted(() => this._discoverFieldFromDOM());
-            }
+        // so the DOM discovery only runs on opted-in settings.
+        // No specific/default indicator here: the settings record is never
+        // saved, and its targets are plain columns without a fallback.
+        if (this.props.companyDependent === true && !this.props.fieldName) {
+            onMounted(() => this._discoverFieldFromDOM());
         }
     },
 
@@ -117,23 +112,8 @@ patch(Setting.prototype, {
         for (const widget of widgets) {
             if (widget.offsetParent !== null) {
                 this._cdState.discoveredField = widget.getAttribute("name");
-                this._loadCDMeta();
                 return;
             }
         }
-    },
-
-    async _loadCDMeta() {
-        const fn = this.cdFieldName;
-        if (!fn) return;
-        const { resModel, resId } = this.props.record;
-        if (!resId) return;
-        const meta = await this._cdService.getMetaForRecord(resModel, resId);
-        this._cdState.isSpecific = meta[fn] ?? false;
-    },
-
-    async _onCDSaved() {
-        await this.props.record.load();
-        await this._loadCDMeta();
     },
 });

@@ -182,8 +182,8 @@ class BaseCompanyDependent(models.AbstractModel):
         Para ``res.config.settings`` con ``related='company_id.xxx'``, opera
         directamente sobre ``res.company``.
 
-        Para ``product.template`` con ``standard_price`` (computed/inverse
-        delegado a la variante), opera sobre ``product.product``.
+        Otros módulos lo extienden para sus modelos (ej.
+        ``product_company_dependent`` para ``product.template``).
 
         :returns: tupla ``(target_model, target_field_name, target_id)``
         """
@@ -215,20 +215,6 @@ class BaseCompanyDependent(models.AbstractModel):
             if traversable and current and len(current) == 1:
                 return current._name, related_parts[-1], current.id
 
-        # product.template.standard_price → product.product.standard_price
-        # Con variante única delegamos a la variante para acceder al JSONB real de
-        # product.product (is_specific exacto, valores precisos).
-        # Con múltiples variantes el fallback mantiene el target en product.template:
-        # la lectura devuelve el promedio vía computed y la escritura propaga a todas
-        # las variantes vía _inverse — idéntico al comportamiento nativo de Odoo.
-        if res_model == "product.template":
-            template = self.env["product.template"].browse(res_id)
-            variants = template.product_variant_ids
-            if len(variants) == 1:
-                variant_field = self.env["product.product"]._fields.get(field_name)
-                if variant_field and variant_field.company_dependent:
-                    return "product.product", field_name, variants.id
-
         # Fallback: usar el modelo/registro original con ORM puro
         return res_model, field_name, res_id
 
@@ -245,14 +231,16 @@ class BaseCompanyDependent(models.AbstractModel):
         rec = record.with_company(company)
         try:
             raw_val = rec[field.name]
-        except Exception:
+        except (AccessError, MissingError, UserError) as exc:
+            _logger.debug("[CD ORM GET] cannot read %s for company %s: %s", field.name, company.id, exc)
             raw_val = None
 
         # Obtener el valor de la compañía base (sin context) para comparar
         base_company = record.company_id if hasattr(record, "company_id") and record.company_id else self.env.company
         try:
             base_val = record.with_company(base_company)[field.name]
-        except Exception:
+        except (AccessError, MissingError, UserError) as exc:
+            _logger.debug("[CD ORM GET] cannot read base value of %s: %s", field.name, exc)
             base_val = None
 
         value_id = None
@@ -373,17 +361,24 @@ class BaseCompanyDependent(models.AbstractModel):
     # Escritura ORM (sin JSONB)
     # ------------------------------------------------------------------
 
+    def _check_orm_target(self, target_model, target_id):
+        """Refuse targets the dialog cannot persist per company."""
+        Target = self.env[target_model]
+        if Target._transient or not Target.browse(target_id).exists():
+            raise UserError(
+                self.env._("This value cannot be managed per company from here. Switch company to edit it.")
+            )
+
     def _set_values_orm(self, res_model, res_id, field_name, values_dict):
         """Escribe valores por compañía usando ORM con with_company.
 
         Resuelve el target real (ej. res.company para settings, product.product
         para product.template) y escribe mediante el ORM estándar.
 
-        ``RESET`` se traduce a ``write({field: False})`` — para targets ORM puros
-        (ej. ``res.company`` columnas no-CD) no existe el concepto "remover
-        override" del JSON path, por lo que reset == vaciar al falsy del tipo.
-        Si el target resuelto sí es un campo CD nativo, este método delega al
-        writer JSON donde RESET sí elimina la clave del JSONB.
+        ``RESET`` solo tiene sentido si el target resuelto es un campo CD nativo:
+        en ese caso este método delega al writer JSON, que elimina la clave del
+        JSONB. En targets ORM puros (ej. columnas comunes de ``res.company``) no
+        hay valor por defecto al que volver, así que se informa como ``skipped``.
 
         Access control: el método público que orquesta este path
         (``set_company_dependent_values``) chequea ``write`` sobre el
@@ -392,6 +387,7 @@ class BaseCompanyDependent(models.AbstractModel):
         ``self.env.companies`` para evitar escrituras cross-company por RPC.
         """
         target_model, target_field, target_id = self._resolve_orm_target(res_model, res_id, field_name)
+        self._check_orm_target(target_model, target_id)
         # Access control sobre el target resuelto (el público ya validó el res_model
         # original; acá cerramos el segundo modelo cuando el resolver salta de
         # res.config.settings a res.company / product.product / etc.).
@@ -438,6 +434,9 @@ class BaseCompanyDependent(models.AbstractModel):
                 )
                 skipped.append({"id": company_id, "name": company.name or "", "reason": "no access to company"})
                 continue
+            if value == "RESET":
+                skipped.append({"id": company_id, "name": company.name, "reason": "reset not supported"})
+                continue
 
             try:
                 with self.env.cr.savepoint():
@@ -447,16 +446,15 @@ class BaseCompanyDependent(models.AbstractModel):
                         rec = self.env["res.company"].browse(company_id)
                     else:
                         rec = record.with_company(company)
-                    write_value = False if value == "RESET" else value
                     before = rec[target_field]
-                    rec.write({target_field: write_value})
+                    rec.write({target_field: value})
                     after = rec[target_field]
                     _logger.debug(
                         "[CD ORM SET] wrote company=%s rec=%s.%s=%s (before=%r after=%r)",
                         company.name,
                         rec._name,
                         rec.id,
-                        write_value,
+                        value,
                         before,
                         after,
                     )
@@ -734,6 +732,7 @@ class BaseCompanyDependent(models.AbstractModel):
 
         # Resolver target real para lectura
         target_model, target_field, target_id = self._resolve_orm_target(res_model, res_id, field_name)
+        self._check_orm_target(target_model, target_id)
         _logger.debug(
             "[CD ORM GET] res_model=%s res_id=%s field=%s → target=(%s, %s, %s)",
             res_model,
@@ -789,6 +788,8 @@ class BaseCompanyDependent(models.AbstractModel):
             "field_type": target_field_obj.type,
             "comodel_name": comodel_name,
             "selection_options": selection_options,
+            # Plain columns have no default to go back to.
+            "can_reset": False,
         }
 
     def _get_field_domain_for_company(self, res_model, field_name, company_id):

@@ -308,7 +308,7 @@
                 record="props.record"
                 isSpecific="_cdState.isSpecific"
                 mode="cdMode"
-                    onSaved="() => this._loadCDMeta()"
+                onSaved="() => this._loadCDMeta()"
             />
         </xpath>
     </t>
@@ -337,7 +337,7 @@
                 record="props.record"
                 isSpecific="_cdState.isSpecific"
                 mode="cdMode"
-                    onSaved="() => this._loadCDMeta()"
+                onSaved="() => this._loadCDMeta()"
             />
         </div>
     </t>
@@ -524,6 +524,7 @@
 
                                             <!-- Botón Reset -->
                                             <button
+                                                t-if="state.canReset"
                                                 type="button"
                                                 class="btn btn-sm btn-outline-danger"
                                                 t-att-disabled="!isSpecificRow(row)"
@@ -541,10 +542,12 @@
 
                     <!-- Nota aclaratoria -->
                     <div class="alert alert-info py-2 small mt-2">
-                        <i class="fa fa-undo me-1"/>
-                        <strong><t t-esc="footerNoteHtml.reset"/></strong>
-                        <em><t t-esc="footerNoteHtml.resetDesc"/></em>
-                        <br/>
+                        <t t-if="state.canReset">
+                            <i class="fa fa-undo me-1"/>
+                            <strong><t t-esc="footerNoteHtml.reset"/></strong>
+                            <em><t t-esc="footerNoteHtml.resetDesc"/></em>
+                            <br/>
+                        </t>
                         <i class="fa fa-copy me-1"/>
                         <strong><t t-esc="footerNoteHtml.copy"/></strong>
                         <em><t t-esc="footerNoteHtml.copyDesc"/></em>
