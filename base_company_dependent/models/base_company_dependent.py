@@ -379,6 +379,32 @@ class BaseCompanyDependent(models.AbstractModel):
         if not Target.browse(target_id).exists():
             raise MissingError(self.env._("The record to edit no longer exists."))
 
+    def _is_orm_manageable(self, res_model, res_id, field_name):
+        """True when the per-company dialog can operate on ``field_name``.
+
+        Runs the same checks as ``_get_values_orm`` without building any row,
+        so it is cheap enough to probe several candidate fields in a row.
+        """
+        if res_model not in self.env:
+            return False
+        model_obj = self.env[res_model]
+        if field_name not in model_obj._fields:
+            return False
+        try:
+            target_model, target_field, target_id = self._resolve_orm_target(res_model, res_id, field_name)
+        except READ_ERRORS:
+            return False
+        if target_model not in self.env:
+            return False
+        target = self.env[target_model]
+        if target._transient or target_field not in target._fields:
+            return False
+        try:
+            self.env["ir.model.access"].check(target_model, "read")
+        except AccessError:
+            return False
+        return bool(target.browse(target_id).exists())
+
     def _set_values_orm(self, res_model, res_id, field_name, values_dict):
         """Escribe valores por compañía usando ORM con with_company.
 
@@ -935,6 +961,96 @@ class BaseCompanyDependent(models.AbstractModel):
                 skipped.append({"id": company_id, "name": company.name, "reason": str(reason)})
 
         return {"saved": saved, "skipped": skipped}
+
+    @api.model
+    def resolve_manageable_fields(self, res_model, res_id, field_names):
+        """Keep, among ``field_names``, the ones the dialog can manage.
+
+        A ``<setting company_dependent="1">`` labels a whole block and the
+        fields that vary per company are not always the first one, nor only
+        one: ``Quotation Templates`` opens with the group flag and holds a
+        single per-company field, while ``Inter-Company Transactions`` opens
+        with the module flag and holds four. The client sends the fields it
+        rendered, in view order, and gets back those it can operate, in the
+        same order.
+
+        :param field_names: candidate field names, in the order they appear.
+        :returns: list of ``{'field_name': str, 'field_string': str}``, empty
+                  when none of them can be managed per company.
+        """
+        self.env["ir.model.access"].check(res_model, "read")
+        usable = [f for f in (field_names or []) if self._is_orm_manageable(res_model, res_id, f)]
+        if not usable:
+            return []
+        descriptions = self.env[res_model].fields_get(usable, ["string"])
+        return [
+            {
+                "field_name": field_name,
+                "field_string": descriptions.get(field_name, {}).get("string") or field_name,
+            }
+            for field_name in usable
+        ]
+
+    @api.model
+    def get_company_dependent_values_multi(self, res_model, res_id, field_names, mode=None):
+        """Per-company values of several fields at once, indexed by company.
+
+        The dialog of a settings block shows one column per field and one row
+        per company, so it needs them together and already paired: reading
+        them one by one would leave the client joining rows by company id.
+
+        :returns: dict with ``fields`` (metadata, in the order asked) and
+                  ``rows`` (one per company, with a ``values`` dict keyed by
+                  field name).
+        """
+        fields_meta = []
+        rows_by_company = {}
+        company_order = []
+        descriptions = self.env[res_model].fields_get(list(field_names or []), ["string"])
+
+        for field_name in field_names or []:
+            result = self.get_company_dependent_values(res_model, res_id, field_name, mode=mode)
+            fields_meta.append(
+                {
+                    "field_name": field_name,
+                    "field_string": descriptions.get(field_name, {}).get("string") or field_name,
+                    "field_type": result["field_type"],
+                    "comodel_name": result.get("comodel_name"),
+                    "selection_options": result.get("selection_options"),
+                    "can_reset": result.get("can_reset", True),
+                }
+            )
+            for row in result["values"]:
+                company_id = row["company_id"]
+                if company_id not in rows_by_company:
+                    rows_by_company[company_id] = {
+                        "company_id": company_id,
+                        "company_name": row["company_name"],
+                        "parent_id": row.get("parent_id"),
+                        "level": row.get("level", 1),
+                        "has_children": row.get("has_children", False),
+                        "child_ids": row.get("child_ids", []),
+                        "values": {},
+                    }
+                    company_order.append(company_id)
+                rows_by_company[company_id]["values"][field_name] = row
+
+        return {"fields": fields_meta, "rows": [rows_by_company[c] for c in company_order]}
+
+    @api.model
+    def set_company_dependent_values_multi(self, res_model, res_id, values_by_field, mode=None):
+        """Save several fields of the same record in one call.
+
+        Each field keeps its own savepoint behaviour: a company crossover on
+        one field does not roll back what the others already wrote.
+
+        :param values_by_field: ``{field_name: {str(company_id): value}}``.
+        :returns: ``{field_name: {'saved': [...], 'skipped': [...]}}``.
+        """
+        return {
+            field_name: self.set_company_dependent_values(res_model, res_id, field_name, values_dict, mode=mode)
+            for field_name, values_dict in (values_by_field or {}).items()
+        }
 
     @api.model
     def get_company_dependent_meta(self, res_model, res_id):

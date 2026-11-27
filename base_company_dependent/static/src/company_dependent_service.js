@@ -21,10 +21,49 @@ class CompanyDependentService {
          * @type {Map<string, Promise<Object>|Object>}
          */
         this._cache = new Map();
+        /**
+         * Tandas en vuelo de resolveManageableFields, por cacheKey.
+         * @type {Map<string, {names: Set<string>, promise: Promise}>}
+         */
+        this._batches = new Map();
     }
 
     _key(resModel, resId) {
         return `${resModel}:${resId}`;
+    }
+
+    /**
+     * Devuelve qué campos de ``candidates`` puede gestionar el diálogo.
+     *
+     * Una pantalla de Ajustes tiene decenas de bloques y cada uno pregunta por
+     * los suyos: las preguntas del mismo tick se juntan en UNA llamada con la
+     * unión de los nombres, y cada bloque filtra después los propios. Así la
+     * pantalla paga una consulta, no una por bloque.
+     *
+     * @returns {Promise<Array<{field_name: string, field_string: string}>>}
+     *          los gestionables de toda la tanda, no solo los de quien pregunta.
+     */
+    resolveManageableFields(resModel, resId, candidates) {
+        const key = this._key(resModel, resId);
+        if (!this._batches.has(key)) {
+            const batch = { names: new Set(), promise: null };
+            // El microtask corre cuando terminaron de montarse los bloques de
+            // esta tanda, así que para entonces `names` ya los tiene a todos.
+            batch.promise = Promise.resolve().then(() => {
+                this._batches.delete(key);
+                return this.orm.call("base.company.dependent", "resolve_manageable_fields", [
+                    resModel,
+                    resId,
+                    [...batch.names],
+                ]);
+            });
+            this._batches.set(key, batch);
+        }
+        const batch = this._batches.get(key);
+        for (const name of candidates || []) {
+            batch.names.add(name);
+        }
+        return batch.promise;
     }
 
     /**

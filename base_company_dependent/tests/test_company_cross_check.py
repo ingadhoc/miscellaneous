@@ -25,26 +25,42 @@ class TesterModelMixin:
     """Registers ``company.dependent.tester`` for the test class."""
 
     MODEL = "company.dependent.tester"
+    SETTINGS_MODEL = "company.dependent.settings.tester"
 
     @classmethod
     def _register_test_model(cls):
-        from odoo.orm.model_classes import add_to_registry
-
         from . import company_dependent_models
 
-        add_to_registry(cls.registry, company_dependent_models.CompanyDependentTester)
-        cls.registry._setup_models__(cls.env.cr, [cls.MODEL])
-        cls.registry.init_models(cls.env.cr, [cls.MODEL], {"models_to_check": True})
-        cls.addClassCleanup(cls.registry.__delitem__, cls.MODEL)
+        cls._add_test_model(company_dependent_models.CompanyDependentTester, cls.MODEL, "company_dependent_tester_test")
+
+    @classmethod
+    def _register_settings_test_model(cls):
+        """Register the transient tester that stands in for a settings view."""
+        from . import company_dependent_models
+
+        cls._add_test_model(
+            company_dependent_models.CompanyDependentSettingsTester,
+            cls.SETTINGS_MODEL,
+            "company_dependent_settings_tester_test",
+        )
+
+    @classmethod
+    def _add_test_model(cls, model_class, model_name, acl_name):
+        from odoo.orm.model_classes import add_to_registry
+
+        add_to_registry(cls.registry, model_class)
+        cls.registry._setup_models__(cls.env.cr, [model_name])
+        cls.registry.init_models(cls.env.cr, [model_name], {"models_to_check": True})
+        cls.addClassCleanup(cls.registry.__delitem__, model_name)
         # Cleanups run in reverse order: drop the tester fields from the field
         # triggers before the model leaves the registry.
-        cls.addClassCleanup(cls.registry._discard_fields, list(cls.registry[cls.MODEL]._fields.values()))
+        cls.addClassCleanup(cls.registry._discard_fields, list(cls.registry[model_name]._fields.values()))
         # Group-less ACL so the non-superuser test actor can operate the model.
-        cls.env["ir.model"]._reflect_models([cls.MODEL])
+        cls.env["ir.model"]._reflect_models([model_name])
         cls.env["ir.model.access"].create(
             {
-                "name": "company_dependent_tester_test",
-                "model_id": cls.env["ir.model"]._get(cls.MODEL).id,
+                "name": acl_name,
+                "model_id": cls.env["ir.model"]._get(model_name).id,
                 "perm_read": True,
                 "perm_write": True,
                 "perm_create": True,

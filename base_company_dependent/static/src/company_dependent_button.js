@@ -31,6 +31,9 @@ export class CompanyDependentButton extends Component {
         isSpecific: { validate: (v) => v === null || typeof v === "boolean", optional: true },
         onSaved: { type: Function, optional: true },
         mode: { validate: (v) => v == null || typeof v === "string", optional: true },
+        // Settings only: the fields of the <setting> block that vary per
+        // company, already resolved, in view order.
+        fields: { type: Array, element: Object, optional: true },
     };
 
     setup() {
@@ -50,12 +53,17 @@ export class CompanyDependentButton extends Component {
             : _t("Default value (fallback). Click to manage.");
     }
 
+    _notifyNotManageable() {
+        this.notification.add(
+            _t("These values are company-specific. Switch company to see or edit values for other companies."),
+            { type: "info" },
+        );
+    }
+
     async onClick() {
-        if (!this.props.fieldName) {
-            this.notification.add(
-                _t("These values are company-specific. Switch company to see or edit values for other companies."),
-                { type: "info" },
-            );
+        const fields = this.props.fields;
+        if (!this.props.fieldName && !(fields && fields.length)) {
+            this._notifyNotManageable();
             return;
         }
         // Cerrar cualquier AutoComplete/dropdown abierto en el formulario antes
@@ -72,6 +80,7 @@ export class CompanyDependentButton extends Component {
         this.addDialog(CompanyDependentDialog, {
             fieldName: this.props.fieldName,
             fieldString: this.props.fieldString,
+            fields,
             required: this.props.required,
             resId,
             resModel,
