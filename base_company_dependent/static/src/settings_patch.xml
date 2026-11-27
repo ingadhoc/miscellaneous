@@ -9,7 +9,7 @@
         <xpath expr="//t[@t-if='displayCompanyDependentIcon']" position="replace">
             <t t-if="displayCompanyDependentButton">
                 <CompanyDependentButton
-                    fieldName="cdFieldName"
+                    fields="cdManageableFields"
                     fieldString="cdFieldString"
                     required="cdFieldRequired"
                     record="props.record"

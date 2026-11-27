@@ -44,6 +44,7 @@ class TestBaseCompanyDependent(TesterModelMixin, TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
         cls._register_test_model()
+        cls._register_settings_test_model()
         cls.helper = cls.env["base.company.dependent"]
 
         # Dos compañías para probar valores multi-compañía
@@ -524,4 +525,125 @@ class TestBaseCompanyDependent(TesterModelMixin, TransactionCase):
                 "primary_color",
                 {str(self.company_1.id): "#111111"},
                 mode="orm",
+            )
+
+    # ------------------------------------------------------------------
+    # resolve_manageable_fields / *_multi
+    # ------------------------------------------------------------------
+
+    SETTINGS_BLOCK = ["group_flag", "company_color", "company_email"]
+
+    def _settings_record(self):
+        return self.env[self.SETTINGS_MODEL].create({})
+
+    def test_resolve_skips_unmanageable_first_field(self):
+        """A <setting> block labels several fields and the per-company value is
+        not always the first one. The resolver drops the flag and keeps the
+        rest (the `Quotation Templates` case: the group flag, then `Default
+        Template`)."""
+        resolved = self.helper.resolve_manageable_fields(
+            self.SETTINGS_MODEL, self._settings_record().id, ["group_flag", "company_color"]
+        )
+        self.assertEqual([f["field_name"] for f in resolved], ["company_color"])
+        self.assertEqual(resolved[0]["field_string"], "Company Color")
+
+    def test_resolve_keeps_every_manageable_field_in_view_order(self):
+        """A block can hold more than one per-company field — the inter-company
+        one holds four once its module is installed. All of them come back, in
+        the order the view drew them, so the dialog can show a column each."""
+        resolved = self.helper.resolve_manageable_fields(
+            self.SETTINGS_MODEL, self._settings_record().id, self.SETTINGS_BLOCK
+        )
+        self.assertEqual([f["field_name"] for f in resolved], ["company_color", "company_email"])
+
+    def test_resolve_none_usable(self):
+        """With no usable candidate the resolver returns an empty list, and the
+        settings block shows no icon at all instead of one that leads nowhere."""
+        self.assertEqual(
+            self.helper.resolve_manageable_fields(self.SETTINGS_MODEL, self._settings_record().id, ["group_flag"]),
+            [],
+        )
+
+    def test_resolve_ignores_unknown_fields(self):
+        """Candidates come from the rendered DOM, so a name that is not a field
+        of the model must be skipped rather than raise."""
+        resolved = self.helper.resolve_manageable_fields(
+            self.SETTINGS_MODEL, self._settings_record().id, ["not_a_field", "company_color"]
+        )
+        self.assertEqual([f["field_name"] for f in resolved], ["company_color"])
+
+    def test_resolve_empty_candidates(self):
+        self.assertEqual(self.helper.resolve_manageable_fields(self.SETTINGS_MODEL, self._settings_record().id, []), [])
+
+    def test_resolve_enforces_read_access(self):
+        """The public entrypoint checks read on res_model before looking at any
+        field, like the getters do. `ir.config_parameter` is used because the
+        tester model is registered with a group-less ACL that everyone reads."""
+        portal_user = self.env["res.users"].create(
+            {
+                "name": "CD Portal Resolver",
+                "login": "cd_portal_resolver",
+                "group_ids": [(6, 0, [self.env.ref("base.group_portal").id])],
+            }
+        )
+        with self.assertRaises(AccessError):
+            self.helper.with_user(portal_user).resolve_manageable_fields("ir.config_parameter", 1, ["value"])
+
+    def test_values_multi_pairs_every_field_by_company(self):
+        """The dialog draws one row per company and one column per field, so it
+        gets the values already paired instead of joining them itself."""
+        settings = self._settings_record()
+        result = self.helper.get_company_dependent_values_multi(
+            self.SETTINGS_MODEL, settings.id, ["company_color", "company_email"], mode="orm"
+        )
+        self.assertEqual([f["field_name"] for f in result["fields"]], ["company_color", "company_email"])
+        self.assertEqual([f["field_type"] for f in result["fields"]], ["char", "char"])
+        self.assertEqual(len(result["rows"]), len(self.env.companies))
+        for row in result["rows"]:
+            self.assertEqual(sorted(row["values"]), ["company_color", "company_email"])
+            self.assertIn("is_specific", row["values"]["company_color"])
+
+    def test_values_multi_matches_the_single_field_getter(self):
+        """Reading a field through the multi getter must say exactly what the
+        single one says: the dialog uses only the first and they cannot drift."""
+        settings = self._settings_record()
+        single = self.helper.get_company_dependent_values(self.SETTINGS_MODEL, settings.id, "company_color", mode="orm")
+        multi = self.helper.get_company_dependent_values_multi(
+            self.SETTINGS_MODEL, settings.id, ["company_color"], mode="orm"
+        )
+        self.assertEqual(multi["fields"][0]["field_type"], single["field_type"])
+        self.assertEqual(multi["fields"][0]["can_reset"], single["can_reset"])
+        self.assertEqual(
+            [r["values"]["company_color"]["display_value"] for r in multi["rows"]],
+            [v["display_value"] for v in single["values"]],
+        )
+
+    def test_set_values_multi_writes_every_field(self):
+        """One Save in the dialog writes every column it changed."""
+        settings = self._settings_record()
+        result = self.helper.set_company_dependent_values_multi(
+            self.SETTINGS_MODEL,
+            settings.id,
+            {
+                "company_color": {str(self.company_1.id): "#111111"},
+                "company_email": {str(self.company_2.id): "two@example.com"},
+            },
+            mode="orm",
+        )
+        self.assertEqual(result["company_color"]["saved"], [self.company_1.id])
+        self.assertEqual(result["company_email"]["saved"], [self.company_2.id])
+        self.assertEqual(self.company_1.primary_color, "#111111")
+        self.assertEqual(self.company_2.email, "two@example.com")
+
+    def test_set_values_multi_empty_payload(self):
+        self.assertEqual(
+            self.helper.set_company_dependent_values_multi(self.SETTINGS_MODEL, self._settings_record().id, {}), {}
+        )
+
+    def test_unmanageable_field_still_raises_on_open(self):
+        """The guard that produces the `switch company` error stays in place
+        for the fields that genuinely cannot be managed per company."""
+        with self.assertRaises(UserError):
+            self.helper.get_company_dependent_values(
+                self.SETTINGS_MODEL, self._settings_record().id, "group_flag", mode="orm"
             )

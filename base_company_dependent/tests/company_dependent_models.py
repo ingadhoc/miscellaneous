@@ -34,3 +34,18 @@ class CompanyDependentTester(models.Model):
     currency_id = fields.Many2one("res.currency", company_dependent=True)
     company_id = fields.Many2one("res.company")
     company_color = fields.Char(related="company_id.primary_color", readonly=False)
+
+
+class CompanyDependentSettingsTester(models.TransientModel):
+    """Transient model registered only during the tests. Mirrors a
+    ``<setting company_dependent="1">`` block: a flag that cannot be managed
+    per company next to several ``company_id.x`` related fields that can, like
+    the inter-company block once its module is installed."""
+
+    _name = "company.dependent.settings.tester"
+    _description = "Company Dependent Settings Tester (tests only)"
+
+    group_flag = fields.Boolean()
+    company_id = fields.Many2one("res.company", default=lambda self: self.env.company)
+    company_color = fields.Char(related="company_id.primary_color", readonly=False, string="Company Color")
+    company_email = fields.Char(related="company_id.email", readonly=False, string="Company Email")

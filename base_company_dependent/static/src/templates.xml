@@ -364,6 +364,95 @@
     <!-- ──────────────────────────────────────────────────────────────────── -->
     <!--  CompanyDependentDialog                                              -->
     <!-- ──────────────────────────────────────────────────────────────────── -->
+    <!-- Celda de valor de un campo para una compañía.
+         Se llama con `field` y `row` en el contexto. -->
+    <t t-name="base_company_dependent.CompanyDependentValueCell">
+        <!-- Many2One -->
+        <t t-if="field.field_type === 'many2one'">
+            <div t-att-class="{ 'o_cd_fallback': !isSpecificRow(field, row) }">
+                <AutoComplete
+                    t-key="getAutoCompleteKey(field, row)"
+                    value="getDisplayValue(field, row)"
+                    sources="getAutoCompleteSources(field, row)"
+                    onChange.bind="(info) => this.onAutoCompleteChange(field, row, info)"
+                    placeholder="getRowPlaceholder(field, row)"
+                    class="'o_input w-100'"
+                />
+            </div>
+        </t>
+
+        <!-- Selection -->
+        <t t-elif="field.field_type === 'selection'">
+            <select
+                t-att-class="'o_input w-100' + (!isSpecificRow(field, row) ? ' text-muted' : '')"
+                t-on-change="(ev) => this.onSelectionChange(field, row, ev)"
+            >
+                <option value="" t-att-selected="_getEffectiveRow(field, row).value_id === null || _getEffectiveRow(field, row).value_id === undefined">—</option>
+                <t t-foreach="field.selection_options || []" t-as="opt" t-key="opt[0]">
+                    <option
+                        t-att-value="opt[0] === false ? '__false__' : opt[0]"
+                        t-att-selected="_getEffectiveRow(field, row).value_id === opt[0]"
+                    >
+                        <t t-esc="opt[1]"/>
+                    </option>
+                </t>
+            </select>
+        </t>
+
+        <!-- Float / Integer / Monetary -->
+        <t t-elif="field.field_type === 'float' || field.field_type === 'integer' || field.field_type === 'monetary'">
+            <input
+                type="number"
+                t-att-class="'o_input w-100' + (!isSpecificRow(field, row) ? ' text-muted' : '')"
+                t-att-value="getDisplayValue(field, row)"
+                t-att-step="field.field_type === 'integer' ? '1' : 'any'"
+                t-on-change="(ev) => this.onScalarChange(field, row, ev)"
+            />
+        </t>
+
+        <!-- Boolean -->
+        <t t-elif="field.field_type === 'boolean'">
+            <div class="form-check form-switch d-flex justify-content-start ms-1">
+                <input
+                    class="form-check-input"
+                    type="checkbox"
+                    t-att-checked="_getEffectiveRow(field, row).value_id"
+                    t-on-change="(ev) => this.onBooleanChange(field, row, ev)"
+                />
+            </div>
+        </t>
+
+        <!-- Date -->
+        <t t-elif="field.field_type === 'date'">
+            <input
+                type="date"
+                t-att-class="'o_input w-100' + (!isSpecificRow(field, row) ? ' text-muted' : '')"
+                t-att-value="getDisplayValue(field, row)"
+                t-on-change="(ev) => this.onScalarChange(field, row, ev)"
+            />
+        </t>
+
+        <!-- Datetime -->
+        <t t-elif="field.field_type === 'datetime'">
+            <input
+                type="datetime-local"
+                t-att-class="'o_input w-100' + (!isSpecificRow(field, row) ? ' text-muted' : '')"
+                t-att-value="getDisplayValue(field, row)"
+                t-on-change="(ev) => this.onScalarChange(field, row, ev)"
+            />
+        </t>
+
+        <!-- Char / Text (fallback) -->
+        <t t-else="">
+            <input
+                type="text"
+                t-att-class="'o_input w-100' + (!isSpecificRow(field, row) ? ' text-muted' : '')"
+                t-att-value="getDisplayValue(field, row)"
+                t-on-change="(ev) => this.onScalarChange(field, row, ev)"
+            />
+        </t>
+    </t>
+
     <t t-name="base_company_dependent.CompanyDependentDialog">
         <Dialog t-props="{ title: title, size: 'lg' }">
             <div class="o_cd_dialog">
@@ -376,14 +465,17 @@
                     </div>
                 </t>
 
-                <!-- Tabla jerárquica de valores -->
+                <!-- Tabla jerárquica de valores: una fila por compañía y una
+                     columna por campo gestionable del bloque. -->
                 <t t-else="">
                     <table class="table table-sm align-middle o_cd_table">
                         <thead>
                             <tr>
                                 <th><t t-esc="labelCompany"/></th>
-                                <th><t t-esc="labelValue"/></th>
-                                <th class="text-center o_cd_col_status"><t t-esc="labelStatus"/></th>
+                                <t t-foreach="state.fields" t-as="field" t-key="field.field_name">
+                                    <th><t t-esc="isSingleField ? labelValue : field.field_string"/></th>
+                                </t>
+                                <th t-if="isSingleField" class="text-center o_cd_col_status"><t t-esc="labelStatus"/></th>
                                 <th class="text-center o_cd_col_actions">Actions</th>
                             </tr>
                         </thead>
@@ -391,7 +483,7 @@
                             <t t-foreach="orderedRows" t-as="item" t-key="item.row.company_id">
                                 <t t-set="row" t-value="item.row"/>
                                 <t t-set="depth" t-value="item.depth"/>
-                                <tr t-att-class="'o_cd_row o_cd_depth_' + depth + (isSpecificRow(row) ? ' o_cd_row_specific' : ' o_cd_row_default')">
+                                <tr t-att-class="getRowClass(row, depth)">
 
                                     <!-- Columna 1: nombre de la compañía con indentación -->
                                     <td class="o_cd_company_cell">
@@ -406,97 +498,33 @@
                                         </div>
                                     </td>
 
-                                    <!-- Columna 2: input de valor según tipo de campo -->
-                                    <td>
-                                        <!-- Many2One -->
-                                        <t t-if="state.fieldType === 'many2one'">
-                                            <div t-att-class="{ 'o_cd_fallback': !isSpecificRow(row) }">
-                                                <AutoComplete
-                                                    t-key="getAutoCompleteKey(row)"
-                                                    value="getDisplayValue(row)"
-                                                    sources="getAutoCompleteSources(row)"
-                                                    onChange.bind="(info) => this.onAutoCompleteChange(row, info)"
-                                                    placeholder="getRowPlaceholder(row)"
-                                                    class="'o_input w-100'"
-                                                />
+                                    <!-- Una columna por campo. Con varias, el reset
+                                         vive en su celda: no hay una sola acción
+                                         de fila que sirva para todas. -->
+                                    <t t-foreach="state.fields" t-as="field" t-key="field.field_name">
+                                        <td>
+                                            <div class="d-flex align-items-center gap-1">
+                                                <div class="flex-grow-1">
+                                                    <t t-call="base_company_dependent.CompanyDependentValueCell"/>
+                                                </div>
+                                                <button
+                                                    t-if="!isSingleField &amp;&amp; field.can_reset !== false"
+                                                    type="button"
+                                                    class="btn btn-sm btn-outline-danger"
+                                                    t-att-disabled="!isSpecificRow(field, row)"
+                                                    t-att-title="resetButtonTitle"
+                                                    t-on-click="() => this.onResetRow(field, row)"
+                                                >
+                                                    <i class="fa fa-undo"/>
+                                                </button>
                                             </div>
-                                        </t>
+                                        </td>
+                                    </t>
 
-                                        <!-- Selection -->
-                                        <t t-elif="state.fieldType === 'selection'">
-                                            <select
-                                                t-att-class="'o_input w-100' + (!isSpecificRow(row) ? ' text-muted' : '')"
-                                                t-on-change="(ev) => this.onSelectionChange(row, ev)"
-                                            >
-                                                <option value="" t-att-selected="_getEffectiveRow(row).value_id === null || _getEffectiveRow(row).value_id === undefined">—</option>
-                                                <t t-foreach="state.selectionOptions" t-as="opt" t-key="opt[0]">
-                                                    <option
-                                                        t-att-value="opt[0] === false ? '__false__' : opt[0]"
-                                                        t-att-selected="_getEffectiveRow(row).value_id === opt[0]"
-                                                    >
-                                                        <t t-esc="opt[1]"/>
-                                                    </option>
-                                                </t>
-                                            </select>
-                                        </t>
-
-                                        <!-- Float / Integer / Monetary -->
-                                        <t t-elif="state.fieldType === 'float' || state.fieldType === 'integer' || state.fieldType === 'monetary'">
-                                            <input
-                                                type="number"
-                                                t-att-class="'o_input w-100' + (!isSpecificRow(row) ? ' text-muted' : '')"
-                                                t-att-value="getDisplayValue(row)"
-                                                t-att-step="state.fieldType === 'integer' ? '1' : 'any'"
-                                                t-on-change="(ev) => this.onScalarChange(row, ev)"
-                                            />
-                                        </t>
-
-                                        <!-- Boolean -->
-                                        <t t-elif="state.fieldType === 'boolean'">
-                                            <div class="form-check form-switch d-flex justify-content-start ms-1">
-                                                <input
-                                                    class="form-check-input"
-                                                    type="checkbox"
-                                                    t-att-checked="_getEffectiveRow(row).value_id"
-                                                    t-on-change="(ev) => this.onBooleanChange(row, ev)"
-                                                />
-                                            </div>
-                                        </t>
-
-                                        <!-- Date -->
-                                        <t t-elif="state.fieldType === 'date'">
-                                            <input
-                                                type="date"
-                                                t-att-class="'o_input w-100' + (!isSpecificRow(row) ? ' text-muted' : '')"
-                                                t-att-value="getDisplayValue(row)"
-                                                t-on-change="(ev) => this.onScalarChange(row, ev)"
-                                            />
-                                        </t>
-
-                                        <!-- Datetime -->
-                                        <t t-elif="state.fieldType === 'datetime'">
-                                            <input
-                                                type="datetime-local"
-                                                t-att-class="'o_input w-100' + (!isSpecificRow(row) ? ' text-muted' : '')"
-                                                t-att-value="getDisplayValue(row)"
-                                                t-on-change="(ev) => this.onScalarChange(row, ev)"
-                                            />
-                                        </t>
-
-                                        <!-- Char / Text (fallback) -->
-                                        <t t-else="">
-                                            <input
-                                                type="text"
-                                                t-att-class="'o_input w-100' + (!isSpecificRow(row) ? ' text-muted' : '')"
-                                                t-att-value="getDisplayValue(row)"
-                                                t-on-change="(ev) => this.onScalarChange(row, ev)"
-                                            />
-                                        </t>
-                                    </td>
-
-                                    <!-- Columna 3: badge de estado -->
-                                    <td class="text-center o_cd_col_status">
-                                        <t t-if="isSpecificRow(row)">
+                                    <!-- Columna de estado: solo con un campo, donde
+                                         la fila entera es específica o por defecto -->
+                                    <td t-if="isSingleField" class="text-center o_cd_col_status">
+                                        <t t-if="isSpecificRow(state.fields[0], row)">
                                             <span class="badge o_cd_badge_specific">
                                                 <i class="fa fa-lock me-1"/><t t-esc="labelSpecific"/>
                                             </span>
@@ -508,7 +536,7 @@
                                         </t>
                                     </td>
 
-                                    <!-- Columna 4: acciones (Copy + Reset) -->
+                                    <!-- Acciones de la fila (Copy + Reset con un campo) -->
                                     <td class="text-center o_cd_col_actions">
                                         <div class="d-flex gap-1 justify-content-center">
                                             <!-- Copy button: only visible when the company has children -->
@@ -524,12 +552,12 @@
 
                                             <!-- Botón Reset -->
                                             <button
-                                                t-if="state.canReset"
+                                                t-if="isSingleField &amp;&amp; state.fields[0].can_reset !== false"
                                                 type="button"
                                                 class="btn btn-sm btn-outline-danger"
-                                                t-att-disabled="!isSpecificRow(row)"
+                                                t-att-disabled="!isSpecificRow(state.fields[0], row)"
                                                 t-att-title="resetButtonTitle"
-                                                t-on-click="() => this.onResetRow(row)"
+                                                t-on-click="() => this.onResetRow(state.fields[0], row)"
                                             >
                                                 <i class="fa fa-undo"/>
                                             </button>
@@ -542,7 +570,7 @@
 
                     <!-- Nota aclaratoria -->
                     <div class="alert alert-info py-2 small mt-2">
-                        <t t-if="state.canReset">
+                        <t t-if="anyCanReset">
                             <i class="fa fa-undo me-1"/>
                             <strong><t t-esc="footerNoteHtml.reset"/></strong>
                             <em><t t-esc="footerNoteHtml.resetDesc"/></em>
